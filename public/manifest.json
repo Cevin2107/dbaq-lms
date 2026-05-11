@@ -1,0 +1,16 @@
+{
+  "name": "Gia sư Đào Bá Anh Quân",
+  "short_name": "Gia sư",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#2563eb",
+  "description": "Hệ thống bài tập trực tuyến",
+  "icons": [
+    {
+      "src": "/icon.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}

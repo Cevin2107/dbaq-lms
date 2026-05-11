@@ -32,6 +32,9 @@ export default function RootLayout({
 }) {
   return (
     <html lang="vi" suppressHydrationWarning>
+      <head>
+        <link rel="manifest" href="/manifest.json" />
+      </head>
       <body className={inter.className} suppressHydrationWarning>
         <QueryProvider>
           <ThemeProvider>
