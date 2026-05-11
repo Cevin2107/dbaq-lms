@@ -305,10 +305,10 @@ export default function NewAssignmentPage() {
                           type="number"
                           min={0}
                           step={0.5}
-                          value={range.totalPoints === "" ? "" : range.totalPoints}
+                          value={range.totalPoints}
                           onChange={(e) => setPointRanges(p => {
                             const updated = [...p];
-                            updated[idx] = { ...updated[idx], totalPoints: e.target.value === "" ? "" : parseFloat(e.target.value) } as any;
+                            updated[idx] = { ...updated[idx], totalPoints: e.target.value === "" ? 0 : parseFloat(e.target.value) };
                             return updated;
                           })}
                           className="w-16 rounded border border-slate-200 px-2 py-1 text-sm text-center"

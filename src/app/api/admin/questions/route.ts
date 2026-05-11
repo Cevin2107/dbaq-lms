@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { checkAdminAuth } from "@/lib/adminAuth";
-import { createQuestion, fetchQuestions } from "@/lib/supabaseHelpers";
+import { bulkDeleteQuestions, createQuestion, fetchQuestions } from "@/lib/supabaseHelpers";
 
 export async function GET(req: NextRequest) {
   const isAuth = await checkAdminAuth();
@@ -45,13 +45,16 @@ export async function DELETE(req: NextRequest) {
 
   try {
     const body = await req.json();
-    const { questionIds } = body;
+    const { questionIds, assignmentId } = body;
     
     if (!Array.isArray(questionIds) || questionIds.length === 0) {
       return NextResponse.json({ error: "Missing or invalid questionIds array" }, { status: 400 });
     }
 
-    const { bulkDeleteQuestions } = require("@/lib/supabaseHelpers");
+    if (!assignmentId || typeof assignmentId !== "string") {
+      return NextResponse.json({ error: "Missing or invalid assignmentId" }, { status: 400 });
+    }
+
     await bulkDeleteQuestions(questionIds, assignmentId);
     
     return NextResponse.json({ success: true });
