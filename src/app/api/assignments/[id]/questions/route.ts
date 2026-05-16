@@ -32,7 +32,6 @@ export async function GET(
         type: row.type,
         content: row.content,
         choices: row.choices,
-        answerKey: row.answer_key,
         points: row.points,
         imageUrl: row.image_url,
         subQuestions: row.sub_questions || undefined,

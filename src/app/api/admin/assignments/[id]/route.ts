@@ -19,7 +19,7 @@ export async function GET(
   try {
     const { id } = await params;
     const assignment = await fetchAssignmentByIdAdmin(id);
-    const questions = await fetchQuestions(id);
+    const questions = await fetchQuestions(id, { includeAnswerKey: true });
     
     return NextResponse.json({
       assignment: assignment ? {

@@ -13,7 +13,7 @@ export async function GET(req: NextRequest) {
     const assignmentId = searchParams.get("assignmentId");
     if (!assignmentId) return NextResponse.json({ error: "Missing assignmentId" }, { status: 400 });
 
-    const questions = await fetchQuestions(assignmentId);
+    const questions = await fetchQuestions(assignmentId, { includeAnswerKey: true });
     return NextResponse.json({ questions });
   } catch (error) {
     console.error("Error fetching questions:", error);

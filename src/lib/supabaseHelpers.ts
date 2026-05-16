@@ -160,8 +160,12 @@ export async function fetchAssignmentByIdAdmin(id: string): Promise<Assignment |
   };
 }
 
-export async function fetchQuestions(assignmentId: string): Promise<Question[]> {
+export async function fetchQuestions(
+  assignmentId: string,
+  options: { includeAnswerKey?: boolean } = {}
+): Promise<Question[]> {
   const supabase = getSupabaseClient();
+  const includeAnswerKey = Boolean(options.includeAnswerKey);
   const { data, error } = await supabase
     .from("questions")
     .select("*")
@@ -180,7 +184,7 @@ export async function fetchQuestions(assignmentId: string): Promise<Question[]> 
     type: row.type,
     content: row.content,
     choices: row.choices,
-    answerKey: row.answer_key,
+    ...(includeAnswerKey ? { answerKey: row.answer_key } : {}),
     points: row.points,
     imageUrl: row.image_url,
     subQuestions: row.sub_questions || undefined,

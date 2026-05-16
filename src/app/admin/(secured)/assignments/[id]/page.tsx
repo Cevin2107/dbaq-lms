@@ -14,7 +14,7 @@ export default async function AssignmentDetailPageServer({ params }: { params: P
 
   const [assignment, questions] = await Promise.all([
     fetchAssignmentByIdAdmin(assignmentId),
-    fetchQuestions(assignmentId),
+    fetchQuestions(assignmentId, { includeAnswerKey: true }),
   ]);
 
   if (!assignment) {
