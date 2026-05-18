@@ -35,37 +35,21 @@ export async function POST(req: NextRequest) {
     }
 
     const { credentialID, credentialPublicKey, counter } = verification.registrationInfo;
-    const credentialIdRaw: unknown = credentialID;
-    let credentialIdBytes: Uint8Array | null = null;
 
-    if (credentialIdRaw instanceof ArrayBuffer) {
-      credentialIdBytes = new Uint8Array(credentialIdRaw);
-    } else if (ArrayBuffer.isView(credentialIdRaw)) {
-      credentialIdBytes = new Uint8Array(credentialIdRaw.buffer);
-    } else if (typeof credentialIdRaw === "string" && credentialIdRaw.length > 0) {
-      credentialIdBytes = isoBase64URL.toBuffer(credentialIdRaw);
-    } else if (typeof attestationResponse?.id === "string" && attestationResponse.id.length > 0) {
-      credentialIdBytes = isoBase64URL.toBuffer(attestationResponse.id);
-    } else if (typeof attestationResponse?.rawId === "string" && attestationResponse.rawId.length > 0) {
-      credentialIdBytes = isoBase64URL.toBuffer(attestationResponse.rawId);
-    }
-
+    const credentialIdBase64 = attestationResponse?.id || (credentialID ? isoBase64URL.fromBuffer(
+      new Uint8Array(
+        (credentialID as any).buffer || credentialID,
+        (credentialID as any).byteOffset || 0,
+        (credentialID as any).byteLength || (credentialID as any).length
+      )
+    ) : "");
     const publicKeyBytes = new Uint8Array(credentialPublicKey);
-    const credentialIdLength = credentialIdBytes?.length ?? 0;
     const publicKeyLength = publicKeyBytes.length;
+    const publicKeyBase64 = isoBase64URL.fromBuffer(publicKeyBytes);
 
-    if (!credentialIdBytes || credentialIdLength === 0 || publicKeyLength === 0) {
-      console.error("Passkey empty credential data", {
-        credentialIdType: typeof credentialID,
-        credentialIdLength,
-        publicKeyType: typeof credentialPublicKey,
-        publicKeyLength,
-      });
+    if (!credentialIdBase64 || publicKeyLength === 0) {
       return NextResponse.json({ error: "Passkey không hợp lệ (credential rỗng)" }, { status: 400 });
     }
-
-    const credentialIdBase64 = isoBase64URL.fromBuffer(credentialIdBytes);
-    const publicKeyBase64 = isoBase64URL.fromBuffer(publicKeyBytes);
 
     const supabase = createSupabaseAdmin();
     const { error } = await supabase.from("admin_passkeys").insert({
