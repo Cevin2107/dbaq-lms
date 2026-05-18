@@ -15,6 +15,8 @@ export function useSupabaseRealtime<T>(
   const [data, setData] = useState<T[]>([]);
   const [isConnected, setIsConnected] = useState(false);
   const [error, setError] = useState<Error | null>(null);
+  const filterColumn = filter?.column;
+  const filterValue = filter?.value;
 
   useEffect(() => {
     const supabase = createClient(supabaseUrl, supabaseAnonKey);
@@ -24,8 +26,8 @@ export function useSupabaseRealtime<T>(
       try {
         let query = supabase.from(table).select('*');
         
-        if (filter) {
-          query = query.eq(filter.column, filter.value);
+        if (filterColumn && filterValue) {
+          query = query.eq(filterColumn, filterValue);
         }
 
         const { data: initialData, error: fetchError } = await query;
@@ -51,7 +53,7 @@ export function useSupabaseRealtime<T>(
           event: options?.event || '*',
           schema: options?.schema || 'public',
           table: table,
-          filter: filter ? `${filter.column}=eq.${filter.value}` : undefined,
+          filter: filterColumn && filterValue ? `${filterColumn}=eq.${filterValue}` : undefined,
         } as any,
         (payload: any) => {
           console.log(`Real-time update on ${table}:`, payload);
@@ -86,7 +88,7 @@ export function useSupabaseRealtime<T>(
       console.log(`🔌 Unsubscribing from ${table}`);
       supabase.removeChannel(channel);
     };
-  }, [table, filter?.column, filter?.value, options?.event, options?.schema]);
+  }, [table, filterColumn, filterValue, options?.event, options?.schema]);
 
   return { data, isConnected, error };
 }

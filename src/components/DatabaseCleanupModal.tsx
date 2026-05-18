@@ -12,11 +12,11 @@ interface CleanupItem {
 }
 
 interface CleanupTabProps {
-  type: "assignments" | "images" | "questions" | "submissions" | "sessions";
+  type: "assignments" | "images" | "submissions" | "sessions";
 }
 
 export default function DatabaseCleanupModal({ onClose }: { onClose: () => void }) {
-  const [activeTab, setActiveTab] = useState<"assignments" | "images" | "questions" | "submissions" | "sessions">("assignments");
+  const [activeTab, setActiveTab] = useState<"assignments" | "images" | "submissions" | "sessions">("assignments");
   const [items, setItems] = useState<CleanupItem[]>([]);
   const [selectedItems, setSelectedItems] = useState<Set<string>>(new Set());
   const [loading, setLoading] = useState(false);
@@ -24,7 +24,6 @@ export default function DatabaseCleanupModal({ onClose }: { onClose: () => void 
 
   const tabs = [
     { key: "assignments" as const, label: "Bài tập", icon: "📝" },
-    { key: "questions" as const, label: "Câu hỏi", icon: "❓" },
     { key: "submissions" as const, label: "Bài nộp", icon: "✅" },
     { key: "sessions" as const, label: "Phiên làm bài", icon: "⏱️" },
     { key: "images" as const, label: "Hình ảnh", icon: "🖼️" },
@@ -117,32 +116,41 @@ export default function DatabaseCleanupModal({ onClose }: { onClose: () => void 
   };
 
   return (
-    <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
-      <div className="bg-white rounded-xl shadow-2xl max-w-5xl w-full max-h-[90vh] flex flex-col">
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/50 backdrop-blur-sm p-4">
+      <div className="w-full max-w-5xl max-h-[90vh] overflow-hidden rounded-3xl border border-white/60 bg-white/90 shadow-2xl shadow-slate-300/40 flex flex-col">
         {/* Header */}
-        <div className="border-b border-slate-200 p-4 flex items-center justify-between">
-          <div>
-            <h2 className="text-xl font-bold text-slate-900">🗑️ Dọn dẹp Database</h2>
-            <p className="text-sm text-slate-600">Xóa các mục không cần thiết để giải phóng dung lượng</p>
+        <div className="relative z-20 overflow-hidden border-b border-white/70 px-6 py-5">
+          <div className="absolute inset-0 bg-gradient-to-r from-rose-50/70 via-white/40 to-indigo-50/60" />
+          <div className="relative flex items-center justify-between">
+            <div className="flex items-center gap-3">
+              <div className="flex h-10 w-10 items-center justify-center rounded-2xl bg-gradient-to-br from-rose-500 to-red-600 text-white shadow-lg shadow-rose-500/30">
+                <span aria-hidden="true">🗑️</span>
+              </div>
+              <div>
+                <h2 className="text-lg font-bold text-slate-900">Dọn dẹp Database</h2>
+                <p className="text-xs text-slate-600">Xoa cac muc khong can thiet de giai phong dung luong</p>
+              </div>
+            </div>
+            <button
+              onClick={onClose}
+              className="flex h-9 w-9 items-center justify-center rounded-xl bg-white/70 text-slate-500 shadow-sm hover:bg-white hover:text-slate-700 transition"
+              aria-label="Dong"
+            >
+              ×
+            </button>
           </div>
-          <button
-            onClick={onClose}
-            className="text-slate-400 hover:text-slate-600 text-2xl"
-          >
-            ×
-          </button>
         </div>
 
         {/* Tabs */}
-        <div className="border-b border-slate-200 px-4 flex gap-2 overflow-x-auto">
+        <div className="sticky top-0 z-30 border-b border-slate-200/80 px-4 py-2 flex gap-2 overflow-x-auto bg-white shadow-sm">
           {tabs.map((tab) => (
             <button
               key={tab.key}
               onClick={() => handleTabChange(tab.key)}
-              className={`px-4 py-3 text-sm font-medium border-b-2 transition whitespace-nowrap ${
+              className={`px-3 py-2 text-xs font-semibold rounded-full border transition whitespace-nowrap ${
                 activeTab === tab.key
-                  ? "border-blue-600 text-blue-600"
-                  : "border-transparent text-slate-600 hover:text-slate-900"
+                  ? "border-indigo-300 bg-indigo-50 text-indigo-700 shadow-sm"
+                  : "border-transparent text-slate-600 hover:text-slate-900 hover:bg-slate-100"
               }`}
             >
               {tab.icon} {tab.label}
@@ -151,24 +159,29 @@ export default function DatabaseCleanupModal({ onClose }: { onClose: () => void 
         </div>
 
         {/* Content */}
-        <div className="flex-1 overflow-y-auto p-4">
+        <div className="relative z-0 flex-1 overflow-y-auto p-4 pt-6 sm:p-6" style={{ isolation: "isolate" }}>
           {!loading && items.length === 0 ? (
-            <div className="text-center py-12">
+            <div className="flex flex-col items-center justify-center py-12 text-center">
+              <div className="mb-3 flex h-12 w-12 items-center justify-center rounded-2xl bg-slate-100 text-slate-500">
+                <span aria-hidden="true">📦</span>
+              </div>
+              <p className="text-sm font-semibold text-slate-700">Chua co du lieu</p>
+              <p className="mt-1 text-xs text-slate-500">Tai du lieu de bat dau don dep</p>
               <button
                 onClick={() => loadItems(activeTab)}
-                className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition"
+                className="mt-4 px-4 py-2 text-xs font-semibold text-white bg-indigo-600 rounded-xl hover:bg-indigo-700 transition"
               >
-                Tải dữ liệu
+                Tai du lieu
               </button>
             </div>
           ) : loading ? (
             <div className="text-center py-12">
-              <p className="text-slate-600">Đang tải...</p>
+              <p className="text-slate-600 text-sm">Dang tai...</p>
             </div>
           ) : (
-            <div className="space-y-2">
+            <div className="space-y-3">
               {/* Select all */}
-              <div className="flex items-center justify-between p-3 bg-slate-50 rounded-lg border border-slate-200">
+              <div className="flex items-center justify-between rounded-2xl border border-slate-200 bg-slate-50/70 px-4 py-3">
                 <label className="flex items-center gap-2 cursor-pointer">
                   <input
                     type="checkbox"
@@ -176,11 +189,11 @@ export default function DatabaseCleanupModal({ onClose }: { onClose: () => void 
                     onChange={toggleAll}
                     className="w-4 h-4"
                   />
-                  <span className="text-sm font-medium text-slate-700">
+                  <span className="text-sm font-semibold text-slate-700">
                     Chọn tất cả ({items.length} mục)
                   </span>
                 </label>
-                <span className="text-sm text-slate-600">
+                <span className="text-xs text-slate-600">
                   Đã chọn: {selectedItems.size}
                 </span>
               </div>
@@ -201,7 +214,7 @@ export default function DatabaseCleanupModal({ onClose }: { onClose: () => void 
                     
                     return (
                     <div key={assignmentId} className="mb-4">
-                      <div className="sticky top-0 bg-slate-100 border border-slate-300 rounded-lg p-3 mb-2">
+                      <div className="sticky top-0 z-10 bg-slate-100/90 backdrop-blur border border-slate-200 rounded-2xl p-3 mb-2">
                         <div className="flex items-center justify-between">
                           <label className="flex items-center gap-3 cursor-pointer flex-1">
                             <input
@@ -211,7 +224,7 @@ export default function DatabaseCleanupModal({ onClose }: { onClose: () => void 
                               className="w-4 h-4"
                             />
                             <h3 className="text-sm font-bold text-slate-900">
-                              📚 {groupItems[0]?.assignmentTitle || "Không có bài tập"}
+                              📚 {groupItems[0]?.assignmentTitle || "Khong co bai tap"}
                             </h3>
                           </label>
                           <span className="text-xs text-slate-600">{groupItems.length} ảnh</span>
@@ -221,9 +234,9 @@ export default function DatabaseCleanupModal({ onClose }: { onClose: () => void 
                         {groupItems.map((item) => (
                           <div
                             key={item.id}
-                            className={`flex items-center gap-3 p-3 rounded-lg border transition ${
+                            className={`flex items-center gap-3 p-3 rounded-2xl border transition ${
                               selectedItems.has(item.id)
-                                ? "border-blue-400 bg-blue-50"
+                                ? "border-indigo-300 bg-indigo-50"
                                 : "border-slate-200 bg-white hover:border-slate-300"
                             }`}
                           >
@@ -254,11 +267,12 @@ export default function DatabaseCleanupModal({ onClose }: { onClose: () => void 
                 items.map((item) => (
                 <div
                   key={item.id}
-                  className={`flex items-center gap-3 p-3 rounded-lg border transition ${
+                  className={`relative flex items-center gap-3 p-3 rounded-2xl border transition ${
                     selectedItems.has(item.id)
-                      ? "border-blue-400 bg-blue-50"
+                      ? "border-indigo-300 bg-indigo-50"
                       : "border-slate-200 bg-white hover:border-slate-300"
                   }`}
+                  style={{ zIndex: 0 }}
                 >
                   <input
                     type="checkbox"
@@ -282,7 +296,7 @@ export default function DatabaseCleanupModal({ onClose }: { onClose: () => void 
         </div>
 
         {/* Footer */}
-        <div className="border-t border-slate-200 p-4 flex items-center justify-between">
+        <div className="border-t border-slate-200/70 bg-white/80 px-6 py-4 flex items-center justify-between">
           <p className="text-sm text-slate-600">
             {selectedItems.size > 0
               ? `${selectedItems.size} mục được chọn`
@@ -291,14 +305,14 @@ export default function DatabaseCleanupModal({ onClose }: { onClose: () => void 
           <div className="flex gap-2">
             <button
               onClick={onClose}
-              className="px-4 py-2 text-sm font-medium text-slate-700 bg-white border border-slate-300 rounded-lg hover:bg-slate-50 transition"
+              className="px-4 py-2 text-sm font-semibold text-slate-700 bg-white border border-slate-300 rounded-xl hover:bg-slate-50 transition"
             >
               Đóng
             </button>
             <button
               onClick={handleDelete}
               disabled={selectedItems.size === 0 || deleting}
-              className="px-4 py-2 text-sm font-medium text-white bg-red-600 rounded-lg hover:bg-red-700 transition disabled:opacity-50 disabled:cursor-not-allowed"
+              className="px-4 py-2 text-sm font-semibold text-white bg-red-600 rounded-xl hover:bg-red-700 transition disabled:opacity-50 disabled:cursor-not-allowed"
             >
               {deleting ? "Đang xóa..." : `Xóa ${selectedItems.size > 0 ? `(${selectedItems.size})` : ""}`}
             </button>

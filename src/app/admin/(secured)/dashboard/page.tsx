@@ -4,16 +4,37 @@ import Link from "next/link";
 import { useAdminAssignments } from "@/features/admin/hooks/useAdminAssignments";
 import DatabaseSizeCard from "@/components/DatabaseSizeCard";
 import { Button } from "@/components/ui/Button";
+import { useToast } from "@/components/ui/Toast";
 import { Badge } from "@/components/ui/Badge";
 import { Card } from "@/components/ui/Card";
 import { CardSkeleton } from "@/components/ui/Skeleton";
-import { Eye, EyeOff, LayoutList, BarChart3, Plus, RefreshCw } from "lucide-react";
+import { Eye, EyeOff, LayoutList, BarChart3, Plus, RefreshCw, Copy } from "lucide-react";
 
 export default function AdminDashboardPage() {
   const { data: assignments = [], isLoading, isRefetching, refetch } = useAdminAssignments();
+  const { addToast } = useToast();
 
   const visibleCount = assignments.filter((a) => !a.is_hidden).length;
   const hiddenCount = assignments.filter((a) => a.is_hidden).length;
+
+  const handleCopyLink = (assignmentId: string) => {
+    const url = `${window.location.origin}/assignments/${assignmentId}/start`;
+    navigator.clipboard.writeText(url).then(() => {
+      addToast({
+        title: "Đã sao chép!",
+        description: "Link bài tập đã được sao chép vào clipboard",
+        variant: "success",
+        duration: 3000,
+      });
+    }).catch(() => {
+      addToast({
+        title: "Lỗi",
+        description: "Không thể sao chép link",
+        variant: "error",
+        duration: 3000,
+      });
+    });
+  };
 
   return (
     <div className="container-custom py-6 md:py-8 space-y-6 animate-fade-in">
@@ -133,11 +154,23 @@ export default function AdminDashboardPage() {
                         <span className="font-semibold">{a.total_score} điểm</span>
                       </div>
                     </div>
-                    <Link href={`/admin/assignments/${a.id}`}>
-                      <Button variant="secondary" size="sm" className="bg-slate-50/80 backdrop-blur-sm hover:bg-slate-100/80">
-                        Chi tiết
+                    <div className="flex items-center gap-2">
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        onClick={() => handleCopyLink(a.id)}
+                        className="h-9 w-9 bg-slate-50/80 text-slate-500 hover:bg-slate-100/80 hover:text-indigo-600"
+                        aria-label="Sao chép link bài tập"
+                        title="Sao chép link bài tập"
+                      >
+                        <Copy className="h-4 w-4" />
                       </Button>
-                    </Link>
+                      <Link href={`/admin/assignments/${a.id}`}>
+                        <Button variant="secondary" size="sm" className="bg-slate-50/80 backdrop-blur-sm hover:bg-slate-100/80">
+                          Chi tiết
+                        </Button>
+                      </Link>
+                    </div>
                   </div>
                 ))}
               </div>

@@ -61,6 +61,7 @@ export function AssignmentTaking({ assignment, questions: initialQuestions, init
   const [lastSaveTime, setLastSaveTime] = useState<number | null>(null);
   const [isSaving, setIsSaving] = useState(false);
   const { theme, toggleTheme } = useTheme();
+  const questionsRef = useRef(questions);
 
   const isDark = theme === "dark";
 
@@ -90,7 +91,11 @@ export function AssignmentTaking({ assignment, questions: initialQuestions, init
         if (data.deadlineAt) setServerDeadline(new Date(data.deadlineAt));
       })
       .catch(err => console.error(err));
-  }, [assignment.id, router]);
+  }, [assignment.id, router, initialStudentName]);
+
+  useEffect(() => {
+    questionsRef.current = questions;
+  }, [questions]);
 
   useEffect(() => {
     const id = setInterval(() => setCurrentVietnamTime(new Date()), 1000);
@@ -209,10 +214,10 @@ export function AssignmentTaking({ assignment, questions: initialQuestions, init
         const newQs = data.questions as Question[];
         if (!newQs || !Array.isArray(newQs)) return;
         
-        if (newQs.length !== questions.length) {
+        if (newQs.length !== questionsRef.current.length) {
           setQuestions(newQs);
         } else if (newQs.length > 0) {
-          const updated = questions.map(oldQ => {
+          const updated = questionsRef.current.map(oldQ => {
             const newQ = newQs.find(q => q.id === oldQ.id);
             if (!newQ) return oldQ;
             const hasChange = newQ.content !== oldQ.content || JSON.stringify(newQ.choices) !== JSON.stringify(oldQ.choices) || (newQ.imageUrl || '') !== (oldQ.imageUrl || '');
@@ -222,13 +227,13 @@ export function AssignmentTaking({ assignment, questions: initialQuestions, init
             }
             return oldQ;
           });
-          if (updated.some((q, i) => q !== questions[i])) setQuestions(updated);
+          if (updated.some((q, i) => q !== questionsRef.current[i])) setQuestions(updated);
         }
       } catch (err) {}
     };
     const c = supabase.channel(`questions-${assignment.id}`).on('postgres_changes', { event: '*', schema: 'public', table: 'questions', filter: `assignment_id=eq.${assignment.id}` }, fetchQuestions).subscribe();
     return () => { supabase.removeChannel(c); };
-  }, [assignment.id, sessionId, questions.length, submitting, hasSubmitted]);
+  }, [assignment.id, sessionId, submitting, hasSubmitted]);
 
   const timeUp = hasTimer && remaining === 0;
   const locked = timeUp;

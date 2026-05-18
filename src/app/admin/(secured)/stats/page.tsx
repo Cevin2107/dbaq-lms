@@ -14,7 +14,8 @@ import {
   FileText, 
   Trash2,
   RefreshCw,
-  BarChart3
+  BarChart3,
+  Edit3
 } from "lucide-react";
 
 interface StudentStats {
@@ -81,15 +82,25 @@ interface DetailData {
 
 export default function AdminStatsPage() {
   const [students, setStudents] = useState<StudentStats[]>([]);
+  const [authStudents, setAuthStudents] = useState<Array<{ id: string; full_name: string; email: string }>>([]);
   const [loading, setLoading] = useState(true);
   const [expandedStudent, setExpandedStudent] = useState<string | null>(null);
-  const [selectedItem, setSelectedItem] = useState<{ type: 'submission' | 'session', id: string } | null>(null);
+  const [selectedItem, setSelectedItem] = useState<{ type: "submission" | "session"; id: string } | null>(null);
   const [detailData, setDetailData] = useState<DetailData | null>(null);
   const [loadingDetail, setLoadingDetail] = useState(false);
   const [autoRefresh, setAutoRefresh] = useState(false);
   const [selectedSubmissions, setSelectedSubmissions] = useState<Set<string>>(new Set());
   const [selectedSessions, setSelectedSessions] = useState<Set<string>>(new Set());
   const [deleting, setDeleting] = useState(false);
+  const [editingStudent, setEditingStudent] = useState<{
+    id: string;
+    currentName: string;
+    fullName: string;
+    email: string;
+  } | null>(null);
+  const [savingStudent, setSavingStudent] = useState(false);
+  const [newPassword, setNewPassword] = useState("");
+  const [editError, setEditError] = useState<string | null>(null);
 
   const loadStats = useCallback(async (silent = false) => {
     if (!silent) {
@@ -126,9 +137,42 @@ export default function AdminStatsPage() {
     }
   }, []);
 
+  const loadAuthStudents = useCallback(async () => {
+    try {
+      const res = await fetch("/api/admin/students", { cache: "no-store" });
+      if (res.ok) {
+        const data = await res.json();
+        if (Array.isArray(data.students)) {
+          setAuthStudents(data.students);
+        }
+      }
+    } catch (error) {
+      console.error("Error loading auth students:", error);
+    }
+  }, []);
+
+  const fetchAuthStudents = async () => {
+    try {
+      const res = await fetch("/api/admin/students", { cache: "no-store" });
+      if (!res.ok) return [];
+      const data = await res.json();
+      if (Array.isArray(data.students)) {
+        setAuthStudents(data.students);
+        return data.students as Array<{ id: string; full_name: string; email: string }>;
+      }
+    } catch (error) {
+      console.error("Error fetching auth students:", error);
+    }
+    return [];
+  };
+
   useEffect(() => {
     loadStats(false);
   }, [loadStats]);
+
+  useEffect(() => {
+    loadAuthStudents();
+  }, [loadAuthStudents]);
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -333,6 +377,91 @@ export default function AdminStatsPage() {
     }
   };
 
+  const findAuthStudent = (
+    studentName: string,
+    list: Array<{ id: string; full_name: string; email: string }> = authStudents
+  ) => {
+    return list.find((student) => student.full_name === studentName || student.email === studentName);
+  };
+
+  const openEditStudent = async (studentName: string) => {
+    setEditError(null);
+    let authStudent = findAuthStudent(studentName);
+    if (!authStudent) {
+      const fetched = await fetchAuthStudents();
+      authStudent = findAuthStudent(studentName, fetched);
+    }
+
+    if (!authStudent) {
+      setEditError("Không tìm thấy tài khoản học sinh khớp tên hoặc email.");
+      setEditingStudent({
+        id: "",
+        currentName: studentName,
+        fullName: studentName,
+        email: "",
+      });
+      setNewPassword("");
+      return;
+    }
+
+    setEditingStudent({
+      id: authStudent.id,
+      currentName: studentName,
+      fullName: authStudent.full_name || studentName,
+      email: authStudent.email || "",
+    });
+    setNewPassword("");
+  };
+
+  const saveStudentChanges = async () => {
+    if (!editingStudent) return;
+    if (!editingStudent.id) {
+      setEditError("Không thể cập nhật vì chưa tìm thấy tài khoản học sinh.");
+      return;
+    }
+
+    const trimmedName = editingStudent.fullName.trim();
+    const trimmedEmail = editingStudent.email.trim();
+    const trimmedPassword = newPassword.trim();
+
+    if (!trimmedName && !trimmedEmail && !trimmedPassword) {
+      alert("Vui lòng nhập ít nhất một thay đổi");
+      return;
+    }
+
+    setSavingStudent(true);
+    try {
+      const res = await fetch("/api/admin/students", {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          id: editingStudent.id,
+          fullName: trimmedName || undefined,
+          email: trimmedEmail || undefined,
+          password: trimmedPassword || undefined,
+          currentName: editingStudent.currentName,
+        }),
+      });
+
+      if (!res.ok) {
+        const data = await res.json().catch(() => ({}));
+        throw new Error(data.error || "Không thể cập nhật học sinh");
+      }
+
+      await loadStats(true);
+      await loadAuthStudents();
+      setEditingStudent(null);
+      setNewPassword("");
+      setEditError(null);
+      alert("Cập nhật học sinh thành công");
+    } catch (error) {
+      console.error("Error updating student:", error);
+      alert(error instanceof Error ? error.message : "Có lỗi xảy ra khi cập nhật");
+    } finally {
+      setSavingStudent(false);
+    }
+  };
+
   if (loading) {
     return (
       <main className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50/30 to-indigo-50/40 relative overflow-hidden">
@@ -496,6 +625,18 @@ export default function AdminStatsPage() {
                         <button
                           onClick={(e) => {
                             e.stopPropagation();
+                            openEditStudent(student.studentName);
+                          }}
+                          onMouseDown={(e) => e.stopPropagation()}
+                          className="px-3 py-2 text-xs font-semibold text-indigo-600 bg-indigo-50/80 backdrop-blur-sm border border-indigo-200/50 rounded-xl hover:bg-indigo-100 hover:shadow-md hover:shadow-indigo-200/50 disabled:opacity-50 transition-all flex items-center gap-1.5"
+                          title="Chỉnh sửa học sinh"
+                        >
+                          <Edit3 className="h-3.5 w-3.5" />
+                          Chỉnh sửa
+                        </button>
+                        <button
+                          onClick={(e) => {
+                            e.stopPropagation();
                             deleteAllStudentData(student.studentName);
                           }}
                           disabled={deleting}
@@ -520,6 +661,7 @@ export default function AdminStatsPage() {
                           {student.inProgress.length > 0 && (
                             <div>
                               <div className="flex items-center justify-between mb-3">
+
                                 <h4 className="text-sm font-bold text-amber-700 flex items-center gap-2">
                                   <div className="flex h-7 w-7 items-center justify-center rounded-xl bg-amber-100/80 backdrop-blur-sm">
                                     <Clock className="h-4 w-4" />
@@ -703,6 +845,89 @@ export default function AdminStatsPage() {
           )}
         </div>
       </div>
+
+      {editingStudent && (
+        <div className="fixed inset-0 z-[80] flex items-center justify-center bg-slate-900/40 backdrop-blur-sm px-4">
+          <div className="w-full max-w-lg rounded-3xl bg-white/90 backdrop-blur-xl border border-white/70 shadow-2xl shadow-slate-200/60 p-6">
+            <div className="flex items-center justify-between mb-4">
+              <h2 className="text-lg font-bold text-slate-900">Chỉnh sửa học sinh</h2>
+              <button
+                type="button"
+                onClick={() => setEditingStudent(null)}
+                className="flex h-8 w-8 items-center justify-center rounded-xl bg-slate-100 text-slate-500 hover:bg-slate-200 transition"
+              >
+                <CloseIcon className="h-4 w-4" />
+              </button>
+            </div>
+
+            <div className="space-y-4">
+              {editError && (
+                <div className="rounded-xl border border-rose-200 bg-rose-50 px-3 py-2 text-xs font-semibold text-rose-700">
+                  {editError}
+                </div>
+              )}
+              <div>
+                <label className="text-xs font-semibold text-slate-600">Họ tên học sinh</label>
+                <input
+                  type="text"
+                  value={editingStudent.fullName}
+                  onChange={(e) =>
+                    setEditingStudent({
+                      ...editingStudent,
+                      fullName: e.target.value,
+                    })
+                  }
+                  className="mt-1 w-full rounded-xl border border-slate-200 px-3 py-2 text-sm focus:border-indigo-400 focus:outline-none focus:ring-4 focus:ring-indigo-100"
+                  placeholder="Nhập họ tên"
+                />
+              </div>
+              <div>
+                <label className="text-xs font-semibold text-slate-600">Email</label>
+                <input
+                  type="email"
+                  value={editingStudent.email}
+                  onChange={(e) =>
+                    setEditingStudent({
+                      ...editingStudent,
+                      email: e.target.value,
+                    })
+                  }
+                  className="mt-1 w-full rounded-xl border border-slate-200 px-3 py-2 text-sm focus:border-indigo-400 focus:outline-none focus:ring-4 focus:ring-indigo-100"
+                  placeholder="student@example.com"
+                />
+              </div>
+              <div>
+                <label className="text-xs font-semibold text-slate-600">Mật khẩu mới</label>
+                <input
+                  type="password"
+                  value={newPassword}
+                  onChange={(e) => setNewPassword(e.target.value)}
+                  className="mt-1 w-full rounded-xl border border-slate-200 px-3 py-2 text-sm focus:border-indigo-400 focus:outline-none focus:ring-4 focus:ring-indigo-100"
+                  placeholder="Để trống nếu không đổi"
+                />
+              </div>
+            </div>
+
+            <div className="mt-6 flex items-center justify-end gap-2">
+              <button
+                type="button"
+                onClick={() => setEditingStudent(null)}
+                className="px-4 py-2 text-sm font-semibold text-slate-600 hover:text-slate-800"
+              >
+                Hủy
+              </button>
+              <button
+                type="button"
+                onClick={saveStudentChanges}
+                disabled={savingStudent || !editingStudent.id}
+                className="px-4 py-2 text-sm font-semibold text-white bg-indigo-600 hover:bg-indigo-700 rounded-xl shadow-sm disabled:opacity-60"
+              >
+                {savingStudent ? "Đang lưu..." : "Lưu thay đổi"}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* Detail Modal - Glassmorphic */}
       {selectedItem && (
