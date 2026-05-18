@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { createSupabaseAdmin } from "@/lib/supabaseAdmin";
 import { getPasskeyRelyingParty, PASSKEY_CHALLENGE_COOKIE } from "@/lib/passkeys";
 import { verifyAuthenticationResponse } from "@simplewebauthn/server";
+import { isoBase64URL } from "@simplewebauthn/server/helpers";
 
 export async function POST(req: NextRequest) {
   const challenge = req.cookies.get(PASSKEY_CHALLENGE_COOKIE.auth)?.value;
@@ -33,7 +34,6 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: "Passkey not found" }, { status: 404 });
     }
 
-    const { isoBase64URL } = require("@simplewebauthn/server/helpers");
     const publicKeyBytes = typeof passkey.public_key === "string" ? isoBase64URL.toBuffer(passkey.public_key) : passkey.public_key;
 
     const { rpID, rpOrigin } = getPasskeyRelyingParty(req);
