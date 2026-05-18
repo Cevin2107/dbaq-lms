@@ -11,6 +11,7 @@ import {
   GraduationCap,
   Users,
   Settings,
+  CalendarDays,
   LogOut,
   Menu,
   X,
@@ -19,6 +20,7 @@ import {
 const NAV_ITEMS = [
   { name: "Tổng quan", href: "/admin/dashboard", icon: LayoutDashboard },
   { name: "Bài tập", href: "/admin/assignments", icon: GraduationCap },
+  { name: "Lịch dạy", href: "/admin/schedule", icon: CalendarDays },
   { name: "Học sinh", href: "/admin/stats", icon: Users },
   { name: "Cài đặt", href: "/admin/settings", icon: Settings },
 ];

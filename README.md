@@ -12,15 +12,19 @@ Tạo `.env.local` từ file mẫu:
 NEXT_PUBLIC_SUPABASE_URL=
 NEXT_PUBLIC_SUPABASE_ANON_KEY=
 SUPABASE_SERVICE_ROLE_KEY=
-ADMIN_PASSWORD_HASH=
+ADMIN_PASSWORD=
 GROQ_API_KEY=
+PASSKEY_RP_ID=
+PASSKEY_RP_ORIGIN=
+PASSKEY_RP_NAME=
 ```
 
 ### API Keys cần thiết cho AI generation:
 - **GROQ_API_KEY**: Đăng ký miễn phí tại https://console.groq.com - dùng để sinh câu hỏi từ text
 - OCR sử dụng **Tesseract.js** (hoàn toàn miễn phí, không cần API key)
 
-`ADMIN_PASSWORD_HASH` nên là bcrypt hash. Mặc định repo đã thêm `.env.local` với hash của mật khẩu: Anhquan210706.
+`ADMIN_PASSWORD` dùng để khởi tạo mật khẩu admin lần đầu (sau đó lưu hash trong database). Bạn có thể đổi trong tab Cài đặt.
+`PASSKEY_RP_ID` và `PASSKEY_RP_ORIGIN` chỉ cần set khi deploy domain thật (ví dụ: `example.com`, `https://example.com`).
 
 ## Cài đặt
 ```
@@ -42,6 +46,7 @@ npm run dev
 4. **answers** - Câu trả lời trong bài nộp
 5. **student_sessions** - Phiên làm bài (tracking: active/exited/submitted)
 6. **admin_settings** - Cài đặt mật khẩu admin
+7. **admin_passkeys** - Thiết bị passkey (vân tay)
 
 ### Khởi tạo Database
 Chạy file `supabase/schema.sql` trong Supabase SQL Editor để tạo tất cả bảng, indexes, RLS policies và storage bucket.

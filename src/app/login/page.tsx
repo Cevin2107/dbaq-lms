@@ -3,10 +3,11 @@
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
-import { Eye, EyeOff } from 'lucide-react';
+import { Eye, EyeOff, Fingerprint } from 'lucide-react';
 import { createSupabaseBrowserClient } from '@/lib/supabaseClient';
 import { Button } from '@/components/ui/Button';
 import { useToast } from '@/components/ui/Toast';
+import { startAuthentication } from '@simplewebauthn/browser';
 
 export default function LoginPage() {
   const [email, setEmail] = useState('');
@@ -15,6 +16,7 @@ export default function LoginPage() {
   const [rememberMe, setRememberMe] = useState(true);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
+  const [adminPasskeyLoading, setAdminPasskeyLoading] = useState(false);
   const router = useRouter();
   const { addToast } = useToast();
 
@@ -68,6 +70,48 @@ export default function LoginPage() {
 
   const handleForgotPassword = () => {
     router.push('/forgot-password');
+  };
+
+  const readJsonResponse = async (res: Response) => {
+    const contentType = res.headers.get('content-type') || '';
+    if (contentType.includes('application/json')) {
+      return res.json();
+    }
+    const text = await res.text();
+    return text ? { error: text } : {};
+  };
+
+  const handleAdminPasskeyLogin = async () => {
+    setAdminPasskeyLoading(true);
+    try {
+      const optionsRes = await fetch('/api/admin/passkeys/auth-options', { method: 'POST' });
+      const options = await readJsonResponse(optionsRes);
+      if (!optionsRes.ok) {
+        throw new Error(options.error || 'Không thể tạo yêu cầu xác thực');
+      }
+
+      const assertionResponse = await startAuthentication(options);
+      const verifyRes = await fetch('/api/admin/passkeys/auth-verify', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ assertionResponse }),
+      });
+      const verifyData = await readJsonResponse(verifyRes);
+      if (!verifyRes.ok) {
+        throw new Error(verifyData.error || 'Không thể xác thực');
+      }
+
+      window.location.assign('/admin/dashboard');
+    } catch (err: any) {
+      addToast({
+        title: 'Đăng nhập vân tay thất bại',
+        description: err?.message || 'Không thể xác thực',
+        variant: 'error',
+        duration: 3500,
+      });
+    } finally {
+      setAdminPasskeyLoading(false);
+    }
   };
 
   return (
@@ -175,13 +219,22 @@ export default function LoginPage() {
             </Link>
           </div>
 
-          <div className="mt-4">
+          <div className="mt-4 flex items-center gap-2">
             <Link
               href="/admin"
               className="flex w-full items-center justify-center rounded-full border border-slate-200 bg-slate-50 px-4 py-2.5 text-sm font-semibold text-slate-700 transition hover:border-indigo-200 hover:bg-indigo-50 hover:text-indigo-700"
             >
               Đăng nhập dưới quyền quản trị
             </Link>
+            <button
+              type="button"
+              onClick={handleAdminPasskeyLogin}
+              disabled={adminPasskeyLoading}
+              className="inline-flex h-10 w-10 items-center justify-center rounded-full border border-slate-200 bg-white text-slate-700 shadow-sm transition hover:bg-slate-50 disabled:opacity-60"
+              aria-label="Đăng nhập admin bằng vân tay"
+            >
+              <Fingerprint className={`h-5 w-5 ${adminPasskeyLoading ? 'animate-pulse' : ''}`} />
+            </button>
           </div>
         </div>
       </div>

@@ -15,6 +15,7 @@ drop table if exists assignment_assignments cascade;
 drop table if exists student_profiles cascade;
 drop table if exists assignments cascade;
 drop table if exists admin_settings cascade;
+drop table if exists admin_passkeys cascade;
 
 -- Drop old triggers and functions
 drop trigger if exists on_auth_user_created on auth.users;
@@ -119,6 +120,19 @@ create table admin_settings (
 );
 
 -- ============================================
+-- 8.1 TABLE: admin_passkeys - Passkey admin
+-- ============================================
+create table admin_passkeys (
+  id uuid primary key default gen_random_uuid(),
+  name text,
+  credential_id text not null unique,
+  public_key text not null,
+  counter integer not null default 0,
+  transports text[],
+  created_at timestamptz not null default now()
+);
+
+-- ============================================
 -- 9. TABLE: student_profiles - Hồ sơ học sinh (từ migration)
 -- ============================================
 create table student_profiles (
@@ -162,6 +176,7 @@ alter table questions enable row level security;
 alter table submissions enable row level security;
 alter table answers enable row level security;
 alter table admin_settings enable row level security;
+alter table admin_passkeys enable row level security;
 alter table student_sessions enable row level security;
 alter table student_profiles enable row level security;
 alter table assignment_assignments enable row level security;
@@ -209,6 +224,13 @@ create policy "Service role read admin settings" on admin_settings
 
 create policy "Service role update admin settings" on admin_settings
   for update using (auth.role() = 'service_role') with check (true);
+
+-- Admin passkeys policies
+create policy "Service role read admin passkeys" on admin_passkeys
+  for select using (auth.role() = 'service_role');
+
+create policy "Service role manage admin passkeys" on admin_passkeys
+  for all using (auth.role() = 'service_role') with check (true);
 
 -- Student sessions policies
 create policy "Public insert student sessions" on student_sessions
