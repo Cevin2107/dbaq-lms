@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { formatVietnamTime } from "@/utils/date";
+import { formatDuration, getSessionDurationSeconds } from "@/lib/sessionTime";
 import { useToast } from "@/components/ui/Toast";
 import { StudentWorkReviewPanel } from "./StudentWorkReviewPanel";
 import { 
@@ -180,6 +181,8 @@ export function StudentSessionsTab({ assignmentId }: { assignmentId: string }) {
                   pausedAt={session.last_activity_at}
                   submissionId={session.submissions?.id}
                   submissionScore={session.submissions?.score}
+                  submissionDurationSeconds={detailData?.submission?.durationSeconds}
+                  durationSeconds={detailData?.submission?.durationSeconds ?? detailData?.session?.durationSeconds ?? getSessionDurationSeconds(session)}
                   answeredCountOverride={
                     detailData?.draft_answers
                       ? Object.keys(detailData.draft_answers).length
@@ -386,7 +389,7 @@ export function StudentSessionsTab({ assignmentId }: { assignmentId: string }) {
                           )}
                           <div className="flex items-center gap-1.5 text-sm font-medium text-purple-600 bg-purple-50 px-2.5 py-1 rounded-lg">
                             <Timer className="h-3 w-3" />
-                            <span>{Math.floor((new Date().getTime() - new Date(s.started_at).getTime()) / 60000)} phút</span>
+                            <span>{formatDuration(getSessionDurationSeconds(s))}</span>
                           </div>
                         </div>
                       )}

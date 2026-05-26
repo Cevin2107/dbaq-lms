@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { Calendar } from "@/features/admin/schedule/components/Calendar";
 import { Statistics } from "@/features/admin/schedule/components/Statistics";
 import { SessionModal } from "@/features/admin/schedule/components/SessionModal";
@@ -31,34 +31,24 @@ export function ScheduleApp() {
 
   // Load students on mount
   useEffect(() => {
-    loadStudents();
-  }, []);
-
-  // Load sessions when student or date changes
-  useEffect(() => {
-    if (selectedTab === "student" && selectedStudentId) {
-      loadSessions();
-    } else if (selectedTab === "student" && !selectedStudentId && students.length > 0) {
-      // Auto-select first student if none selected
-      setSelectedStudentId(students[0].id);
-    }
-  }, [year, month, selectedStudentId, selectedTab]);
-
-  const loadStudents = async () => {
-    try {
-      const data = await getStudents();
-      setStudents(data);
-      if (data.length > 0 && !selectedStudentId) {
-        setSelectedStudentId(data[0].id);
+    const loadStudents = async () => {
+      try {
+        const data = await getStudents();
+        setStudents(data);
+        if (data.length > 0 && !selectedStudentId) {
+          setSelectedStudentId(data[0].id);
+        }
+      } catch (error) {
+        console.error("Error loading students:", error);
+      } finally {
+        setIsLoading(false);
       }
-    } catch (error) {
-      console.error("Error loading students:", error);
-    } finally {
-      setIsLoading(false);
-    }
-  };
+    };
 
-  const loadSessions = async () => {
+    loadStudents();
+  }, [selectedStudentId]);
+
+  const loadSessions = useCallback(async () => {
     if (!selectedStudentId) return;
     setIsLoading(true);
     try {
@@ -69,7 +59,17 @@ export function ScheduleApp() {
     } finally {
       setIsLoading(false);
     }
-  };
+  }, [year, month, selectedStudentId]);
+
+  // Load sessions when student or date changes
+  useEffect(() => {
+    if (selectedTab === "student" && selectedStudentId) {
+      loadSessions();
+    } else if (selectedTab === "student" && !selectedStudentId && students.length > 0) {
+      // Auto-select first student if none selected
+      setSelectedStudentId(students[0].id);
+    }
+  }, [year, month, selectedStudentId, selectedTab, loadSessions, students]);
 
   const handleMonthChange = (newYear: number, newMonth: number) => {
     setCurrentDate(new Date(newYear, newMonth - 1, 1));

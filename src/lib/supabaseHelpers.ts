@@ -721,6 +721,7 @@ export async function fetchAllStudentsStats() {
     .select(`
       id,
       status,
+      exit_count,
       student_name,
       assignment_id,
       started_at,
@@ -766,6 +767,7 @@ export async function fetchAllStudentsStats() {
       grade: string;
       startedAt: string;
       lastActivityAt?: string;
+      exitCount: number;
       questionsAnswered: number;
       draftAnswers: Record<string, string>;
     }>;
@@ -841,6 +843,7 @@ export async function fetchAllStudentsStats() {
   type SessionRow = {
     id: string;
     status: "active" | "exited";
+    exit_count?: number;
     student_name: string;
     assignment_id: string;
     started_at: string;
@@ -873,6 +876,7 @@ export async function fetchAllStudentsStats() {
       grade: session.assignments?.grade || "N/A",
       startedAt: session.started_at,
       lastActivityAt: session.last_activity_at,
+      exitCount: session.exit_count || 0,
       questionsAnswered: Object.keys(draftAnswers).length,
       draftAnswers: draftAnswers,
     });

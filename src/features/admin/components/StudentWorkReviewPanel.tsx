@@ -1,8 +1,9 @@
 import { useEffect, useState } from "react";
 import { countActualQuestions } from "@/lib/utils";
+import { formatDuration } from "@/lib/sessionTime";
 import { RegradeModal, RegradeInstruction } from "@/components/RegradeControls";
 import { StudentAnswerReviewList, type ReviewQuestion } from "./StudentAnswerReviewList";
-import { CheckCircle2, Edit3, RefreshCw, Target, Timer, TrendingUp, Zap } from "lucide-react";
+import { CheckCircle2, Edit3, LogOut, RefreshCw, Target, Timer, TrendingUp, Zap } from "lucide-react";
 
 interface StudentWorkReviewPanelProps {
   questions: ReviewQuestion[];
@@ -13,6 +14,7 @@ interface StudentWorkReviewPanelProps {
   submissionId?: string;
   submissionScore?: number;
   submissionDurationSeconds?: number;
+  durationSeconds?: number;
   answeredCountOverride?: number;
   exitCount?: number;
   onRefresh: () => Promise<void> | void;
@@ -34,6 +36,7 @@ export function StudentWorkReviewPanel({
   submissionId,
   submissionScore,
   submissionDurationSeconds,
+  durationSeconds,
   answeredCountOverride,
   exitCount,
   onRefresh,
@@ -63,23 +66,15 @@ export function StudentWorkReviewPanel({
   const startedAtMs = new Date(startedAt).getTime();
   const pausedAtMs = pausedAt ? new Date(pausedAt).getTime() : NaN;
   const endTimeMs = isPaused && Number.isFinite(pausedAtMs) ? pausedAtMs : liveNow;
-  const elapsedSeconds = Number.isNaN(startedAtMs)
+  const fallbackElapsedSeconds = Number.isNaN(startedAtMs)
     ? 0
     : Math.max(0, Math.floor((endTimeMs - startedAtMs) / 1000));
-  const workSeconds = isSubmitted && submissionDurationSeconds != null
-    ? Math.max(0, Math.floor(submissionDurationSeconds))
-    : elapsedSeconds;
-  const workTimeLabel = (() => {
-    const hours = Math.floor(workSeconds / 3600);
-    const minutes = Math.floor((workSeconds % 3600) / 60);
-    const seconds = workSeconds % 60;
-
-    if (hours > 0) {
-      return `${hours}:${String(minutes).padStart(2, "0")}:${String(seconds).padStart(2, "0")}`;
-    }
-
-    return `${minutes}:${String(seconds).padStart(2, "0")}`;
-  })();
+  const workSeconds = typeof durationSeconds === "number"
+    ? Math.max(0, Math.floor(durationSeconds))
+    : isSubmitted && submissionDurationSeconds != null
+      ? Math.max(0, Math.floor(submissionDurationSeconds))
+      : fallbackElapsedSeconds;
+  const workTimeLabel = formatDuration(workSeconds);
   const progress = totalQuestions > 0 ? Math.round((answeredCount / totalQuestions) * 100) : 0;
 
   const startRegrading = () => {
@@ -207,7 +202,7 @@ export function StudentWorkReviewPanel({
         </div>
       )}
 
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+      <div className="grid grid-cols-2 md:grid-cols-5 gap-3">
         <div className="group relative overflow-hidden rounded-2xl bg-slate-50/95 backdrop-blur-sm border border-slate-200/80 shadow-md shadow-slate-200/40 p-3 hover:shadow-lg transition-all duration-300">
           <div className="absolute inset-0 bg-gradient-to-br from-blue-50/50 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
           <div className="relative">
@@ -216,6 +211,17 @@ export function StudentWorkReviewPanel({
             </div>
             <p className="text-xl font-bold text-blue-700 drop-shadow-sm">{answeredCount}/{totalQuestions}</p>
             <p className="text-xs text-slate-500 mt-0.5 font-medium">Câu đã trả lời</p>
+          </div>
+        </div>
+
+        <div className="group relative overflow-hidden rounded-2xl bg-slate-50/95 backdrop-blur-sm border border-slate-200/80 shadow-md shadow-slate-200/40 p-3 hover:shadow-lg transition-all duration-300">
+          <div className="absolute inset-0 bg-gradient-to-br from-rose-50/50 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
+          <div className="relative">
+            <div className="flex items-center justify-between mb-1.5">
+              <LogOut className="h-4 w-4 text-rose-500" />
+            </div>
+            <p className="text-xl font-bold text-rose-700 drop-shadow-sm">{exitCount ?? 0}</p>
+            <p className="text-xs text-slate-500 mt-0.5 font-medium">Số lần thoát</p>
           </div>
         </div>
 

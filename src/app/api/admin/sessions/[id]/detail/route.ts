@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { checkAdminAuth } from "@/lib/adminAuth";
 import { createClient } from "@supabase/supabase-js";
+import { getSessionDurationSeconds } from "@/lib/sessionTime";
 
 export const dynamic = "force-dynamic";
 export const revalidate = 0;
@@ -26,7 +27,10 @@ export async function GET(
       .select(`
         id,
         student_name,
+        status,
+        exit_count,
         started_at,
+        last_activity_at,
         draft_answers,
         assignment_id,
         assignments!inner (
@@ -53,6 +57,7 @@ export async function GET(
     if (questionsError) throw questionsError;
 
     const draftAnswers = session.draft_answers || {};
+  const durationSeconds = getSessionDurationSeconds(session as { status?: string; started_at?: string; draft_answers?: Record<string, unknown> | null });
 
     // Map câu hỏi với draft answers
     const questionDetails = (questions || []).map((q: { id: string; order: number; type: string; content: string; choices?: string[]; answer_key?: string; points: number; image_url?: string; sub_questions?: unknown }) => {
@@ -80,10 +85,22 @@ export async function GET(
     return NextResponse.json({
       student_name: session.student_name,
       started_at: session.started_at,
+      status: session.status,
+      durationSeconds,
       assignment_title: assignmentData?.title || "N/A",
       subject: assignmentData?.subject || "N/A",
       grade: assignmentData?.grade || "N/A",
       draft_answers: draftAnswers,
+      session: {
+        studentName: session.student_name,
+        assignmentTitle: assignmentData?.title || "N/A",
+        startedAt: session.started_at,
+        lastActivityAt: session.last_activity_at,
+        status: session.status,
+        exitCount: session.exit_count || 0,
+        durationSeconds,
+        questionsAnswered: Object.keys(draftAnswers).length,
+      },
       questions: questionDetails,
     });
   } catch (error) {

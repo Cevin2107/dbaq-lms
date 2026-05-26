@@ -11,6 +11,8 @@ drop table if exists answers cascade;
 drop table if exists submissions cascade;
 drop table if exists questions cascade;
 drop table if exists student_sessions cascade;
+drop table if exists teaching_sessions cascade;
+drop table if exists students cascade;
 drop table if exists assignment_assignments cascade;
 drop table if exists student_profiles cascade;
 drop table if exists assignments cascade;
@@ -86,6 +88,8 @@ create table student_sessions (
   student_name text not null,
   status text not null default 'active' check (status in ('active','exited','submitted')),
   started_at timestamptz not null default now(),
+  active_since timestamptz,
+  active_duration_seconds integer not null default 0,
   deadline_at timestamptz,
   last_activity_at timestamptz not null default now(),
   exit_count integer not null default 0,
@@ -154,6 +158,34 @@ create table assignment_assignments (
 );
 
 -- ============================================
+-- 10.1 TABLE: students - Học sinh (lịch dạy)
+-- ============================================
+create table students (
+  id uuid primary key default gen_random_uuid(),
+  name text not null,
+  salary_per_session integer not null default 200000,
+  color text default '#3B82F6',
+  created_at timestamptz default now(),
+  updated_at timestamptz default now()
+);
+
+-- Default student for teaching sessions
+insert into students (name, salary_per_session, color)
+values ('Học sinh mặc định', 200000, '#3B82F6')
+on conflict do nothing;
+
+-- ============================================
+-- 10.2 TABLE: teaching_sessions - Lịch dạy học
+-- ============================================
+create table teaching_sessions (
+  id uuid primary key default gen_random_uuid(),
+  teaching_date date not null,
+  subject varchar(20) not null check (subject in ('Toan', 'Ly', 'Hoa')),
+  student_id uuid not null references students(id) on delete cascade,
+  created_at timestamptz default now()
+);
+
+-- ============================================
 -- 11. INDEXES - Tăng tốc truy vấn
 -- ============================================
 create index idx_questions_assignment on questions(assignment_id);
@@ -167,6 +199,8 @@ create index idx_student_sessions_student on student_sessions(student_name);
 create index idx_student_sessions_status on student_sessions(status);
 create index idx_assignment_assignments_student_id on assignment_assignments(student_id);
 create index idx_assignment_assignments_assignment_id on assignment_assignments(assignment_id);
+create index idx_teaching_sessions_student_id on teaching_sessions(student_id);
+create index idx_teaching_sessions_date on teaching_sessions(teaching_date);
 
 -- ============================================
 -- 12. ROW LEVEL SECURITY (RLS)
@@ -180,6 +214,8 @@ alter table admin_passkeys enable row level security;
 alter table student_sessions enable row level security;
 alter table student_profiles enable row level security;
 alter table assignment_assignments enable row level security;
+alter table students enable row level security;
+alter table teaching_sessions enable row level security;
 
 -- ============================================
 -- 13. RLS POLICIES
@@ -255,6 +291,29 @@ create policy "Students can view their own assignments" on assignment_assignment
 
 create policy "Service role manage assignment_assignments" on assignment_assignments
   for all using (auth.role() = 'service_role') with check (true);
+
+-- Students policies
+create policy "Anyone can view students" on students
+  for select to public using (true);
+
+create policy "Anyone can insert students" on students
+  for insert to public with check (true);
+
+create policy "Anyone can update students" on students
+  for update to public using (true);
+
+create policy "Anyone can delete students" on students
+  for delete to public using (true);
+
+-- Teaching sessions policies
+create policy "Anyone can view teaching sessions" on teaching_sessions
+  for select to public using (true);
+
+create policy "Anyone can insert teaching sessions" on teaching_sessions
+  for insert to public with check (true);
+
+create policy "Anyone can delete teaching sessions" on teaching_sessions
+  for delete to public using (true);
 
 -- ============================================
 -- 14. TRIGGERS & FUNCTIONS

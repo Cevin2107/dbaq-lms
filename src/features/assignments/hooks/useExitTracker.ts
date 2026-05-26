@@ -4,13 +4,13 @@ export function useExitTracker(sessionId: string | null, submitting: boolean, ha
   useEffect(() => {
     if (!sessionId || submitting || hasSubmitted) return;
 
-    // Report exit to server
+    // Report exit to server using existing PUT handler which increments exit_count
     const reportExit = () => {
-      fetch("/api/student-sessions/track-exit", {
-        method: "POST",
+      fetch("/api/student-sessions", {
+        method: "PUT",
+        keepalive: true,
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ sessionId }),
-        keepalive: true, // ensure it fires even when unloading
+        body: JSON.stringify({ sessionId, status: "exited" }),
       }).catch(console.error);
     };
 

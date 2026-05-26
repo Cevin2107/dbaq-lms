@@ -5,6 +5,32 @@ export const dynamic = "force-dynamic";
 export const revalidate = 0;
 const ACTIVE_SESSION_TIMEOUT_MS = 45 * 1000;
 
+function getSessionMeta(draftAnswers: unknown) {
+  if (!draftAnswers || typeof draftAnswers !== "object") {
+    return { activeSince: null as string | null, activeDurationSeconds: 0 };
+  }
+
+  const sessionMeta = (draftAnswers as Record<string, unknown>).__sessionMeta;
+  if (!sessionMeta || typeof sessionMeta !== "object") {
+    return { activeSince: null as string | null, activeDurationSeconds: 0 };
+  }
+
+  const meta = sessionMeta as { activeSince?: string | null; activeDurationSeconds?: number | null };
+  return {
+    activeSince: meta.activeSince ?? null,
+    activeDurationSeconds: Math.max(0, Math.floor(Number(meta.activeDurationSeconds ?? 0))),
+  };
+}
+
+function setSessionMeta(draftAnswers: unknown, activeSince: string | null, activeDurationSeconds: number) {
+  const answers = draftAnswers && typeof draftAnswers === "object" ? { ...(draftAnswers as Record<string, unknown>) } : {};
+  answers.__sessionMeta = {
+    activeSince,
+    activeDurationSeconds: Math.max(0, Math.floor(activeDurationSeconds)),
+  };
+  return answers;
+}
+
 // POST: Tạo session mới khi học sinh bắt đầu làm bài
 export async function POST(req: Request) {
   try {
@@ -52,6 +78,7 @@ export async function POST(req: Request) {
         started_at: startedAt.toISOString(),
         deadline_at: deadlineAt?.toISOString() || null,
         last_activity_at: startedAt.toISOString(),
+        draft_answers: setSessionMeta({}, startedAt.toISOString(), 0),
       })
       .select()
       .single();
@@ -85,7 +112,7 @@ export async function PUT(req: Request) {
     // Lấy trạng thái hiện tại để kiểm tra
     const { data: currentSession } = await supabase
       .from("student_sessions")
-      .select("status, exit_count")
+      .select("status, exit_count, draft_answers")
       .eq("id", sessionId)
       .single();
 
@@ -98,14 +125,37 @@ export async function PUT(req: Request) {
       status: string;
       last_activity_at: string;
       exit_count?: number;
+      draft_answers?: Record<string, unknown>;
     } = {
       status,
       last_activity_at: new Date().toISOString(),
     };
 
+    const now = new Date();
+    const { activeSince, activeDurationSeconds } = getSessionMeta(currentSession?.draft_answers);
+    const activeSinceMs = activeSince ? new Date(activeSince).getTime() : NaN;
+    const shouldAccumulate = currentSession?.status === "active" && Number.isFinite(activeSinceMs);
+    if (shouldAccumulate) {
+      const accumulated = Number(activeDurationSeconds ?? 0);
+      const extraSeconds = Math.max(0, Math.floor((now.getTime() - activeSinceMs) / 1000));
+      updateData.draft_answers = setSessionMeta(currentSession?.draft_answers, null, accumulated + extraSeconds);
+    }
+
     // Nếu chuyển từ active → exited, tăng exit_count
     if (currentSession && currentSession.status === "active" && status === "exited") {
       updateData.exit_count = (currentSession.exit_count || 0) + 1;
+    }
+
+    if (status === "active" && currentSession?.status === "exited") {
+      updateData.draft_answers = setSessionMeta(currentSession?.draft_answers, now.toISOString(), Number(activeDurationSeconds ?? 0));
+    }
+
+    if (status === "active" && currentSession?.status === "active" && !activeSince) {
+      updateData.draft_answers = setSessionMeta(currentSession?.draft_answers, now.toISOString(), Number(activeDurationSeconds ?? 0));
+    }
+
+    if (status === "submitted") {
+      updateData.draft_answers = setSessionMeta(currentSession?.draft_answers, null, Number(activeDurationSeconds ?? 0));
     }
 
     // Cập nhật session
@@ -201,16 +251,32 @@ export async function GET(req: Request) {
       .map((session) => session.id);
 
     if (staleActiveIds.length > 0) {
-      await supabase
-        .from("student_sessions")
-        .update({ status: "exited" })
-        .in("id", staleActiveIds)
-        .eq("status", "active");
+      const staleSessions = rawSessions.filter((session) => staleActiveIds.includes(session.id));
 
-      for (const session of rawSessions) {
-        if (staleActiveIds.includes(session.id)) {
-          session.status = "exited";
-        }
+      for (const session of staleSessions) {
+          const { activeSince, activeDurationSeconds } = getSessionMeta(session.draft_answers);
+          const activeSinceMs = activeSince ? new Date(activeSince).getTime() : NaN;
+        const lastRelevantMs = new Date(session.last_activity_at || session.started_at || 0).getTime();
+        const extraSeconds = Number.isFinite(activeSinceMs) && Number.isFinite(lastRelevantMs)
+          ? Math.max(0, Math.floor((lastRelevantMs - activeSinceMs) / 1000))
+          : 0;
+          const updatedDuration = Math.max(0, Math.floor(Number(activeDurationSeconds ?? 0))) + extraSeconds;
+
+        const nextExitCount = Math.max(0, Number(session.exit_count ?? 0)) + 1;
+
+        await supabase
+          .from("student_sessions")
+          .update({
+            status: "exited",
+            exit_count: nextExitCount,
+            draft_answers: setSessionMeta(session.draft_answers, null, updatedDuration),
+          })
+          .eq("id", session.id)
+          .eq("status", "active");
+
+        session.status = "exited";
+        session.exit_count = nextExitCount;
+        session.draft_answers = setSessionMeta(session.draft_answers, null, updatedDuration);
       }
     }
 

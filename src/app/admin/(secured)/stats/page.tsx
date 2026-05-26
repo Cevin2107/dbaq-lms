@@ -40,6 +40,7 @@ interface StudentStats {
     grade: string;
     startedAt: string;
     lastActivityAt?: string;
+    exitCount: number;
     questionsAnswered: number;
     draftAnswers: Record<string, string>;
   }>;
@@ -75,8 +76,10 @@ interface DetailData {
     questionsAnswered: number;
     totalQuestions: number;
     startedAt: string;
+    durationSeconds: number;
     status?: "active" | "exited";
     lastActivityAt?: string;
+    exitCount?: number;
   };
 }
 
@@ -209,8 +212,10 @@ export default function AdminStatsPage() {
                   questionsAnswered: Object.keys(data.draft_answers || {}).length,
                   totalQuestions: data.questions.length,
                   startedAt: session.startedAt,
+                  durationSeconds: data.durationSeconds ?? 0,
                   status: session.status,
                   lastActivityAt: session.lastActivityAt,
+                  exitCount: session.exitCount,
                 },
               });
             }
@@ -272,8 +277,10 @@ export default function AdminStatsPage() {
               questionsAnswered: Object.keys(data.draft_answers || {}).length,
               totalQuestions: countActualQuestions(data.questions),
               startedAt: session.startedAt,
+              durationSeconds: data.durationSeconds ?? 0,
               status: session.status,
               lastActivityAt: session.lastActivityAt,
+              exitCount: session.exitCount,
             };
           }
         }
@@ -997,7 +1004,9 @@ export default function AdminStatsPage() {
                     submissionId={selectedItem.type === 'submission' ? selectedItem.id : undefined}
                     submissionScore={detailData.submission?.score}
                     submissionDurationSeconds={detailData.submission?.durationSeconds}
+                    durationSeconds={selectedItem.type === 'session' ? detailData.session?.durationSeconds : detailData.submission?.durationSeconds}
                     answeredCountOverride={selectedItem.type === 'session' ? detailData.session?.questionsAnswered : undefined}
+                    exitCount={selectedItem.type === 'session' ? detailData.session?.exitCount : undefined}
                     onRefresh={async () => {
                       if (!selectedItem) return;
 

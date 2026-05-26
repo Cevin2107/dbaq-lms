@@ -37,24 +37,24 @@ export function Overview({ onOpenSettings, refreshKey }: OverviewProps) {
   const [selectedMonth, setSelectedMonth] = useState(today.getMonth() + 1);
 
   useEffect(() => {
+    const loadData = async () => {
+      setIsLoading(true);
+      try {
+        const [studentsData, sessionsData] = await Promise.all([
+          getStudents(),
+          getSessionsForAllStudents(selectedYear, selectedMonth),
+        ]);
+        setStudents(studentsData);
+        setSessions(sessionsData);
+      } catch (error) {
+        console.error("Error loading overview data:", error);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
     loadData();
   }, [selectedYear, selectedMonth, refreshKey]);
-
-  const loadData = async () => {
-    setIsLoading(true);
-    try {
-      const [studentsData, sessionsData] = await Promise.all([
-        getStudents(),
-        getSessionsForAllStudents(selectedYear, selectedMonth),
-      ]);
-      setStudents(studentsData);
-      setSessions(sessionsData);
-    } catch (error) {
-      console.error("Error loading overview data:", error);
-    } finally {
-      setIsLoading(false);
-    }
-  };
 
   const handlePrevMonth = () => {
     if (selectedMonth === 1) {

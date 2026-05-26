@@ -65,17 +65,70 @@ export function StudentAnswerReviewList({
   onSetAnswerPoints,
   onSetSubQuestionAnswer,
 }: StudentAnswerReviewListProps) {
+  let actualQuestionNumber = 0;
+
   return (
     <div className="space-y-3">
       {questions && questions.length > 0 ? (
         questions.map((q) => {
-          if (q.type === "section") return null;
+          if (q.type === "section") {
+            return (
+              <div
+                key={q.questionId}
+                className="group relative overflow-hidden rounded-3xl bg-slate-50/95 backdrop-blur-sm border border-slate-200/80 shadow-md shadow-slate-200/40 p-3.5 hover:shadow-lg hover:-translate-y-0.5 transition-all duration-300"
+              >
+                <div
+                  className={`absolute top-0 left-0 right-0 h-0.5 bg-gradient-to-r from-indigo-500 to-violet-500`}
+                />
+
+                <div className="flex justify-between items-start mb-3">
+                  <div className="flex items-center gap-2.5">
+                    <div className="flex items-center justify-center h-8 w-8 rounded-2xl font-bold text-sm text-white shadow-md bg-gradient-to-br from-indigo-500 to-violet-500 shadow-indigo-500/30">
+                      i
+                    </div>
+                    <div>
+                      <div className="flex items-center gap-1.5">
+                        <span className="text-xs font-semibold text-slate-500 uppercase tracking-wider">
+                          Đoạn văn / Ghi chú
+                        </span>
+                        <span className="text-xs text-slate-400">•</span>
+                        <span className="text-sm font-bold text-slate-600">{q.points}đ</span>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="flex items-center gap-2">
+                    {/* Section questions are informational, not scorable */}
+                    <div
+                      className="flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-bold shadow-md bg-slate-100 border border-slate-300 text-slate-600"
+                    >
+                      <span className="text-xs font-semibold text-slate-500 uppercase tracking-wider">
+                        Thông tin
+                      </span>
+                    </div>
+                  </div>
+                </div>
+
+                {q.imageUrl && (
+                  <div className="mb-3 rounded-2xl overflow-hidden border border-slate-200/50 shadow-sm">
+                    <img src={q.imageUrl} alt="Question image" className="max-h-48 w-full object-contain bg-slate-50" />
+                  </div>
+                )}
+
+                <div className="text-sm text-slate-700 leading-relaxed mb-3">
+                  <MathText text={q.content || ""} />
+                </div>
+              </div>
+            );
+          }
 
           const hasAnswer = q.studentAnswer !== undefined && q.studentAnswer !== null && q.studentAnswer !== "";
           const regradeAnswer = regradeAnswers.get(q.questionId);
           const displayIsCorrect = regradingMode ? (regradeAnswer?.isCorrect ?? (q.isCorrect ?? false)) : (q.isCorrect ?? false);
           const displayPointsAwarded = regradingMode ? (regradeAnswer?.pointsAwarded ?? (q.pointsAwarded ?? 0)) : (q.pointsAwarded ?? 0);
           const displayContent = toMathRenderableText(sanitizeQuestionContent(q.content || ""));
+          actualQuestionNumber += 1;
+          const questionNumber = actualQuestionNumber;
 
           return (
             <div
@@ -107,7 +160,7 @@ export function StudentAnswerReviewList({
                         : "bg-gradient-to-br from-slate-400 to-slate-500 shadow-slate-500/30"
                     }`}
                   >
-                    {q.order}
+                    {questionNumber}
                   </div>
                   <div>
                     <div className="flex items-center gap-1.5">

@@ -272,7 +272,7 @@ export function AssignmentTaking({ assignment, questions: initialQuestions, init
     let hasExited = false;
     const handleVC = () => {
       if (document.hidden && !hasSubmitted && !hasExited) {
-        fetch("/api/student-sessions", { method: "PUT", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ sessionId, status: "exited" }) }).catch(e => e);
+        fetch("/api/student-sessions", { method: "PUT", keepalive: true, headers: { "Content-Type": "application/json" }, body: JSON.stringify({ sessionId, status: "exited" }) }).catch(e => e);
         hasExited = true;
       } else if (!document.hidden && hasExited && !hasSubmitted) {
         fetch("/api/student-sessions", { method: "PUT", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ sessionId, status: "active" }) }).catch(e => e);

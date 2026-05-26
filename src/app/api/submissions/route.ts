@@ -1,6 +1,32 @@
 import { NextResponse } from "next/server";
 import { createClient } from "@supabase/supabase-js";
 
+function getSessionMeta(draftAnswers: unknown) {
+  if (!draftAnswers || typeof draftAnswers !== "object") {
+    return { activeSince: null as string | null, activeDurationSeconds: 0 };
+  }
+
+  const sessionMeta = (draftAnswers as Record<string, unknown>).__sessionMeta;
+  if (!sessionMeta || typeof sessionMeta !== "object") {
+    return { activeSince: null as string | null, activeDurationSeconds: 0 };
+  }
+
+  const meta = sessionMeta as { activeSince?: string | null; activeDurationSeconds?: number | null };
+  return {
+    activeSince: meta.activeSince ?? null,
+    activeDurationSeconds: Math.max(0, Math.floor(Number(meta.activeDurationSeconds ?? 0))),
+  };
+}
+
+function setSessionMeta(draftAnswers: unknown, activeSince: string | null, activeDurationSeconds: number) {
+  const answers = draftAnswers && typeof draftAnswers === "object" ? { ...(draftAnswers as Record<string, unknown>) } : {};
+  answers.__sessionMeta = {
+    activeSince,
+    activeDurationSeconds: Math.max(0, Math.floor(activeDurationSeconds)),
+  };
+  return answers;
+}
+
 export async function POST(req: Request) {
   try {
     const body = await req.json();
@@ -13,6 +39,29 @@ export async function POST(req: Request) {
     const url = process.env.NEXT_PUBLIC_SUPABASE_URL!;
     const serviceKey = process.env.SUPABASE_SERVICE_ROLE_KEY!;
     const supabase = createClient(url, serviceKey);
+
+    const submittedAt = new Date().toISOString();
+    const { data: session } = sessionId
+      ? await supabase
+        .from("student_sessions")
+        .select("status, draft_answers")
+        .eq("id", sessionId)
+        .single()
+      : { data: null };
+
+    const sessionAccumulated = (() => {
+      if (!session) return null;
+      const { activeSince, activeDurationSeconds } = getSessionMeta(session.draft_answers);
+      const base = Math.max(0, Math.floor(Number(activeDurationSeconds ?? 0)));
+      if (session.status === "active" && activeSince) {
+        const activeSinceMs = new Date(activeSince).getTime();
+        if (Number.isFinite(activeSinceMs)) {
+          return base + Math.max(0, Math.floor((new Date(submittedAt).getTime() - activeSinceMs) / 1000));
+        }
+      }
+      return base;
+    })();
+    const finalDurationSeconds = sessionAccumulated ?? Math.max(0, Math.floor(Number(durationSeconds ?? 0)));
 
     // Lấy câu hỏi để chấm điểm
     const { data: questions } = await supabase
@@ -39,8 +88,8 @@ export async function POST(req: Request) {
       const { data: updatedSubmission, error: updateError } = await supabase
         .from("submissions")
         .update({
-          submitted_at: new Date().toISOString(),
-          duration_seconds: durationSeconds,
+          submitted_at: submittedAt,
+          duration_seconds: finalDurationSeconds,
           status: "pending",
         })
         .eq("id", existingSubmission.id)
@@ -66,8 +115,8 @@ export async function POST(req: Request) {
         .insert({
           assignment_id: assignmentId,
           student_name: studentName,
-          submitted_at: new Date().toISOString(),
-          duration_seconds: durationSeconds,
+          submitted_at: submittedAt,
+          duration_seconds: finalDurationSeconds,
           status: "pending",
         })
         .select()
@@ -152,7 +201,8 @@ export async function POST(req: Request) {
         .update({ 
           status: "submitted",
           submission_id: submission.id,
-          last_activity_at: new Date().toISOString()
+          last_activity_at: submittedAt,
+          draft_answers: setSessionMeta(session?.draft_answers, null, finalDurationSeconds),
         })
         .eq("id", sessionId)
         .select();
