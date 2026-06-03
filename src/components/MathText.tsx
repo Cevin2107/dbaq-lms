@@ -54,7 +54,7 @@ function ensureInlineMathDelimiters(text: string) {
 
   const protectedSegments: string[] = [];
   const placeholderPrefix = "@@MATH_SEGMENT_";
-  const withPlaceholders = text.replace(/\$\$[\s\S]+?\$\$|\$[^$\n]+\$/g, (segment) => {
+  const withPlaceholders = text.replace(/\$\$[\s\S]+?\$\$|\$[^$\n]+\$|\\\([\s\S]+?\\\)|\\\[[\s\S]+?\\\]/g, (segment) => {
     const idx = protectedSegments.push(segment) - 1;
     return `${placeholderPrefix}${idx}@@`;
   });
@@ -72,6 +72,14 @@ function ensureInlineMathDelimiters(text: string) {
     const parsed = Number.parseInt(idx, 10);
     return Number.isFinite(parsed) ? protectedSegments[parsed] || "" : "";
   });
+}
+
+function normalizeMathDelimiters(text: string) {
+  if (!text) return text;
+
+  return text
+    .replace(/\\\[\s*([\s\S]*?)\s*\\\]/g, (_m, inner) => `$$${inner}$$`)
+    .replace(/\\\(\s*([\s\S]*?)\s*\\\)/g, (_m, inner) => `$${inner}$`);
 }
 
 function renderLatexSegment(content: string, displayMode: boolean) {
@@ -97,7 +105,7 @@ function renderLatexSegment(content: string, displayMode: boolean) {
 function splitMathSegments(text: string) {
   const normalized = ensureInlineMathDelimiters(
     normalizeFractionsForMathDetection(
-      text
+      normalizeMathDelimiters(text)
       .replace(/\\\[/g, "$$")
       .replace(/\\\]/g, "$$")
       .replace(/\\\(/g, "$")

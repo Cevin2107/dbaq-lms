@@ -405,7 +405,7 @@ function ensureInlineMathDelimiters(text: string): string {
 
   const protectedSegments: string[] = [];
   const placeholderPrefix = "@@MATH_SEGMENT_";
-  const withPlaceholders = text.replace(/\$\$[\s\S]+?\$\$|\$[^$\n]+\$/g, (segment) => {
+  const withPlaceholders = text.replace(/\$\$[\s\S]+?\$\$|\$[^$\n]+\$|\\\([\s\S]+?\\\)|\\\[[\s\S]+?\\\]/g, (segment) => {
     const idx = protectedSegments.push(segment) - 1;
     return `${placeholderPrefix}${idx}@@`;
   });
@@ -429,8 +429,16 @@ function ensureInlineMathDelimiters(text: string): string {
   });
 }
 
+function normalizeMathDelimiters(text: string): string {
+  if (!text) return text;
+
+  return text
+    .replace(/\\\[\s*([\s\S]*?)\s*\\\]/g, (_m, inner) => `$$${inner}$$`)
+    .replace(/\\\(\s*([\s\S]*?)\s*\\\)/g, (_m, inner) => `$${inner}$`);
+}
+
 function formatMathForRender(text: string): string {
-  return ensureInlineMathDelimiters(toHumanReadableMath(text));
+  return ensureInlineMathDelimiters(toHumanReadableMath(normalizeMathDelimiters(text)));
 }
 
 function splitBundledQuestionBlocks(text: string): string[] {
