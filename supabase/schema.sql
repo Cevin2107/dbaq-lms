@@ -192,15 +192,19 @@ create index idx_questions_assignment on questions(assignment_id);
 create index idx_questions_order on questions("order");
 create index idx_submissions_assignment on submissions(assignment_id);
 create index idx_submissions_student_name on submissions(student_name);
+create index idx_submissions_submitted_at on submissions(submitted_at desc);
 create index idx_answers_submission on answers(submission_id);
 create index idx_answers_question on answers(question_id);
 create index idx_student_sessions_assignment on student_sessions(assignment_id);
 create index idx_student_sessions_student on student_sessions(student_name);
 create index idx_student_sessions_status on student_sessions(status);
+create index idx_student_sessions_started_at on student_sessions(started_at desc);
+create index idx_student_sessions_last_activity on student_sessions(last_activity_at desc);
 create index idx_assignment_assignments_student_id on assignment_assignments(student_id);
 create index idx_assignment_assignments_assignment_id on assignment_assignments(assignment_id);
 create index idx_teaching_sessions_student_id on teaching_sessions(student_id);
 create index idx_teaching_sessions_date on teaching_sessions(teaching_date);
+create index idx_assignments_created_at on assignments(created_at desc);
 
 -- ============================================
 -- 12. ROW LEVEL SECURITY (RLS)

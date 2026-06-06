@@ -9,8 +9,8 @@ export async function GET(req: NextRequest) {
   }
 
   const supabase = createSupabaseAdmin();
-  const { data, error } = await supabase
-    .from("admin_passkeys")
+  const { data, error } = await (supabase
+    .from("admin_passkeys") as any)
     .select("id, name, created_at")
     .order("created_at", { ascending: false });
 

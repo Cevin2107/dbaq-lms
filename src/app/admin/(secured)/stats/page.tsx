@@ -2,6 +2,7 @@
 
 import { useCallback, useEffect, useState } from "react";
 import Link from "next/link";
+import clsx from "clsx";
 import { countActualQuestions } from "@/lib/utils";
 import { StudentWorkReviewPanel } from "@/features/admin/components/StudentWorkReviewPanel";
 import { 
@@ -87,6 +88,8 @@ export default function AdminStatsPage() {
   const [students, setStudents] = useState<StudentStats[]>([]);
   const [authStudents, setAuthStudents] = useState<Array<{ id: string; full_name: string; email: string }>>([]);
   const [loading, setLoading] = useState(true);
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 10;
   const [expandedStudent, setExpandedStudent] = useState<string | null>(null);
   const [selectedItem, setSelectedItem] = useState<{ type: "submission" | "session"; id: string } | null>(null);
   const [detailData, setDetailData] = useState<DetailData | null>(null);
@@ -209,7 +212,7 @@ export default function AdminStatsPage() {
                 session: {
                   studentName: student.studentName,
                   assignmentTitle: session.assignmentTitle,
-                  questionsAnswered: Object.keys(data.draft_answers || {}).length,
+                  questionsAnswered: Object.keys(data.draft_answers || {}).filter(k => k !== "__sessionMeta").length,
                   totalQuestions: data.questions.length,
                   startedAt: session.startedAt,
                   durationSeconds: data.durationSeconds ?? 0,
@@ -274,7 +277,7 @@ export default function AdminStatsPage() {
             detailWithMeta.session = {
               studentName: studentName,
               assignmentTitle: session.assignmentTitle,
-              questionsAnswered: Object.keys(data.draft_answers || {}).length,
+              questionsAnswered: Object.keys(data.draft_answers || {}).filter(k => k !== "__sessionMeta").length,
               totalQuestions: countActualQuestions(data.questions),
               startedAt: session.startedAt,
               durationSeconds: data.durationSeconds ?? 0,
@@ -570,7 +573,15 @@ export default function AdminStatsPage() {
             </div>
           ) : (
             <div className="space-y-4">
-              {students.map((student) => {
+              {(() => {
+                const totalPages = Math.ceil(students.length / itemsPerPage);
+                const paginatedStudents = students.slice(
+                  (currentPage - 1) * itemsPerPage,
+                  currentPage * itemsPerPage
+                );
+                return (
+                  <>
+                    {paginatedStudents.map((student) => {
                 const avgScore = student.submissions.length
                   ? (
                       student.submissions.reduce((sum, s) => sum + s.score, 0) /
@@ -847,7 +858,43 @@ export default function AdminStatsPage() {
                     )}
                   </div>
                 );
-              })}
+                    })}
+                    
+                    {totalPages > 1 && (
+                      <div className="flex items-center justify-center gap-1.5 mt-8">
+                        <button
+                          onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}
+                          disabled={currentPage === 1}
+                          className="flex h-10 w-10 items-center justify-center rounded-2xl border border-slate-200/60 bg-white/60 backdrop-blur-sm text-slate-600 hover:text-indigo-600 disabled:opacity-40 disabled:cursor-not-allowed transition-all shadow-md"
+                        >
+                          &larr;
+                        </button>
+                        {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
+                          <button
+                            key={page}
+                            onClick={() => setCurrentPage(page)}
+                            className={clsx(
+                              "h-10 w-10 rounded-2xl text-sm font-semibold transition-all duration-300 border shadow-md",
+                              currentPage === page
+                                ? "bg-gradient-to-r from-indigo-600 to-violet-600 border-indigo-600 text-white shadow-indigo-500/30"
+                                : "bg-white/60 border-slate-200/60 text-slate-600 hover:bg-white"
+                            )}
+                          >
+                            {page}
+                          </button>
+                        ))}
+                        <button
+                          onClick={() => setCurrentPage(prev => Math.min(prev + 1, totalPages))}
+                          disabled={currentPage === totalPages}
+                          className="flex h-10 w-10 items-center justify-center rounded-2xl border border-slate-200/60 bg-white/60 backdrop-blur-sm text-slate-600 hover:text-indigo-600 disabled:opacity-40 disabled:cursor-not-allowed transition-all shadow-md"
+                        >
+                          &rarr;
+                        </button>
+                      </div>
+                    )}
+                  </>
+                );
+              })()}
             </div>
           )}
         </div>

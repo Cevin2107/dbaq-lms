@@ -52,7 +52,7 @@ export async function POST(req: NextRequest) {
     }
 
     const supabase = createSupabaseAdmin();
-    const { error } = await supabase.from("admin_passkeys").insert({
+    const { error } = await (supabase.from("admin_passkeys") as any).insert({
       name: name || null,
       credential_id: credentialIdBase64,
       public_key: publicKeyBase64,

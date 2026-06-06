@@ -11,8 +11,8 @@ export async function POST(req: NextRequest) {
   }
   try {
     const supabase = createSupabaseAdmin();
-    const { data: passkeys, error } = await supabase
-      .from("admin_passkeys")
+    const { data: passkeys, error } = await (supabase
+      .from("admin_passkeys") as any)
       .select("credential_id");
 
     if (error) {
@@ -27,7 +27,7 @@ export async function POST(req: NextRequest) {
       userName: "admin",
       timeout: 60000,
       attestationType: "none",
-      excludeCredentials: (passkeys || []).map((item) => ({
+      excludeCredentials: ((passkeys as any[]) || []).map((item: any) => ({
         id: item.credential_id,
       })),
       authenticatorSelection: {

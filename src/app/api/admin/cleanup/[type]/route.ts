@@ -14,7 +14,7 @@ export async function GET(
   try {
     const { type } = await params;
     const supabase = createSupabaseAdmin();
-    let items: Array<{ id: string; name: string; info?: string; size?: string }> = [];
+    let items: any[] = [];
 
     switch (type) {
       case "assignments": {
@@ -25,7 +25,7 @@ export async function GET(
 
         if (error) throw error;
 
-        items = (data || []).map((a) => ({
+        items = ((data as any[]) || []).map((a) => ({
           id: a.id,
           name: a.title,
           info: `${a.subject} - ${a.grade} ${a.is_hidden ? "(Ẩn)" : ""}`,
@@ -48,7 +48,7 @@ export async function GET(
 
         if (error) throw error;
 
-        items = (data || []).map((q) => {
+        items = ((data as any[]) || []).map((q) => {
           const assignmentTitle = (q.assignments as { title?: string } | null)?.title || "N/A";
           return {
             id: q.id,
@@ -73,7 +73,7 @@ export async function GET(
 
         if (error) throw error;
 
-        items = (data || []).map((s) => {
+        items = ((data as any[]) || []).map((s) => {
           const assignmentTitle = (s.assignments as { title?: string } | null)?.title || "N/A";
           return {
             id: s.id,
@@ -97,7 +97,7 @@ export async function GET(
 
         if (error) throw error;
 
-        items = (data || []).map((s) => {
+        items = ((data as any[]) || []).map((s) => {
           const assignmentTitle = (s.assignments as { title?: string } | null)?.title || "N/A";
           return {
             id: s.id,
@@ -124,7 +124,7 @@ export async function GET(
 
         if (error) throw error;
 
-        items = (data || [])
+        items = ((data as any[]) || [])
           .filter((q) => q.image_url)
           .map((q) => {
             const assignment = q.assignments as { title?: string; subject?: string; grade?: string } | null;
@@ -181,8 +181,7 @@ export async function DELETE(
     switch (type) {
       case "assignments": {
         for (const id of ids) {
-          const { error } = await supabase
-            .from("assignments")
+          const { error } = await (supabase.from("assignments") as any)
             .delete()
             .eq("id", id);
           if (error) console.error(`Error deleting assignment ${id}:`, error);
@@ -192,8 +191,7 @@ export async function DELETE(
 
       case "questions": {
         for (const id of ids) {
-          const { error } = await supabase
-            .from("questions")
+          const { error } = await (supabase.from("questions") as any)
             .delete()
             .eq("id", id);
           if (error) console.error(`Error deleting question ${id}:`, error);
@@ -203,8 +201,7 @@ export async function DELETE(
 
       case "submissions": {
         for (const id of ids) {
-          const { error } = await supabase
-            .from("submissions")
+          const { error } = await (supabase.from("submissions") as any)
             .delete()
             .eq("id", id);
           if (error) console.error(`Error deleting submission ${id}:`, error);
@@ -214,8 +211,7 @@ export async function DELETE(
 
       case "sessions": {
         for (const id of ids) {
-          const { error } = await supabase
-            .from("student_sessions")
+          const { error } = await (supabase.from("student_sessions") as any)
             .delete()
             .eq("id", id);
           if (error) console.error(`Error deleting session ${id}:`, error);
@@ -226,8 +222,7 @@ export async function DELETE(
       case "images": {
         // For images, we update questions to remove image_url
         for (const id of ids) {
-          const { error } = await supabase
-            .from("questions")
+          const { error } = await (supabase.from("questions") as any)
             .update({ image_url: null })
             .eq("id", id);
           if (error) console.error(`Error removing image from question ${id}:`, error);

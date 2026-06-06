@@ -131,7 +131,10 @@ export async function POST(req: Request) {
     }
 
     // Chấm điểm và lưu answers, chuẩn hóa thang 10
-    const totalPossiblePoints = questions.reduce((sum, q) => sum + Number(q.points || 1), 0) || 1;
+    const totalPossiblePoints = questions.reduce((sum, q) => {
+      if (q.type === "section") return sum;
+      return sum + Number(q.points !== undefined && q.points !== null ? q.points : 1);
+    }, 0) || 1;
     let totalScoreRaw = 0;
 
     for (const q of questions) {

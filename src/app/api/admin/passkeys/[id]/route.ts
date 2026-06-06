@@ -17,7 +17,7 @@ export async function DELETE(
   }
 
   const supabase = createSupabaseAdmin();
-  const { error } = await supabase.from("admin_passkeys").delete().eq("id", id);
+  const { error } = await (supabase.from("admin_passkeys") as any).delete().eq("id", id);
 
   if (error) {
     return NextResponse.json({ error: error.message }, { status: 500 });

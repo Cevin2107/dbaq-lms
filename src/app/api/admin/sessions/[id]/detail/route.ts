@@ -99,7 +99,7 @@ export async function GET(
         status: session.status,
         exitCount: session.exit_count || 0,
         durationSeconds,
-        questionsAnswered: Object.keys(draftAnswers).length,
+        questionsAnswered: Object.keys(draftAnswers).filter(k => k !== "__sessionMeta").length,
       },
       questions: questionDetails,
     });

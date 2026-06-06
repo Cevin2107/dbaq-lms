@@ -57,11 +57,28 @@ export function AssignmentTaking({ assignment, questions: initialQuestions, init
   const draftKey = useMemo(() => `assignment-draft-${assignment.id}`, [assignment.id]);
   const hasAutoSubmitted = useRef(false);
   const [showExitConfirm, setShowExitConfirm] = useState(false);
+  const [showSubmitConfirm, setShowSubmitConfirm] = useState(false);
   const [isMounted, setIsMounted] = useState(false);
   const [lastSaveTime, setLastSaveTime] = useState<number | null>(null);
   const [isSaving, setIsSaving] = useState(false);
+  const [isOnline, setIsOnline] = useState(true);
   const { theme, toggleTheme } = useTheme();
   const questionsRef = useRef(questions);
+  const lastSyncedAnswersStr = useRef<string>("");
+
+  // Lắng nghe trạng thái kết nối mạng
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    setIsOnline(navigator.onLine);
+    const handleOnline = () => setIsOnline(true);
+    const handleOffline = () => setIsOnline(false);
+    window.addEventListener("online", handleOnline);
+    window.addEventListener("offline", handleOffline);
+    return () => {
+      window.removeEventListener("online", handleOnline);
+      window.removeEventListener("offline", handleOffline);
+    };
+  }, []);
 
   const isDark = theme === "dark";
 
@@ -161,6 +178,7 @@ export function AssignmentTaking({ assignment, questions: initialQuestions, init
           const data = await res.json();
           if (data.draftAnswers && Object.keys(data.draftAnswers).length > 0) {
             setAnswers(data.draftAnswers);
+            lastSyncedAnswersStr.current = JSON.stringify(data.draftAnswers);
           }
         }
       } catch (err) {
@@ -168,7 +186,10 @@ export function AssignmentTaking({ assignment, questions: initialQuestions, init
           const saved = localStorage.getItem(draftKey);
           if (saved) {
             const parsed = JSON.parse(saved);
-            if (parsed?.answers) setAnswers(parsed.answers);
+            if (parsed?.answers) {
+              setAnswers(parsed.answers);
+              lastSyncedAnswersStr.current = JSON.stringify(parsed.answers);
+            }
           }
         } catch (localErr) {}
       }
@@ -176,30 +197,45 @@ export function AssignmentTaking({ assignment, questions: initialQuestions, init
     loadDraft();
   }, [sessionId, draftKey]);
 
+  // 1. Luôn ghi tiến trình vào localStorage NGAY LẬP TỨC khi có thay đổi đáp án
   useEffect(() => {
-    if (typeof window === "undefined" || !sessionId) return;
-    const saveDraft = async () => {
+    if (typeof window === "undefined" || !sessionId || Object.keys(answers).length === 0) return;
+    try {
+      localStorage.setItem(draftKey, JSON.stringify({ answers }));
+      setLastSaveTime(Date.now());
+    } catch (err) {
+      console.error("Local storage save error:", err);
+    }
+  }, [answers, sessionId, draftKey]);
+
+  // 2. Đồng bộ ngầm tiến trình từ localStorage lên Server khi có kết nối mạng
+  useEffect(() => {
+    if (typeof window === "undefined" || !sessionId || !isOnline) return;
+
+    const currentAnswersStr = JSON.stringify(answers);
+    if (currentAnswersStr === lastSyncedAnswersStr.current) return;
+
+    const syncWithServer = async () => {
       try {
         setIsSaving(true);
-        await fetch(`/api/student-sessions/${sessionId}/draft`, {
+        const res = await fetch(`/api/student-sessions/${sessionId}/draft`, {
           method: "PATCH",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ draftAnswers: answers }),
         });
-        localStorage.setItem(draftKey, JSON.stringify({ answers }));
-        setLastSaveTime(Date.now());
+        if (res.ok) {
+          lastSyncedAnswersStr.current = currentAnswersStr;
+        }
       } catch (err) {
-        try {
-          localStorage.setItem(draftKey, JSON.stringify({ answers }));
-          setLastSaveTime(Date.now());
-        } catch (localErr) {}
+        console.error("Sync draft error:", err);
       } finally {
         setIsSaving(false);
       }
     };
-    const id = setTimeout(saveDraft, 500);
+
+    const id = setTimeout(syncWithServer, 1000); // Debounce 1s
     return () => clearTimeout(id);
-  }, [answers, sessionId, draftKey]);
+  }, [answers, sessionId, isOnline]);
 
   useEffect(() => {
     if (!sessionId || submitting || hasSubmitted) return;
@@ -237,7 +273,7 @@ export function AssignmentTaking({ assignment, questions: initialQuestions, init
 
   const timeUp = hasTimer && remaining === 0;
   const locked = timeUp;
-  const answeredCount = useMemo(() => Object.keys(answers).length, [answers]);
+  const answeredCount = useMemo(() => Object.keys(answers).filter(k => k !== "__sessionMeta").length, [answers]);
   const nonSectionQuestions = useMemo(() => getActualQuestions(questions), [questions]);
 
   const handleSubmit = useCallback(async (isAutoSubmit = false) => {
@@ -361,7 +397,7 @@ export function AssignmentTaking({ assignment, questions: initialQuestions, init
       )}
 
       <TabSwitchWarning sessionId={sessionId} />
-      <AutoSaveIndicator lastSaveTime={lastSaveTime} isSaving={isSaving} />
+      <AutoSaveIndicator lastSaveTime={lastSaveTime} isSaving={isSaving} isOnline={isOnline} />
       
       {/* Top Navigation */}
       <div className={clsx(
@@ -452,8 +488,54 @@ export function AssignmentTaking({ assignment, questions: initialQuestions, init
               <button onClick={() => handleExitConfirm(false)} className={clsx("w-full rounded-xl border px-4 py-3.5 text-sm font-bold transition-all", isDark ? "border-red-500/20 text-red-400 bg-red-500/10 hover:bg-red-500/20" : "border-red-200 text-red-600 bg-red-50 hover:bg-red-100")}>
                 Xoá bài (Làm lại cữ đầu)
               </button>
-              <button onClick={() => setShowExitConfirm(false)} className={clsx("w-full rounded-xl px-4 py-3.5 text-sm font-bold transition-all", isDark ? "text-slate-400 hover:text-white hover:bg-slate-800" : "text-slate-500 hover:text-slate-800 hover:bg-slate-100")}>
+              <button onClick={() => setShowExitConfirm(false)} className={clsx("w-full rounded-xl px-4 py-3.5 text-sm font-bold transition-all", isDark ? "text-slate-400 hover:text-white hover:bg-slate-800" : "text-slate-500 hover:text-slate-800 hover:bg-slate-100")} >
                 Hủy, quay lại bài
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {showSubmitConfirm && (
+        <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/60 p-4 backdrop-blur-md animate-fade-in">
+          <div className={clsx("w-full max-w-sm rounded-[2rem] p-6 shadow-2xl animate-scale-in border", isDark ? "bg-slate-900 border-slate-700" : "bg-white border-slate-100")}>
+            <div className="mb-6 flex flex-col items-center text-center">
+              <div className="flex h-16 w-16 items-center justify-center rounded-full bg-indigo-500/20 text-indigo-500 mb-4 ring-8 ring-indigo-500/10">
+                <svg className="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01" />
+                </svg>
+              </div>
+              <h3 className={clsx("text-lg font-black mb-1", isDark ? "text-white" : "text-slate-900")}>Nộp bài tập?</h3>
+              <p className={clsx("text-sm mb-3", isDark ? "text-slate-400" : "text-slate-500")}>
+                Bạn có chắc chắn muốn nộp bài không? Hành động này không thể hoàn tác.
+              </p>
+              
+              <div className={clsx("rounded-2xl p-3 w-full text-xs font-semibold text-center", isDark ? "bg-slate-800" : "bg-slate-50")}>
+                <p className={isDark ? "text-slate-300" : "text-slate-700"}>
+                  Đã làm: {answeredCount}/{nonSectionQuestions.length} câu
+                </p>
+                {answeredCount < nonSectionQuestions.length && (
+                  <p className="text-rose-500 mt-1.5 font-bold">
+                    ⚠️ Còn {nonSectionQuestions.length - answeredCount} câu chưa hoàn thành!
+                  </p>
+                )}
+              </div>
+            </div>
+            <div className="space-y-3">
+              <button 
+                onClick={() => {
+                  setShowSubmitConfirm(false);
+                  handleSubmit(false);
+                }} 
+                className="w-full rounded-xl bg-indigo-600 hover:bg-indigo-500 px-4 py-3.5 text-sm font-bold text-white transition-all shadow-lg shadow-indigo-600/30"
+              >
+                Xác nhận nộp bài
+              </button>
+              <button 
+                onClick={() => setShowSubmitConfirm(false)} 
+                className={clsx("w-full rounded-xl px-4 py-3.5 text-sm font-bold transition-all", isDark ? "text-slate-400 hover:text-white hover:bg-slate-800" : "text-slate-500 hover:text-slate-800 hover:bg-slate-100")}
+              >
+                Hủy, tiếp tục làm bài
               </button>
             </div>
           </div>
@@ -511,7 +593,7 @@ export function AssignmentTaking({ assignment, questions: initialQuestions, init
                 )}
                 type="button"
                 disabled={locked || submitting}
-                onClick={() => handleSubmit(false)}
+                onClick={() => setShowSubmitConfirm(true)}
               >
                 {submitting ? (
                   <span className="flex items-center justify-center gap-2">

@@ -29,8 +29,8 @@ export async function POST(
     const supabase = createSupabaseAdmin();
 
     // 1. Lấy thông tin submission
-    const { data: submission, error: submissionError } = await supabase
-      .from("submissions")
+    const { data: submission, error: submissionError } = await (supabase
+      .from("submissions") as any)
       .select("id, assignment_id")
       .eq("id", id)
       .single();
@@ -41,8 +41,7 @@ export async function POST(
 
     // 2. Cập nhật từng câu trả lời
     for (const answer of answers) {
-      const { error: updateError } = await supabase
-        .from("answers")
+      const { error: updateError } = await (supabase.from("answers") as any)
         .update({
           is_correct: answer.isCorrect,
           points_awarded: answer.pointsAwarded,
@@ -56,28 +55,28 @@ export async function POST(
     }
 
     // 3. Tính tổng điểm mới
-    const { data: allAnswers, error: answersError } = await supabase
-      .from("answers")
+    const { data: allAnswers, error: answersError } = await (supabase
+      .from("answers") as any)
       .select("points_awarded")
       .eq("submission_id", id);
 
     if (answersError) throw answersError;
 
     const totalPoints = (allAnswers || []).reduce(
-      (sum, a) => sum + (a.points_awarded || 0),
+      (sum: number, a: any) => sum + (a.points_awarded || 0),
       0
     );
 
     // 4. Lấy tổng điểm của assignment (dựa trên các câu hỏi hiện tại)
-    const { data: questions, error: questionsError } = await supabase
-      .from("questions")
+    const { data: questions, error: questionsError } = await (supabase
+      .from("questions") as any)
       .select("points")
       .eq("assignment_id", submission.assignment_id);
 
     if (questionsError) throw questionsError;
 
     const totalAssignmentPoints = (questions || []).reduce(
-      (sum, q) => sum + (q.points || 0),
+      (sum: number, q: any) => sum + (q.points || 0),
       0
     );
 
@@ -89,8 +88,8 @@ export async function POST(
     }
 
     // 6. Cập nhật điểm mới vào submission
-    const { error: updateSubmissionError } = await supabase
-      .from("submissions")
+    const { error: updateSubmissionError } = await (supabase
+      .from("submissions") as any)
       .update({ score: finalScore })
       .eq("id", id);
 

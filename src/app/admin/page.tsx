@@ -2,7 +2,7 @@
 
 import { loginAdmin } from "@/lib/adminAuth";
 import { startAuthentication } from "@simplewebauthn/browser";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Link from "next/link";
 import { Fingerprint } from "lucide-react";
 
@@ -11,6 +11,18 @@ export default function AdminLoginPage() {
   const [loading, setLoading] = useState(false);
   const [passkeyError, setPasskeyError] = useState("");
   const [passkeyLoading, setPasskeyLoading] = useState(false);
+
+  useEffect(() => {
+    // Warm up the passkey API route to resolve Next.js dynamic compile and serverless cold starts
+    fetch("/api/admin/passkeys/auth-options")
+      .then((res) => {
+        if (res.ok) {
+          console.log("[Passkey Pre-warm] API route warmed up successfully.");
+        }
+      })
+      .catch((err) => console.warn("[Passkey Pre-warm] API route pre-warm failed:", err));
+  }, []);
+
 
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();

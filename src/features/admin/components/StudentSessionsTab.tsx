@@ -1,5 +1,7 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import clsx from "clsx";
 import { useQuery } from "@tanstack/react-query";
+import { createClient } from "@supabase/supabase-js";
 import { formatVietnamTime } from "@/utils/date";
 import { formatDuration, getSessionDurationSeconds } from "@/lib/sessionTime";
 import { useToast } from "@/components/ui/Toast";
@@ -26,6 +28,13 @@ export function StudentSessionsTab({ assignmentId }: { assignmentId: string }) {
   const { addToast } = useToast();
   const [selectedSessionId, setSelectedSessionId] = useState<string | null>(null);
   const [searchTerm, setSearchTerm] = useState("");
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 10;
+
+  // Reset page when search term changes
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [searchTerm]);
 
   const { data: sessions = [], isLoading, refetch } = useQuery({
     queryKey: ["student-sessions", assignmentId],
@@ -35,7 +44,6 @@ export function StudentSessionsTab({ assignmentId }: { assignmentId: string }) {
       const data = await res.json();
       return data.sessions || [];
     },
-    refetchInterval: 2000, // Giảm từ 3s xuống 2s để realtime tốt hơn
     staleTime: 0, // Data luôn được coi là stale, refetch ngay lập tức
   });
 
@@ -58,11 +66,38 @@ export function StudentSessionsTab({ assignmentId }: { assignmentId: string }) {
     },
     enabled: !!selectedSessionId,
     staleTime: 0, // Data luôn được coi là stale
-    refetchInterval: (query) => {
-      const session = sessions.find((s: any) => s.id === selectedSessionId);
-      return (session && !session.submissions?.id) ? 3000 : false; // Giảm từ 5s xuống 3s
-    }
   });
+
+  // Đăng ký nhận thông báo thay đổi thời gian thực từ Supabase Realtime
+  useEffect(() => {
+    if (!assignmentId) return;
+
+    const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!;
+    const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!;
+    const supabase = createClient(supabaseUrl, supabaseAnonKey);
+
+    const channel = supabase
+      .channel(`student-sessions-admin-${assignmentId}`)
+      .on(
+        "postgres_changes",
+        {
+          event: "*",
+          schema: "public",
+          table: "student_sessions",
+          filter: `assignment_id=eq.${assignmentId}`,
+        },
+        (payload) => {
+          console.log("Realtime update received on student_sessions:", payload);
+          refetch();
+          refetchDetail();
+        }
+      )
+      .subscribe();
+
+    return () => {
+      supabase.removeChannel(channel);
+    };
+  }, [assignmentId, refetch, refetchDetail]);
 
   const handleDeleteSession = async (sessionId: string) => {
     if (!confirm("Xóa phiên làm bài này? Toàn bộ quá trình của học sinh sẽ bị mất.")) return;
@@ -96,6 +131,12 @@ export function StudentSessionsTab({ assignmentId }: { assignmentId: string }) {
       // Priority 3: Sort by started_at desc
       return new Date(b.started_at).getTime() - new Date(a.started_at).getTime();
     });
+
+  const totalPages = Math.ceil(filteredSessions.length / itemsPerPage);
+  const paginatedSessions = filteredSessions.slice(
+    (currentPage - 1) * itemsPerPage,
+    currentPage * itemsPerPage
+  );
 
   if (selectedSessionId) {
     const session = sessions.find((s: any) => s.id === selectedSessionId);
@@ -185,7 +226,7 @@ export function StudentSessionsTab({ assignmentId }: { assignmentId: string }) {
                   durationSeconds={detailData?.submission?.durationSeconds ?? detailData?.session?.durationSeconds ?? getSessionDurationSeconds(session)}
                   answeredCountOverride={
                     detailData?.draft_answers
-                      ? Object.keys(detailData.draft_answers).length
+                      ? Object.keys(detailData.draft_answers).filter(k => k !== "__sessionMeta").length
                       : undefined
                   }
                   exitCount={session.exit_count || 0}
@@ -303,7 +344,7 @@ export function StudentSessionsTab({ assignmentId }: { assignmentId: string }) {
         </div>
       ) : (
         <div className="grid grid-cols-1 gap-3">
-          {filteredSessions.map((s: any) => (
+          {paginatedSessions.map((s: any) => (
             <div 
               key={s.id} 
               className="group relative overflow-hidden rounded-xl sm:rounded-2xl bg-white/70 backdrop-blur-xl border border-white/80 shadow-lg shadow-slate-200/50 hover:shadow-xl transition-all duration-300 p-3 sm:p-4"
@@ -381,10 +422,10 @@ export function StudentSessionsTab({ assignmentId }: { assignmentId: string }) {
                       {/* Real-time stats for active sessions */}
                       {!s.submissions?.id && (
                         <div className="mt-2 flex items-center gap-3 flex-wrap">
-                          {s.draft_answers && Object.keys(s.draft_answers || {}).length > 0 && (
+                          {s.draft_answers && Object.keys(s.draft_answers || {}).filter(k => k !== "__sessionMeta").length > 0 && (
                             <div className="flex items-center gap-1.5 text-sm font-medium text-indigo-600 bg-indigo-50 px-2.5 py-1 rounded-lg">
                               <Target className="h-3 w-3" />
-                              <span>{Object.keys(s.draft_answers || {}).length} câu đã lưu</span>
+                              <span>{Object.keys(s.draft_answers || {}).filter(k => k !== "__sessionMeta").length} câu đã lưu</span>
                             </div>
                           )}
                           <div className="flex items-center gap-1.5 text-sm font-medium text-purple-600 bg-purple-50 px-2.5 py-1 rounded-lg">
@@ -429,6 +470,39 @@ export function StudentSessionsTab({ assignmentId }: { assignmentId: string }) {
               </div>
             </div>
           ))}
+        </div>
+      )}
+
+      {totalPages > 1 && (
+        <div className="flex items-center justify-center gap-1.5 mt-6">
+          <button
+            onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}
+            disabled={currentPage === 1}
+            className="flex h-9 w-9 items-center justify-center rounded-xl border border-slate-200 bg-white/80 text-slate-600 hover:text-indigo-600 disabled:opacity-40 disabled:cursor-not-allowed transition-all shadow-sm"
+          >
+            &larr;
+          </button>
+          {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
+            <button
+              key={page}
+              onClick={() => setCurrentPage(page)}
+              className={clsx(
+                "h-9 w-9 rounded-xl text-xs font-semibold transition-all duration-300 border shadow-sm",
+                currentPage === page
+                  ? "bg-gradient-to-r from-indigo-500 to-violet-500 border-indigo-500 text-white shadow-indigo-500/20"
+                  : "bg-white/80 border-slate-200 text-slate-600 hover:text-indigo-600"
+              )}
+            >
+              {page}
+            </button>
+          ))}
+          <button
+            onClick={() => setCurrentPage(prev => Math.min(prev + 1, totalPages))}
+            disabled={currentPage === totalPages}
+            className="flex h-9 w-9 items-center justify-center rounded-xl border border-slate-200 bg-white/80 text-slate-600 hover:text-indigo-600 disabled:opacity-40 disabled:cursor-not-allowed transition-all shadow-sm"
+          >
+            &rarr;
+          </button>
         </div>
       )}
     </div>

@@ -42,8 +42,8 @@ export default async function ResultPage({
 
   const supabase = createSupabaseAdmin();
 
-  const { data: submission } = await supabase
-    .from("submissions")
+  const { data: submission } = await (supabase
+    .from("submissions") as any)
     .select("*, assignments(*)")
     .eq("id", sid)
     .single();
@@ -51,40 +51,60 @@ export default async function ResultPage({
   if (!submission) return notFound();
 
   // Lấy câu hỏi và câu trả lời
-  const { data: questions } = await supabase
-    .from("questions")
+  const { data: questions } = await (supabase
+    .from("questions") as any)
     .select("*")
     .eq("assignment_id", submission.assignment_id)
     .order("order");
 
-  const { data: answers } = await supabase
-    .from("answers")
+  const { data: answers } = await (supabase
+    .from("answers") as any)
     .select("*")
     .eq("submission_id", sid);
 
-  const answerMap = new Map(answers?.map((a) => [a.question_id, a]) || []);
+  const answerMap = new Map<string, any>(answers?.map((a: any) => [a.question_id, a]) || []);
 
   const assignment = submission.assignments;
   const score = submission.score ?? 0;
-  const totalPoints = assignment?.total_score ?? questions?.reduce((sum, q) => sum + Number(q.points || 0), 0) ?? 0;
+  const totalPoints = assignment?.total_score ?? questions?.reduce((sum: number, q: any) => sum + Number(q.points || 0), 0) ?? 0;
   const submittedAt = new Date(submission.submitted_at).toLocaleString("vi-VN");
   const isScoreHidden = Boolean(assignment?.hide_score);
 
   // Tính toán thống kê
-  const mcqQuestions = questions?.filter(q => q.type === 'mcq') || [];
-  const correctCount = mcqQuestions.filter(q => answerMap.get(q.id)?.is_correct).length;
-  const incorrectCount = mcqQuestions.filter(q => answerMap.get(q.id)?.is_correct === false).length;
-  const unansweredCount = mcqQuestions.filter(q => !answerMap.has(q.id)).length;
+  const actualQuestions = questions?.filter((q: any) => q.type !== 'section') || [];
+  const correctCount = actualQuestions.filter((q: any) => {
+    const answer = answerMap.get(q.id);
+    let isCorrect = answer?.is_correct;
+    if (isCorrect === null && q.type === "short_answer") {
+      isCorrect = answer?.points_awarded === q.points;
+    }
+    return isCorrect === true;
+  }).length;
+
+  const incorrectCount = actualQuestions.filter((q: any) => {
+    const answer = answerMap.get(q.id);
+    let isCorrect = answer?.is_correct;
+    if (isCorrect === null && q.type === "short_answer") {
+      isCorrect = answer?.points_awarded === q.points;
+    }
+    return isCorrect === false;
+  }).length;
+
+  const unansweredCount = actualQuestions.filter((q: any) => {
+    const ans = answerMap.get(q.id);
+    return !ans || !ans.answer || ans.answer.trim() === "";
+  }).length;
+
   const percentage = totalPoints > 0 ? ((score / totalPoints) * 100).toFixed(1) : '0.0';
 
-  const { data: history } = await supabase
-    .from("submissions")
+  const { data: historyRaw } = await (supabase
+    .from("submissions") as any)
     .select("id, score, submitted_at, status, duration_seconds")
     .eq("assignment_id", submission.assignment_id)
     .eq("student_name", submission.student_name)
     .order("submitted_at", { ascending: false })
-    .limit(10)
-    .returns<SubmissionSummary[]>();
+    .limit(10);
+  const history = historyRaw as SubmissionSummary[] | null;
 
   return (
     <main className="min-h-screen bg-slate-100 dark:bg-[#0B1120] transition-colors duration-500" suppressHydrationWarning>

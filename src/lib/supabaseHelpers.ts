@@ -877,7 +877,7 @@ export async function fetchAllStudentsStats() {
       startedAt: session.started_at,
       lastActivityAt: session.last_activity_at,
       exitCount: session.exit_count || 0,
-      questionsAnswered: Object.keys(draftAnswers).length,
+      questionsAnswered: Object.keys(draftAnswers).filter(k => k !== "__sessionMeta").length,
       draftAnswers: draftAnswers,
     });
   });

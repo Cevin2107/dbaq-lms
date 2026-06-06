@@ -16,6 +16,8 @@ export function AssignmentList({ assignments }: AssignmentListProps) {
   const [statusFilter, setStatusFilter] = useState("not_started");
   const [now, setNow] = useState<number | null>(null);
   const [mounted, setMounted] = useState(false);
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 6;
 
   useEffect(() => {
     setMounted(true);
@@ -23,6 +25,11 @@ export function AssignmentList({ assignments }: AssignmentListProps) {
     const id = setInterval(() => setNow(Date.now()), 1000);
     return () => clearInterval(id);
   }, []);
+
+  // Reset page when filters change
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [search, subjectFilter, statusFilter]);
 
   const formatRemaining = (dueAt?: string | null) => {
     if (!dueAt) return null;
@@ -76,6 +83,12 @@ export function AssignmentList({ assignments }: AssignmentListProps) {
       return matchSearch && matchSubject && matchStatus;
     });
   }, [assignments, getDerivedStatus, search, subjectFilter, statusFilter]);
+
+  const totalPages = Math.ceil(filtered.length / itemsPerPage);
+  const paginated = useMemo(() => {
+    const start = (currentPage - 1) * itemsPerPage;
+    return filtered.slice(start, start + itemsPerPage);
+  }, [filtered, currentPage]);
 
   const subjects = Array.from(new Set(assignments.map((a) => a.subject)));
 
@@ -221,7 +234,7 @@ export function AssignmentList({ assignments }: AssignmentListProps) {
       </div>
 
       <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3" suppressHydrationWarning>
-        {filtered.map((assignment) => {
+        {paginated.map((assignment) => {
           const status = getDerivedStatus(assignment);
           const overdue = status === "overdue";
           const completed = status === "completed";
@@ -340,6 +353,39 @@ export function AssignmentList({ assignments }: AssignmentListProps) {
           </div>
         )}
       </div>
+
+      {totalPages > 1 && (
+        <div className="flex items-center justify-center gap-1.5 mt-8">
+          <button
+            onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}
+            disabled={currentPage === 1}
+            className="flex h-10 w-10 items-center justify-center rounded-2xl border border-slate-200/60 dark:border-slate-700 bg-white/60 dark:bg-slate-800/60 backdrop-blur-sm text-slate-600 dark:text-slate-300 hover:bg-white dark:hover:bg-slate-700 disabled:opacity-40 disabled:cursor-not-allowed transition-all shadow-md"
+          >
+            &larr;
+          </button>
+          {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
+            <button
+              key={page}
+              onClick={() => setCurrentPage(page)}
+              className={clsx(
+                "h-10 w-10 rounded-2xl text-sm font-semibold transition-all duration-300 border shadow-md",
+                currentPage === page
+                  ? "bg-gradient-to-r from-indigo-600 to-violet-600 border-indigo-600 text-white shadow-indigo-500/30"
+                  : "bg-white/60 dark:bg-slate-800/60 border-slate-200/60 dark:border-slate-700 text-slate-600 dark:text-slate-300 hover:bg-white dark:hover:bg-slate-700"
+              )}
+            >
+              {page}
+            </button>
+          ))}
+          <button
+            onClick={() => setCurrentPage(prev => Math.min(prev + 1, totalPages))}
+            disabled={currentPage === totalPages}
+            className="flex h-10 w-10 items-center justify-center rounded-2xl border border-slate-200/60 dark:border-slate-700 bg-white/60 dark:bg-slate-800/60 backdrop-blur-sm text-slate-600 dark:text-slate-300 hover:bg-white dark:hover:bg-slate-700 disabled:opacity-40 disabled:cursor-not-allowed transition-all shadow-md"
+          >
+            &rarr;
+          </button>
+        </div>
+      )}
     </div>
   );
 }
