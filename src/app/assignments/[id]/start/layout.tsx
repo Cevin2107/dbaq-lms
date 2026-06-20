@@ -11,7 +11,7 @@ export async function generateMetadata({ params }: { params: Promise<{ id: strin
     const assignment = await fetchAssignmentByIdAdmin(id);
 
     if (assignment) {
-      const title = `${assignment.title} + Gia sư Đào Bá Anh Quân`;
+      const title = `📝 ${assignment.title} 🔸 Gia sư Đào Bá Anh Quân`;
       const description = `Bài tập ${assignment.subject} ${assignment.grade}. Hoàn thành đúng hạn, được làm lại nhiều lần.`;
       
       return {
@@ -42,13 +42,13 @@ export async function generateMetadata({ params }: { params: Promise<{ id: strin
 
   return {
     ...(hasBaseUrl ? { metadataBase: new URL(appUrl!) } : {}),
-    title: "Bài tập - Gia sư Đào Bá Anh Quân",
+    title: "📝 Bài tập 🔸 Gia sư Đào Bá Anh Quân",
     description: "Hệ thống bài tập trực tuyến",
     alternates: {
       canonical: startPath,
     },
     openGraph: {
-      title: "Bài tập - Gia sư Đào Bá Anh Quân",
+      title: "📝 Bài tập 🔸 Gia sư Đào Bá Anh Quân",
       description: "Hệ thống bài tập trực tuyến",
       ...(hasBaseUrl ? { url: startPath } : {}),
       siteName: "Gia sư Đào Bá Anh Quân",
