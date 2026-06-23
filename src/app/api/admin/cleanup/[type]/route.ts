@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { checkAdminAuth } from "@/lib/adminAuth";
 import { createSupabaseAdmin } from "@/lib/supabaseAdmin";
-
+import { deleteAssignment, deleteQuestion, updateQuestion } from "@/lib/supabaseHelpers";
 export async function GET(
   req: NextRequest,
   { params }: { params: Promise<{ type: string }> }
@@ -181,20 +181,22 @@ export async function DELETE(
     switch (type) {
       case "assignments": {
         for (const id of ids) {
-          const { error } = await (supabase.from("assignments") as any)
-            .delete()
-            .eq("id", id);
-          if (error) console.error(`Error deleting assignment ${id}:`, error);
+          try {
+            await deleteAssignment(id);
+          } catch (error) {
+            console.error(`Error deleting assignment ${id}:`, error);
+          }
         }
         break;
       }
 
       case "questions": {
         for (const id of ids) {
-          const { error } = await (supabase.from("questions") as any)
-            .delete()
-            .eq("id", id);
-          if (error) console.error(`Error deleting question ${id}:`, error);
+          try {
+            await deleteQuestion(id);
+          } catch (error) {
+            console.error(`Error deleting question ${id}:`, error);
+          }
         }
         break;
       }
@@ -220,12 +222,13 @@ export async function DELETE(
       }
 
       case "images": {
-        // For images, we update questions to remove image_url
+        // For images, we update questions to remove image_url, which triggers deletion on Catbox/Supabase
         for (const id of ids) {
-          const { error } = await (supabase.from("questions") as any)
-            .update({ image_url: null })
-            .eq("id", id);
-          if (error) console.error(`Error removing image from question ${id}:`, error);
+          try {
+            await updateQuestion(id, { imageUrl: null });
+          } catch (error) {
+            console.error(`Error removing image from question ${id}:`, error);
+          }
         }
         break;
       }

@@ -417,6 +417,41 @@ export async function rebalanceQuestionPoints(assignmentId: string) {
   }
 }
 
+export async function deleteCatboxImages(urls: string[]) {
+  const userhash = process.env.CATBOX_USERHASH;
+  if (!userhash) return; // Anonymous files cannot be deleted via API
+  
+  const filesToDelete = urls
+    .filter(u => u && u.includes("files.catbox.moe"))
+    .map(u => {
+      const match = u.match(/files\.catbox\.moe\/(.+)$/);
+      return match ? match[1] : null;
+    })
+    .filter(Boolean) as string[];
+
+  if (filesToDelete.length === 0) return;
+
+  try {
+    const fd = new FormData();
+    fd.append("reqtype", "deletefiles");
+    fd.append("userhash", userhash);
+    fd.append("files", filesToDelete.join(" "));
+
+    const res = await fetch("https://catbox.moe/user/api.php", {
+      method: "POST",
+      body: fd,
+    });
+    
+    if (!res.ok) {
+      console.error("Failed to delete from Catbox:", await res.text());
+    } else {
+      console.log(`Deleted ${filesToDelete.length} files from Catbox`);
+    }
+  } catch (err) {
+    console.error("Catbox delete error:", err);
+  }
+}
+
 export async function deleteAssignment(assignmentId: string) {
   const supabase = getSupabaseAdmin();
   
@@ -444,6 +479,7 @@ export async function deleteAssignment(assignmentId: string) {
         console.log(`Deleting ${imagePaths.length} images from storage`);
         await supabase.storage.from('question-images').remove(imagePaths);
       }
+      await deleteCatboxImages(imageUrls);
     }
   }
   
@@ -483,6 +519,7 @@ export async function deleteQuestion(questionId: string) {
     if (match) {
       await supabase.storage.from('question-images').remove([match[1]]);
     }
+    await deleteCatboxImages([question.image_url]);
   }
 
   const { error: deleteError } = await supabase.from("questions").delete().eq("id", questionId);
@@ -533,6 +570,9 @@ export async function bulkDeleteQuestions(questionIds: string[], assignmentId: s
   if (imagePaths.length > 0) {
     await supabase.storage.from('question-images').remove(imagePaths);
   }
+
+  const allImageUrls = questions.map(q => q.image_url).filter(Boolean) as string[];
+  await deleteCatboxImages(allImageUrls);
 
   // 2. Delete questions
   const idsToDelete = questions.map(q => q.id);
@@ -588,6 +628,7 @@ export async function updateQuestion(questionId: string, data: {
       if (match) {
         await supabase.storage.from('question-images').remove([match[1]]);
       }
+      await deleteCatboxImages([oldQuestion.image_url]);
     }
   }
 
