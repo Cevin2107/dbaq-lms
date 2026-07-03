@@ -9,6 +9,7 @@ import { ThemeProvider } from "@/providers/ThemeProvider";
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
+  metadataBase: new URL("https://dbaq-lms.vercel.app"),
   title: "Gia sư Đào Bá Anh Quân",
   description: "Hệ thống bài tập trực tuyến - Giao và làm bài tập, tự động chấm điểm, theo dõi tiến độ học tập",
   appleWebApp: {
