@@ -214,7 +214,7 @@ export function AiGeneratorModal({ assignmentId, isOpen, onClose, onSuccess }: A
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/40 backdrop-blur-sm p-4 animate-fade-in">
-      <Card className="flex w-full max-w-4xl flex-col max-h-[90vh] overflow-hidden bg-white shadow-2xl">
+      <Card className="flex w-full max-w-4xl flex-col max-h-[90vh] overflow-hidden rounded-[2rem] bg-white/95 dark:bg-[#1d1d1f]/95 backdrop-blur-xl shadow-[0_8px_30px_rgba(0,0,0,0.12)] border border-black/5 dark:border-white/5">
         <div className="flex items-center justify-between border-b border-slate-100 px-6 py-4">
           <div className="flex items-center gap-2">
             <Sparkles className="h-5 w-5 text-indigo-500" />

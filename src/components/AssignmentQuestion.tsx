@@ -40,22 +40,22 @@ export const AssignmentQuestion = memo(function AssignmentQuestion({
       id={`q-${q.id}`}
       style={{ animationDelay: `${Math.min(idx * 35, 350)}ms` }}
       className={clsx(
-        "rounded-3xl p-5 sm:p-6 transition-all duration-300 animate-slide-up relative overflow-hidden",
+        "rounded-[2rem] p-5 sm:p-6 transition-all duration-300 animate-slide-up relative overflow-hidden",
         q.type === "section"
           ? isDark 
-            ? "bg-slate-800/80 border border-slate-700 shadow-xl" 
-            : "bg-gradient-to-br from-indigo-50/90 to-violet-50/90 border border-indigo-100 shadow-lg backdrop-blur-xl"
+            ? "bg-[#1d1d1f]/80 border border-white/5 shadow-sm backdrop-blur-xl" 
+            : "bg-slate-50/90 border border-black/5 shadow-[0_4px_20px_rgba(0,0,0,0.03)] backdrop-blur-xl"
           : isAnswered
             ? isDark
-              ? "bg-slate-800/95 border border-emerald-500/40 shadow-[0_0_15px_rgba(16,185,129,0.1)] ring-1 ring-emerald-500/20"
-              : "bg-white border-2 border-emerald-200 shadow-xl shadow-emerald-100/40"
+              ? "bg-[#1d1d1f]/95 border border-[#0066cc]/30 shadow-[0_4px_20px_rgba(0,0,0,0.03)] ring-1 ring-[#0066cc]/10"
+              : "bg-white border border-[#0066cc]/20 shadow-[0_4px_20px_rgba(0,0,0,0.03)] ring-1 ring-[#0066cc]/10"
             : isDark
-              ? "bg-slate-800/60 border border-slate-700 hover:border-slate-600 shadow-lg"
-              : "bg-white/95 border border-slate-200/80 shadow-lg hover:shadow-xl backdrop-blur-md"
+              ? "bg-[#1d1d1f]/60 border border-white/5 hover:border-white/10 shadow-[0_4px_20px_rgba(0,0,0,0.03)]"
+              : "bg-white/95 border border-black/5 shadow-[0_4px_20px_rgba(0,0,0,0.03)] hover:shadow-[0_8px_30px_rgba(0,0,0,0.05)] backdrop-blur-md"
       )}
     >
       {/* Accent glow on top edge */}
-      {isAnswered && !isDark && <div className="absolute top-0 inset-x-0 h-1 bg-gradient-to-r from-emerald-400 to-teal-400" />}
+      {isAnswered && !isDark && <div className="absolute top-0 inset-x-0 h-1 bg-[#0066cc]" />}
       {isAnswered && isDark && <div className="absolute top-0 inset-x-0 h-1 bg-gradient-to-r from-emerald-500 to-teal-500 opacity-50" />}
 
       <div className="flex items-start justify-between gap-4">
@@ -63,15 +63,15 @@ export const AssignmentQuestion = memo(function AssignmentQuestion({
           {q.type === "section" ? (
             <div className="flex flex-col sm:flex-row items-start gap-3 sm:gap-4">
               <div className={clsx(
-                "mt-0.5 flex h-8 w-8 sm:h-10 sm:w-10 shrink-0 items-center justify-center rounded-2xl shadow-sm",
-                isDark ? "bg-indigo-500/20 text-indigo-400" : "bg-white text-indigo-600 border border-indigo-100"
+                "mt-0.5 flex h-8 w-8 sm:h-10 sm:w-10 shrink-0 items-center justify-center rounded-full shadow-sm",
+                isDark ? "bg-blue-500/20 text-[#0066cc]" : "bg-[#0066cc]/10 text-[#0066cc]"
               )}>
                 <svg className="h-4 w-4 sm:h-5 sm:w-5" fill="currentColor" viewBox="0 0 20 20">
                   <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clipRule="evenodd" />
                 </svg>
               </div>
               <div className="flex-1 min-w-0">
-                <p className={clsx("text-[10px] sm:text-xs font-black uppercase tracking-widest mb-2 opacity-70", isDark ? "text-indigo-400" : "text-indigo-600")}>Thông báo</p>
+                <p className={clsx("text-[10px] sm:text-xs font-bold uppercase tracking-widest mb-2 opacity-70", isDark ? "text-blue-400" : "text-[#0066cc]")}>Thông báo</p>
                 {q.imageUrl && (
                   <div className={clsx("mb-4 overflow-hidden rounded-2xl border", isDark ? "border-slate-700 bg-slate-900/50" : "border-indigo-100 bg-white/50")}>
                     <img 
@@ -94,15 +94,15 @@ export const AssignmentQuestion = memo(function AssignmentQuestion({
             <>
               <div className="flex items-center gap-3 mb-4">
                 <div className={clsx(
-                  "flex h-8 w-8 items-center justify-center rounded-xl text-sm font-black shrink-0 transition-all duration-300 shadow-sm",
+                  "flex h-8 w-8 items-center justify-center rounded-full text-[13px] font-bold shrink-0 transition-all duration-300 shadow-sm",
                   isAnswered 
-                    ? isDark ? "bg-emerald-500/20 text-emerald-400" : "bg-emerald-100 text-emerald-700 border border-emerald-200" 
-                    : isDark ? "bg-slate-700 text-slate-300" : "bg-slate-100 text-slate-600 border border-slate-200"
+                    ? isDark ? "bg-[#0066cc]/20 text-blue-400" : "bg-[#0066cc]/10 text-[#0066cc] border border-[#0066cc]/20" 
+                    : isDark ? "bg-white/10 text-slate-300 border border-white/5" : "bg-slate-50 text-slate-600 border border-black/5"
                 )}>
                   {questionNumber}
                 </div>
                 {isAnswered && (
-                  <span className={clsx("flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-bold", isDark ? "bg-emerald-500/10 text-emerald-400 ring-1 ring-emerald-500/20" : "bg-emerald-50 text-emerald-600 ring-1 ring-emerald-200")}>
+                  <span className={clsx("flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[11px] font-bold", isDark ? "bg-[#0066cc]/10 text-[#0066cc] ring-1 ring-[#0066cc]/20" : "bg-[#0066cc]/5 text-[#0066cc] ring-1 ring-[#0066cc]/10")}>
                     <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={3}>
                       <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
                     </svg>
@@ -111,7 +111,7 @@ export const AssignmentQuestion = memo(function AssignmentQuestion({
                 )}
               </div>
               {q.imageUrl && (
-                <div className={clsx("mb-4 overflow-hidden rounded-2xl border shadow-sm", isDark ? "border-slate-700 bg-slate-900/50" : "border-slate-200 bg-slate-50")}>
+                <div className={clsx("mb-4 overflow-hidden rounded-2xl border shadow-sm", isDark ? "border-white/5 bg-[#1d1d1f]/50" : "border-black/5 bg-slate-50")}>
                   <img src={q.imageUrl} alt="Câu hỏi" className="max-h-[350px] w-full object-contain" loading="lazy"
                     onError={(e) => { (e.target as HTMLImageElement).style.display = 'none'; }} />
                 </div>
@@ -149,11 +149,11 @@ export const AssignmentQuestion = memo(function AssignmentQuestion({
                   "group relative flex cursor-pointer items-start sm:items-center gap-3 rounded-2xl border px-4 py-3 sm:py-4 transition-all duration-300 overflow-hidden",
                   checked
                     ? isDark 
-                      ? "border-indigo-500 bg-indigo-500/20 shadow-[0_4px_20px_rgba(99,102,241,0.15)] ring-1 ring-indigo-500/50 z-10 scale-[1.02]" 
-                      : "border-transparent bg-gradient-to-br from-indigo-500 to-violet-600 text-white shadow-xl shadow-indigo-500/30 z-10 scale-[1.02]"
+                      ? "border-blue-500 bg-blue-500/20 shadow-[0_4px_20px_rgba(0,102,204,0.15)] ring-1 ring-blue-500/50 z-10 scale-[1.02]" 
+                      : "border-transparent bg-[#0066cc] text-white shadow-md shadow-blue-500/30 z-10 scale-[1.02]"
                     : isDark 
-                      ? "border-slate-700 bg-slate-800/50 hover:bg-slate-700 hover:border-slate-500" 
-                      : "border-slate-200 bg-slate-50/50 text-slate-700 hover:border-indigo-300 hover:bg-white hover:shadow-md"
+                      ? "border-white/10 bg-[#1d1d1f]/50 hover:bg-white/5 hover:border-white/20" 
+                      : "border-black/5 bg-slate-50/50 text-slate-700 hover:border-[#0066cc]/30 hover:bg-white hover:shadow-sm"
                 )}
               >
                 {/* Background glow on selected */}
@@ -161,10 +161,10 @@ export const AssignmentQuestion = memo(function AssignmentQuestion({
                 {checked && !isDark && <div className="absolute inset-0 bg-gradient-to-r from-white/0 via-white/10 to-white/0 translate-x-[-100%] animate-[shimmer_2s_infinite] pointer-events-none" />}
 
                 <span className={clsx(
-                  "flex h-6 w-6 sm:h-7 sm:w-7 shrink-0 items-center justify-center rounded-full text-xs sm:text-sm font-black transition-all duration-300 relative z-10",
+                  "flex h-6 w-6 sm:h-7 sm:w-7 shrink-0 items-center justify-center rounded-full text-xs sm:text-[13px] font-bold transition-all duration-300 relative z-10",
                   checked 
-                    ? isDark ? "bg-indigo-500 text-white shadow-md shadow-indigo-500/40 scale-110" : "bg-white text-indigo-600 shadow-lg scale-110" 
-                    : isDark ? "bg-slate-700 text-slate-400 group-hover:bg-slate-600 group-hover:text-slate-200" : "bg-white text-slate-500 shadow-sm ring-1 ring-slate-200 group-hover:ring-indigo-300 group-hover:text-indigo-600"
+                    ? isDark ? "bg-[#0066cc] text-white shadow-sm scale-110" : "bg-white text-[#0066cc] shadow-sm scale-110" 
+                    : isDark ? "bg-white/10 text-slate-400 group-hover:bg-white/20 group-hover:text-slate-200" : "bg-white text-slate-500 shadow-sm border border-black/5 group-hover:border-[#0066cc]/30 group-hover:text-[#0066cc]"
                 )}>
                   {val}
                 </span>
@@ -181,10 +181,10 @@ export const AssignmentQuestion = memo(function AssignmentQuestion({
           <div className="relative group">
             <textarea
               className={clsx(
-                "min-h-[150px] w-full rounded-2xl border px-5 py-4 text-sm sm:text-[15px] transition-all duration-300 resize-y",
+                "min-h-[150px] w-full rounded-2xl border px-5 py-4 text-[15px] transition-all duration-300 resize-y",
                 isDark 
-                  ? "bg-slate-900/50 border-slate-700 text-slate-200 placeholder-slate-500 focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500/50 hover:border-slate-600" 
-                  : "bg-slate-50/50 border-slate-200 text-slate-800 placeholder-slate-400 focus:border-indigo-400 focus:bg-white focus:ring-4 focus:ring-indigo-500/10 hover:border-slate-300 hover:bg-slate-50"
+                  ? "bg-[#1d1d1f]/50 border-white/10 text-slate-200 placeholder-slate-500 focus:border-[#0066cc] focus:ring-1 focus:ring-[#0066cc]/50 hover:border-white/20" 
+                  : "bg-slate-50/50 border-black/5 text-slate-800 placeholder-slate-400 focus:border-[#0066cc]/50 focus:bg-white focus:ring-4 focus:ring-[#0066cc]/10 hover:border-[#0066cc]/30 hover:bg-slate-50"
               )}
               placeholder="Nhập phần tự luận của bạn vào đây..."
               disabled={locked}
@@ -232,10 +232,10 @@ export const AssignmentQuestion = memo(function AssignmentQuestion({
                 <label className={clsx(
                   "flex cursor-pointer group flex-col sm:flex-row items-center justify-center gap-3 sm:gap-4 rounded-2xl border-2 border-dashed px-6 py-6 sm:py-8 transition-all duration-300",
                   essayImageUploading
-                    ? isDark ? "border-indigo-500/50 bg-indigo-500/10 text-indigo-400 cursor-wait" : "border-indigo-300 bg-indigo-50 text-indigo-500 cursor-wait"
+                    ? isDark ? "border-[#0066cc]/50 bg-[#0066cc]/10 text-blue-400 cursor-wait" : "border-[#0066cc]/30 bg-[#0066cc]/5 text-[#0066cc] cursor-wait"
                     : isDark 
-                      ? "border-slate-700 bg-slate-800/30 text-slate-400 hover:border-indigo-500/50 hover:bg-indigo-500/10 hover:text-indigo-300" 
-                      : "border-slate-300 bg-slate-50 text-slate-500 hover:border-indigo-400 hover:bg-indigo-50 hover:text-indigo-600"
+                      ? "border-white/10 bg-[#1d1d1f]/30 text-slate-400 hover:border-[#0066cc]/50 hover:bg-[#0066cc]/10 hover:text-blue-300" 
+                      : "border-black/10 bg-slate-50 text-slate-500 hover:border-[#0066cc]/40 hover:bg-[#0066cc]/5 hover:text-[#0066cc]"
                 )}>
                   {essayImageUploading ? (
                     <>
@@ -306,10 +306,10 @@ export const AssignmentQuestion = memo(function AssignmentQuestion({
         <input
           type="text"
           className={clsx(
-            "mt-4 w-full rounded-2xl border px-5 py-4 text-sm sm:text-[15px] transition-all duration-300",
+            "mt-4 w-full rounded-2xl border px-5 py-4 text-[15px] transition-all duration-300",
             isDark 
-              ? "bg-slate-900/50 border-slate-700 text-slate-200 placeholder-slate-500 focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500/50 hover:border-slate-600" 
-              : "bg-slate-50/50 border-slate-200 text-slate-800 placeholder-slate-400 focus:border-indigo-400 focus:bg-white focus:ring-4 focus:ring-indigo-500/10 hover:border-slate-300 hover:bg-slate-50"
+              ? "bg-[#1d1d1f]/50 border-white/10 text-slate-200 placeholder-slate-500 focus:border-[#0066cc] focus:ring-1 focus:ring-[#0066cc]/50 hover:border-white/20" 
+              : "bg-slate-50/50 border-black/5 text-slate-800 placeholder-slate-400 focus:border-[#0066cc]/50 focus:bg-white focus:ring-4 focus:ring-[#0066cc]/10 hover:border-[#0066cc]/30 hover:bg-slate-50"
           )}
           placeholder="Nhập đáp án ngắn..."
           disabled={locked}
@@ -345,14 +345,14 @@ export const AssignmentQuestion = memo(function AssignmentQuestion({
                         onSetChoice(q.id, JSON.stringify(updated));
                       }}
                       className={clsx(
-                        "rounded-xl px-5 py-2.5 text-xs sm:text-sm font-bold transition-all duration-300 min-w-[70px] flex-1 sm:flex-none",
+                        "rounded-full px-5 py-2.5 text-[13px] font-bold transition-all duration-300 min-w-[70px] flex-1 sm:flex-none active:scale-[0.98]",
                         selected === val
                           ? val === "true" 
-                            ? "bg-gradient-to-br from-emerald-400 to-emerald-600 text-white shadow-lg shadow-emerald-500/30 scale-105" 
-                            : "bg-gradient-to-br from-red-400 to-red-600 text-white shadow-lg shadow-red-500/30 scale-105"
+                            ? "bg-emerald-500 text-white shadow-sm" 
+                            : "bg-red-500 text-white shadow-sm"
                           : isDark 
-                            ? "border border-slate-600 bg-slate-700/50 text-slate-300 hover:bg-slate-600 hover:text-white" 
-                            : "border border-slate-200 bg-white text-slate-600 hover:border-slate-300 hover:bg-slate-50 hover:shadow-sm"
+                            ? "border border-white/10 bg-[#1d1d1f]/50 text-slate-300 hover:bg-white/10 hover:text-white" 
+                            : "border border-black/5 bg-white text-slate-600 hover:border-black/10 hover:bg-slate-50 hover:shadow-sm"
                       )}
                     >
                       {val === "true" ? "Đúng" : "Sai"}

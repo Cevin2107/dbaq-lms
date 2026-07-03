@@ -71,7 +71,7 @@ export default function DatabaseCleanupModal({ onClose }: { onClose: () => void 
   const toggleAssignmentGroup = (groupItems: CleanupItem[]) => {
     const groupIds = groupItems.map((item) => item.id);
     const allSelected = groupIds.every((id) => selectedItems.has(id));
-    
+
     const newSet = new Set(selectedItems);
     if (allSelected) {
       // Deselect all in group
@@ -147,11 +147,10 @@ export default function DatabaseCleanupModal({ onClose }: { onClose: () => void 
             <button
               key={tab.key}
               onClick={() => handleTabChange(tab.key)}
-              className={`px-3 py-2 text-xs font-semibold rounded-full border transition whitespace-nowrap ${
-                activeTab === tab.key
+              className={`px-3 py-2 text-xs font-semibold rounded-full border transition whitespace-nowrap ${activeTab === tab.key
                   ? "border-indigo-300 bg-indigo-50 text-indigo-700 shadow-sm"
                   : "border-transparent text-slate-600 hover:text-slate-900 hover:bg-slate-100"
-              }`}
+                }`}
             >
               {tab.icon} {tab.label}
             </button>
@@ -211,86 +210,84 @@ export default function DatabaseCleanupModal({ onClose }: { onClose: () => void 
 
                   return Object.entries(grouped).map(([assignmentId, groupItems]) => {
                     const allSelected = groupItems.every((item) => selectedItems.has(item.id));
-                    
+
                     return (
-                    <div key={assignmentId} className="mb-4">
-                      <div className="sticky top-0 z-10 bg-slate-100/90 backdrop-blur border border-slate-200 rounded-2xl p-3 mb-2">
-                        <div className="flex items-center justify-between">
-                          <label className="flex items-center gap-3 cursor-pointer flex-1">
-                            <input
-                              type="checkbox"
-                              checked={allSelected}
-                              onChange={() => toggleAssignmentGroup(groupItems)}
-                              className="w-4 h-4"
-                            />
-                            <h3 className="text-sm font-bold text-slate-900">
-                              📚 {groupItems[0]?.assignmentTitle || "Khong co bai tap"}
-                            </h3>
-                          </label>
-                          <span className="text-xs text-slate-600">{groupItems.length} ảnh</span>
+                      <div key={assignmentId} className="mb-4">
+                        <div className="sticky top-0 z-10 bg-slate-100/90 backdrop-blur border border-slate-200 rounded-2xl p-3 mb-2">
+                          <div className="flex items-center justify-between">
+                            <label className="flex items-center gap-3 cursor-pointer flex-1">
+                              <input
+                                type="checkbox"
+                                checked={allSelected}
+                                onChange={() => toggleAssignmentGroup(groupItems)}
+                                className="w-4 h-4"
+                              />
+                              <h3 className="text-sm font-bold text-slate-900">
+                                📚 {groupItems[0]?.assignmentTitle || "Khong co bai tap"}
+                              </h3>
+                            </label>
+                            <span className="text-xs text-slate-600">{groupItems.length} ảnh</span>
+                          </div>
                         </div>
-                      </div>
-                      <div className="space-y-2 pl-4">
-                        {groupItems.map((item) => (
-                          <div
-                            key={item.id}
-                            className={`flex items-center gap-3 p-3 rounded-2xl border transition ${
-                              selectedItems.has(item.id)
-                                ? "border-indigo-300 bg-indigo-50"
-                                : "border-slate-200 bg-white hover:border-slate-300"
-                            }`}
-                          >
-                            <input
-                              type="checkbox"
-                              checked={selectedItems.has(item.id)}
-                              onChange={() => toggleItem(item.id)}
-                              className="w-4 h-4"
-                            />
-                            <div className="flex-1">
-                              <p className="text-sm font-medium text-slate-900">{item.name}</p>
-                              {item.info && (
-                                <p className="text-xs text-slate-600">{item.info}</p>
+                        <div className="space-y-2 pl-4">
+                          {groupItems.map((item) => (
+                            <div
+                              key={item.id}
+                              className={`flex items-center gap-3 p-3 rounded-2xl border transition ${selectedItems.has(item.id)
+                                  ? "border-indigo-300 bg-indigo-50"
+                                  : "border-slate-200 bg-white hover:border-slate-300"
+                                }`}
+                            >
+                              <input
+                                type="checkbox"
+                                checked={selectedItems.has(item.id)}
+                                onChange={() => toggleItem(item.id)}
+                                className="w-4 h-4"
+                              />
+                              <div className="flex-1">
+                                <p className="text-sm font-medium text-slate-900">{item.name}</p>
+                                {item.info && (
+                                  <p className="text-xs text-slate-600">{item.info}</p>
+                                )}
+                              </div>
+                              {item.size && (
+                                <span className="text-xs text-slate-500">{item.size}</span>
                               )}
                             </div>
-                            {item.size && (
-                              <span className="text-xs text-slate-500">{item.size}</span>
-                            )}
-                          </div>
-                        ))}
+                          ))}
+                        </div>
                       </div>
-                    </div>
-                  );
-                });
+                    );
+                  });
                 })()
               ) : (
                 // Regular list for other tabs
                 items.map((item) => (
-                <div
-                  key={item.id}
-                  className={`relative flex items-center gap-3 p-3 rounded-2xl border transition ${
-                    selectedItems.has(item.id)
-                      ? "border-indigo-300 bg-indigo-50"
-                      : "border-slate-200 bg-white hover:border-slate-300"
-                  }`}
-                  style={{ zIndex: 0 }}
-                >
-                  <input
-                    type="checkbox"
-                    checked={selectedItems.has(item.id)}
-                    onChange={() => toggleItem(item.id)}
-                    className="w-4 h-4"
-                  />
-                  <div className="flex-1">
-                    <p className="text-sm font-medium text-slate-900">{item.name}</p>
-                    {item.info && (
-                      <p className="text-xs text-slate-600">{item.info}</p>
+                  <div
+                    key={item.id}
+                    className={`relative flex items-center gap-3 p-3 rounded-2xl border transition ${selectedItems.has(item.id)
+                        ? "border-indigo-300 bg-indigo-50"
+                        : "border-slate-200 bg-white hover:border-slate-300"
+                      }`}
+                    style={{ zIndex: 0 }}
+                  >
+                    <input
+                      type="checkbox"
+                      checked={selectedItems.has(item.id)}
+                      onChange={() => toggleItem(item.id)}
+                      className="w-4 h-4"
+                    />
+                    <div className="flex-1">
+                      <p className="text-sm font-medium text-slate-900">{item.name}</p>
+                      {item.info && (
+                        <p className="text-xs text-slate-600">{item.info}</p>
+                      )}
+                    </div>
+                    {item.size && (
+                      <span className="text-xs text-slate-500">{item.size}</span>
                     )}
                   </div>
-                  {item.size && (
-                    <span className="text-xs text-slate-500">{item.size}</span>
-                  )}
-                </div>
-              )))}
+                )))}
             </div>
           )}
         </div>

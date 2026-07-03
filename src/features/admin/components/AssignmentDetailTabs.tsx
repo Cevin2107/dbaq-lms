@@ -29,7 +29,7 @@ export function AssignmentDetailTabs({ assignmentId, initialAssignment, initialQ
 
   return (
     <div className="mx-auto max-w-6xl px-3 sm:px-4 py-4 sm:py-8 md:px-8 space-y-4 sm:space-y-6 animate-fade-in transition-colors duration-500">
-      <div className="flex flex-col gap-3 sm:gap-4 md:flex-row md:items-center md:justify-between bg-white/70 dark:bg-slate-800/80 backdrop-blur-xl border border-slate-200/50 dark:border-slate-700/50 p-4 sm:p-6 rounded-2xl sm:rounded-3xl shadow-sm">
+      <div className="flex flex-col gap-3 sm:gap-4 md:flex-row md:items-center md:justify-between bg-white/80 dark:bg-[#1d1d1f]/80 backdrop-blur-xl border border-black/5 dark:border-white/5 p-4 sm:p-6 rounded-[2rem] shadow-[0_4px_20px_rgba(0,0,0,0.03)]">
         <div>
           <Link href="/admin/dashboard">
             <Button variant="ghost" size="sm" className="mb-2 -ml-3 text-slate-500 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-700/50">
@@ -38,20 +38,20 @@ export function AssignmentDetailTabs({ assignmentId, initialAssignment, initialQ
             </Button>
           </Link>
           <div className="flex items-center gap-3">
-             <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-gradient-to-br from-indigo-500 to-violet-600 shadow-lg text-white">
+             <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl bg-[#0066cc] shadow-lg shadow-blue-500/20 text-white">
                 <Settings className="h-5 w-5" />
              </div>
              <div>
-              <h1 className="text-lg sm:text-2xl font-black text-slate-900 dark:text-white tracking-tight line-clamp-2">
+              <h1 className="text-lg sm:text-2xl font-black text-slate-900 dark:text-white tracking-[-0.02em] line-clamp-2">
                 <MathText text={initialAssignment?.title || "Chi tiết bài tập"} />
               </h1>
-                <p className="text-xs sm:text-sm font-medium text-slate-500 dark:text-slate-400 mt-0.5 hidden sm:block">Quản lý cấu hình, bộ câu hỏi và theo dõi quá trình làm bài.</p>
+                <p className="text-xs sm:text-[15px] font-medium text-slate-500 dark:text-slate-400 mt-1 hidden sm:block">Quản lý cấu hình, bộ câu hỏi và theo dõi quá trình làm bài.</p>
              </div>
           </div>
         </div>
       </div>
 
-      <div className="bg-white/70 dark:bg-slate-800/80 backdrop-blur-xl border border-slate-200/50 dark:border-slate-700/50 p-1.5 sm:p-2 rounded-2xl shadow-sm">
+      <div className="bg-white/80 dark:bg-[#1d1d1f]/80 backdrop-blur-xl border border-black/5 dark:border-white/5 p-1.5 sm:p-2 rounded-[2rem] shadow-[0_4px_20px_rgba(0,0,0,0.03)]">
         <nav className="flex gap-1 sm:gap-2 overflow-x-auto scrollbar-hide" aria-label="Tabs">
           {TABS.map((tab) => {
             const Icon = tab.icon;
@@ -61,16 +61,16 @@ export function AssignmentDetailTabs({ assignmentId, initialAssignment, initialQ
                 key={tab.id}
                 onClick={() => setActiveTab(tab.id as any)}
                 className={cn(
-                  "group inline-flex items-center rounded-xl px-3 sm:px-5 py-2.5 sm:py-3 text-xs sm:text-sm font-bold transition-all whitespace-nowrap flex-shrink-0",
+                  "group inline-flex items-center rounded-full px-4 sm:px-6 py-2.5 sm:py-3 text-[14px] font-bold transition-all whitespace-nowrap flex-shrink-0",
                   isActive
-                    ? "bg-indigo-50 dark:bg-indigo-500/10 text-indigo-600 dark:text-indigo-400 shadow-sm"
+                    ? "bg-[#0066cc]/10 text-[#0066cc] shadow-sm"
                     : "text-slate-500 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-700/50 hover:text-slate-700 dark:hover:text-slate-300"
                 )}
               >
                 <Icon
                   className={cn(
                     "mr-1.5 sm:mr-2.5 h-4 w-4 transition-colors flex-shrink-0",
-                    isActive ? "text-indigo-600 dark:text-indigo-400" : "text-slate-400 group-hover:text-slate-500 dark:group-hover:text-slate-300"
+                    isActive ? "text-[#0066cc]" : "text-slate-400 group-hover:text-slate-500 dark:group-hover:text-slate-300"
                   )}
                   aria-hidden="true"
                 />

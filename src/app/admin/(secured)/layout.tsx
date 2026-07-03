@@ -15,11 +15,11 @@ export default async function AdminLayout({
   }
 
   return (
-    <div className="flex h-screen overflow-hidden bg-gradient-to-br from-slate-50 via-blue-50/20 to-indigo-50/30 relative">
+    <div className="flex h-screen overflow-hidden bg-[#f5f5f7] dark:bg-black relative">
       {/* Soft background elements */}
       <div className="pointer-events-none fixed inset-0 overflow-hidden">
-        <div className="absolute -top-40 right-1/4 h-[500px] w-[500px] rounded-full bg-gradient-to-br from-blue-200/20 to-indigo-200/15 blur-[120px]" />
-        <div className="absolute -bottom-40 left-1/4 h-[500px] w-[500px] rounded-full bg-gradient-to-tl from-violet-200/20 to-purple-200/15 blur-[120px]" />
+        <div className="absolute -top-40 right-1/4 h-[500px] w-[500px] rounded-full bg-blue-200/20 dark:bg-blue-900/20 blur-[120px]" />
+        <div className="absolute -bottom-40 left-1/4 h-[500px] w-[500px] rounded-full bg-sky-200/20 dark:bg-sky-900/20 blur-[120px]" />
       </div>
 
       <AdminSidebar />

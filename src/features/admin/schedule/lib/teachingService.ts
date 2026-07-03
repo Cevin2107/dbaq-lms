@@ -60,3 +60,17 @@ export async function getSessionsForAllStudents(year: number, month: number) {
   if (error) throw error;
   return data || [];
 }
+
+export async function getSessionsForYear(year: number) {
+  const startDate = `${year}-01-01`;
+  const endDate = `${year}-12-31`;
+
+  const { data, error } = await supabase
+    .from("teaching_sessions")
+    .select("teaching_date")
+    .gte("teaching_date", startDate)
+    .lte("teaching_date", endDate);
+
+  if (error) throw error;
+  return data || [];
+}

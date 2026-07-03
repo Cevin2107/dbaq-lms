@@ -191,83 +191,78 @@ export function StudentWorkReviewPanel({
   return (
     <div className="space-y-4">
       {!isSubmitted && (
-        <div className="flex items-center gap-2 p-2.5 rounded-2xl bg-amber-50 border border-amber-200/80">
+        <div className="flex items-center gap-2 p-3 rounded-[2rem] bg-amber-50 dark:bg-amber-900/20 border border-amber-200/80 dark:border-amber-800/30 shadow-[0_4px_20px_rgba(0,0,0,0.03)]">
           <div className="flex-shrink-0">
             <div className="relative">
               <div className="absolute inset-0 bg-amber-500 rounded-full blur animate-pulse" />
-              <Zap className="relative h-4 w-4 text-amber-600" />
+              <Zap className="relative h-4 w-4 text-amber-600 dark:text-amber-400" />
             </div>
           </div>
-          <p className="text-xs text-amber-800 font-medium">⚡ Cập nhật theo thời gian thực - Học sinh đang làm bài</p>
+          <p className="text-[13px] text-amber-800 dark:text-amber-300 font-medium">⚡ Cập nhật theo thời gian thực - Học sinh đang làm bài</p>
         </div>
       )}
 
       <div className="grid grid-cols-2 md:grid-cols-5 gap-3">
-        <div className="group relative overflow-hidden rounded-2xl bg-slate-50/95 backdrop-blur-sm border border-slate-200/80 shadow-md shadow-slate-200/40 p-3 hover:shadow-lg transition-all duration-300">
-          <div className="absolute inset-0 bg-gradient-to-br from-blue-50/50 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
+        <div className="group relative overflow-hidden rounded-[2rem] bg-white/80 dark:bg-[#1d1d1f]/80 backdrop-blur-xl border border-black/5 dark:border-white/5 shadow-[0_4px_20px_rgba(0,0,0,0.03)] p-4 hover:shadow-lg transition-all duration-300">
           <div className="relative">
-            <div className="flex items-center justify-between mb-1.5">
-              <Target className="h-4 w-4 text-blue-500" />
+            <div className="flex items-center justify-between mb-2">
+              <Target className="h-5 w-5 text-blue-500" />
             </div>
-            <p className="text-xl font-bold text-blue-700 drop-shadow-sm">{answeredCount}/{totalQuestions}</p>
-            <p className="text-xs text-slate-500 mt-0.5 font-medium">Câu đã trả lời</p>
+            <p className="text-xl font-bold text-slate-900 dark:text-white drop-shadow-sm tracking-[-0.01em]">{answeredCount}/{totalQuestions}</p>
+            <p className="text-[13px] text-slate-500 dark:text-slate-400 mt-1 font-medium">Câu đã trả lời</p>
           </div>
         </div>
 
-        <div className="group relative overflow-hidden rounded-2xl bg-slate-50/95 backdrop-blur-sm border border-slate-200/80 shadow-md shadow-slate-200/40 p-3 hover:shadow-lg transition-all duration-300">
-          <div className="absolute inset-0 bg-gradient-to-br from-rose-50/50 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
+        <div className="group relative overflow-hidden rounded-[2rem] bg-white/80 dark:bg-[#1d1d1f]/80 backdrop-blur-xl border border-black/5 dark:border-white/5 shadow-[0_4px_20px_rgba(0,0,0,0.03)] p-4 hover:shadow-lg transition-all duration-300">
           <div className="relative">
-            <div className="flex items-center justify-between mb-1.5">
-              <LogOut className="h-4 w-4 text-rose-500" />
+            <div className="flex items-center justify-between mb-2">
+              <LogOut className="h-5 w-5 text-rose-500" />
             </div>
-            <p className="text-xl font-bold text-rose-700 drop-shadow-sm">{exitCount ?? 0}</p>
-            <p className="text-xs text-slate-500 mt-0.5 font-medium">Số lần thoát</p>
+            <p className="text-xl font-bold text-slate-900 dark:text-white drop-shadow-sm tracking-[-0.01em]">{exitCount ?? 0}</p>
+            <p className="text-[13px] text-slate-500 dark:text-slate-400 mt-1 font-medium">Số lần thoát</p>
           </div>
         </div>
 
-        <div className="group relative overflow-hidden rounded-2xl bg-slate-50/95 backdrop-blur-sm border border-slate-200/80 shadow-md shadow-slate-200/40 p-3 hover:shadow-lg transition-all duration-300">
-          <div className="absolute inset-0 bg-gradient-to-br from-purple-50/50 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
+        <div className="group relative overflow-hidden rounded-[2rem] bg-white/80 dark:bg-[#1d1d1f]/80 backdrop-blur-xl border border-black/5 dark:border-white/5 shadow-[0_4px_20px_rgba(0,0,0,0.03)] p-4 hover:shadow-lg transition-all duration-300">
           <div className="relative">
-            <div className="flex items-center justify-between mb-1.5">
-              <Timer className="h-4 w-4 text-purple-500" />
+            <div className="flex items-center justify-between mb-2">
+              <Timer className="h-5 w-5 text-purple-500" />
             </div>
-            <p className="text-xl font-bold text-purple-700 drop-shadow-sm">{workTimeLabel}</p>
-            <p className="text-xs text-slate-500 mt-0.5 font-medium">Thời gian làm</p>
+            <p className="text-xl font-bold text-slate-900 dark:text-white drop-shadow-sm tracking-[-0.01em]">{workTimeLabel}</p>
+            <p className="text-[13px] text-slate-500 dark:text-slate-400 mt-1 font-medium">Thời gian làm</p>
           </div>
         </div>
 
         {isSubmitted && (
-          <div className="group relative overflow-hidden rounded-2xl bg-slate-50/95 backdrop-blur-sm border border-slate-200/80 shadow-md shadow-slate-200/40 p-3 hover:shadow-lg transition-all duration-300">
-            <div className="absolute inset-0 bg-gradient-to-br from-emerald-50/50 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
+          <div className="group relative overflow-hidden rounded-[2rem] bg-white/80 dark:bg-[#1d1d1f]/80 backdrop-blur-xl border border-black/5 dark:border-white/5 shadow-[0_4px_20px_rgba(0,0,0,0.03)] p-4 hover:shadow-lg transition-all duration-300">
             <div className="relative">
-              <div className="flex items-center justify-between mb-1.5">
-                <TrendingUp className="h-4 w-4 text-emerald-500" />
+              <div className="flex items-center justify-between mb-2">
+                <TrendingUp className="h-5 w-5 text-emerald-500" />
               </div>
-              <p className="text-xl font-bold text-emerald-700 drop-shadow-sm">{submissionScore ?? 0}đ</p>
-              <p className="text-xs text-slate-500 mt-0.5 font-medium">Điểm số</p>
+              <p className="text-xl font-bold text-slate-900 dark:text-white drop-shadow-sm tracking-[-0.01em]">{submissionScore ?? 0}đ</p>
+              <p className="text-[13px] text-slate-500 dark:text-slate-400 mt-1 font-medium">Điểm số</p>
             </div>
           </div>
         )}
 
-        <div className="group relative overflow-hidden rounded-2xl bg-slate-50/95 backdrop-blur-sm border border-slate-200/80 shadow-md shadow-slate-200/40 p-3 hover:shadow-lg transition-all duration-300">
-          <div className="absolute inset-0 bg-gradient-to-br from-indigo-50/50 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
+        <div className="group relative overflow-hidden rounded-[2rem] bg-white/80 dark:bg-[#1d1d1f]/80 backdrop-blur-xl border border-black/5 dark:border-white/5 shadow-[0_4px_20px_rgba(0,0,0,0.03)] p-4 hover:shadow-lg transition-all duration-300">
           <div className="relative">
-            <div className="flex items-center justify-between mb-1.5">
-              <CheckCircle2 className="h-4 w-4 text-indigo-500" />
+            <div className="flex items-center justify-between mb-2">
+              <CheckCircle2 className="h-5 w-5 text-[#0066cc]" />
             </div>
-            <p className="text-xl font-bold text-indigo-700 drop-shadow-sm">{progress}%</p>
-            <p className="text-[11px] text-slate-500 mt-0.5 font-medium">Tiến độ</p>
+            <p className="text-xl font-bold text-slate-900 dark:text-white drop-shadow-sm tracking-[-0.01em]">{progress}%</p>
+            <p className="text-[13px] text-slate-500 dark:text-slate-400 mt-1 font-medium">Tiến độ</p>
           </div>
         </div>
       </div>
 
       {isSubmitted && submissionId && (
-        <div className="rounded-2xl bg-slate-50/95 backdrop-blur-sm border border-slate-200/80 shadow-md shadow-slate-200/40 p-3">
+        <div className="rounded-[2rem] bg-white/80 dark:bg-[#1d1d1f]/80 backdrop-blur-xl border border-black/5 dark:border-white/5 shadow-[0_4px_20px_rgba(0,0,0,0.03)] p-4">
           <div className="flex items-center justify-between gap-3 flex-wrap">
             {!regradingMode ? (
               <button
                 onClick={startRegrading}
-                className="inline-flex items-center gap-2 px-4 py-2 text-sm font-bold text-white bg-gradient-to-r from-indigo-600 to-violet-600 rounded-2xl shadow-md shadow-indigo-500/30 hover:shadow-lg hover:shadow-indigo-500/40 transition-all"
+                className="inline-flex items-center gap-2 px-6 py-2.5 text-[15px] font-bold text-white bg-[#0066cc] rounded-full shadow-lg shadow-blue-500/20 hover:bg-[#005bb5] transition-all"
               >
                 <Edit3 className="h-4 w-4" />
                 Chấm lại điểm

@@ -29,21 +29,21 @@ export function Statistics({ sessions, onExport, salaryPerSession }: StatisticsP
   return (
     <div className="h-full flex flex-col gap-4">
       <div className="flex flex-col gap-4 flex-1">
-        <div className="bg-white rounded-2xl shadow-xl p-6 space-y-4">
+        <div className="bg-white/80 dark:bg-[#1d1d1f]/80 backdrop-blur-xl rounded-[2rem] shadow-[0_4px_20px_rgba(0,0,0,0.03)] border border-black/5 dark:border-white/5 p-6 space-y-4">
           <div className="flex items-center gap-4">
-            <div className="p-3 bg-blue-100 rounded-xl">
-              <BookOpen className="w-6 h-6 text-blue-600" />
+            <div className="p-3.5 bg-blue-50 dark:bg-blue-900/20 rounded-2xl">
+              <BookOpen className="w-6 h-6 text-[#0066cc]" />
             </div>
             <div>
-              <p className="text-sm text-gray-600">Tổng số buổi</p>
-              <p className="text-2xl font-bold text-gray-800">{totalDays}</p>
+              <p className="text-[13px] font-medium text-slate-500 dark:text-slate-400">Tổng số buổi</p>
+              <p className="text-[28px] leading-tight font-bold text-slate-900 dark:text-white tracking-[-0.02em]">{totalDays}</p>
             </div>
           </div>
         </div>
 
-        <div className="bg-white rounded-2xl shadow-xl p-6 space-y-4">
-          <h4 className="font-semibold text-gray-800 mb-3">Số buổi theo môn</h4>
-          <div className="space-y-3">
+        <div className="bg-white/80 dark:bg-[#1d1d1f]/80 backdrop-blur-xl rounded-[2rem] shadow-[0_4px_20px_rgba(0,0,0,0.03)] border border-black/5 dark:border-white/5 p-6 space-y-5">
+          <h4 className="font-bold text-slate-900 dark:text-white mb-3 text-[17px] tracking-[-0.01em]">Số buổi theo môn</h4>
+          <div className="space-y-4">
             {Object.entries(SUBJECT_NAMES).map(([subject, name]) => {
               const count = subjectCounts[subject as Subject] || 0;
               const percentage = totalDays > 0 ? (count / totalDays) * 100 : 0;
@@ -51,13 +51,13 @@ export function Statistics({ sessions, onExport, salaryPerSession }: StatisticsP
               return (
                 <div key={subject} className="space-y-2">
                   <div className="flex items-center justify-between">
-                    <div className="flex items-center gap-2">
+                    <div className="flex items-center gap-2.5">
                       <div
-                        className={`w-3 h-3 rounded-full ${SUBJECT_COLORS[subject as Subject].bg}`}
+                        className={`w-3.5 h-3.5 rounded-full ring-2 ring-white dark:ring-[#1d1d1f] shadow-sm ${SUBJECT_COLORS[subject as Subject].bg}`}
                       />
-                      <span className="text-sm font-medium text-gray-700">{name}</span>
+                      <span className="text-[15px] font-medium text-slate-700 dark:text-slate-300">{name}</span>
                     </div>
-                    <span className="text-sm font-bold text-gray-900">{count}</span>
+                    <span className="text-[15px] font-bold text-slate-900 dark:text-white">{count}</span>
                   </div>
                   <div className="w-full bg-gray-200 rounded-full h-2 overflow-hidden">
                     <div
@@ -71,17 +71,18 @@ export function Statistics({ sessions, onExport, salaryPerSession }: StatisticsP
           </div>
         </div>
 
-        <div className="bg-gradient-to-br from-green-500 to-green-600 rounded-2xl shadow-xl p-4 text-white">
-          <div className="flex items-center gap-3 mb-4">
-            <div className="p-3 bg-white bg-opacity-20 rounded-xl">
+        <div className="bg-emerald-500 rounded-[2rem] shadow-lg shadow-emerald-500/20 p-6 text-white relative overflow-hidden">
+          <div className="absolute inset-0 bg-white/10 blur-[30px] pointer-events-none" />
+          <div className="relative flex items-center gap-4 mb-4">
+            <div className="p-3.5 bg-white/20 rounded-2xl backdrop-blur-sm">
               <DollarSign className="w-6 h-6" />
             </div>
             <div>
-              <p className="text-sm text-green-100">Tổng học phí</p>
-              <p className="text-3xl font-bold">{formatCurrency(totalIncome)}</p>
+              <p className="text-[13px] font-medium text-emerald-100">Tổng học phí</p>
+              <p className="text-[32px] leading-tight font-bold tracking-[-0.02em]">{formatCurrency(totalIncome)}</p>
             </div>
           </div>
-          <div className="text-sm text-green-100">
+          <div className="relative text-[13px] font-medium text-emerald-100/80">
             {totalDays} buổi × {formatCurrency(pricePerSession)}
           </div>
         </div>
@@ -89,9 +90,9 @@ export function Statistics({ sessions, onExport, salaryPerSession }: StatisticsP
 
       <button
         onClick={onExport}
-        className="w-full bg-gradient-to-r from-blue-500 to-cyan-600 text-white py-3 rounded-xl font-semibold shadow-md hover:shadow-lg transition-all duration-200 flex items-center justify-center gap-2 hover:scale-105"
+        className="w-full bg-[#0066cc] text-white py-3.5 rounded-full font-bold shadow-lg shadow-blue-500/20 hover:bg-[#005bb5] transition-all duration-300 flex items-center justify-center gap-2 group text-[15px]"
       >
-        <Download className="w-5 h-5" />
+        <Download className="w-5 h-5 group-hover:-translate-y-0.5 transition-transform" />
         Xuất ảnh thống kê
       </button>
     </div>

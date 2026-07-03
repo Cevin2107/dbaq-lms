@@ -115,28 +115,28 @@ export default function LoginPage() {
   };
 
   return (
-    <main className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50/20 to-indigo-50/30 flex items-center justify-center px-4 py-8">
+    <main className="min-h-screen bg-[#f5f5f7] dark:bg-[#000000] flex items-center justify-center px-4 py-12 sm:px-6 lg:px-8">
       <div className="w-full max-w-md animate-fade-in">
-        <div className="rounded-2xl bg-white/80 backdrop-blur-lg border border-white/80 shadow-xl p-6 sm:p-8">
-          <div className="text-center mb-6">
-            <div className="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-xl bg-gradient-to-br from-indigo-500 to-violet-600 shadow-lg">
-              <svg className="h-6 w-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 16l-4-4m0 0l4-4m-4 4h14m-5 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h7a3 3 0 013 3v1" />
+        <div className="rounded-[2rem] bg-white/80 dark:bg-[#1d1d1f]/80 backdrop-blur-xl border border-black/5 dark:border-white/5 shadow-[0_4px_20px_rgba(0,0,0,0.03)] p-8 sm:p-10">
+          <div className="text-center mb-8">
+            <div className="mx-auto mb-5 flex h-14 w-14 items-center justify-center rounded-2xl bg-blue-50 dark:bg-blue-900/40 text-[#0066cc] dark:text-blue-400">
+              <svg className="h-7 w-7" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M11 16l-4-4m0 0l4-4m-4 4h14m-5 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h7a3 3 0 013 3v1" />
               </svg>
             </div>
-            <h1 className="text-2xl font-bold text-slate-900">Đăng nhập</h1>
-            <p className="text-sm text-slate-600 mt-1">Đăng nhập để làm bài tập</p>
+            <h1 className="text-2xl font-bold text-slate-900 dark:text-white tracking-[-0.02em]">Đăng nhập</h1>
+            <p className="text-sm text-slate-500 dark:text-slate-400 mt-2">Đăng nhập hệ thống để làm bài tập</p>
           </div>
 
           <form onSubmit={handleLogin} className="space-y-4">
             <div>
-              <label htmlFor="email" className="mb-1 block text-sm font-medium text-slate-700">
+              <label htmlFor="email" className="mb-1.5 block text-sm font-medium text-slate-700 dark:text-slate-300">
                 Email
               </label>
               <input
                 id="email"
                 type="email"
-                className="w-full rounded-xl border-2 border-slate-200 bg-white px-3 py-2 text-base transition focus:border-indigo-400 focus:outline-none focus:ring-2 focus:ring-indigo-100"
+                className="w-full rounded-2xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800/50 px-4 py-3 text-base text-slate-900 dark:text-white transition focus:border-[#0066cc] dark:focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-[#0066cc]/20 dark:focus:ring-blue-500/20"
                 placeholder="student@example.com"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
@@ -146,14 +146,14 @@ export default function LoginPage() {
             </div>
 
             <div>
-              <label htmlFor="password" className="mb-1 block text-sm font-medium text-slate-700">
+              <label htmlFor="password" className="mb-1.5 block text-sm font-medium text-slate-700 dark:text-slate-300">
                 Mật khẩu
               </label>
               <div className="relative">
                 <input
                   id="password"
                   type={showPassword ? 'text' : 'password'}
-                  className="w-full rounded-xl border-2 border-slate-200 bg-white px-3 py-2 pr-12 text-base transition focus:border-indigo-400 focus:outline-none focus:ring-2 focus:ring-indigo-100"
+                  className="w-full rounded-2xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800/50 px-4 py-3 pr-12 text-base text-slate-900 dark:text-white transition focus:border-[#0066cc] dark:focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-[#0066cc]/20 dark:focus:ring-blue-500/20"
                   placeholder="••••••••"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
@@ -173,16 +173,16 @@ export default function LoginPage() {
               </div>
             </div>
 
-            <div className="flex items-center">
+            <div className="flex items-center pt-1">
               <input
                 id="rememberMe"
                 type="checkbox"
-                className="h-4 w-4 rounded border-slate-300 text-indigo-600 focus:ring-indigo-500"
+                className="h-5 w-5 rounded border-slate-300 text-[#0066cc] focus:ring-[#0066cc] dark:border-slate-600 dark:bg-slate-800 dark:checked:bg-blue-500"
                 checked={rememberMe}
                 onChange={(e) => setRememberMe(e.target.checked)}
                 disabled={loading}
               />
-              <label htmlFor="rememberMe" className="ml-2 block text-sm text-slate-700 font-medium">
+              <label htmlFor="rememberMe" className="ml-2.5 block text-sm text-slate-600 dark:text-slate-400">
                 Luôn giữ tôi đăng nhập
               </label>
             </div>
@@ -206,23 +206,23 @@ export default function LoginPage() {
             <button
               type="button"
               onClick={handleForgotPassword}
-              className="w-full text-center text-sm text-indigo-600 hover:text-indigo-500 transition"
+              className="w-full text-center text-sm font-medium text-[#0066cc] dark:text-blue-400 hover:text-[#005bb5] dark:hover:text-blue-300 transition"
             >
               Quên mật khẩu?
             </button>
           </form>
 
           <div className="mt-6 text-center text-sm">
-            <span className="text-slate-600">Chưa có tài khoản?</span>{' '}
-            <Link href="/signup" className="font-medium text-indigo-600 hover:text-indigo-500">
+            <span className="text-slate-500 dark:text-slate-400">Chưa có tài khoản?</span>{' '}
+            <Link href="/signup" className="font-semibold text-[#0066cc] dark:text-blue-400 hover:text-[#005bb5] dark:hover:text-blue-300 transition">
               Đăng ký ngay
             </Link>
           </div>
 
-          <div className="mt-4 flex items-center gap-2">
+          <div className="mt-6 pt-6 border-t border-slate-100 dark:border-white/5 flex items-center gap-3">
             <Link
               href="/admin"
-              className="flex w-full items-center justify-center rounded-full border border-slate-200 bg-slate-50 px-4 py-2.5 text-sm font-semibold text-slate-700 transition hover:border-indigo-200 hover:bg-indigo-50 hover:text-indigo-700"
+              className="flex w-full items-center justify-center rounded-full border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800/50 px-4 py-3 text-[14px] font-semibold text-slate-700 dark:text-slate-300 transition hover:border-blue-200 dark:hover:border-blue-800 hover:bg-blue-50 dark:hover:bg-blue-900/30 hover:text-[#0066cc] dark:hover:text-blue-400"
             >
               Đăng nhập dưới quyền quản trị
             </Link>
@@ -230,7 +230,7 @@ export default function LoginPage() {
               type="button"
               onClick={handleAdminPasskeyLogin}
               disabled={adminPasskeyLoading}
-              className="inline-flex h-10 w-10 items-center justify-center rounded-full border border-slate-200 bg-white text-slate-700 shadow-sm transition hover:bg-slate-50 disabled:opacity-60"
+              className="inline-flex h-11 w-11 shrink-0 items-center justify-center rounded-full border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-300 shadow-[0_2px_10px_rgba(0,0,0,0.02)] transition hover:bg-slate-50 dark:hover:bg-slate-700 disabled:opacity-60"
               aria-label="Đăng nhập admin bằng vân tay"
             >
               <Fingerprint className={`h-5 w-5 ${adminPasskeyLoading ? 'animate-pulse' : ''}`} />

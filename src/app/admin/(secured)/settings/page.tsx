@@ -133,19 +133,19 @@ export default function SettingsPage() {
   return (
     <div className="mx-auto max-w-4xl px-8 py-8 space-y-8 animate-fade-in">
       <div>
-        <h1 className="text-2xl font-bold text-slate-900 tracking-tight">Cài đặt hệ thống</h1>
-        <p className="text-sm text-slate-500 mt-1">Quản lý bảo mật, mật khẩu quản trị và cấu hình chung.</p>
+        <h1 className="text-2xl sm:text-3xl font-bold text-slate-900 dark:text-white tracking-[-0.02em]">Cài đặt hệ thống</h1>
+        <p className="text-[15px] text-slate-500 dark:text-slate-400 mt-2">Quản lý bảo mật, mật khẩu quản trị và cấu hình chung.</p>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
         <div className="md:col-span-1 space-y-4">
            <div className="flex items-center gap-3">
-              <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-indigo-50 text-indigo-600">
+              <div className="flex h-10 w-10 items-center justify-center rounded-2xl bg-[#0066cc]/10 text-[#0066cc]">
                 <ShieldCheck className="h-5 w-5" />
               </div>
-              <h2 className="text-lg font-bold text-slate-900">Tính bảo mật</h2>
+              <h2 className="text-[17px] font-bold text-slate-900 dark:text-white tracking-[-0.01em]">Tính bảo mật</h2>
            </div>
-           <p className="text-sm text-slate-500 leading-relaxed">
+           <p className="text-[15px] text-slate-500 dark:text-slate-400 leading-relaxed">
              Bảo vệ tài khoản quản trị của bạn bằng cách sử dụng mật khẩu mạnh. Khuyến nghị thay đổi mật khẩu định kỳ 3 tháng một lần để đảm bảo an toàn.
            </p>
         </div>
@@ -154,45 +154,45 @@ export default function SettingsPage() {
            <Card className="p-6">
               <form onSubmit={handleSubmit} className="space-y-6">
                  <div>
-                    <label className="text-sm font-semibold text-slate-700 block mb-2">Mật khẩu hiện tại</label>
+                    <label className="text-sm font-semibold text-slate-700 dark:text-slate-200 block mb-2">Mật khẩu hiện tại</label>
                     <div className="relative">
-                       <Lock className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400" />
+                       <Lock className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400" />
                        <input 
                          type="password" 
                          required
                          value={currentPassword}
                          onChange={e => setCurrentPassword(e.target.value)}
-                         className="w-full pl-10 pr-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:bg-white focus:ring-4 focus:ring-indigo-100 focus:border-indigo-400 transition"
+                         className="w-full pl-11 pr-4 py-3 bg-slate-50 dark:bg-[#1d1d1f]/50 border border-slate-200 dark:border-white/10 rounded-2xl text-[15px] text-slate-900 dark:text-white focus:bg-white dark:focus:bg-[#1d1d1f] focus:ring-4 focus:ring-blue-100 dark:focus:ring-blue-900/30 focus:border-[#0066cc] dark:focus:border-blue-500 transition-all outline-none"
                          placeholder="Nhập mật khẩu đang dùng"
                        />
                     </div>
                  </div>
 
-                 <div className="pt-4 border-t border-slate-100 grid gap-6">
+                 <div className="pt-4 border-t border-slate-100 dark:border-white/5 grid gap-6">
                     <div>
-                       <label className="text-sm font-semibold text-slate-700 block mb-2">Mật khẩu mới</label>
+                       <label className="text-sm font-semibold text-slate-700 dark:text-slate-200 block mb-2">Mật khẩu mới</label>
                        <div className="relative">
-                          <Lock className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400" />
+                          <Lock className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400" />
                           <input 
                             type="password" 
                             required
                             value={newPassword}
                             onChange={e => setNewPassword(e.target.value)}
-                            className="w-full pl-10 pr-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:bg-white focus:ring-4 focus:ring-indigo-100 focus:border-indigo-400 transition"
+                            className="w-full pl-11 pr-4 py-3 bg-slate-50 dark:bg-[#1d1d1f]/50 border border-slate-200 dark:border-white/10 rounded-2xl text-[15px] text-slate-900 dark:text-white focus:bg-white dark:focus:bg-[#1d1d1f] focus:ring-4 focus:ring-blue-100 dark:focus:ring-blue-900/30 focus:border-[#0066cc] dark:focus:border-blue-500 transition-all outline-none"
                             placeholder="Mật khẩu mới (ít nhất 6 ký tự)"
                           />
                        </div>
                     </div>
                     <div>
-                       <label className="text-sm font-semibold text-slate-700 block mb-2">Xác nhận mật khẩu mới</label>
+                       <label className="text-sm font-semibold text-slate-700 dark:text-slate-200 block mb-2">Xác nhận mật khẩu mới</label>
                        <div className="relative">
-                          <Lock className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400" />
+                          <Lock className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400" />
                           <input 
                             type="password" 
                             required
                             value={confirmPassword}
                             onChange={e => setConfirmPassword(e.target.value)}
-                            className="w-full pl-10 pr-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:bg-white focus:ring-4 focus:ring-indigo-100 focus:border-indigo-400 transition"
+                            className="w-full pl-11 pr-4 py-3 bg-slate-50 dark:bg-[#1d1d1f]/50 border border-slate-200 dark:border-white/10 rounded-2xl text-[15px] text-slate-900 dark:text-white focus:bg-white dark:focus:bg-[#1d1d1f] focus:ring-4 focus:ring-blue-100 dark:focus:ring-blue-900/30 focus:border-[#0066cc] dark:focus:border-blue-500 transition-all outline-none"
                             placeholder="Nhập lại mật khẩu mới"
                           />
                        </div>
@@ -207,28 +207,28 @@ export default function SettingsPage() {
               </form>
            </Card>
 
-           <Card className="p-6 mt-8">
+            <Card className="p-6 mt-8">
               <div className="flex items-center justify-between gap-4">
                 <div>
-                  <h3 className="text-base font-bold text-slate-900">Passkey (vân tay)</h3>
-                  <p className="text-sm text-slate-500 mt-1">
+                  <h3 className="text-[17px] font-bold text-slate-900 dark:text-white tracking-[-0.01em]">Passkey (vân tay)</h3>
+                  <p className="text-[15px] text-slate-500 dark:text-slate-400 mt-1">
                     Đăng ký thiết bị để đăng nhập nhanh bằng vân tay. Bạn có thể thu hồi thiết bị bất kỳ lúc nào.
                   </p>
                 </div>
-                <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-indigo-50 text-indigo-600">
+                <div className="flex h-10 w-10 items-center justify-center rounded-2xl bg-[#0066cc]/10 text-[#0066cc]">
                   <Fingerprint className="h-5 w-5" />
                 </div>
               </div>
 
               <div className="mt-6 grid gap-4">
                 <div>
-                  <label className="text-sm font-semibold text-slate-700 block mb-2">Tên thiết bị (tuỳ chọn)</label>
+                  <label className="text-sm font-semibold text-slate-700 dark:text-slate-200 block mb-2">Tên thiết bị (tuỳ chọn)</label>
                   <input
                     type="text"
                     value={passkeyName}
                     onChange={(e) => setPasskeyName(e.target.value)}
                     placeholder="VD: Xiaomi 13 của tôi"
-                    className="w-full rounded-xl border border-slate-200 bg-slate-50 px-4 py-2.5 text-sm focus:bg-white focus:ring-4 focus:ring-indigo-100 focus:border-indigo-400 transition"
+                    className="w-full rounded-2xl border border-slate-200 dark:border-white/10 bg-slate-50 dark:bg-[#1d1d1f]/50 px-4 py-3 text-[15px] text-slate-900 dark:text-white focus:bg-white dark:focus:bg-[#1d1d1f] focus:ring-4 focus:ring-blue-100 dark:focus:ring-blue-900/30 focus:border-[#0066cc] dark:focus:border-blue-500 transition-all outline-none"
                   />
                 </div>
 
@@ -239,27 +239,28 @@ export default function SettingsPage() {
                 </div>
               </div>
 
-              <div className="mt-6 border-t border-slate-100 pt-6">
-                <h4 className="text-sm font-semibold text-slate-800">Thiết bị đã đăng ký</h4>
+              <div className="mt-6 border-t border-slate-100 dark:border-white/5 pt-6">
+                <h4 className="text-[15px] font-semibold text-slate-800 dark:text-slate-200">Thiết bị đã đăng ký</h4>
                 {passkeyListLoading ? (
-                  <p className="text-sm text-slate-500 mt-3">Đang tải danh sách...</p>
+                  <p className="text-[15px] text-slate-500 dark:text-slate-400 mt-3">Đang tải danh sách...</p>
                 ) : passkeys.length === 0 ? (
-                  <p className="text-sm text-slate-500 mt-3">Chưa có thiết bị nào.</p>
+                  <p className="text-[15px] text-slate-500 dark:text-slate-400 mt-3">Chưa có thiết bị nào.</p>
                 ) : (
-                  <div className="mt-3 space-y-3">
+                  <div className="mt-4 space-y-3">
                     {passkeys.map((item) => (
-                      <div key={item.id} className="flex items-center justify-between rounded-xl border border-slate-200 bg-white px-4 py-3">
+                      <div key={item.id} className="flex items-center justify-between rounded-2xl border border-slate-200 dark:border-white/10 bg-white dark:bg-[#1d1d1f]/50 px-4 py-4">
                         <div>
-                          <p className="text-sm font-semibold text-slate-900">{item.name || "Thiết bị không tên"}</p>
-                          <p className="text-xs text-slate-500 mt-1">Đăng ký: {new Date(item.created_at).toLocaleString("vi-VN")}</p>
+                          <p className="text-[15px] font-semibold text-slate-900 dark:text-white">{item.name || "Thiết bị không tên"}</p>
+                          <p className="text-xs text-slate-500 dark:text-slate-400 mt-1">Đăng ký: {new Date(item.created_at).toLocaleString("vi-VN")}</p>
                         </div>
                         <Button
                           type="button"
                           variant="ghost"
                           onClick={() => handleRevokePasskey(item.id)}
                           disabled={passkeyLoading}
+                          className="text-red-600 hover:text-red-700 hover:bg-red-50 dark:hover:bg-red-900/20"
                         >
-                          <Trash2 className="h-4 w-4 mr-2" /> Thu hồi
+                          <Trash2 className="h-4 w-4 sm:mr-2" /> <span className="hidden sm:inline">Thu hồi</span>
                         </Button>
                       </div>
                     ))}

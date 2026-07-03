@@ -474,36 +474,30 @@ export default function AdminStatsPage() {
 
   if (loading) {
     return (
-      <main className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50/30 to-indigo-50/40 relative overflow-hidden">
-        {/* Background decoration */}
-        <div className="pointer-events-none fixed inset-0 overflow-hidden">
-          <div className="absolute -top-40 right-1/4 h-[600px] w-[600px] rounded-full bg-gradient-to-br from-blue-200/40 via-indigo-200/30 to-violet-200/20 blur-[140px] animate-pulse-slow" />
-          <div className="absolute -bottom-40 left-1/4 h-[600px] w-[600px] rounded-full bg-gradient-to-tl from-violet-200/40 via-purple-200/30 to-fuchsia-200/20 blur-[140px] animate-pulse-slow" style={{ animationDelay: '1s' }} />
-        </div>
-
+      <main className="min-h-screen bg-[#f5f5f7] dark:bg-[#000000] relative overflow-hidden">
         <div className="relative">
           {/* Header */}
           <div className="mb-8 px-4 py-6">
             <div className="mx-auto max-w-6xl">
-              <div className="rounded-3xl bg-white/70 backdrop-blur-xl border border-white/80 shadow-xl shadow-slate-200/50 p-6">
+              <div className="rounded-[2rem] bg-white/80 dark:bg-[#1d1d1f]/80 backdrop-blur-xl border border-black/5 dark:border-white/5 shadow-[0_4px_20px_rgba(0,0,0,0.03)] p-6">
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-4">
                     <div className="relative group">
-                      <div className="absolute inset-0 bg-gradient-to-br from-indigo-500 to-violet-600 rounded-2xl blur opacity-30" />
-                      <div className="relative flex h-12 w-12 items-center justify-center rounded-2xl bg-gradient-to-br from-indigo-500 via-violet-500 to-purple-600 shadow-lg shadow-indigo-500/30">
+                      <div className="absolute inset-0 bg-[#0066cc] rounded-2xl blur opacity-30" />
+                      <div className="relative flex h-12 w-12 items-center justify-center rounded-[18px] bg-[#0066cc] shadow-lg shadow-blue-500/30">
                         <GraduationCap className="h-6 w-6 text-white" />
                       </div>
                     </div>
                     <div>
-                      <h1 className="text-2xl font-bold bg-gradient-to-r from-indigo-600 via-violet-600 to-purple-600 bg-clip-text text-transparent">
+                      <h1 className="text-2xl font-bold text-slate-900 dark:text-white tracking-[-0.02em]">
                         Quản lý học sinh
                       </h1>
-                      <p className="text-sm text-slate-600">Xem kết quả bài làm của học sinh</p>
+                      <p className="text-[15px] text-slate-500 dark:text-slate-400 mt-1">Xem kết quả bài làm của học sinh</p>
                     </div>
                   </div>
                   <Link
                     href="/admin/dashboard"
-                    className="px-4 py-2 text-sm font-medium text-slate-600 hover:text-indigo-600 bg-white/50 backdrop-blur-sm rounded-2xl border border-white/60 hover:border-indigo-200 hover:bg-white/80 transition-all"
+                    className="px-5 py-2 text-[14px] font-semibold text-slate-600 dark:text-slate-300 hover:text-[#0066cc] dark:hover:text-blue-400 bg-slate-50 dark:bg-slate-800 backdrop-blur-sm rounded-full border border-slate-200 dark:border-slate-700 hover:border-[#0066cc]/50 dark:hover:border-blue-500/50 transition-all"
                   >
                     ← Dashboard
                   </Link>
@@ -522,38 +516,31 @@ export default function AdminStatsPage() {
       </main>
     );
   }
-
   return (
-    <main className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50/30 to-indigo-50/40 relative overflow-hidden">
-      {/* Background decoration */}
-      <div className="pointer-events-none fixed inset-0 overflow-hidden">
-        <div className="absolute -top-40 right-1/4 h-[600px] w-[600px] rounded-full bg-gradient-to-br from-blue-200/40 via-indigo-200/30 to-violet-200/20 blur-[140px] animate-pulse-slow" />
-        <div className="absolute -bottom-40 left-1/4 h-[600px] w-[600px] rounded-full bg-gradient-to-tl from-violet-200/40 via-purple-200/30 to-fuchsia-200/20 blur-[140px] animate-pulse-slow" style={{ animationDelay: '1s' }} />
-      </div>
-
+    <main className="min-h-screen bg-[#f5f5f7] dark:bg-[#000000] relative overflow-hidden">
       <div className="relative">
         {/* Header */}
         <div className="mb-8 px-4 py-6">
           <div className="mx-auto max-w-6xl">
-            <div className="rounded-3xl bg-white/70 backdrop-blur-xl border border-white/80 shadow-xl shadow-slate-200/50 p-6 hover:shadow-2xl hover:shadow-indigo-200/30 transition-all duration-300">
+            <div className="rounded-[2rem] bg-white/80 dark:bg-[#1d1d1f]/80 backdrop-blur-xl border border-black/5 dark:border-white/5 shadow-[0_4px_20px_rgba(0,0,0,0.03)] p-6 hover:shadow-[0_8px_30px_rgba(0,0,0,0.06)] transition-all duration-300">
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-4">
                   <div className="relative group">
-                    <div className="absolute inset-0 bg-gradient-to-br from-indigo-500 to-violet-600 rounded-2xl blur opacity-30 group-hover:opacity-50 transition-opacity" />
-                    <div className="relative flex h-12 w-12 items-center justify-center rounded-2xl bg-gradient-to-br from-indigo-500 via-violet-500 to-purple-600 shadow-lg shadow-indigo-500/30">
+                    <div className="absolute inset-0 bg-[#0066cc] rounded-[18px] blur opacity-30 group-hover:opacity-50 transition-opacity" />
+                    <div className="relative flex h-12 w-12 items-center justify-center rounded-[18px] bg-[#0066cc] shadow-lg shadow-blue-500/30">
                       <GraduationCap className="h-6 w-6 text-white" />
                     </div>
                   </div>
                   <div>
-                    <h1 className="text-2xl font-bold bg-gradient-to-r from-indigo-600 via-violet-600 to-purple-600 bg-clip-text text-transparent">
+                    <h1 className="text-2xl font-bold text-slate-900 dark:text-white tracking-[-0.02em]">
                       Quản lý học sinh
                     </h1>
-                    <p className="text-sm text-slate-600">Xem kết quả bài làm của học sinh</p>
+                    <p className="text-[15px] text-slate-500 dark:text-slate-400 mt-1">Xem kết quả bài làm của học sinh</p>
                   </div>
                 </div>
                 <Link
                   href="/admin/dashboard"
-                  className="px-4 py-2 text-sm font-medium text-slate-600 hover:text-indigo-600 bg-white/50 backdrop-blur-sm rounded-2xl border border-white/60 hover:border-indigo-200 hover:bg-white/80 transition-all"
+                  className="px-5 py-2 text-[14px] font-semibold text-slate-600 dark:text-slate-300 hover:text-[#0066cc] dark:hover:text-blue-400 bg-slate-50 dark:bg-slate-800 backdrop-blur-sm rounded-full border border-slate-200 dark:border-slate-700 hover:border-[#0066cc]/50 dark:hover:border-blue-500/50 transition-all"
                 >
                   ← Dashboard
                 </Link>
@@ -564,12 +551,12 @@ export default function AdminStatsPage() {
 
         <div className="mx-auto max-w-6xl space-y-6 px-4 pb-8">
           {students.length === 0 ? (
-            <div className="rounded-3xl bg-white/70 backdrop-blur-xl border border-white/80 shadow-xl shadow-slate-200/50 p-12 text-center">
-              <div className="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-gradient-to-br from-slate-100 to-slate-200 mb-4">
+            <div className="rounded-[2rem] bg-white/80 dark:bg-[#1d1d1f]/80 backdrop-blur-xl border border-black/5 dark:border-white/5 shadow-[0_4px_20px_rgba(0,0,0,0.03)] p-12 text-center">
+              <div className="inline-flex items-center justify-center w-16 h-16 rounded-[20px] bg-slate-50 dark:bg-slate-800 mb-4 ring-1 ring-slate-200 dark:ring-white/5">
                 <BarChart3 className="h-8 w-8 text-slate-400" />
               </div>
-              <p className="text-slate-600 font-medium">Chưa có học sinh nào nộp bài.</p>
-              <p className="text-sm text-slate-500 mt-1">Danh sách sẽ hiển thị khi có học sinh làm bài</p>
+              <p className="text-[15px] text-slate-600 dark:text-slate-300 font-medium">Chưa có học sinh nào nộp bài.</p>
+              <p className="text-[14px] text-slate-500 dark:text-slate-400 mt-1">Danh sách sẽ hiển thị khi có học sinh làm bài</p>
             </div>
           ) : (
             <div className="space-y-4">
@@ -593,16 +580,16 @@ export default function AdminStatsPage() {
                 return (
                   <div 
                     key={student.studentName} 
-                    className="rounded-3xl bg-white/70 backdrop-blur-xl border border-white/80 shadow-xl shadow-slate-200/50 overflow-hidden hover:shadow-2xl hover:shadow-indigo-200/30 transition-all duration-300"
+                    className="rounded-[2rem] bg-white/80 dark:bg-[#1d1d1f]/80 backdrop-blur-xl border border-black/5 dark:border-white/5 shadow-[0_4px_20px_rgba(0,0,0,0.03)] overflow-hidden hover:shadow-[0_8px_30px_rgba(0,0,0,0.06)] transition-all duration-300"
                   >
                     {/* Student Card Header */}
-                    <div className="flex items-center justify-between p-5 cursor-pointer group" onClick={() => toggleStudent(student.studentName)}>
-                      <div className="flex items-center gap-4 flex-1">
+                    <div className="flex items-center justify-between p-6 cursor-pointer group" onClick={() => toggleStudent(student.studentName)}>
+                      <div className="flex items-center gap-5 flex-1">
                         {/* Avatar */}
                         <div className="relative">
-                          <div className="absolute inset-0 bg-gradient-to-br from-indigo-400 to-violet-500 rounded-2xl blur opacity-40 group-hover:opacity-60 transition-opacity" />
-                          <div className="relative flex h-14 w-14 items-center justify-center rounded-2xl bg-gradient-to-br from-indigo-500 to-violet-600 shadow-lg shadow-indigo-500/30">
-                            <span className="text-xl font-bold text-white">
+                          <div className="absolute inset-0 bg-[#0066cc] rounded-[18px] blur opacity-40 group-hover:opacity-60 transition-opacity" />
+                          <div className="relative flex h-[60px] w-[60px] items-center justify-center rounded-[20px] bg-[#0066cc] shadow-lg shadow-blue-500/30">
+                            <span className="text-2xl font-bold text-white">
                               {(student.studentName || "?").charAt(0).toUpperCase()}
                             </span>
                           </div>
@@ -610,7 +597,7 @@ export default function AdminStatsPage() {
 
                         {/* Student Info */}
                         <div className="flex-1">
-                          <h3 className="text-lg font-bold bg-gradient-to-r from-slate-900 to-slate-700 bg-clip-text text-transparent">
+                          <h3 className="text-[19px] font-bold text-slate-900 dark:text-white tracking-[-0.01em]">
                             {student.studentName}
                           </h3>
                           <div className="flex flex-wrap items-center gap-3 mt-1">
@@ -639,17 +626,17 @@ export default function AdminStatsPage() {
                       </div>
 
                       {/* Actions */}
-                      <div className="flex items-center gap-2">
+                      <div className="flex items-center gap-2.5">
                         <button
                           onClick={(e) => {
                             e.stopPropagation();
                             openEditStudent(student.studentName);
                           }}
                           onMouseDown={(e) => e.stopPropagation()}
-                          className="px-3 py-2 text-xs font-semibold text-indigo-600 bg-indigo-50/80 backdrop-blur-sm border border-indigo-200/50 rounded-xl hover:bg-indigo-100 hover:shadow-md hover:shadow-indigo-200/50 disabled:opacity-50 transition-all flex items-center gap-1.5"
+                          className="px-4 py-2.5 text-[13px] font-semibold text-[#0066cc] dark:text-blue-400 bg-blue-50 dark:bg-blue-900/30 backdrop-blur-sm border border-blue-200/50 dark:border-blue-800/50 rounded-full hover:bg-blue-100 dark:hover:bg-blue-900/50 transition-all flex items-center gap-2"
                           title="Chỉnh sửa học sinh"
                         >
-                          <Edit3 className="h-3.5 w-3.5" />
+                          <Edit3 className="h-4 w-4" />
                           Chỉnh sửa
                         </button>
                         <button
@@ -658,14 +645,14 @@ export default function AdminStatsPage() {
                             deleteAllStudentData(student.studentName);
                           }}
                           disabled={deleting}
-                          className="px-3 py-2 text-xs font-semibold text-red-600 bg-red-50/80 backdrop-blur-sm border border-red-200/50 rounded-xl hover:bg-red-100 hover:shadow-md hover:shadow-red-200/50 disabled:opacity-50 transition-all flex items-center gap-1.5"
+                          className="px-4 py-2.5 text-[13px] font-semibold text-red-600 dark:text-red-400 bg-red-50 dark:bg-red-900/30 backdrop-blur-sm border border-red-200/50 dark:border-red-900/50 rounded-full hover:bg-red-100 dark:hover:bg-red-900/50 disabled:opacity-50 transition-all flex items-center gap-2"
                         >
-                          <Trash2 className="h-3.5 w-3.5" />
+                          <Trash2 className="h-4 w-4" />
                           Xóa tất cả
                         </button>
-                        <div className={`flex h-8 w-8 items-center justify-center rounded-xl bg-slate-100/80 backdrop-blur-sm text-slate-600 group-hover:bg-gradient-to-br group-hover:from-indigo-100 group-hover:to-violet-100 group-hover:text-indigo-600 transition-all ${isExpanded ? 'rotate-180' : ''}`}>
-                          <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                        <div className={`flex h-10 w-10 items-center justify-center rounded-full bg-slate-100/80 dark:bg-slate-800/80 backdrop-blur-sm text-slate-600 dark:text-slate-400 group-hover:bg-blue-50 dark:group-hover:bg-blue-900/50 group-hover:text-[#0066cc] dark:group-hover:text-blue-400 transition-all ${isExpanded ? 'rotate-180' : ''}`}>
+                          <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M19 9l-7 7-7-7" />
                           </svg>
                         </div>
                       </div>

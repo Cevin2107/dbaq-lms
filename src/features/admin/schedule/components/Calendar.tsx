@@ -52,25 +52,25 @@ export function Calendar({
   };
 
   return (
-    <div className="bg-white rounded-2xl shadow-lg overflow-hidden h-full flex flex-col">
+    <div className="bg-white/80 dark:bg-[#1d1d1f]/80 backdrop-blur-xl rounded-[2rem] shadow-[0_4px_20px_rgba(0,0,0,0.03)] border border-black/5 dark:border-white/5 overflow-hidden h-full flex flex-col">
       {studentName && (
         <div
           className="px-3 sm:px-5 py-3 text-white text-center"
           style={{
-            backgroundColor: studentColor ? adjustColor(studentColor, -20) : "#2563EB",
+            backgroundColor: studentColor ? adjustColor(studentColor, -20) : "#005bb5",
           }}
         >
-          <h3 className="text-lg sm:text-xl font-bold tracking-widest uppercase">
+          <h3 className="text-lg sm:text-[17px] font-bold tracking-widest uppercase">
             Thống kê - {studentName}
           </h3>
         </div>
       )}
       {/* Header */}
       <div
-        className="flex items-center justify-between px-3 sm:px-5 py-2 sm:py-3"
+        className="flex items-center justify-between px-3 sm:px-5 py-3 sm:py-4 export-month-header"
         style={{
-          background: `linear-gradient(135deg, ${studentColor || "#2563EB"}, ${
-            studentColor ? adjustColor(studentColor, -20) : "#1E40AF"
+          background: `linear-gradient(135deg, ${studentColor || "#0066cc"}, ${
+            studentColor ? adjustColor(studentColor, -20) : "#005bb5"
           })`,
         }}
       >
@@ -94,12 +94,12 @@ export function Calendar({
       </div>
 
       {/* Weekday headers */}
-      <div className="grid grid-cols-7 bg-gray-50 border-b border-gray-200">
+      <div className="grid grid-cols-7 bg-slate-50/50 dark:bg-slate-800/50 border-b border-black/5 dark:border-white/5">
         {WEEKDAYS.map((day, i) => (
           <div
             key={day}
-            className={`py-2.5 text-center text-xs font-semibold uppercase tracking-wider ${
-              i >= 5 ? "text-slate-400" : "text-gray-500"
+            className={`py-3 text-center text-[11px] font-bold uppercase tracking-wider ${
+              i >= 5 ? "text-rose-500" : "text-slate-500 dark:text-slate-400"
             }`}
           >
             {day}
@@ -108,7 +108,7 @@ export function Calendar({
       </div>
 
       {/* Days grid */}
-      <div className="grid grid-cols-7 border-l border-t border-gray-100 flex-1">
+      <div className="grid grid-cols-7 border-l border-t border-black/5 dark:border-white/5 flex-1">
         {days.map((day, index) => (
           <CalendarDay
             key={index}

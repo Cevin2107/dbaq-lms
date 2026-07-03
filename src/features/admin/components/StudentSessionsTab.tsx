@@ -146,33 +146,32 @@ export function StudentSessionsTab({ assignmentId }: { assignmentId: string }) {
     return (
       <div className="space-y-4 animate-fade-in">
         {/* Header Section - Glassmorphism */}
-        <div className="relative overflow-hidden rounded-2xl bg-slate-50/95 backdrop-blur-xl border border-slate-200/80 shadow-lg shadow-slate-200/40 p-4">
+        <div className="relative overflow-hidden rounded-[2rem] bg-white/80 dark:bg-[#1d1d1f]/80 backdrop-blur-xl border border-black/5 dark:border-white/5 shadow-[0_4px_20px_rgba(0,0,0,0.03)] p-4 sm:p-6">
           <div className="absolute inset-0 bg-gradient-to-br from-slate-50 via-indigo-50/40 to-violet-50/40 pointer-events-none" />
           
           <div className="relative flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
             <div className="flex items-center gap-3">
               <button
                 onClick={() => setSelectedSessionId(null)}
-                className="flex-shrink-0 flex items-center justify-center h-10 w-10 rounded-xl bg-white/80 backdrop-blur-sm border border-white/60 shadow-md shadow-slate-200/50 text-slate-600 hover:text-indigo-600 hover:shadow-lg transition-all duration-300 group"
+                className="flex-shrink-0 flex items-center justify-center h-10 w-10 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 hover:text-[#0066cc] dark:hover:text-[#0066cc] hover:bg-blue-50 dark:hover:bg-blue-900/20 transition-all duration-300 group"
               >
                 <ArrowLeft className="h-4 w-4 group-hover:-translate-x-0.5 transition-transform" />
               </button>
               
               <div className="flex items-center gap-2.5">
                 <div className="relative group">
-                  <div className="absolute inset-0 bg-gradient-to-br from-indigo-500 to-violet-600 rounded-xl blur opacity-30 group-hover:opacity-50 transition-opacity" />
-                  <div className="relative flex h-11 w-11 items-center justify-center rounded-xl bg-gradient-to-br from-indigo-500 via-violet-500 to-purple-600 text-white shadow-md shadow-indigo-500/30">
+                  <div className="relative flex h-11 w-11 items-center justify-center rounded-2xl bg-[#0066cc]/10 text-[#0066cc]">
                     <User className="h-5 w-5" />
                   </div>
                 </div>
                 
                 <div className="min-w-0">
-                  <h2 className="text-lg font-bold bg-gradient-to-r from-indigo-600 to-violet-600 bg-clip-text text-transparent truncate">
+                  <h2 className="text-[17px] font-bold text-slate-900 dark:text-white tracking-[-0.01em] truncate">
                     {session.student_name}
                   </h2>
                   <div className="flex items-center gap-1.5 mt-0.5">
                     <Clock className="h-3 w-3 text-slate-400" />
-                    <p className="text-xs text-slate-500">Bắt đầu: {formatVietnamTime(new Date(session.started_at))}</p>
+                    <p className="text-[13px] text-slate-500 dark:text-slate-400">Bắt đầu: {formatVietnamTime(new Date(session.started_at))}</p>
                   </div>
                 </div>
               </div>
@@ -200,7 +199,7 @@ export function StudentSessionsTab({ assignmentId }: { assignmentId: string }) {
         </div>
 
         {/* Detail Card - Glassmorphism */}
-        <div className="relative overflow-hidden rounded-2xl bg-slate-50/95 backdrop-blur-xl border border-slate-200/80 shadow-lg shadow-slate-200/40 p-4">
+        <div className="relative overflow-hidden rounded-[2rem] bg-white/80 dark:bg-[#1d1d1f]/80 backdrop-blur-xl border border-black/5 dark:border-white/5 shadow-[0_4px_20px_rgba(0,0,0,0.03)] p-4 sm:p-6">
           <div className="absolute inset-0 bg-gradient-to-br from-slate-50 via-blue-50/30 to-purple-50/30 pointer-events-none" />
           
           <div className="relative">
@@ -254,13 +253,11 @@ export function StudentSessionsTab({ assignmentId }: { assignmentId: string }) {
   return (
     <div className="space-y-4 animate-fade-in">
       {/* Header Section - Glassmorphism */}
-      <div className="relative overflow-hidden rounded-xl sm:rounded-2xl bg-white/70 backdrop-blur-xl border border-white/80 shadow-lg shadow-slate-200/50 p-3 sm:p-4">
-        <div className="absolute inset-0 bg-gradient-to-br from-indigo-50/50 via-transparent to-violet-50/50 pointer-events-none" />
-        
-        <div className="relative flex flex-col gap-3">
+      <div className="relative overflow-hidden rounded-[2rem] bg-white/80 dark:bg-[#1d1d1f]/80 backdrop-blur-xl border border-black/5 dark:border-white/5 shadow-[0_4px_20px_rgba(0,0,0,0.03)] p-4 sm:p-6">
+        <div className="relative flex flex-col gap-4">
           <div className="flex-1">
             <div className="flex items-center gap-2.5 mb-1.5">
-              <h2 className="text-xl font-bold bg-gradient-to-r from-indigo-600 to-violet-600 bg-clip-text text-transparent">
+              <h2 className="text-xl font-bold text-slate-900 dark:text-white tracking-[-0.02em]">
                 Danh sách học sinh
               </h2>
               <div className={`flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-xs font-bold shadow-md ${
@@ -283,19 +280,19 @@ export function StudentSessionsTab({ assignmentId }: { assignmentId: string }) {
           <div className="flex flex-col sm:flex-row gap-2">
             <div className="flex flex-1 max-w-md items-center gap-2">
               <div className="relative flex-1">
-                <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400 pointer-events-none" />
+                <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400 pointer-events-none" />
                 <input
                   type="text"
                   placeholder="Tìm kiếm học sinh..."
                   value={searchTerm}
                   onChange={e => setSearchTerm(e.target.value)}
-                  className="w-full pl-10 pr-3 py-2 bg-white/60 backdrop-blur-sm border border-white/60 rounded-xl text-xs font-medium text-slate-700 placeholder-slate-400 shadow-md shadow-slate-200/50 focus:bg-white focus:ring-4 focus:ring-indigo-100 focus:border-indigo-300 transition-all outline-none"
+                  className="w-full pl-11 pr-4 py-2.5 bg-slate-50 dark:bg-[#1d1d1f]/50 border border-slate-200 dark:border-white/10 rounded-full text-[14px] text-slate-900 dark:text-white placeholder-slate-400 focus:bg-white dark:focus:bg-[#1d1d1f] focus:ring-4 focus:ring-blue-100 dark:focus:ring-blue-900/30 focus:border-[#0066cc] dark:focus:border-blue-500 transition-all outline-none"
                   aria-label="Tìm kiếm học sinh"
                 />
               </div>
               <button
                 onClick={() => window.open(`/api/admin/assignments/${assignmentId}/export`, '_blank')}
-                className="flex items-center gap-1.5 px-3 py-2 bg-emerald-50 text-emerald-600 hover:bg-emerald-100 hover:text-emerald-700 font-semibold rounded-xl border border-emerald-200 transition-colors flex-shrink-0 text-xs shadow-sm"
+                className="flex items-center gap-1.5 px-4 py-2.5 bg-emerald-50 dark:bg-emerald-900/20 text-emerald-600 dark:text-emerald-400 hover:bg-emerald-100 dark:hover:bg-emerald-900/40 font-semibold rounded-full border border-emerald-200 dark:border-emerald-800/30 transition-colors flex-shrink-0 text-[14px]"
               >
                 <Download className="h-4 w-4" />
                 <span className="hidden sm:inline">Xuất bảng điểm</span>
@@ -307,17 +304,16 @@ export function StudentSessionsTab({ assignmentId }: { assignmentId: string }) {
 
       {/* Sessions List */}
       {isLoading ? (
-        <div className="relative overflow-hidden rounded-2xl bg-white/70 backdrop-blur-xl border border-white/80 shadow-lg shadow-slate-200/50 p-10">
+        <div className="relative overflow-hidden rounded-[2rem] bg-white/80 dark:bg-[#1d1d1f]/80 backdrop-blur-xl border border-black/5 dark:border-white/5 shadow-[0_4px_20px_rgba(0,0,0,0.03)] p-10">
           <div className="flex flex-col items-center justify-center">
             <div className="relative mb-4">
-              <div className="absolute inset-0 bg-indigo-500/20 rounded-full blur-xl animate-pulse" />
-              <RefreshCw className="relative h-10 w-10 text-indigo-500 animate-spin" />
+              <RefreshCw className="relative h-10 w-10 text-[#0066cc] animate-spin" />
             </div>
-            <p className="text-slate-600 font-medium text-sm">Đang tải danh sách...</p>
+            <p className="text-slate-600 dark:text-slate-400 font-medium text-[15px]">Đang tải danh sách...</p>
           </div>
         </div>
       ) : filteredSessions.length === 0 ? (
-        <div className="relative overflow-hidden rounded-2xl bg-white/70 backdrop-blur-xl border border-white/80 shadow-lg shadow-slate-200/50 p-10">
+        <div className="relative overflow-hidden rounded-[2rem] bg-white/80 dark:bg-[#1d1d1f]/80 backdrop-blur-xl border border-black/5 dark:border-white/5 shadow-[0_4px_20px_rgba(0,0,0,0.03)] p-10">
           <div className="absolute inset-0 bg-gradient-to-br from-slate-50/50 via-transparent to-slate-50/50 pointer-events-none" />
           
           <div className="relative text-center">
@@ -343,11 +339,11 @@ export function StudentSessionsTab({ assignmentId }: { assignmentId: string }) {
           </div>
         </div>
       ) : (
-        <div className="grid grid-cols-1 gap-3">
+        <div className="grid grid-cols-1 gap-4">
           {paginatedSessions.map((s: any) => (
             <div 
               key={s.id} 
-              className="group relative overflow-hidden rounded-xl sm:rounded-2xl bg-white/70 backdrop-blur-xl border border-white/80 shadow-lg shadow-slate-200/50 hover:shadow-xl transition-all duration-300 p-3 sm:p-4"
+              className="group relative overflow-hidden rounded-[2rem] bg-white/80 dark:bg-[#1d1d1f]/80 backdrop-blur-xl border border-black/5 dark:border-white/5 shadow-[0_4px_20px_rgba(0,0,0,0.03)] hover:shadow-lg transition-all duration-300 p-4 sm:p-5"
             >
               {/* Top gradient indicator */}
               <div className={`absolute top-0 left-0 right-0 h-1 ${
@@ -364,20 +360,7 @@ export function StudentSessionsTab({ assignmentId }: { assignmentId: string }) {
                   <div className="flex items-start gap-3 mb-3">
                     {/* Avatar */}
                     <div className="relative group/avatar flex-shrink-0">
-                      <div className={`absolute inset-0 rounded-xl blur opacity-30 group-hover/avatar:opacity-50 transition-opacity ${
-                        s.submissions?.id 
-                          ? 'bg-gradient-to-br from-emerald-500 to-teal-600'
-                          : s.status === "exited"
-                          ? 'bg-gradient-to-br from-rose-500 to-red-600'
-                          : 'bg-gradient-to-br from-amber-500 to-orange-600'
-                      }`} />
-                      <div className={`relative flex h-11 w-11 items-center justify-center rounded-xl text-white shadow-md ${
-                        s.submissions?.id 
-                          ? 'bg-gradient-to-br from-emerald-500 to-teal-600 shadow-emerald-500/30'
-                          : s.status === "exited"
-                          ? 'bg-gradient-to-br from-rose-500 to-red-600 shadow-rose-500/30'
-                          : 'bg-gradient-to-br from-amber-500 to-orange-600 shadow-amber-500/30'
-                      }`}>
+                      <div className="relative flex h-11 w-11 items-center justify-center rounded-2xl bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-400">
                         <User className="h-5 w-5" />
                       </div>
                     </div>
@@ -385,7 +368,7 @@ export function StudentSessionsTab({ assignmentId }: { assignmentId: string }) {
                     {/* Info */}
                     <div className="flex-1 min-w-0">
                       <div className="flex items-center gap-2 mb-1.5 flex-wrap">
-                        <h3 className="text-base font-bold text-slate-900 truncate">{s.student_name}</h3>
+                        <h3 className="text-[17px] font-bold text-slate-900 dark:text-white truncate tracking-[-0.01em]">{s.student_name}</h3>
                         {s.submissions?.id ? (
                           <div className="flex items-center gap-1 px-2.5 py-0.5 rounded-lg bg-gradient-to-r from-emerald-500 to-teal-500 text-white text-xs font-bold shadow-md shadow-emerald-500/30">
                             <FileCheck className="h-3 w-3" />
@@ -452,16 +435,16 @@ export function StudentSessionsTab({ assignmentId }: { assignmentId: string }) {
                 <div className="flex items-center gap-2 flex-shrink-0">
                   <button
                     onClick={() => setSelectedSessionId(s.id)}
-                    className="group/btn flex items-center gap-1.5 px-4 py-2 bg-gradient-to-r from-indigo-500 to-violet-500 hover:from-indigo-600 hover:to-violet-600 text-white rounded-xl font-semibold text-xs shadow-md shadow-indigo-500/30 hover:shadow-lg hover:shadow-indigo-500/40 transition-all duration-300"
+                    className="group/btn flex items-center gap-1.5 px-4 py-2.5 bg-[#0066cc] hover:bg-[#005bb5] text-white rounded-full font-semibold text-[14px] shadow-lg shadow-blue-500/20 transition-all duration-300"
                   >
-                    <Eye className="h-3.5 w-3.5 group-hover/btn:scale-110 transition-transform" />
+                    <Eye className="h-4 w-4" />
                     <span className="hidden sm:inline">Xem chi tiết</span>
                     <span className="sm:hidden">Chi tiết</span>
                   </button>
                   
                   <button
                     onClick={() => handleDeleteSession(s.id)}
-                    className="group/del flex items-center justify-center h-9 w-9 bg-white/60 backdrop-blur-sm border border-white/60 rounded-xl text-slate-400 hover:text-red-600 hover:bg-red-50 hover:border-red-200 shadow-md shadow-slate-200/50 hover:shadow-lg transition-all duration-300"
+                    className="group/del flex items-center justify-center h-10 w-10 bg-slate-100 dark:bg-slate-800 rounded-full text-slate-500 hover:text-red-600 hover:bg-red-50 dark:hover:bg-red-900/20 transition-all duration-300"
                     aria-label="Xóa phiên làm bài"
                   >
                     <Trash2 className="h-3.5 w-3.5 group-hover/del:scale-110 transition-transform" />
@@ -474,11 +457,11 @@ export function StudentSessionsTab({ assignmentId }: { assignmentId: string }) {
       )}
 
       {totalPages > 1 && (
-        <div className="flex items-center justify-center gap-1.5 mt-6">
+        <div className="flex items-center justify-center gap-2 mt-6">
           <button
             onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}
             disabled={currentPage === 1}
-            className="flex h-9 w-9 items-center justify-center rounded-xl border border-slate-200 bg-white/80 text-slate-600 hover:text-indigo-600 disabled:opacity-40 disabled:cursor-not-allowed transition-all shadow-sm"
+            className="flex h-10 w-10 items-center justify-center rounded-full bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 hover:bg-slate-200 dark:hover:bg-slate-700 disabled:opacity-40 disabled:cursor-not-allowed transition-all"
           >
             &larr;
           </button>
@@ -487,10 +470,10 @@ export function StudentSessionsTab({ assignmentId }: { assignmentId: string }) {
               key={page}
               onClick={() => setCurrentPage(page)}
               className={clsx(
-                "h-9 w-9 rounded-xl text-xs font-semibold transition-all duration-300 border shadow-sm",
+                "h-10 w-10 rounded-full text-[15px] font-semibold transition-all duration-300",
                 currentPage === page
-                  ? "bg-gradient-to-r from-indigo-500 to-violet-500 border-indigo-500 text-white shadow-indigo-500/20"
-                  : "bg-white/80 border-slate-200 text-slate-600 hover:text-indigo-600"
+                  ? "bg-[#0066cc] text-white shadow-lg shadow-blue-500/20"
+                  : "bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 hover:bg-slate-200 dark:hover:bg-slate-700"
               )}
             >
               {page}
@@ -499,7 +482,7 @@ export function StudentSessionsTab({ assignmentId }: { assignmentId: string }) {
           <button
             onClick={() => setCurrentPage(prev => Math.min(prev + 1, totalPages))}
             disabled={currentPage === totalPages}
-            className="flex h-9 w-9 items-center justify-center rounded-xl border border-slate-200 bg-white/80 text-slate-600 hover:text-indigo-600 disabled:opacity-40 disabled:cursor-not-allowed transition-all shadow-sm"
+            className="flex h-10 w-10 items-center justify-center rounded-full bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 hover:bg-slate-200 dark:hover:bg-slate-700 disabled:opacity-40 disabled:cursor-not-allowed transition-all"
           >
             &rarr;
           </button>

@@ -172,7 +172,7 @@ export function ScheduleApp() {
   const currentStudent = students.find((s) => s.id === selectedStudentId);
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 py-3 px-2 sm:py-4 sm:px-3">
+    <div className="min-h-screen py-3 px-2 sm:py-4 sm:px-3 animate-fade-in">
       <div className="max-w-7xl mx-auto">
         <StudentTabs
           students={students}
@@ -191,12 +191,12 @@ export function ScheduleApp() {
             <div className="animate-spin rounded-full h-16 w-16 border-b-2 border-blue-500" />
           </div>
         ) : (
-          <div id="export-container" className="flex flex-col gap-4 p-4 sm:p-6 rounded-2xl bg-gradient-to-br from-gray-50 to-gray-100">
+          <div id="export-container" className="flex flex-col gap-4 p-4 sm:p-6 rounded-[2rem] bg-white/80 dark:bg-[#1d1d1f]/80 backdrop-blur-xl shadow-[0_4px_20px_rgba(0,0,0,0.03)] border border-black/5 dark:border-white/5">
             <div className="text-center">
-              <h1 className="text-2xl sm:text-4xl font-bold text-gray-800 mb-1">
+              <h1 className="text-2xl sm:text-4xl font-bold text-slate-900 dark:text-white mb-1 tracking-[-0.02em] export-title">
                 Theo Dõi Lịch Dạy Học
               </h1>
-              <p className="text-sm sm:text-base text-gray-600">
+              <p className="text-[15px] text-slate-500 dark:text-slate-400 hidden sm:block export-subtitle">
                 Gia sư Đào Bá Anh Quân
               </p>
             </div>

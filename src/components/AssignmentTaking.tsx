@@ -402,18 +402,18 @@ export function AssignmentTaking({ assignment, questions: initialQuestions, init
       {/* Top Navigation */}
       <div className={clsx(
         "sticky top-0 z-40 transition-all duration-300",
-        isDark ? "bg-[#1e293b]/80 border-b border-slate-800 backdrop-blur-xl shadow-lg" : "bg-white/80 border-b border-slate-200 backdrop-blur-xl shadow-sm"
+        isDark ? "bg-[#1d1d1f]/80 border-b border-white/5 backdrop-blur-xl shadow-sm" : "bg-white/80 border-b border-black/5 backdrop-blur-xl shadow-[0_4px_20px_rgba(0,0,0,0.03)]"
       )}>
         <div className="mx-auto max-w-7xl px-4 sm:px-6">
           <div className="flex items-center justify-between gap-4 py-3 sm:py-4">
             <div className="flex-1 min-w-0 flex items-center gap-3">
-              <div className={clsx("hidden sm:flex h-10 w-10 shrink-0 items-center justify-center rounded-xl shadow-md bg-gradient-to-br from-indigo-500 to-violet-600 text-white")}>
+              <div className={clsx("hidden sm:flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl shadow-sm bg-[#0066cc] text-white")}>
                 <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
                   <path strokeLinecap="round" strokeLinejoin="round" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
                 </svg>
               </div>
               <div className="min-w-0" suppressHydrationWarning>
-                <h1 className={clsx("truncate text-sm sm:text-lg font-black tracking-tight", isDark ? "text-white" : "text-slate-900")}>
+                <h1 className={clsx("truncate text-sm sm:text-[17px] font-bold tracking-[-0.01em]", isDark ? "text-white" : "text-slate-900")}>
                   {assignment.title}
                 </h1>
                 <p className={clsx("text-[11px] sm:text-xs font-medium truncate mt-0.5", isDark ? "text-slate-400" : "text-slate-500")}>
@@ -447,8 +447,8 @@ export function AssignmentTaking({ assignment, questions: initialQuestions, init
               <button
                 onClick={handleExitClick}
                 className={clsx(
-                  "flex items-center justify-center gap-1.5 rounded-lg sm:rounded-xl px-3 py-1.5 sm:py-2 text-xs sm:text-sm font-bold transition-all border shadow-sm",
-                  isDark ? "bg-slate-800 border-slate-700 text-slate-300 hover:bg-slate-700 hover:text-white" : "bg-white border-slate-200 text-slate-600 hover:bg-slate-50 hover:border-slate-300"
+                  "flex items-center justify-center gap-1.5 rounded-full px-4 py-2 sm:py-2.5 text-xs sm:text-sm font-bold transition-all border shadow-sm active:scale-[0.98]",
+                  isDark ? "bg-[#1d1d1f] border-white/10 text-slate-300 hover:bg-white/10 hover:text-white" : "bg-white border-black/5 text-slate-600 hover:bg-slate-50"
                 )}
               >
                 <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
@@ -463,32 +463,32 @@ export function AssignmentTaking({ assignment, questions: initialQuestions, init
         {/* Global Progress Line */}
         <div className={clsx("h-[3px] w-full", isDark ? "bg-slate-800" : "bg-slate-100")}>
           <div
-            className="h-full bg-gradient-to-r from-emerald-400 via-teal-400 to-indigo-500 transition-all duration-700 ease-out"
+            className="h-full bg-[#0066cc] transition-all duration-700 ease-out"
             style={{ width: `${nonSectionQuestions.length > 0 ? (answeredCount / nonSectionQuestions.length) * 100 : 0}%` }}
           />
         </div>
       </div>
 
       {showExitConfirm && (
-        <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/60 p-4 backdrop-blur-md animate-fade-in">
-          <div className={clsx("w-full max-w-sm rounded-[2rem] p-6 shadow-2xl animate-scale-in border", isDark ? "bg-slate-900 border-slate-700" : "bg-white border-slate-100")}>
+        <div className="fixed inset-0 z-[100] flex items-center justify-center bg-slate-900/40 p-4 backdrop-blur-sm animate-in fade-in duration-200">
+          <div className={clsx("w-full max-w-sm rounded-[2rem] p-6 shadow-[0_8px_32px_rgba(0,0,0,0.12)] animate-in zoom-in-95 duration-200 border", isDark ? "bg-[#1d1d1f] border-white/5" : "bg-white/90 backdrop-blur-xl border-black/5")}>
             <div className="mb-6 flex flex-col items-center text-center">
               <div className="flex h-16 w-16 items-center justify-center rounded-full bg-amber-500/20 text-amber-500 mb-4 ring-8 ring-amber-500/10">
                 <svg className="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
                   <path strokeLinecap="round" strokeLinejoin="round" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
                 </svg>
               </div>
-              <h3 className={clsx("text-lg font-black mb-1", isDark ? "text-white" : "text-slate-900")}>Thoát bài ngay?</h3>
-              <p className={clsx("text-sm", isDark ? "text-slate-400" : "text-slate-500")}>Bạn đã làm {answeredCount}/{nonSectionQuestions.length} câu. Tiến trình có thể lưu lại được.</p>
+              <h3 className={clsx("text-[19px] font-bold tracking-[-0.01em] mb-1", isDark ? "text-white" : "text-slate-900")}>Thoát bài ngay?</h3>
+              <p className={clsx("text-[15px]", isDark ? "text-slate-400" : "text-slate-500")}>Bạn đã làm {answeredCount}/{nonSectionQuestions.length} câu. Tiến trình có thể lưu lại được.</p>
             </div>
             <div className="space-y-3">
-              <button onClick={() => handleExitConfirm(true)} className="w-full rounded-xl bg-indigo-600 hover:bg-indigo-500 px-4 py-3.5 text-sm font-bold text-white transition-all shadow-lg shadow-indigo-600/30">
+              <button onClick={() => handleExitConfirm(true)} className="w-full rounded-full bg-[#0066cc] hover:bg-[#005bb5] px-4 py-3.5 text-[15px] font-bold text-white transition-all shadow-sm hover:shadow-md active:scale-[0.98]">
                 Lưu và thoát (Tiếp tục sau)
               </button>
-              <button onClick={() => handleExitConfirm(false)} className={clsx("w-full rounded-xl border px-4 py-3.5 text-sm font-bold transition-all", isDark ? "border-red-500/20 text-red-400 bg-red-500/10 hover:bg-red-500/20" : "border-red-200 text-red-600 bg-red-50 hover:bg-red-100")}>
+              <button onClick={() => handleExitConfirm(false)} className={clsx("w-full rounded-full border px-4 py-3.5 text-[15px] font-bold transition-all active:scale-[0.98]", isDark ? "border-red-500/20 text-red-400 bg-red-500/10 hover:bg-red-500/20" : "border-red-200 text-red-600 bg-red-50 hover:bg-red-100")}>
                 Xoá bài (Làm lại cữ đầu)
               </button>
-              <button onClick={() => setShowExitConfirm(false)} className={clsx("w-full rounded-xl px-4 py-3.5 text-sm font-bold transition-all", isDark ? "text-slate-400 hover:text-white hover:bg-slate-800" : "text-slate-500 hover:text-slate-800 hover:bg-slate-100")} >
+              <button onClick={() => setShowExitConfirm(false)} className={clsx("w-full rounded-full px-4 py-3.5 text-[15px] font-bold transition-all active:scale-[0.98]", isDark ? "text-slate-400 hover:text-white hover:bg-white/10" : "text-slate-500 hover:text-slate-800 hover:bg-slate-100")} >
                 Hủy, quay lại bài
               </button>
             </div>
@@ -497,20 +497,20 @@ export function AssignmentTaking({ assignment, questions: initialQuestions, init
       )}
 
       {showSubmitConfirm && (
-        <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/60 p-4 backdrop-blur-md animate-fade-in">
-          <div className={clsx("w-full max-w-sm rounded-[2rem] p-6 shadow-2xl animate-scale-in border", isDark ? "bg-slate-900 border-slate-700" : "bg-white border-slate-100")}>
+        <div className="fixed inset-0 z-[100] flex items-center justify-center bg-slate-900/40 p-4 backdrop-blur-sm animate-in fade-in duration-200">
+          <div className={clsx("w-full max-w-sm rounded-[2rem] p-6 shadow-[0_8px_32px_rgba(0,0,0,0.12)] animate-in zoom-in-95 duration-200 border", isDark ? "bg-[#1d1d1f] border-white/5" : "bg-white/90 backdrop-blur-xl border-black/5")}>
             <div className="mb-6 flex flex-col items-center text-center">
-              <div className="flex h-16 w-16 items-center justify-center rounded-full bg-indigo-500/20 text-indigo-500 mb-4 ring-8 ring-indigo-500/10">
+              <div className="flex h-16 w-16 items-center justify-center rounded-full bg-blue-500/20 text-[#0066cc] dark:text-blue-400 mb-4 ring-8 ring-blue-500/10">
                 <svg className="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
                   <path strokeLinecap="round" strokeLinejoin="round" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01" />
                 </svg>
               </div>
-              <h3 className={clsx("text-lg font-black mb-1", isDark ? "text-white" : "text-slate-900")}>Nộp bài tập?</h3>
-              <p className={clsx("text-sm mb-3", isDark ? "text-slate-400" : "text-slate-500")}>
+              <h3 className={clsx("text-[19px] font-bold tracking-[-0.01em] mb-1", isDark ? "text-white" : "text-slate-900")}>Nộp bài tập?</h3>
+              <p className={clsx("text-[15px] mb-3", isDark ? "text-slate-400" : "text-slate-500")}>
                 Bạn có chắc chắn muốn nộp bài không? Hành động này không thể hoàn tác.
               </p>
               
-              <div className={clsx("rounded-2xl p-3 w-full text-xs font-semibold text-center", isDark ? "bg-slate-800" : "bg-slate-50")}>
+              <div className={clsx("rounded-2xl p-3 w-full text-[13px] font-semibold text-center", isDark ? "bg-slate-800" : "bg-slate-50")}>
                 <p className={isDark ? "text-slate-300" : "text-slate-700"}>
                   Đã làm: {answeredCount}/{nonSectionQuestions.length} câu
                 </p>
@@ -527,13 +527,13 @@ export function AssignmentTaking({ assignment, questions: initialQuestions, init
                   setShowSubmitConfirm(false);
                   handleSubmit(false);
                 }} 
-                className="w-full rounded-xl bg-indigo-600 hover:bg-indigo-500 px-4 py-3.5 text-sm font-bold text-white transition-all shadow-lg shadow-indigo-600/30"
+                className="w-full rounded-full bg-[#0066cc] hover:bg-[#005bb5] px-4 py-3.5 text-[15px] font-bold text-white transition-all shadow-sm hover:shadow-md active:scale-[0.98]"
               >
                 Xác nhận nộp bài
               </button>
               <button 
                 onClick={() => setShowSubmitConfirm(false)} 
-                className={clsx("w-full rounded-xl px-4 py-3.5 text-sm font-bold transition-all", isDark ? "text-slate-400 hover:text-white hover:bg-slate-800" : "text-slate-500 hover:text-slate-800 hover:bg-slate-100")}
+                className={clsx("w-full rounded-full px-4 py-3.5 text-[15px] font-bold transition-all active:scale-[0.98]", isDark ? "text-slate-400 hover:text-white hover:bg-white/10" : "text-slate-500 hover:text-slate-800 hover:bg-slate-100")}
               >
                 Hủy, tiếp tục làm bài
               </button>
@@ -567,29 +567,29 @@ export function AssignmentTaking({ assignment, questions: initialQuestions, init
             })}
 
             <div className={clsx(
-              "rounded-3xl border p-6 sm:p-8 text-center transition-all duration-300 shadow-xl mt-8",
-              isDark ? "bg-slate-800/80 border-slate-700" : "bg-white border-slate-200"
+              "rounded-[2rem] border p-6 sm:p-8 text-center transition-all duration-300 shadow-[0_4px_20px_rgba(0,0,0,0.03)] mt-8",
+              isDark ? "bg-[#1d1d1f]/80 backdrop-blur-xl border-white/5" : "bg-white/80 backdrop-blur-xl border-black/5"
             )}>
               <div className="mb-6">
-                <div className="inline-flex items-center justify-center p-3 sm:p-4 rounded-full bg-emerald-500/10 text-emerald-500 mb-4">
+                <div className="inline-flex items-center justify-center p-3 sm:p-4 rounded-full bg-[#0066cc]/10 text-[#0066cc] dark:bg-blue-500/20 dark:text-blue-400 mb-4">
                   <svg className="w-8 h-8 sm:w-10 sm:h-10" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
                     <path strokeLinecap="round" strokeLinejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
                   </svg>
                 </div>
-                <h3 className={clsx("text-lg sm:text-xl font-black mb-1", isDark ? "text-white" : "text-slate-900")}>Hoàn thành bài làm</h3>
-                <p className={clsx("text-sm font-medium", isDark ? "text-slate-400" : "text-slate-500")}>
+                <h3 className={clsx("text-[19px] sm:text-xl font-bold tracking-[-0.01em] mb-1", isDark ? "text-white" : "text-slate-900")}>Hoàn thành bài làm</h3>
+                <p className={clsx("text-[15px] font-medium", isDark ? "text-slate-400" : "text-slate-500")}>
                   Đã làm <span className={clsx("font-bold", isDark ? "text-white" : "text-slate-900")}>{answeredCount}</span>/{nonSectionQuestions.length} câu
                 </p>
                 {answeredCount < nonSectionQuestions.length && !locked && (
-                  <p className="mt-1 text-sm font-bold text-amber-500">Còn {nonSectionQuestions.length - answeredCount} câu chưa làm!</p>
+                  <p className="mt-1 text-[14px] font-bold text-amber-500">Còn {nonSectionQuestions.length - answeredCount} câu chưa làm!</p>
                 )}
               </div>
               <button
                 className={clsx(
-                  "w-full sm:w-auto min-w-[200px] rounded-2xl px-8 py-4 text-sm sm:text-base font-black transition-all duration-300 shadow-lg",
+                  "w-full sm:w-auto min-w-[200px] rounded-full px-8 py-4 text-[15px] sm:text-base font-bold transition-all duration-300 shadow-sm active:scale-[0.98]",
                   locked || submitting
                     ? isDark ? "cursor-not-allowed bg-slate-700 text-slate-500 shadow-none border border-slate-600" : "cursor-not-allowed bg-slate-100 text-slate-400 shadow-none"
-                    : "bg-gradient-to-br from-indigo-500 via-indigo-600 to-violet-600 text-white shadow-indigo-500/30 hover:shadow-indigo-500/40 hover:-translate-y-0.5 active:translate-y-0"
+                    : "bg-[#0066cc] text-white hover:bg-[#005bb5] hover:shadow-md"
                 )}
                 type="button"
                 disabled={locked || submitting}
@@ -612,12 +612,12 @@ export function AssignmentTaking({ assignment, questions: initialQuestions, init
             
             {/* Realtime Vietnam Clock */}
             {isMounted && (
-              <div className={clsx("rounded-3xl border p-5 text-center shadow-lg relative overflow-hidden", isDark ? "bg-slate-800/90 border-slate-700" : "bg-gradient-to-br from-indigo-50 to-violet-50 border-indigo-100")}>
-                <div className="absolute top-0 right-0 p-3 opacity-20">
+              <div className={clsx("rounded-[2rem] border p-5 text-center shadow-[0_4px_20px_rgba(0,0,0,0.03)] relative overflow-hidden", isDark ? "bg-[#1d1d1f]/80 backdrop-blur-xl border-white/5" : "bg-white/80 backdrop-blur-xl border-black/5")}>
+                <div className="absolute top-0 right-0 p-3 opacity-20 text-[#0066cc] dark:text-blue-500">
                   <Clock className="w-16 h-16" />
                 </div>
-                <p className={clsx("text-xs font-bold uppercase tracking-widest relative z-10", isDark ? "text-indigo-400" : "text-indigo-600")}>Giờ chuẩn Việt Nam</p>
-                <p className={clsx("mt-1.5 font-mono text-[1.75rem] font-black tabular-nums relative z-10", isDark ? "text-white" : "text-indigo-900")}>
+                <p className={clsx("text-xs font-bold uppercase tracking-widest relative z-10", isDark ? "text-blue-400" : "text-[#0066cc]")}>Giờ chuẩn Việt Nam</p>
+                <p className={clsx("mt-1.5 font-mono text-[1.75rem] font-bold tabular-nums relative z-10", isDark ? "text-white" : "text-slate-900")}>
                   {formatVietnamTime(currentVietnamTime)}
                 </p>
               </div>
@@ -626,33 +626,33 @@ export function AssignmentTaking({ assignment, questions: initialQuestions, init
             {/* Timer Panel */}
             {isMounted && hasTimer && (
               <div className={clsx(
-                "rounded-3xl border p-6 text-center transition-all duration-500 shadow-xl",
+                "rounded-[2rem] border p-6 text-center transition-all duration-500 shadow-[0_4px_20px_rgba(0,0,0,0.03)] backdrop-blur-xl",
                 timeUp 
                   ? isDark ? "border-red-500/30 bg-red-500/10 shadow-[0_0_20px_rgba(239,68,68,0.15)]" : "border-red-200 bg-red-50 shadow-red-100/50"
                   : remaining <= 300 
                     ? isDark ? "border-amber-500/30 bg-amber-500/10 animate-pulse-slow" : "border-amber-200 bg-amber-50"
-                    : isDark ? "border-slate-700 bg-slate-800/90" : "border-slate-200 bg-white"
+                    : isDark ? "border-white/5 bg-[#1d1d1f]/80" : "border-black/5 bg-white/80"
               )}>
                 <p className={clsx(
-                  "text-[10px] font-black uppercase tracking-[0.2em] mb-2",
+                  "text-[10px] font-bold uppercase tracking-[0.2em] mb-2",
                   timeUp || remaining <= 300 ? "text-red-500" : remaining <= 900 ? "text-amber-500" : isDark ? "text-slate-400" : "text-slate-500"
                 )}>
                   Thời gian còn lại
                 </p>
                 <p className={clsx(
-                  "font-mono text-5xl font-black tabular-nums tracking-tighter drop-shadow-sm",
-                  timeUp || remaining <= 300 ? "text-red-500" : remaining <= 900 ? "text-amber-500" : isDark ? "text-slate-100" : "text-slate-800"
+                  "font-mono text-5xl font-bold tabular-nums tracking-tight drop-shadow-sm",
+                  timeUp || remaining <= 300 ? "text-red-500" : remaining <= 900 ? "text-amber-500" : isDark ? "text-white" : "text-slate-900"
                 )}>
                   {formatClock(remaining)}
                 </p>
-                {timeUp && <p className="mt-2 text-sm font-black text-red-500 animate-pulse">Đã hết giờ làm bài!</p>}
+                {timeUp && <p className="mt-2 text-sm font-bold text-red-500 animate-pulse">Đã hết giờ làm bài!</p>}
                 
                 {!timeUp && hasTimer && (
-                  <div className={clsx("mt-5 h-2 w-full rounded-full overflow-hidden shadow-inner", isDark ? "bg-slate-700" : "bg-slate-100")}>
+                  <div className={clsx("mt-5 h-2 w-full rounded-full overflow-hidden shadow-inner", isDark ? "bg-white/5" : "bg-black/5")}>
                     <div
                       className={clsx(
                         "h-full rounded-full transition-all duration-1000 ease-linear",
-                        remaining <= 300 ? "bg-red-500 shadow-[0_0_10px_rgba(239,68,68,0.5)]" : remaining <= 900 ? "bg-amber-500" : "bg-gradient-to-r from-indigo-500 to-violet-500"
+                        remaining <= 300 ? "bg-red-500 shadow-[0_0_10px_rgba(239,68,68,0.5)]" : remaining <= 900 ? "bg-amber-500" : "bg-[#0066cc]"
                       )}
                       style={{ width: `${(remaining / ((assignment.durationMinutes ?? 1) * 60)) * 100}%` }}
                     />
@@ -662,10 +662,10 @@ export function AssignmentTaking({ assignment, questions: initialQuestions, init
             )}
 
             {/* Question Map */}
-            <div className={clsx("rounded-3xl border p-5 shadow-lg flex-1 min-h-0 flex flex-col", isDark ? "bg-slate-800/90 border-slate-700" : "bg-white border-slate-200")}>
+            <div className={clsx("rounded-[2rem] border p-5 shadow-[0_4px_20px_rgba(0,0,0,0.03)] backdrop-blur-xl flex-1 min-h-0 flex flex-col", isDark ? "bg-[#1d1d1f]/80 border-white/5" : "bg-white/80 border-black/5")}>
               <div className="flex items-center justify-between mb-4 shrink-0">
-                <p className={clsx("text-xs font-bold uppercase tracking-widest", isDark ? "text-slate-400" : "text-slate-500")}>Câu hỏi</p>
-                <span className={clsx("text-xs font-black px-2 py-0.5 rounded-md", isDark ? "bg-slate-700 text-slate-300" : "bg-slate-100 text-slate-700")}>
+                <p className={clsx("text-[11px] font-bold uppercase tracking-widest", isDark ? "text-slate-400" : "text-slate-500")}>Câu hỏi</p>
+                <span className={clsx("text-xs font-bold px-2.5 py-0.5 rounded-full", isDark ? "bg-white/10 text-slate-300" : "bg-slate-100 text-slate-700")}>
                   {answeredCount}/{nonSectionQuestions.length}
                 </span>
               </div>
@@ -679,12 +679,12 @@ export function AssignmentTaking({ assignment, questions: initialQuestions, init
                       type="button"
                       onClick={() => scrollToQuestion(q.id)}
                       className={clsx(
-                        "flex h-10 w-full items-center justify-center rounded-xl text-xs font-black transition-all duration-200 relative overflow-hidden",
+                        "flex h-10 w-full items-center justify-center rounded-xl text-[13px] font-bold transition-all duration-200 relative overflow-hidden",
                         done
-                          ? "bg-indigo-500 text-white shadow-md shadow-indigo-500/20 hover:bg-indigo-600 hover:scale-105"
+                          ? "bg-[#0066cc] text-white shadow-sm hover:bg-[#005bb5] hover:scale-105"
                           : isDark 
-                            ? "bg-slate-700/50 text-slate-400 hover:bg-slate-600 hover:text-slate-200 border border-slate-600/50" 
-                            : "bg-slate-50 text-slate-500 border border-slate-200 hover:border-indigo-300 hover:bg-indigo-50 hover:text-indigo-600"
+                            ? "bg-white/5 text-slate-400 hover:bg-white/10 hover:text-slate-200 border border-white/5" 
+                            : "bg-slate-50 text-slate-500 border border-black/5 hover:border-[#0066cc]/30 hover:bg-[#0066cc]/5 hover:text-[#0066cc]"
                       )}
                     >
                       {/* Active indicator dot */}
@@ -696,9 +696,9 @@ export function AssignmentTaking({ assignment, questions: initialQuestions, init
               </div>
 
               {nonSectionQuestions.length > 0 && (
-                <div className="mt-4 pt-4 border-t flex flex-wrap justify-center gap-4 text-[11px] font-bold shrink-0 border-inherit">
-                  <span className="flex items-center gap-1.5"><span className="h-3 w-3 rounded-md bg-indigo-500 shadow-sm" />Đã làm</span>
-                  <span className="flex items-center gap-1.5"><span className={clsx("h-3 w-3 rounded-md border", isDark ? "bg-slate-700/50 border-slate-600" : "bg-slate-50 border-slate-200")} />Chưa làm</span>
+                <div className="mt-4 pt-4 border-t border-black/5 dark:border-white/5 flex flex-wrap justify-center gap-4 text-[11px] font-bold shrink-0">
+                  <span className="flex items-center gap-1.5"><span className="h-3 w-3 rounded-md bg-[#0066cc] shadow-sm" />Đã làm</span>
+                  <span className="flex items-center gap-1.5"><span className={clsx("h-3 w-3 rounded-md border", isDark ? "bg-white/5 border-white/10" : "bg-slate-50 border-black/5")} />Chưa làm</span>
                 </div>
               )}
             </div>

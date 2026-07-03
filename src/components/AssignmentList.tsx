@@ -93,26 +93,26 @@ export function AssignmentList({ assignments }: AssignmentListProps) {
 
   const subjects = Array.from(new Set(assignments.map((a) => a.subject)));
 
-  const StatusBadge = ({ assignment }: { assignment: Assignment }) => {
+    const StatusBadge = ({ assignment }: { assignment: Assignment }) => {
     const status = getDerivedStatus(assignment);
     const urgent = isUrgent(assignment);
     return (
-      <div className="flex flex-wrap items-center gap-1.5">
+      <div className="flex flex-wrap items-center gap-2">
         {urgent && (
-          <span className="inline-flex items-center gap-1 rounded-full bg-red-100 dark:bg-red-500/20 px-2.5 py-1 text-xs font-bold text-red-700 dark:text-red-400 ring-1 ring-red-200 dark:ring-red-500/30">
+          <span className="inline-flex items-center gap-1.5 rounded-full bg-red-50 dark:bg-red-500/10 px-2.5 py-1 text-[12px] font-semibold text-red-600 dark:text-red-400">
             <span className="h-1.5 w-1.5 rounded-full bg-red-500 animate-pulse" />
-            Gấp!
+            Gấp
           </span>
         )}
         <span className={clsx(
-          "rounded-full px-2.5 py-1 text-xs font-semibold",
+          "rounded-full px-2.5 py-1 text-[12px] font-medium tracking-tight",
           status === "overdue"
-            ? "bg-red-50 dark:bg-red-500/10 text-red-700 dark:text-red-400 ring-1 ring-red-200 dark:ring-red-500/20"
+            ? "bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-400"
             : status === "completed"
-              ? "bg-emerald-50 dark:bg-emerald-500/10 text-emerald-700 dark:text-emerald-400 ring-1 ring-emerald-200 dark:ring-emerald-500/20"
-              : "bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 ring-1 ring-slate-200 dark:ring-slate-700"
+              ? "bg-emerald-50 dark:bg-emerald-500/10 text-emerald-600 dark:text-emerald-400"
+              : "bg-slate-50 dark:bg-slate-800 text-slate-600 dark:text-slate-300"
         )}>
-          {status === "overdue" ? "Quá hạn" : status === "completed" ? "✓ Đã làm" : "Chưa làm"}
+          {status === "overdue" ? "Quá hạn" : status === "completed" ? "Đã làm" : "Chưa làm"}
         </span>
       </div>
     );
@@ -120,35 +120,37 @@ export function AssignmentList({ assignments }: AssignmentListProps) {
 
   const subjectColor = (subject: string) => {
     const map: Record<string, string> = {
-      "Toán": "bg-blue-100 text-blue-700 dark:bg-blue-500/20 dark:text-blue-400",
-      "Lý": "bg-purple-100 text-purple-700 dark:bg-purple-500/20 dark:text-purple-400",
-      "Hóa": "bg-emerald-100 text-emerald-700 dark:bg-emerald-500/20 dark:text-emerald-400",
-      "Văn": "bg-pink-100 text-pink-700 dark:bg-pink-500/20 dark:text-pink-400",
-      "Anh": "bg-amber-100 text-amber-700 dark:bg-amber-500/20 dark:text-amber-400",
-      "Sinh": "bg-teal-100 text-teal-700 dark:bg-teal-500/20 dark:text-teal-400",
+      "Toán": "bg-blue-50 text-blue-600 dark:bg-blue-500/10 dark:text-blue-400",
+      "Lý": "bg-indigo-50 text-indigo-600 dark:bg-indigo-500/10 dark:text-indigo-400",
+      "Hóa": "bg-emerald-50 text-emerald-600 dark:bg-emerald-500/10 dark:text-emerald-400",
+      "Văn": "bg-rose-50 text-rose-600 dark:bg-rose-500/10 dark:text-rose-400",
+      "Anh": "bg-amber-50 text-amber-600 dark:bg-amber-500/10 dark:text-amber-400",
+      "Sinh": "bg-teal-50 text-teal-600 dark:bg-teal-500/10 dark:text-teal-400",
     };
     for (const key of Object.keys(map)) {
       if (subject?.includes(key)) return map[key];
     }
-    return "bg-indigo-100 text-indigo-700 dark:bg-indigo-500/20 dark:text-indigo-400";
+    return "bg-slate-100 text-slate-600 dark:bg-slate-800 dark:text-slate-300";
   };
+
+
 
   if (!mounted) {
     return (
-      <div className="space-y-5">
-        <div className="rounded-3xl bg-white/70 dark:bg-slate-800/60 backdrop-blur-xl border border-white/80 dark:border-slate-700 shadow-xl shadow-slate-200/50 dark:shadow-none p-5">
-          <div className="skeleton dark:bg-slate-700/50 h-12 mb-3 rounded-2xl" />
+      <div className="space-y-6">
+        <div className="rounded-[2rem] bg-white dark:bg-[#1d1d1f] shadow-[0_2px_10px_rgba(0,0,0,0.02)] p-6">
+          <div className="skeleton dark:bg-slate-700/50 h-12 mb-4 rounded-full" />
           <div className="flex gap-2">
-            {[1, 2, 3, 4].map(i => <div key={i} className="skeleton dark:bg-slate-700/50 h-9 w-24 rounded-2xl" />)}
+            {[1, 2, 3, 4].map(i => <div key={i} className="skeleton dark:bg-slate-700/50 h-10 w-24 rounded-full" />)}
           </div>
         </div>
-        <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
+        <div className="grid gap-6 lg:gap-8 sm:grid-cols-2 lg:grid-cols-3">
           {[1, 2, 3, 4, 5, 6].map(i => (
-            <div key={i} className="rounded-3xl bg-white/70 dark:bg-slate-800/60 backdrop-blur-xl border border-white/80 dark:border-slate-700 shadow-xl shadow-slate-200/50 dark:shadow-none p-6">
+            <div key={i} className="rounded-[2rem] bg-white dark:bg-[#1d1d1f] shadow-[0_2px_10px_rgba(0,0,0,0.02)] p-6">
               <div className="skeleton dark:bg-slate-700/50 h-6 w-3/4 mb-4 rounded-xl" />
               <div className="skeleton dark:bg-slate-700/50 h-4 w-full mb-2 rounded-lg" />
-              <div className="skeleton dark:bg-slate-700/50 h-4 w-2/3 mb-4 rounded-lg" />
-              <div className="skeleton dark:bg-slate-700/50 h-10 w-full rounded-xl" />
+              <div className="skeleton dark:bg-slate-700/50 h-4 w-2/3 mb-6 rounded-lg" />
+              <div className="skeleton dark:bg-slate-700/50 h-11 w-full rounded-full" />
             </div>
           ))}
         </div>
@@ -157,14 +159,16 @@ export function AssignmentList({ assignments }: AssignmentListProps) {
   }
 
   return (
-    <div className="space-y-5 animate-slide-up" suppressHydrationWarning>
-      <div className="space-y-3 rounded-3xl bg-white/70 dark:bg-slate-800/60 backdrop-blur-xl border border-white/80 dark:border-slate-700 shadow-xl shadow-slate-200/50 dark:shadow-none p-5" suppressHydrationWarning>
-        <div className="relative">
+    <div className="space-y-8 animate-slide-up" suppressHydrationWarning>
+      
+      {/* Search & Filter Card */}
+      <div className="rounded-[2rem] bg-white dark:bg-[#1d1d1f] shadow-[0_4px_20px_rgba(0,0,0,0.03)] border border-black/5 dark:border-white/5 p-6" suppressHydrationWarning>
+        <div className="relative mb-6">
           <svg className="absolute left-4 top-1/2 h-5 w-5 -translate-y-1/2 text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
           </svg>
           <input
-            className="w-full rounded-2xl border-2 border-slate-200/60 dark:border-slate-700 bg-white/60 dark:bg-slate-900/50 backdrop-blur-sm py-3 pl-12 pr-4 text-sm text-slate-900 dark:text-white placeholder-slate-400 transition-all focus:border-indigo-400 dark:focus:border-indigo-500 focus:bg-white dark:focus:bg-slate-800 focus:outline-none focus:ring-4 focus:ring-indigo-100/50 dark:focus:ring-indigo-500/20"
+            className="w-full rounded-full bg-slate-50 dark:bg-[#2a2a2c] py-3.5 pl-12 pr-4 text-[16px] text-[#1d1d1f] dark:text-white placeholder-slate-400 transition-all focus:bg-white dark:focus:bg-[#333] focus:outline-none focus:ring-4 focus:ring-[#0066cc]/10 border border-transparent focus:border-[#0066cc]/20"
             placeholder="Tìm kiếm bài tập..."
             value={search}
             onChange={(e) => setSearch(e.target.value)}
@@ -172,7 +176,7 @@ export function AssignmentList({ assignments }: AssignmentListProps) {
           {search && (
             <button
               onClick={() => setSearch("")}
-              className="absolute right-4 top-1/2 -translate-y-1/2 rounded-lg p-1 text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-700 hover:text-slate-700 dark:hover:text-slate-300 transition-colors"
+              className="absolute right-4 top-1/2 -translate-y-1/2 rounded-full p-1.5 text-slate-400 hover:bg-slate-200 dark:hover:bg-slate-700 hover:text-slate-600 transition-colors"
             >
               <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                 <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
@@ -181,30 +185,34 @@ export function AssignmentList({ assignments }: AssignmentListProps) {
           )}
         </div>
 
-        <div className="flex flex-wrap items-center gap-2">
-          {[
-            { value: "not_started", label: "Chưa làm" },
-            { value: "completed", label: "Đã làm" },
-            { value: "overdue", label: "Quá hạn" },
-            { value: "Tất cả", label: "Tất cả" },
-          ].map((tab) => (
-            <button
-              key={tab.value}
-              onClick={() => setStatusFilter(tab.value)}
-              className={clsx(
-                "rounded-2xl px-4 py-2 text-sm font-semibold transition-all duration-300",
-                statusFilter === tab.value
-                  ? "bg-gradient-to-r from-indigo-600 to-violet-600 text-white shadow-lg shadow-indigo-500/30"
-                  : "bg-white/60 dark:bg-slate-800/60 backdrop-blur-sm border border-white/80 dark:border-slate-700 text-slate-600 dark:text-slate-300 hover:bg-white/80 dark:hover:bg-slate-700 hover:text-indigo-600 dark:hover:text-indigo-400"
-              )}
-            >
-              {tab.label}
-            </button>
-          ))}
+        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+          
+          {/* Segmented Control for Tabs */}
+          <div className="flex flex-wrap items-center bg-slate-100 dark:bg-[#2a2a2c] p-1 rounded-full w-full sm:w-auto">
+            {[
+              { value: "not_started", label: "Chưa làm" },
+              { value: "completed", label: "Đã làm" },
+              { value: "overdue", label: "Quá hạn" },
+              { value: "Tất cả", label: "Tất cả" },
+            ].map((tab) => (
+              <button
+                key={tab.value}
+                onClick={() => setStatusFilter(tab.value)}
+                className={clsx(
+                  "flex-1 sm:flex-none rounded-full px-5 py-2 text-[14px] font-medium transition-all duration-300",
+                  statusFilter === tab.value
+                    ? "bg-white dark:bg-[#444] text-[#1d1d1f] dark:text-white shadow-sm"
+                    : "text-slate-500 dark:text-slate-400 hover:text-[#1d1d1f] dark:hover:text-white"
+                )}
+              >
+                {tab.label}
+              </button>
+            ))}
+          </div>
 
           {subjects.length > 1 && (
             <select
-              className="ml-auto rounded-2xl border-2 border-slate-200/60 dark:border-slate-700 bg-white/60 dark:bg-slate-900/50 backdrop-blur-sm px-4 py-2 text-sm font-semibold text-slate-600 dark:text-slate-300 transition focus:border-indigo-400 dark:focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-100 dark:focus:ring-indigo-500/20"
+              className="w-full sm:w-auto rounded-full bg-slate-50 dark:bg-[#2a2a2c] px-5 py-2.5 text-[14px] font-medium text-slate-700 dark:text-slate-200 transition focus:outline-none focus:ring-4 focus:ring-[#0066cc]/10 border border-slate-200 dark:border-[#444]"
               value={subjectFilter}
               onChange={(e) => setSubjectFilter(e.target.value)}
             >
@@ -217,16 +225,13 @@ export function AssignmentList({ assignments }: AssignmentListProps) {
         </div>
 
         {(search || subjectFilter !== "Tất cả" || statusFilter !== "Tất cả") && (
-          <div className="flex items-center gap-2 rounded-xl bg-slate-50/50 dark:bg-slate-900/50 backdrop-blur-sm px-3 py-2">
-            <svg className="h-4 w-4 text-slate-400 dark:text-slate-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z" />
-            </svg>
-            <p className="text-xs text-slate-600 dark:text-slate-300 font-medium">
+          <div className="flex items-center gap-2 px-1">
+            <p className="text-[14px] text-[#1d1d1f]/60 dark:text-white/60 font-normal">
               {filtered.length} kết quả
             </p>
             <button
               onClick={() => { setSearch(""); setSubjectFilter("Tất cả"); setStatusFilter("Tất cả"); }}
-              className="ml-auto text-xs text-indigo-600 dark:text-indigo-400 hover:text-indigo-700 dark:hover:text-indigo-300 font-semibold hover:underline"
+              className="ml-auto text-[14px] text-[#0066cc] dark:text-[#2997ff] hover:underline"
             >
               Xóa bộ lọc
             </button>
@@ -234,7 +239,8 @@ export function AssignmentList({ assignments }: AssignmentListProps) {
         )}
       </div>
 
-      <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3" suppressHydrationWarning>
+      {/* Assignment Grid */}
+      <div className="grid gap-6 lg:gap-8 sm:grid-cols-2 lg:grid-cols-3" suppressHydrationWarning>
         {paginated.map((assignment) => {
           const status = getDerivedStatus(assignment);
           const overdue = status === "overdue";
@@ -248,79 +254,74 @@ export function AssignmentList({ assignments }: AssignmentListProps) {
             <div
               key={assignment.id}
               className={clsx(
-                "group flex flex-col rounded-3xl bg-white/70 dark:bg-slate-800/60 backdrop-blur-xl border border-white/80 dark:border-slate-700 shadow-xl shadow-slate-200/50 dark:shadow-none p-6 transition-all duration-300",
-                urgent ? "ring-2 ring-red-400/50 dark:ring-red-500/30 shadow-red-200/50 hover:shadow-2xl hover:shadow-red-300/40" :
-                overdue ? "opacity-75 hover:shadow-2xl hover:shadow-slate-300/40 dark:hover:shadow-black/40" :
-                completed ? "hover:shadow-2xl hover:shadow-emerald-200/40 dark:hover:border-emerald-500/50" :
-                "hover:shadow-2xl hover:shadow-indigo-200/40 dark:hover:border-indigo-500/50"
+                "group flex flex-col rounded-[2rem] bg-white dark:bg-[#1d1d1f] shadow-[0_2px_12px_rgba(0,0,0,0.03)] border border-black/5 dark:border-white/5 p-6 transition-all duration-300 hover:-translate-y-1 hover:shadow-[0_12px_40px_rgba(0,0,0,0.08)]",
+                urgent && "ring-1 ring-red-400/30",
+                overdue && "opacity-80"
               )}
               suppressHydrationWarning
             >
-              <div className="flex items-center justify-between gap-2 mb-4" suppressHydrationWarning>
+              <div className="flex items-start justify-between gap-2 mb-5" suppressHydrationWarning>
                 <div className="flex items-center gap-2">
-                  <span className={clsx("rounded-xl px-3 py-1 text-xs font-bold backdrop-blur-sm", subjectColor(assignment.subject))}>
+                  <span className={clsx("rounded-full px-3 py-1 text-[13px] font-semibold", subjectColor(assignment.subject))}>
                     {assignment.subject}
                   </span>
-                  <span className="text-xs text-slate-500 dark:text-slate-400 font-medium">{assignment.grade}</span>
+                  <span className="text-[13px] text-slate-400 font-medium">{assignment.grade}</span>
                 </div>
                 <StatusBadge assignment={assignment} />
               </div>
 
-              <h2 className="text-base font-bold text-slate-900 dark:text-white leading-snug line-clamp-2 mb-4">
+              <h2 className="text-[19px] font-bold text-[#1d1d1f] dark:text-white leading-[1.3] tracking-[-0.02em] line-clamp-2 mb-4 group-hover:text-[#0066cc] dark:group-hover:text-sky-400 transition-colors">
                 <MathText text={assignment.title} />
               </h2>
 
-              <div className="flex flex-wrap items-center gap-x-3 gap-y-2 text-xs text-slate-500 dark:text-slate-400 flex-1 mb-5" suppressHydrationWarning>
+              <div className="flex flex-col gap-2 text-[13px] text-slate-500 dark:text-slate-400 flex-1 mb-6" suppressHydrationWarning>
                 {dueDateTime && (
-                  <span className="flex items-center gap-1.5 bg-slate-50/50 dark:bg-slate-900/50 backdrop-blur-sm px-2.5 py-1 rounded-lg">
-                    <svg className="h-3.5 w-3.5 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <span className="flex items-center gap-2">
+                    <svg className="h-4 w-4 shrink-0 text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
                     </svg>
-                    {dueDateTime}
+                    Hạn: {dueDateTime}
                   </span>
                 )}
                 {remaining && (
-                  <span className={clsx("flex items-center gap-1.5 font-semibold px-2.5 py-1 rounded-lg backdrop-blur-sm", urgent ? "text-red-600 dark:text-red-400 bg-red-50/80 dark:bg-red-500/10" : "text-slate-500 dark:text-slate-400 bg-slate-50/50 dark:bg-slate-900/50")}>
-                    <svg className="h-3.5 w-3.5 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <span className={clsx("flex items-center gap-2", urgent ? "text-red-500 font-semibold" : "")}>
+                    <svg className="h-4 w-4 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
                     </svg>
                     Còn {remaining}
                   </span>
                 )}
                 {assignment.durationMinutes && (
-                  <span className="flex items-center gap-1.5 bg-slate-50/50 dark:bg-slate-900/50 backdrop-blur-sm px-2.5 py-1 rounded-lg">
-                    <svg className="h-3.5 w-3.5 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
+                  <span className="flex items-center gap-2">
+                    <svg className="h-4 w-4 shrink-0 text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
                     </svg>
-                    {assignment.durationMinutes} phút
+                    Thời gian: {assignment.durationMinutes} phút
                   </span>
                 )}
               </div>
 
-              <div className="flex items-center justify-between border-t border-slate-100/50 dark:border-slate-700/50 pt-4" suppressHydrationWarning>
+              <div className="flex items-center justify-between border-t border-slate-100 dark:border-[#333] pt-5" suppressHydrationWarning>
                 <div className="flex items-center gap-2">
                   {latest && !assignment.hideScore && (
-                    <div className="flex items-center gap-2 bg-amber-50/50 dark:bg-amber-500/10 backdrop-blur-sm px-3 py-1.5 rounded-xl mr-auto">
-                      <svg className="h-4 w-4 text-amber-500 dark:text-amber-400" fill="currentColor" viewBox="0 0 20 20">
-                        <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
-                      </svg>
-                      <span className="text-sm font-bold text-amber-700 dark:text-amber-400">{latest.score} / {assignment.totalScore} điểm</span>
+                    <div className="flex items-center gap-2 text-[14px] font-semibold text-slate-700 dark:text-slate-300">
+                      <span>{latest.score} <span className="text-slate-400 font-normal">/ {assignment.totalScore}</span></span>
                     </div>
                   )}
                 </div>
 
-                <div className="flex items-center gap-2">
+                <div className="flex items-center gap-2 ml-auto">
                   {latest ? (
                     <>
                       <Link
                         href={`/assignments/${assignment.id}/result?sid=${latest.id}`}
-                        className="rounded-xl bg-white/50 dark:bg-slate-800/50 backdrop-blur-sm border border-white/80 dark:border-slate-600 px-3 py-1.5 text-xs font-semibold text-slate-700 dark:text-slate-300 transition hover:bg-white/80 dark:hover:bg-slate-700 hover:text-slate-900 dark:hover:text-white"
+                        className="rounded-full bg-slate-50 dark:bg-[#2a2a2c] px-4 py-2 text-[14px] font-medium text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-[#333] transition-colors active:scale-95"
                       >
-                        Xem kết quả
+                        Kết quả
                       </Link>
                       <Link
                         href={`/assignments/${assignment.id}/start`}
-                        className="rounded-xl bg-gradient-to-r from-indigo-600 to-violet-600 px-3 py-1.5 text-xs font-semibold text-white shadow-lg shadow-indigo-500/30 transition hover:from-indigo-700 hover:to-violet-700 hover:shadow-xl dark:shadow-indigo-500/20"
+                        className="rounded-full bg-[#0066cc] px-5 py-2 text-[14px] font-medium text-white hover:bg-[#0071e3] transition-colors active:scale-95 shadow-sm shadow-blue-500/20"
                       >
                         Làm lại
                       </Link>
@@ -330,13 +331,13 @@ export function AssignmentList({ assignments }: AssignmentListProps) {
                       href={overdue ? "#" : `/assignments/${assignment.id}/start`}
                       aria-disabled={overdue}
                       className={clsx(
-                        "rounded-xl px-4 py-1.5 text-xs font-semibold transition shadow-lg",
+                        "rounded-full px-6 py-2.5 text-[14px] font-medium transition-all active:scale-95 text-center shadow-sm",
                         overdue
-                          ? "cursor-not-allowed bg-slate-100/80 dark:bg-slate-800/80 backdrop-blur-sm text-slate-400 dark:text-slate-500 shadow-none border dark:border-slate-700"
-                          : "bg-gradient-to-r from-indigo-600 to-violet-600 text-white shadow-indigo-500/30 dark:shadow-indigo-500/20 hover:from-indigo-700 hover:to-violet-700 hover:shadow-xl"
+                          ? "cursor-not-allowed bg-slate-100 dark:bg-slate-800 text-slate-400 dark:text-slate-500 shadow-none"
+                          : "bg-[#0066cc] text-white hover:bg-[#0071e3] shadow-blue-500/20 hover:shadow-blue-500/30"
                       )}
                     >
-                      {overdue ? "Đã hết hạn" : "Làm bài →"}
+                      {overdue ? "Đã hết hạn" : "Bắt đầu làm bài"}
                     </Link>
                   )}
                 </div>
@@ -345,24 +346,24 @@ export function AssignmentList({ assignments }: AssignmentListProps) {
           );
         })}
         {filtered.length === 0 && (
-          <div className="sm:col-span-2 lg:col-span-3 flex flex-col items-center justify-center rounded-3xl bg-white/70 dark:bg-slate-800/60 backdrop-blur-xl border border-white/80 dark:border-slate-700 shadow-xl shadow-slate-200/50 dark:shadow-none p-16 text-center">
-            <div className="mb-4 flex h-20 w-20 items-center justify-center rounded-2xl bg-gradient-to-br from-slate-100 to-slate-200 dark:from-slate-700 dark:to-slate-800">
+          <div className="sm:col-span-2 lg:col-span-3 flex flex-col items-center justify-center rounded-[2rem] bg-white dark:bg-[#1d1d1f] shadow-[0_2px_10px_rgba(0,0,0,0.02)] border border-black/5 dark:border-white/5 p-16 text-center">
+            <div className="mb-5 flex h-24 w-24 items-center justify-center rounded-full bg-slate-50 dark:bg-slate-800/50">
               <svg className="h-10 w-10 text-slate-400 dark:text-slate-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
               </svg>
             </div>
-            <p className="text-lg font-bold text-slate-700 dark:text-white mb-2">Không tìm thấy bài tập phù hợp</p>
-            <p className="text-sm text-slate-500 dark:text-slate-400">Thử thay đổi bộ lọc hoặc tìm kiếm khác</p>
+            <p className="text-[17px] font-semibold text-[#1d1d1f] dark:text-white tracking-[-0.02em] mb-2">Không tìm thấy bài tập phù hợp</p>
+            <p className="text-[14px] text-[#1d1d1f]/60 dark:text-white/60">Thử thay đổi bộ lọc hoặc tìm kiếm khác</p>
           </div>
         )}
       </div>
 
       {totalPages > 1 && (
-        <div className="flex items-center justify-center gap-1.5 mt-8">
+        <div className="flex items-center justify-center gap-2 mt-8">
           <button
             onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}
             disabled={currentPage === 1}
-            className="flex h-10 w-10 items-center justify-center rounded-2xl border border-slate-200/60 dark:border-slate-700 bg-white/60 dark:bg-slate-800/60 backdrop-blur-sm text-slate-600 dark:text-slate-300 hover:bg-white dark:hover:bg-slate-700 disabled:opacity-40 disabled:cursor-not-allowed transition-all shadow-md"
+            className="flex h-10 w-10 items-center justify-center rounded-full border border-black/5 dark:border-white/10 bg-white dark:bg-[#2a2a2c] text-[#1d1d1f] dark:text-white hover:bg-[#f5f5f7] dark:hover:bg-[#333] disabled:opacity-40 disabled:cursor-not-allowed transition-all"
           >
             &larr;
           </button>
@@ -371,10 +372,10 @@ export function AssignmentList({ assignments }: AssignmentListProps) {
               key={page}
               onClick={() => setCurrentPage(page)}
               className={clsx(
-                "h-10 w-10 rounded-2xl text-sm font-semibold transition-all duration-300 border shadow-md",
+                "h-10 w-10 rounded-full text-[14px] font-medium transition-all duration-300 border border-transparent",
                 currentPage === page
-                  ? "bg-gradient-to-r from-indigo-600 to-violet-600 border-indigo-600 text-white shadow-indigo-500/30"
-                  : "bg-white/60 dark:bg-slate-800/60 border-slate-200/60 dark:border-slate-700 text-slate-600 dark:text-slate-300 hover:bg-white dark:hover:bg-slate-700"
+                  ? "bg-[#1d1d1f] dark:bg-white text-white dark:text-[#1d1d1f]"
+                  : "bg-white dark:bg-[#2a2a2c] text-[#1d1d1f] dark:text-white hover:bg-[#f5f5f7] dark:hover:bg-[#333]"
               )}
             >
               {page}
@@ -383,7 +384,7 @@ export function AssignmentList({ assignments }: AssignmentListProps) {
           <button
             onClick={() => setCurrentPage(prev => Math.min(prev + 1, totalPages))}
             disabled={currentPage === totalPages}
-            className="flex h-10 w-10 items-center justify-center rounded-2xl border border-slate-200/60 dark:border-slate-700 bg-white/60 dark:bg-slate-800/60 backdrop-blur-sm text-slate-600 dark:text-slate-300 hover:bg-white dark:hover:bg-slate-700 disabled:opacity-40 disabled:cursor-not-allowed transition-all shadow-md"
+            className="flex h-10 w-10 items-center justify-center rounded-full border border-black/5 dark:border-white/10 bg-white dark:bg-[#2a2a2c] text-[#1d1d1f] dark:text-white hover:bg-[#f5f5f7] dark:hover:bg-[#333] disabled:opacity-40 disabled:cursor-not-allowed transition-all"
           >
             &rarr;
           </button>

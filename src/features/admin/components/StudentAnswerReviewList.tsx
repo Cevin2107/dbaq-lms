@@ -75,24 +75,24 @@ export function StudentAnswerReviewList({
             return (
               <div
                 key={q.questionId}
-                className="group relative overflow-hidden rounded-3xl bg-slate-50/95 backdrop-blur-sm border border-slate-200/80 shadow-md shadow-slate-200/40 p-3.5 hover:shadow-lg hover:-translate-y-0.5 transition-all duration-300"
+                className="group relative overflow-hidden rounded-[2rem] bg-white/80 dark:bg-[#1d1d1f]/80 backdrop-blur-xl border border-black/5 dark:border-white/5 shadow-[0_4px_20px_rgba(0,0,0,0.03)] p-4 sm:p-5 hover:shadow-lg hover:-translate-y-0.5 transition-all duration-300"
               >
                 <div
-                  className={`absolute top-0 left-0 right-0 h-0.5 bg-gradient-to-r from-indigo-500 to-violet-500`}
+                  className={`absolute top-0 left-0 right-0 h-1 bg-[#0066cc]`}
                 />
 
                 <div className="flex justify-between items-start mb-3">
                   <div className="flex items-center gap-2.5">
-                    <div className="flex items-center justify-center h-8 w-8 rounded-2xl font-bold text-sm text-white shadow-md bg-gradient-to-br from-indigo-500 to-violet-500 shadow-indigo-500/30">
+                    <div className="flex items-center justify-center h-8 w-8 rounded-full font-bold text-[14px] text-white shadow-lg shadow-blue-500/20 bg-[#0066cc]">
                       i
                     </div>
                     <div>
                       <div className="flex items-center gap-1.5">
-                        <span className="text-xs font-semibold text-slate-500 uppercase tracking-wider">
+                        <span className="text-[13px] font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider">
                           Đoạn văn / Ghi chú
                         </span>
-                        <span className="text-xs text-slate-400">•</span>
-                        <span className="text-sm font-bold text-slate-600">{q.points}đ</span>
+                        <span className="text-[13px] text-slate-400">•</span>
+                        <span className="text-[14px] font-bold text-slate-600 dark:text-slate-300">{q.points}đ</span>
                       </div>
                     </div>
                   </div>
@@ -133,31 +133,31 @@ export function StudentAnswerReviewList({
           return (
             <div
               key={q.questionId}
-              className="group relative overflow-hidden rounded-3xl bg-slate-50/95 backdrop-blur-sm border border-slate-200/80 shadow-md shadow-slate-200/40 p-3.5 hover:shadow-lg hover:-translate-y-0.5 transition-all duration-300"
+              className="group relative overflow-hidden rounded-[2rem] bg-white/80 dark:bg-[#1d1d1f]/80 backdrop-blur-xl border border-black/5 dark:border-white/5 shadow-[0_4px_20px_rgba(0,0,0,0.03)] p-4 sm:p-5 hover:shadow-lg hover:-translate-y-0.5 transition-all duration-300"
             >
               <div
-                className={`absolute top-0 left-0 right-0 h-0.5 ${
+                className={`absolute top-0 left-0 right-0 h-1 ${
                   hasAnswer
                     ? isSubmitted && displayIsCorrect
-                      ? "bg-gradient-to-r from-emerald-500 to-teal-500"
+                      ? "bg-emerald-500"
                       : isSubmitted && !displayIsCorrect
-                      ? "bg-gradient-to-r from-rose-500 to-red-500"
-                      : "bg-gradient-to-r from-indigo-500 to-violet-500"
-                    : "bg-gradient-to-r from-slate-300 to-slate-400"
+                      ? "bg-rose-500"
+                      : "bg-[#0066cc]"
+                    : "bg-slate-300 dark:bg-slate-700"
                 }`}
               />
 
               <div className="flex justify-between items-start mb-3">
                 <div className="flex items-center gap-2.5">
                   <div
-                    className={`flex items-center justify-center h-8 w-8 rounded-2xl font-bold text-sm text-white shadow-md ${
+                    className={`flex items-center justify-center h-8 w-8 rounded-full font-bold text-[14px] text-white shadow-lg ${
                       hasAnswer
                         ? isSubmitted && displayIsCorrect
-                          ? "bg-gradient-to-br from-emerald-500 to-teal-500 shadow-emerald-500/30"
+                          ? "bg-emerald-500 shadow-emerald-500/30"
                           : isSubmitted && !displayIsCorrect
-                          ? "bg-gradient-to-br from-rose-500 to-red-500 shadow-rose-500/30"
-                          : "bg-gradient-to-br from-indigo-500 to-violet-500 shadow-indigo-500/30"
-                        : "bg-gradient-to-br from-slate-400 to-slate-500 shadow-slate-500/30"
+                          ? "bg-rose-500 shadow-rose-500/30"
+                          : "bg-[#0066cc] shadow-blue-500/20"
+                        : "bg-slate-400 dark:bg-slate-600 shadow-slate-500/30"
                     }`}
                   >
                     {questionNumber}

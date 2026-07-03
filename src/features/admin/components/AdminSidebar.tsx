@@ -22,7 +22,7 @@ const NAV_ITEMS = [
   { name: "Tổng quan", href: "/admin/dashboard", icon: LayoutDashboard },
   { name: "Bài tập", href: "/admin/assignments", icon: GraduationCap },
   { name: "Lịch dạy", href: "/admin/schedule", icon: CalendarDays },
-  { name: "Đăng ký lịch dạy", href: "/admin/teaching-schedule", icon: Clock },
+  { name: "Đăng ký", href: "/admin/teaching-schedule", icon: Clock },
   { name: "Học sinh", href: "/admin/stats", icon: Users },
   { name: "Cài đặt", href: "/admin/settings", icon: Settings },
 ];
@@ -70,17 +70,17 @@ export function AdminSidebar() {
                   className={cn(
                     "flex flex-1 flex-col items-center gap-0.5 py-2 pt-2.5 text-[10px] font-semibold transition-colors relative",
                     isActive
-                      ? "text-indigo-600"
+                      ? "text-[#0066cc]"
                       : "text-slate-400 active:text-slate-600"
                   )}
                 >
                   {isActive && (
-                    <div className="absolute top-0 left-1/2 -translate-x-1/2 w-8 h-0.5 rounded-full bg-indigo-600" />
+                    <div className="absolute top-0 left-1/2 -translate-x-1/2 w-8 h-0.5 rounded-full bg-[#0066cc]" />
                   )}
                   <Icon
                     className={cn(
                       "h-5 w-5 transition-transform",
-                      isActive ? "text-indigo-600 scale-110" : "text-slate-400"
+                      isActive ? "text-[#0066cc] scale-110" : "text-slate-400"
                     )}
                   />
                   <span className="truncate">{item.name}</span>
@@ -110,11 +110,11 @@ export function AdminSidebar() {
               {/* Drawer Header */}
               <div className="flex items-center justify-between p-4 border-b border-slate-100">
                 <div className="flex items-center gap-3">
-                  <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-gradient-to-br from-indigo-500 via-violet-500 to-purple-600 text-white shadow-lg shadow-indigo-500/30">
+                  <div className="flex h-9 w-9 items-center justify-center rounded-[14px] bg-[#0066cc] text-white shadow-lg shadow-blue-500/30">
                     <GraduationCap className="h-4 w-4" />
                   </div>
                   <div>
-                    <h2 className="text-sm font-bold bg-gradient-to-r from-indigo-600 to-violet-600 bg-clip-text text-transparent">Tutor Admin</h2>
+                    <h2 className="text-sm font-bold text-slate-900 dark:text-white">Tutor Admin</h2>
                     <p className="text-[10px] text-slate-500 uppercase tracking-wider font-semibold">Workspace</p>
                   </div>
                 </div>
@@ -139,7 +139,7 @@ export function AdminSidebar() {
                       className={cn(
                         "flex items-center gap-3 rounded-2xl px-4 py-3.5 text-sm font-semibold transition-all",
                         isActive
-                          ? "bg-gradient-to-r from-indigo-500 to-violet-500 text-white shadow-lg shadow-indigo-500/30"
+                          ? "bg-[#0066cc] text-white shadow-lg shadow-blue-500/20"
                           : "text-slate-600 hover:bg-slate-50 active:bg-slate-100"
                       )}
                     >
@@ -172,17 +172,17 @@ export function AdminSidebar() {
 
   // ─── DESKTOP: Classic Sticky Sidebar ────
   return (
-    <aside className="sticky top-0 left-0 z-40 h-screen w-64 flex flex-col border-r border-white/60 bg-white/80 backdrop-blur-xl shadow-2xl shadow-slate-200/50">
-        <div className="flex h-16 shrink-0 items-center justify-between border-b border-white/40 px-4">
+    <aside className="sticky top-0 left-0 z-40 h-screen w-64 flex flex-col border-r border-slate-200 dark:border-white/5 bg-white/80 dark:bg-[#1d1d1f]/80 backdrop-blur-xl shadow-2xl shadow-slate-200/50 dark:shadow-none">
+        <div className="flex h-16 shrink-0 items-center justify-between border-b border-slate-200 dark:border-white/5 px-4">
         <Link href="/admin/dashboard" className="flex items-center gap-3">
           <div className="relative group">
-            <div className="absolute inset-0 bg-gradient-to-br from-indigo-500 to-violet-600 rounded-2xl blur opacity-30 group-hover:opacity-50 transition-opacity" />
-            <div className="relative flex h-10 w-10 items-center justify-center rounded-2xl bg-gradient-to-br from-indigo-500 via-violet-500 to-purple-600 text-white shadow-lg shadow-indigo-500/30 flex-shrink-0">
+            <div className="absolute inset-0 bg-[#0066cc] rounded-2xl blur opacity-30 group-hover:opacity-50 transition-opacity" />
+            <div className="relative flex h-10 w-10 items-center justify-center rounded-[14px] bg-[#0066cc] text-white shadow-lg shadow-blue-500/30 flex-shrink-0">
               <GraduationCap className="h-5 w-5" />
             </div>
           </div>
           <div className="min-w-0">
-            <h1 className="text-sm font-bold bg-gradient-to-r from-indigo-600 to-violet-600 bg-clip-text text-transparent leading-tight truncate">Tutor Admin</h1>
+            <h1 className="text-sm font-bold text-slate-900 dark:text-white leading-tight truncate">Tutor Admin</h1>
             <p className="text-[10px] text-slate-500 uppercase tracking-wider font-semibold">Workspace</p>
           </div>
         </Link>
@@ -201,8 +201,8 @@ export function AdminSidebar() {
               className={cn(
                 "flex items-center gap-3 rounded-2xl px-3 py-3 text-sm font-semibold transition-all",
                 isActive
-                  ? "bg-gradient-to-r from-indigo-500 to-violet-500 text-white shadow-lg shadow-indigo-500/30"
-                  : "text-slate-600 hover:bg-slate-50/80 hover:backdrop-blur-sm hover:text-slate-900"
+                  ? "bg-[#0066cc] text-white shadow-md shadow-blue-500/20"
+                  : "text-slate-600 dark:text-slate-400 hover:bg-slate-50/80 dark:hover:bg-slate-800/80 hover:backdrop-blur-sm hover:text-slate-900 dark:hover:text-white"
               )}
             >
               <Icon className={cn("h-5 w-5 flex-shrink-0", isActive ? "text-white" : "text-slate-400")} />
@@ -213,7 +213,7 @@ export function AdminSidebar() {
       </nav>
 
       {/* Footer Nav */}
-      <div className="shrink-0 border-t border-white/40 p-3">
+      <div className="shrink-0 border-t border-slate-200 dark:border-white/5 p-3">
         <form action="/api/admin/logout" method="POST">
           <button
             type="submit"

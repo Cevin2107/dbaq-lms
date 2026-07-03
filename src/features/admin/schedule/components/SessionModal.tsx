@@ -41,15 +41,15 @@ export function SessionModal({
   };
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4 animate-fadeIn">
-      <div className="bg-white rounded-2xl shadow-2xl max-w-md w-full animate-slideUp">
-        <div className="flex items-center justify-between p-6 border-b border-gray-200">
-          <h3 className="text-xl font-bold text-gray-800">
+    <div className="fixed inset-0 bg-slate-900/40 backdrop-blur-sm flex items-center justify-center z-50 p-4 animate-in fade-in duration-200">
+      <div className="bg-white/90 dark:bg-[#1d1d1f]/90 backdrop-blur-xl rounded-[2rem] shadow-[0_8px_32px_rgba(0,0,0,0.12)] border border-black/5 dark:border-white/5 max-w-md w-full animate-in zoom-in-95 duration-200 overflow-hidden">
+        <div className="flex items-center justify-between p-6 border-b border-black/5 dark:border-white/5">
+          <h3 className="text-[19px] font-bold text-slate-900 dark:text-white tracking-[-0.01em]">
             Buổi dạy ngày {dateStr}
             {studentName && (
               <span
-                className="ml-2 text-sm font-normal px-2 py-1 rounded-full"
-                style={{ backgroundColor: studentColor || "#3B82F6", color: "white" }}
+                className="ml-2 text-[13px] font-semibold px-2.5 py-0.5 rounded-full shadow-sm"
+                style={{ backgroundColor: studentColor || "#0066cc", color: "white" }}
               >
                 {studentName}
               </span>
@@ -57,27 +57,27 @@ export function SessionModal({
           </h3>
           <button
             onClick={onClose}
-            className="p-2 hover:bg-gray-100 rounded-lg transition-colors duration-200"
+            className="p-2 hover:bg-slate-100 dark:hover:bg-white/10 rounded-full transition-colors duration-200"
           >
-            <X className="w-5 h-5 text-gray-500" />
+            <X className="w-5 h-5 text-slate-500 dark:text-slate-400" />
           </button>
         </div>
 
         <div className="p-6 space-y-6">
           {existingSessions.length > 0 && (
-            <div className="space-y-2">
-              <p className="text-sm font-medium text-gray-600">Buổi dạy hiện tại:</p>
-              <div className="space-y-2">
+            <div className="space-y-3">
+              <p className="text-[14px] font-medium text-slate-500 dark:text-slate-400">Buổi dạy hiện tại:</p>
+              <div className="space-y-2.5">
                 {existingSessions.map((session) => (
                   <div
                     key={session.id}
                     className={`
                       ${SUBJECT_COLORS[session.subject].bg}
-                      text-white px-4 py-3 rounded-lg font-medium
+                      text-white px-4 py-3 rounded-2xl font-medium
                       shadow-sm flex items-center justify-between
                     `}
                   >
-                    <span>{SUBJECT_NAMES[session.subject]}</span>
+                    <span className="text-[15px]">{SUBJECT_NAMES[session.subject]}</span>
                   </div>
                 ))}
               </div>
@@ -85,16 +85,16 @@ export function SessionModal({
           )}
 
           <div className="space-y-3">
-            <label className="block text-sm font-medium text-gray-700">
+            <label className="block text-[14px] font-medium text-slate-700 dark:text-slate-300">
               Thêm buổi dạy mới:
             </label>
             <select
               value={selectedSubject}
               onChange={(e) => setSelectedSubject(e.target.value as Subject)}
-              className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200"
+              className="w-full px-4 py-3 border border-slate-200 dark:border-slate-700 bg-white/50 dark:bg-black/20 text-slate-900 dark:text-white rounded-2xl focus:ring-2 focus:ring-[#0066cc] focus:border-transparent transition-all duration-200 outline-none text-[15px]"
             >
               {SUBJECTS.map((subject) => (
-                <option key={subject} value={subject}>
+                <option key={subject} value={subject} className="text-slate-900">
                   {SUBJECT_NAMES[subject]}
                 </option>
               ))}
@@ -102,11 +102,11 @@ export function SessionModal({
           </div>
         </div>
 
-        <div className="flex gap-3 p-6 bg-gray-50 rounded-b-2xl">
+        <div className="flex gap-3 p-6 bg-slate-50/50 dark:bg-slate-800/30 border-t border-black/5 dark:border-white/5">
           {existingSessions.length > 0 && (
             <button
               onClick={handleDelete}
-              className="flex-1 px-6 py-3 bg-red-500 text-white rounded-lg font-medium hover:bg-red-600 transition-colors duration-200 flex items-center justify-center gap-2 shadow-md hover:shadow-lg"
+              className="flex-1 px-6 py-3 bg-rose-500 text-white rounded-full font-bold hover:bg-rose-600 transition-all duration-200 flex items-center justify-center gap-2 shadow-sm hover:shadow-md active:scale-[0.98]"
             >
               <Trash2 className="w-4 h-4" />
               Xóa
@@ -114,14 +114,14 @@ export function SessionModal({
           )}
           <button
             onClick={handleAdd}
-            className="flex-1 px-6 py-3 bg-blue-500 text-white rounded-lg font-medium hover:bg-blue-600 transition-colors duration-200 flex items-center justify-center gap-2 shadow-md hover:shadow-lg"
+            className="flex-1 px-6 py-3 bg-[#0066cc] text-white rounded-full font-bold hover:bg-[#005bb5] transition-all duration-200 flex items-center justify-center gap-2 shadow-sm hover:shadow-md shadow-blue-500/20 active:scale-[0.98]"
           >
             <Plus className="w-4 h-4" />
             Thêm
           </button>
           <button
             onClick={onClose}
-            className="flex-1 px-6 py-3 bg-gray-200 text-gray-700 rounded-lg font-medium hover:bg-gray-300 transition-colors duration-200"
+            className="flex-1 px-6 py-3 bg-slate-100 dark:bg-white/10 text-slate-700 dark:text-slate-200 rounded-full font-bold hover:bg-slate-200 dark:hover:bg-white/20 transition-all duration-200 active:scale-[0.98]"
           >
             Đóng
           </button>

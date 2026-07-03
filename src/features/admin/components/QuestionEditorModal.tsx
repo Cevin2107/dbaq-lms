@@ -35,7 +35,9 @@ export function QuestionEditorModal({ assignmentId, isOpen, onClose, onSuccess, 
         if (editingQuestion.type === "true_false" && initialSubQs.length === 0) {
             initialSubQs = [
                 { id: crypto.randomUUID(), content: "", answerKey: "true", order: 1 },
-                { id: crypto.randomUUID(), content: "", answerKey: "true", order: 2 }
+                { id: crypto.randomUUID(), content: "", answerKey: "true", order: 2 },
+                { id: crypto.randomUUID(), content: "", answerKey: "true", order: 3 },
+                { id: crypto.randomUUID(), content: "", answerKey: "true", order: 4 }
             ];
         }
         setSubQuestions(initialSubQs);
@@ -45,12 +47,15 @@ export function QuestionEditorModal({ assignmentId, isOpen, onClose, onSuccess, 
         setPreviewUrl(editingQuestion.imageUrl || editingQuestion.image_url || "");
         setImageFile(null);
       } else {
-        setType("mcq");
+        const lastType = (typeof window !== "undefined" && localStorage.getItem("last_question_type") as any) || "mcq";
+        setType(lastType);
         setContent("");
         setChoices(["", "", "", ""]);
         setSubQuestions([
             { id: crypto.randomUUID(), content: "", answerKey: "true", order: 1 },
-            { id: crypto.randomUUID(), content: "", answerKey: "true", order: 2 }
+            { id: crypto.randomUUID(), content: "", answerKey: "true", order: 2 },
+            { id: crypto.randomUUID(), content: "", answerKey: "true", order: 3 },
+            { id: crypto.randomUUID(), content: "", answerKey: "true", order: 4 }
         ]);
         setAnswerKey("A");
         setPoints(0);
@@ -188,7 +193,7 @@ export function QuestionEditorModal({ assignmentId, isOpen, onClose, onSuccess, 
       suppressHydrationWarning
     >
       <div className="absolute inset-0 bg-slate-900/60 backdrop-blur-sm" onClick={onClose} />
-      <div className="relative w-full max-w-3xl max-h-[90vh] overflow-y-auto rounded-3xl bg-white shadow-2xl">
+      <div className="relative w-full max-w-3xl max-h-[90vh] overflow-y-auto rounded-[2rem] bg-white/95 dark:bg-[#1d1d1f]/95 backdrop-blur-xl shadow-[0_8px_30px_rgba(0,0,0,0.12)] border border-black/5 dark:border-white/5">
         <div className="sticky top-0 z-10 flex items-center justify-between border-b border-slate-100 bg-white/95 px-6 py-4 backdrop-blur">
           <div>
             <h3 className="text-lg font-bold text-slate-900">{isEditing ? "Chỉnh sửa câu hỏi" : "Bổ sung câu hỏi mới"}</h3>
@@ -206,28 +211,47 @@ export function QuestionEditorModal({ assignmentId, isOpen, onClose, onSuccess, 
             </div>
           )}
 
-          <div className="grid grid-cols-2 gap-6">
-            <div>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div className="md:col-span-2 lg:col-span-1">
               <label className="text-sm font-semibold text-slate-700 mb-2 block">Loại câu hỏi</label>
-              <select value={type} onChange={e => {
-                  const val = e.target.value as any;
-                  setType(val);
-                  if (val === "true_false" && subQuestions.length === 0) {
-                     setSubQuestions([
-                        { id: crypto.randomUUID(), content: "", answerKey: "true", order: 1 },
-                        { id: crypto.randomUUID(), content: "", answerKey: "true", order: 2 }
-                     ]);
-                  }
-                }}
-                className="w-full rounded-xl border border-slate-200 bg-slate-50 px-4 py-2.5 text-sm focus:border-indigo-400 focus:bg-white focus:ring-4 focus:ring-indigo-100">
-                <option value="mcq">Trắc nghiệm (MCQ)</option>
-                <option value="true_false">Đúng / Sai</option>
-                <option value="essay">Tự luận (Tải ảnh)</option>
-                <option value="short_answer">Trả lời ngắn / Điền từ</option>
-                <option value="section">Đoạn văn / Ghi chú</option>
-              </select>
+              <div className="flex flex-wrap gap-2">
+                {[
+                  { value: "mcq", label: "Trắc nghiệm" },
+                  { value: "true_false", label: "Đúng/Sai" },
+                  { value: "short_answer", label: "Trả lời ngắn" },
+                  { value: "essay", label: "Tự luận" },
+                  { value: "section", label: "Ghi chú" },
+                ].map((t) => (
+                  <button
+                    key={t.value}
+                    type="button"
+                    onClick={() => {
+                      const val = t.value as any;
+                      setType(val);
+                      if (typeof window !== "undefined") {
+                        localStorage.setItem("last_question_type", val);
+                      }
+                      if (val === "true_false" && subQuestions.length === 0) {
+                         setSubQuestions([
+                            { id: crypto.randomUUID(), content: "", answerKey: "true", order: 1 },
+                            { id: crypto.randomUUID(), content: "", answerKey: "true", order: 2 },
+                            { id: crypto.randomUUID(), content: "", answerKey: "true", order: 3 },
+                            { id: crypto.randomUUID(), content: "", answerKey: "true", order: 4 }
+                         ]);
+                      }
+                    }}
+                    className={`px-3 py-1.5 rounded-lg border text-sm font-medium transition-colors ${
+                      type === t.value 
+                        ? "bg-indigo-600 text-white border-indigo-600 shadow-sm" 
+                        : "bg-slate-50 text-slate-600 border-slate-200 hover:bg-slate-100"
+                    }`}
+                  >
+                    {t.label}
+                  </button>
+                ))}
+              </div>
             </div>
-            <div>
+            <div className="md:col-span-2 lg:col-span-1">
               <label className="text-sm font-semibold text-slate-700 mb-2 block">Điểm (0 = Tự chia đều)</label>
               <input type="number" step="0.01" min="0" disabled={type === "section"} value={points}
                 onChange={e => setPoints(parseFloat(e.target.value) || 0)}

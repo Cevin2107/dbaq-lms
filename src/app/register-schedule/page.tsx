@@ -5,6 +5,7 @@ import { HeaderBar } from "@/components/HeaderBar";
 import { CalendarDays, Save, RefreshCw, AlertCircle, Info } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+import clsx from "clsx";
 
 type Shift = { id: string; name: string; start_time: string; end_time: string };
 type AvailableSchedule = { id: string; day_of_week: number; shift_id: string };
@@ -118,92 +119,97 @@ export default function RegisterSchedulePage() {
 
   if (loading) {
     return (
-      <main className="min-h-screen bg-slate-50 dark:bg-[#0B1120]">
+      <main className="min-h-screen bg-[#f5f5f7] dark:bg-[#000000] pt-20 sm:pt-24">
         <HeaderBar />
         <div className="flex h-[60vh] items-center justify-center">
-          <RefreshCw className="h-8 w-8 animate-spin text-indigo-500" />
+          <RefreshCw className="h-8 w-8 animate-spin text-[#0066cc]" />
         </div>
       </main>
     );
   }
 
   return (
-    <main className="min-h-screen bg-slate-50 dark:bg-[#0B1120] transition-colors duration-500 pb-12">
+    <main className="min-h-screen bg-[#f5f5f7] dark:bg-[#000000] transition-colors duration-500 pt-20 sm:pt-24 pb-16">
       <HeaderBar />
 
-      <div className="container-custom py-4 sm:py-8 px-4 sm:px-6 max-w-5xl mx-auto">
-        <div className="mb-8 flex flex-col md:flex-row md:items-end justify-between gap-4">
+      <div className="w-full max-w-[1440px] mx-auto px-4 sm:px-6 md:px-8 mt-4 pb-16">
+        
+        {/* Header Tile (Hero style) */}
+        <div className="mb-8 flex flex-col md:flex-row md:items-end justify-between gap-6 bg-gradient-to-br from-[#ffffff] via-[#f0f9ff] to-[#e0f2fe] dark:from-[#1a1c23] dark:via-[#151921] dark:to-[#0f172a] p-8 md:p-10 rounded-[2rem] shadow-[0_8px_30px_rgba(0,102,204,0.08)] border border-[#bae6fd]/30 dark:border-white/10">
           <div>
-            <h1 className="text-2xl md:text-3xl font-bold text-slate-800 dark:text-slate-100 flex items-center gap-3">
-              <div className="p-2 bg-indigo-100 dark:bg-indigo-900/30 rounded-xl text-indigo-600 dark:text-indigo-400">
-                <CalendarDays className="h-6 w-6" />
+            <h1 className="text-3xl md:text-4xl lg:text-[44px] font-bold text-slate-800 dark:text-white flex items-center gap-4 tracking-[-0.02em] leading-tight mb-3">
+              <div className="p-3 bg-blue-100 dark:bg-blue-900/40 rounded-2xl text-[#0066cc] dark:text-blue-400">
+                <CalendarDays className="h-7 w-7 md:h-8 md:w-8" />
               </div>
               Đăng ký Lịch học
             </h1>
-            <p className="text-slate-500 dark:text-slate-400 mt-2">
-              Vui lòng chọn các ca học phù hợp với bạn. Bạn có thể chọn tối đa <span className="font-bold text-indigo-600 dark:text-indigo-400">{maxShifts} ca</span>.
+            <p className="text-[17px] text-slate-600 dark:text-slate-400 mt-2 max-w-xl leading-relaxed">
+              Vui lòng chọn các ca học phù hợp với bạn. Bạn có thể chọn tối đa <span className="font-semibold text-[#0066cc] dark:text-blue-400">{maxShifts} ca</span> trong tuần.
             </p>
           </div>
           
-          <div className="bg-white dark:bg-slate-800 rounded-xl border border-slate-200 dark:border-slate-700 p-3 flex flex-col md:items-end shadow-sm">
-            <span className="text-sm text-slate-500 dark:text-slate-400">Đã chọn</span>
-            <div className="text-2xl font-bold text-slate-800 dark:text-slate-100">
-              <span className={selectedIds.size === maxShifts ? "text-indigo-600 dark:text-indigo-400" : ""}>
+          <div className="bg-white/80 dark:bg-black/40 backdrop-blur-md rounded-[1.5rem] border border-white/40 dark:border-white/10 p-5 flex flex-col md:items-end shadow-sm shrink-0 min-w-[140px]">
+            <span className="text-[14px] font-medium text-slate-500 dark:text-slate-400 mb-1">Đã chọn</span>
+            <div className="text-3xl font-bold text-slate-800 dark:text-white flex items-baseline">
+              <span className={clsx(selectedIds.size === maxShifts ? "text-[#0066cc] dark:text-blue-400" : "")}>
                 {selectedIds.size}
               </span>
-              <span className="text-slate-400 text-lg"> / {maxShifts}</span>
+              <span className="text-slate-400 text-xl ml-1"> / {maxShifts}</span>
             </div>
           </div>
         </div>
 
         {error && (
-          <div className="mb-6 flex items-center gap-2 p-4 bg-red-50 dark:bg-red-500/10 border border-red-200 dark:border-red-500/20 text-red-700 dark:text-red-400 rounded-xl animate-in fade-in slide-in-from-top-2">
-            <AlertCircle className="h-5 w-5 shrink-0" />
-            <p>{error}</p>
+          <div className="mb-6 flex items-center gap-3 p-5 bg-red-50 dark:bg-red-500/10 border border-red-200 dark:border-red-500/20 text-red-700 dark:text-red-400 rounded-[1.5rem] shadow-sm animate-in fade-in slide-in-from-top-2">
+            <AlertCircle className="h-6 w-6 shrink-0" />
+            <p className="text-[15px] font-medium">{error}</p>
           </div>
         )}
 
         {success && (
-          <div className="mb-6 flex items-center gap-2 p-4 bg-green-50 dark:bg-green-500/10 border border-green-200 dark:border-green-500/20 text-green-700 dark:text-green-400 rounded-xl animate-in fade-in slide-in-from-top-2">
-            <svg className="h-5 w-5 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-            </svg>
-            <p>{success}</p>
+          <div className="mb-6 flex items-center gap-3 p-5 bg-emerald-50 dark:bg-emerald-500/10 border border-emerald-200 dark:border-emerald-500/20 text-emerald-700 dark:text-emerald-400 rounded-[1.5rem] shadow-sm animate-in fade-in slide-in-from-top-2">
+            <div className="h-6 w-6 rounded-full bg-emerald-500 flex items-center justify-center shrink-0">
+              <svg className="h-4 w-4 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" />
+              </svg>
+            </div>
+            <p className="text-[15px] font-medium">{success}</p>
           </div>
         )}
 
         {/* Legend */}
-        <div className="flex flex-wrap gap-4 mb-4 text-sm">
-          <div className="flex items-center gap-2">
-            <div className="w-5 h-5 rounded border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800"></div>
-            <span className="text-slate-600 dark:text-slate-400">Trống</span>
+        <div className="flex flex-wrap items-center gap-6 mb-6 text-[15px] px-2">
+          <div className="flex items-center gap-3">
+            <div className="w-6 h-6 rounded-lg border-2 border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800"></div>
+            <span className="text-slate-600 dark:text-slate-400 font-medium">Ca trống</span>
           </div>
-          <div className="flex items-center gap-2">
-            <div className="w-5 h-5 rounded bg-indigo-500 border border-indigo-600 flex items-center justify-center">
-              <svg className="w-3 h-3 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" /></svg>
+          <div className="flex items-center gap-3">
+            <div className="w-6 h-6 rounded-lg bg-[#0066cc] flex items-center justify-center shadow-md shadow-blue-500/20">
+              <svg className="w-4 h-4 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" /></svg>
             </div>
-            <span className="text-slate-600 dark:text-slate-400">Bạn đã chọn</span>
+            <span className="text-slate-600 dark:text-slate-400 font-medium">Bạn đã chọn</span>
           </div>
-          <div className="flex items-center gap-2">
-            <div className="w-5 h-5 rounded bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 flex items-center justify-center opacity-60">
-              <span className="block w-2.5 h-0.5 bg-slate-400 rounded-full rotate-45 relative"><span className="absolute block w-full h-full bg-slate-400 rounded-full -rotate-90"></span></span>
+          <div className="flex items-center gap-3">
+            <div className="w-6 h-6 rounded-lg bg-slate-100 dark:bg-slate-800 border-2 border-slate-200 dark:border-slate-700 flex items-center justify-center opacity-60">
+              <span className="block w-3.5 h-0.5 bg-slate-400 rounded-full rotate-45 relative"><span className="absolute block w-full h-full bg-slate-400 rounded-full -rotate-90"></span></span>
             </div>
-            <span className="text-slate-600 dark:text-slate-400">Đã có người đăng ký</span>
+            <span className="text-slate-600 dark:text-slate-400 font-medium">Đã có người đăng ký</span>
           </div>
         </div>
 
-        <div className="bg-white dark:bg-slate-900/50 rounded-2xl shadow-sm border border-slate-200 dark:border-slate-800 overflow-hidden">
+        {/* Timetable Card */}
+        <div className="bg-white dark:bg-[#1d1d1f] rounded-[2rem] shadow-[0_4px_20px_rgba(0,0,0,0.03)] border border-black/5 dark:border-white/5 overflow-hidden transition-all duration-300 hover:shadow-[0_12px_40px_rgba(0,0,0,0.08)]">
           <div className="overflow-x-auto">
-            <table className="w-full text-sm text-left">
-              <thead className="bg-slate-50 dark:bg-slate-800/50 text-slate-600 dark:text-slate-300 font-medium">
+            <table className="w-full text-left border-collapse">
+              <thead className="bg-slate-50/50 dark:bg-slate-800/30 text-slate-500 dark:text-slate-400 font-medium">
                 <tr>
-                  <th className="px-4 py-4 border-b border-slate-200 dark:border-slate-800 w-32 sticky left-0 bg-slate-50 dark:bg-slate-800 z-10">
+                  <th className="px-6 py-5 border-b border-slate-100 dark:border-white/5 w-36 sticky left-0 bg-slate-50/90 dark:bg-slate-800/90 backdrop-blur z-10 font-semibold uppercase tracking-wider text-[13px]">
                     Thứ \ Ca
                   </th>
                   {shifts.map(shift => (
-                    <th key={shift.id} className="px-4 py-4 border-b border-slate-200 dark:border-slate-800 text-center min-w-[120px]">
-                      <div className="font-semibold text-slate-800 dark:text-slate-200">{shift.name}</div>
-                      <div className="text-xs text-slate-400 dark:text-slate-500 mt-0.5">
+                    <th key={shift.id} className="px-6 py-5 border-b border-slate-100 dark:border-white/5 text-center min-w-[140px]">
+                      <div className="font-bold text-slate-800 dark:text-white text-[15px]">{shift.name}</div>
+                      <div className="text-[13px] text-slate-400 mt-1">
                         {shift.start_time.substring(0,5)} - {shift.end_time.substring(0,5)}
                       </div>
                     </th>
@@ -212,8 +218,11 @@ export default function RegisterSchedulePage() {
               </thead>
               <tbody>
                 {DAYS.map((day, idx) => (
-                  <tr key={day.value} className={`${idx !== DAYS.length - 1 ? 'border-b border-slate-100 dark:border-slate-800/50' : ''} hover:bg-slate-50/50 dark:hover:bg-slate-800/20 transition-colors`}>
-                    <td className="px-4 py-4 font-medium text-slate-700 dark:text-slate-300 sticky left-0 bg-white dark:bg-slate-900/90 z-10 border-r border-slate-100 dark:border-slate-800/50">
+                  <tr key={day.value} className={clsx(
+                    "hover:bg-slate-50/50 dark:hover:bg-white/[0.02] transition-colors",
+                    idx !== DAYS.length - 1 && "border-b border-slate-100 dark:border-white/5"
+                  )}>
+                    <td className="px-6 py-5 font-semibold text-slate-800 dark:text-white sticky left-0 bg-white/90 dark:bg-[#1d1d1f]/90 backdrop-blur z-10 border-r border-slate-100 dark:border-white/5">
                       {day.label}
                     </td>
                     {shifts.map(shift => {
@@ -221,9 +230,9 @@ export default function RegisterSchedulePage() {
                       
                       if (!schedule) {
                         return (
-                          <td key={shift.id} className="px-4 py-4 text-center">
-                            <div className="mx-auto w-10 h-10 rounded-xl bg-slate-50 dark:bg-slate-800/30 border border-slate-100 dark:border-slate-800 flex items-center justify-center opacity-50 cursor-not-allowed" title="Ca này không mở">
-                              <span className="w-1.5 h-1.5 rounded-full bg-slate-300 dark:bg-slate-600"></span>
+                          <td key={shift.id} className="px-6 py-5 text-center">
+                            <div className="mx-auto w-12 h-12 rounded-2xl bg-slate-50 dark:bg-slate-800/30 border border-slate-100 dark:border-white/5 flex items-center justify-center opacity-40 cursor-not-allowed" title="Ca này không mở">
+                              <span className="w-2 h-2 rounded-full bg-slate-300 dark:bg-slate-600"></span>
                             </div>
                           </td>
                         );
@@ -233,25 +242,26 @@ export default function RegisterSchedulePage() {
                       const isLocked = lockedSchedules.has(schedule.id);
 
                       return (
-                        <td key={shift.id} className="px-4 py-4 text-center relative group">
+                        <td key={shift.id} className="px-6 py-5 text-center relative group">
                           {isLocked ? (
                             <div 
-                              className="mx-auto w-10 h-10 rounded-xl bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 flex items-center justify-center cursor-not-allowed opacity-60"
+                              className="mx-auto w-12 h-12 rounded-2xl bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 flex items-center justify-center cursor-not-allowed opacity-60"
                               title="Đã có học sinh đăng ký ca này"
                             >
-                              <span className="block w-3 h-0.5 bg-slate-400 dark:bg-slate-500 rounded-full rotate-45 relative"><span className="absolute block w-full h-full bg-slate-400 dark:bg-slate-500 rounded-full -rotate-90"></span></span>
+                              <span className="block w-4 h-0.5 bg-slate-400 dark:bg-slate-500 rounded-full rotate-45 relative"><span className="absolute block w-full h-full bg-slate-400 dark:bg-slate-500 rounded-full -rotate-90"></span></span>
                             </div>
                           ) : (
                             <button
                               onClick={() => toggleSelection(schedule.id)}
-                              className={`mx-auto w-10 h-10 rounded-xl flex items-center justify-center transition-all ${
+                              className={clsx(
+                                "mx-auto w-12 h-12 rounded-2xl flex items-center justify-center transition-all duration-200",
                                 isSelected 
-                                  ? "bg-indigo-500 hover:bg-indigo-600 border-indigo-600 shadow-md shadow-indigo-500/20 scale-105" 
-                                  : "bg-white dark:bg-slate-800 border border-slate-300 dark:border-slate-600 hover:border-indigo-400 dark:hover:border-indigo-500 hover:bg-indigo-50 dark:hover:bg-indigo-500/10 shadow-sm"
-                              }`}
+                                  ? "bg-[#0066cc] border-[#0066cc] shadow-lg shadow-blue-500/30 scale-105" 
+                                  : "bg-white dark:bg-slate-800 border-2 border-slate-200 dark:border-slate-700 hover:border-[#0066cc]/50 dark:hover:border-blue-500/50 hover:bg-blue-50 dark:hover:bg-blue-900/20"
+                              )}
                             >
                               {isSelected && (
-                                <svg className="w-5 h-5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <svg className="w-6 h-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M5 13l4 4L19 7" />
                                 </svg>
                               )}
@@ -266,16 +276,18 @@ export default function RegisterSchedulePage() {
             </table>
           </div>
           
-          <div className="bg-slate-50 dark:bg-slate-800/30 p-4 border-t border-slate-200 dark:border-slate-800 flex flex-col md:flex-row items-center justify-between gap-4">
-            <div className="flex items-center gap-2 text-sm text-slate-500 dark:text-slate-400 text-center md:text-left">
-              <Info className="w-4 h-4" />
-              <span>Nhấn vào ô trống để đăng ký, nhấn lại để huỷ chọn.</span>
+          <div className="bg-slate-50 dark:bg-[#1d1d1f] p-6 sm:px-8 border-t border-slate-100 dark:border-white/5 flex flex-col md:flex-row items-center justify-between gap-6">
+            <div className="flex items-center gap-3 text-[15px] text-slate-500 dark:text-slate-400 text-center md:text-left">
+              <div className="p-2 bg-slate-200 dark:bg-slate-800 rounded-full text-slate-600 dark:text-slate-300">
+                <Info className="w-5 h-5" />
+              </div>
+              <span>Nhấn vào ô trống để đăng ký, nhấn lại để huỷ chọn. Bạn có thể thay đổi lịch bất kỳ lúc nào trước khi ca học bắt đầu.</span>
             </div>
             
             <button
               onClick={handleRegister}
               disabled={saving}
-              className="w-full md:w-auto flex items-center justify-center gap-2 px-6 py-2.5 rounded-xl bg-indigo-600 hover:bg-indigo-700 active:bg-indigo-800 text-white font-bold transition-all disabled:opacity-50 shadow-lg shadow-indigo-500/30"
+              className="w-full md:w-auto shrink-0 flex items-center justify-center gap-2 px-8 py-3.5 rounded-full bg-[#0066cc] hover:bg-[#005bb5] active:scale-95 text-white font-semibold transition-all disabled:opacity-50 shadow-lg shadow-blue-500/20 text-[16px]"
             >
               {saving ? <RefreshCw className="w-5 h-5 animate-spin" /> : <Save className="w-5 h-5" />}
               Xác nhận đăng ký

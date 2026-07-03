@@ -43,24 +43,24 @@ export function AddStudentModal({ onAdd, onClose }: AddStudentModalProps) {
   };
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4 animate-fadeIn">
-      <div className="bg-white rounded-2xl shadow-2xl max-w-md w-full animate-slideUp">
-        <div className="flex items-center justify-between p-6 border-b border-gray-200">
-          <div className="flex items-center gap-2">
-            <UserPlus className="w-5 h-5 text-blue-600" />
-            <h3 className="text-xl font-bold text-gray-800">Thêm học sinh mới</h3>
+    <div className="fixed inset-0 bg-slate-900/40 backdrop-blur-sm flex items-center justify-center z-50 p-4 animate-in fade-in duration-200">
+      <div className="bg-white/90 dark:bg-[#1d1d1f]/90 backdrop-blur-xl rounded-[2rem] shadow-[0_8px_32px_rgba(0,0,0,0.12)] border border-black/5 dark:border-white/5 max-w-md w-full animate-in zoom-in-95 duration-200 overflow-hidden">
+        <div className="flex items-center justify-between p-6 border-b border-black/5 dark:border-white/5">
+          <div className="flex items-center gap-3">
+            <UserPlus className="w-5 h-5 text-[#0066cc]" />
+            <h3 className="text-[19px] font-bold text-slate-900 dark:text-white tracking-[-0.01em]">Thêm học sinh mới</h3>
           </div>
           <button
             onClick={onClose}
-            className="p-2 hover:bg-gray-100 rounded-lg transition-colors duration-200"
+            className="p-2 hover:bg-slate-100 dark:hover:bg-white/10 rounded-full transition-colors duration-200"
           >
-            <X className="w-5 h-5 text-gray-500" />
+            <X className="w-5 h-5 text-slate-500 dark:text-slate-400" />
           </button>
         </div>
 
         <form onSubmit={handleSubmit} className="p-6 space-y-5">
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
+            <label className="block text-[14px] font-medium text-slate-700 dark:text-slate-300 mb-2">
               Tên học sinh
             </label>
             <input
@@ -68,13 +68,13 @@ export function AddStudentModal({ onAdd, onClose }: AddStudentModalProps) {
               value={name}
               onChange={(e) => setName(e.target.value)}
               placeholder="VD: Nguyễn Văn A"
-              className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200"
+              className="w-full px-4 py-3 border border-slate-200 dark:border-slate-700 bg-white/50 dark:bg-black/20 text-slate-900 dark:text-white rounded-2xl focus:ring-2 focus:ring-[#0066cc] focus:border-transparent transition-all duration-200 outline-none text-[15px]"
               autoFocus
             />
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
+            <label className="block text-[14px] font-medium text-slate-700 dark:text-slate-300 mb-2">
               Mức lương mỗi buổi
             </label>
             <div className="relative">
@@ -83,19 +83,19 @@ export function AddStudentModal({ onAdd, onClose }: AddStudentModalProps) {
                 value={salary}
                 onChange={(e) => setSalary(Number(e.target.value))}
                 step="5000"
-                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200"
+                className="w-full px-4 py-3 border border-slate-200 dark:border-slate-700 bg-white/50 dark:bg-black/20 text-slate-900 dark:text-white rounded-2xl focus:ring-2 focus:ring-[#0066cc] focus:border-transparent transition-all duration-200 outline-none text-[15px]"
               />
-              <span className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-500 text-sm">
+              <span className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 text-sm font-medium">
                 VND
               </span>
             </div>
-            <p className="text-xs text-gray-500 mt-1">
+            <p className="text-[13px] text-slate-500 dark:text-slate-400 mt-2 font-medium">
               Ví dụ: 150000, 200000, 250000
             </p>
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
+            <label className="block text-[14px] font-medium text-slate-700 dark:text-slate-300 mb-2">
               Màu nhận diện
             </label>
             <div className="flex gap-3 flex-wrap">
@@ -108,8 +108,8 @@ export function AddStudentModal({ onAdd, onClose }: AddStudentModalProps) {
                     w-10 h-10 rounded-full transition-all duration-200
                     ${
                       selectedColor === color
-                        ? "ring-2 ring-offset-2 ring-blue-500 scale-110"
-                        : "hover:scale-105"
+                        ? "ring-2 ring-offset-2 ring-offset-white dark:ring-offset-[#1d1d1f] ring-[#0066cc] scale-110 shadow-md"
+                        : "hover:scale-105 shadow-sm"
                     }
                   `}
                   style={{ backgroundColor: color }}
@@ -119,21 +119,21 @@ export function AddStudentModal({ onAdd, onClose }: AddStudentModalProps) {
           </div>
 
           <div className="pt-2">
-            <div className="bg-gray-50 rounded-lg p-4 mb-4">
-              <p className="text-sm text-gray-600">Thông tin sẽ được thêm:</p>
-              <p className="text-sm font-medium text-gray-800 mt-1">
+            <div className="bg-slate-50 dark:bg-slate-800/30 border border-slate-200 dark:border-slate-700 rounded-2xl p-4 mb-4">
+              <p className="text-[13px] font-medium text-slate-500 dark:text-slate-400">Thông tin sẽ được thêm:</p>
+              <p className="text-[15px] font-medium text-slate-900 dark:text-white mt-1">
                 Học sinh: <span className="font-bold">{name || "___"}</span>
               </p>
-              <p className="text-sm text-gray-800">
-                Lương: {formatCurrency(salary)}
+              <p className="text-[15px] text-slate-700 dark:text-slate-300">
+                Lương: <span className="font-medium text-emerald-600 dark:text-emerald-400">{formatCurrency(salary)}</span>
               </p>
             </div>
           </div>
 
-          <div className="flex gap-3 pt-2">
+          <div className="flex flex-col sm:flex-row gap-3 pt-2">
             <button
               type="submit"
-              className="flex-1 px-6 py-3 bg-blue-500 text-white rounded-lg font-medium hover:bg-blue-600 transition-colors duration-200 flex items-center justify-center gap-2 shadow-md hover:shadow-lg"
+              className="flex-1 px-6 py-3.5 bg-[#0066cc] text-white rounded-full font-bold hover:bg-[#005bb5] transition-all duration-200 flex items-center justify-center gap-2 shadow-sm hover:shadow-md shadow-blue-500/20 active:scale-[0.98]"
             >
               <UserPlus className="w-4 h-4" />
               Thêm học sinh
@@ -141,7 +141,7 @@ export function AddStudentModal({ onAdd, onClose }: AddStudentModalProps) {
             <button
               type="button"
               onClick={onClose}
-              className="flex-1 px-6 py-3 bg-gray-200 text-gray-700 rounded-lg font-medium hover:bg-gray-300 transition-colors duration-200"
+              className="flex-1 px-6 py-3.5 bg-slate-100 dark:bg-white/10 text-slate-700 dark:text-slate-200 rounded-full font-bold hover:bg-slate-200 dark:hover:bg-white/20 transition-all duration-200 active:scale-[0.98]"
             >
               Hủy
             </button>

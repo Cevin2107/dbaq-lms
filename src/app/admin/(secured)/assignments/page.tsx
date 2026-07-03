@@ -44,8 +44,8 @@ export default function AssignmentsPage() {
       {/* Header */}
       <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div>
-          <h1 className="text-2xl md:text-3xl font-bold text-slate-900">Quản lý bài tập</h1>
-          <p className="text-sm text-slate-600 mt-1">Tìm kiếm, lọc và phân loại tất cả các đề thi trong hệ thống.</p>
+          <h1 className="text-2xl md:text-3xl font-bold text-slate-900 dark:text-white tracking-[-0.02em]">Quản lý bài tập</h1>
+          <p className="text-[15px] text-slate-500 dark:text-slate-400 mt-2">Tìm kiếm, lọc và phân loại tất cả các đề thi trong hệ thống.</p>
         </div>
         <Link href="/admin/assignments/new">
           <Button variant="brand">
@@ -61,13 +61,13 @@ export default function AssignmentsPage() {
         <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
           {/* Search */}
           <div className="relative flex-1">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400 pointer-events-none" />
+            <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400 pointer-events-none" />
             <input
               type="text"
               placeholder="Tìm kiếm theo tên hoặc môn học..."
               value={searchTerm}
               onChange={e => setSearchTerm(e.target.value)}
-              className="w-full pl-10 pr-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:bg-white focus:ring-4 focus:ring-indigo-100 focus:border-indigo-400 transition outline-none"
+              className="w-full pl-11 pr-4 py-3 bg-slate-50 dark:bg-[#1d1d1f]/50 border border-slate-200 dark:border-white/10 rounded-full text-[15px] text-slate-900 dark:text-white placeholder:text-slate-500 focus:bg-white dark:focus:bg-[#1d1d1f] focus:ring-4 focus:ring-blue-100 dark:focus:ring-blue-900/30 focus:border-[#0066cc] dark:focus:border-blue-500 transition-all outline-none"
               aria-label="Tìm kiếm bài tập"
             />
             {searchTerm && (
@@ -84,13 +84,13 @@ export default function AssignmentsPage() {
           </div>
 
           {/* Filter & Sort */}
-          <div className="flex items-center gap-2">
-            <div className="flex items-center gap-2 bg-slate-50 border border-slate-200 rounded-xl px-3 py-2">
+          <div className="flex items-center gap-3">
+            <div className="flex items-center gap-2 bg-slate-50 dark:bg-[#1d1d1f]/50 border border-slate-200 dark:border-white/10 rounded-full px-4 py-2.5">
               <Filter className="h-4 w-4 text-slate-400" />
               <select 
                 value={filter} 
                 onChange={e => setFilter(e.target.value)}
-                className="bg-transparent text-sm font-semibold text-slate-700 focus:outline-none pr-1"
+                className="bg-transparent text-[14px] font-medium text-slate-700 dark:text-slate-300 focus:outline-none pr-1"
                 aria-label="Lọc trạng thái"
               >
                 <option value="all">Tất cả</option>
@@ -99,14 +99,14 @@ export default function AssignmentsPage() {
               </select>
             </div>
 
-            <div className="flex items-center gap-2 bg-slate-50 border border-slate-200 rounded-xl px-3 py-2">
+            <div className="flex items-center gap-2 bg-slate-50 dark:bg-[#1d1d1f]/50 border border-slate-200 dark:border-white/10 rounded-full px-4 py-2.5">
               <svg className="h-4 w-4 text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                 <path strokeLinecap="round" strokeLinejoin="round" d="M3 4h13M3 8h9m-9 4h9m5-4v12m0 0l-4-4m4 4l4-4" />
               </svg>
               <select 
                 value={sortBy} 
                 onChange={e => setSortBy(e.target.value as any)}
-                className="bg-transparent text-sm font-semibold text-slate-700 focus:outline-none pr-1"
+                className="bg-transparent text-[14px] font-medium text-slate-700 dark:text-slate-300 focus:outline-none pr-1"
                 aria-label="Sắp xếp theo"
               >
                 <option value="title">Tên A-Z</option>
@@ -200,28 +200,28 @@ export default function AssignmentsPage() {
 
               {/* Title */}
               <Tooltip content={a.title.length > 50 ? a.title : ""}>
-                <h3 className="text-base font-bold text-slate-900 mb-3 line-clamp-2 leading-tight min-h-[2.5rem]">
+                <h3 className="text-[17px] font-bold text-slate-900 dark:text-white mb-3 line-clamp-2 leading-tight min-h-[2.5rem] tracking-[-0.01em]">
                   {a.title}
                 </h3>
               </Tooltip>
 
               {/* Meta Info */}
-              <div className="space-y-2 text-sm text-slate-600 flex-1">
+              <div className="space-y-2 text-[14px] text-slate-600 dark:text-slate-400 flex-1">
                 <div className="flex items-center justify-between">
-                  <span className="flex items-center gap-1.5">
-                    <Clock className="h-3.5 w-3.5 text-slate-400" />
+                  <span className="flex items-center gap-2">
+                    <Clock className="h-4 w-4 text-slate-400" />
                     Thời gian
                   </span>
-                  <span className="font-semibold text-slate-900">
+                  <span className="font-semibold text-slate-900 dark:text-slate-200">
                     {a.duration_minutes ? `${a.duration_minutes} phút` : "Không giới hạn"}
                   </span>
                 </div>
                 <div className="flex items-center justify-between">
-                  <span className="flex items-center gap-1.5">
-                    <Award className="h-3.5 w-3.5 text-slate-400" />
+                  <span className="flex items-center gap-2">
+                    <Award className="h-4 w-4 text-slate-400" />
                     Tổng điểm
                   </span>
-                  <span className="font-semibold text-slate-900">{a.total_score || 0}</span>
+                  <span className="font-semibold text-slate-900 dark:text-slate-200">{a.total_score || 0}</span>
                 </div>
               </div>
 

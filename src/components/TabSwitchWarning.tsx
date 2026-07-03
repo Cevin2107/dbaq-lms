@@ -17,12 +17,12 @@ export function TabSwitchWarning({ sessionId }: TabSwitchWarningProps) {
   useEffect(() => {
     const handleVisibilityChange = () => {
       const nowVisible = document.visibilityState === 'visible';
-      
+
       if (!nowVisible && isTabVisible) {
         // Tab was just hidden
         setSwitchCount(prev => prev + 1);
         setShowWarning(true);
-        
+
         addToast({
           title: "Cảnh báo!",
           description: "Bạn đã chuyển tab. Hành vi này có thể bị ghi nhận.",
@@ -35,14 +35,14 @@ export function TabSwitchWarning({ sessionId }: TabSwitchWarningProps) {
           fetch("/api/student-sessions/activity", {
             method: "PATCH",
             headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ 
+            body: JSON.stringify({
               sessionId,
-              tabSwitched: true 
+              tabSwitched: true
             }),
           }).catch(err => console.error("Failed to track tab switch:", err));
         }
       }
-      
+
       setIsTabVisible(nowVisible);
     };
 

@@ -5,10 +5,9 @@ import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { Button } from "@/components/ui/Button";
 import { Card } from "@/components/ui/Card";
-import { Badge } from "@/components/ui/Badge";
-import { ArrowLeft, BookOpen, Clock, Save, Settings2, Target, EyeOff, LayoutTemplate } from "lucide-react";
+import { ArrowLeft, BookOpen, Clock, Settings2, Target, EyeOff, LayoutTemplate, Users } from "lucide-react";
 
-const SUBJECT_OPTIONS = ["Toán học", "Vật lý", "Hóa học"];
+const SUBJECT_OPTIONS = ["Toán học", "Vật lý", "Hóa học", "Ngữ văn", "Tiếng Anh", "Lịch sử", "Địa lý", "Sinh học", "Tin học", "GDCD"];
 const GRADE_OPTIONS = Array.from({ length: 12 }, (_, i) => `Lớp ${i + 1}`);
 const CUSTOM_VALUE = "custom";
 
@@ -22,11 +21,11 @@ export default function NewAssignmentPage() {
   const [gradeSelect, setGradeSelect] = useState<string>(GRADE_OPTIONS[0]);
   const [gradeCustom, setGradeCustom] = useState("");
   const [hideScore, setHideScore] = useState(false);
-  const [pointRanges, setPointRanges] = useState<Array<{ fromQuestion: number; toQuestion: number; totalPoints: number }>>([]);
 
   const [students, setStudents] = useState<Array<{id: string; full_name: string}>>([]);
   const [assignedIds, setAssignedIds] = useState<string[]>([]);
   const [loadingStudents, setLoadingStudents] = useState(true);
+
   useEffect(() => {
     fetch("/api/admin/students")
       .then(res => res.json())
@@ -85,7 +84,6 @@ export default function NewAssignmentPage() {
       durationMinutes: parseInt(formData.get("durationMinutes") as string) || undefined,
       totalScore: parseFloat(formData.get("totalScore") as string) || 10,
       hideScore,
-      pointRanges: pointRanges.length > 0 ? pointRanges : undefined,
       assignedIds,
     };
 
@@ -116,291 +114,222 @@ export default function NewAssignmentPage() {
   }
 
   return (
-    <div className="mx-auto max-w-4xl px-3 sm:px-8 py-4 sm:py-8 space-y-4 sm:space-y-6 animate-fade-in">
-      <div className="flex items-center justify-between">
+    <div className="mx-auto max-w-5xl px-4 sm:px-6 lg:px-8 py-8 space-y-6 animate-fade-in pb-24">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
-          <Link href="/admin/dashboard">
-            <Button variant="ghost" size="sm" className="mb-2 -ml-3 text-slate-500">
+          <Link href="/admin/assignments">
+            <Button variant="ghost" size="sm" className="mb-2 -ml-3 text-slate-500 hover:text-slate-900">
                <ArrowLeft className="h-4 w-4 mr-2" />
-               Quay lại
+               Quay lại danh sách
             </Button>
           </Link>
-          <h1 className="text-xl sm:text-2xl font-bold text-slate-900 tracking-tight">Tạo bài tập mới</h1>
-          <p className="text-xs sm:text-sm text-slate-500 mt-1 hidden sm:block">Cấu hình thông tin cơ bản cho bài tập trước khi biên soạn câu hỏi.</p>
+          <h1 className="text-2xl sm:text-3xl font-bold text-slate-900 dark:text-white tracking-[-0.02em]">Tạo bài tập mới</h1>
+          <p className="text-[15px] text-slate-500 dark:text-slate-400 mt-2">Cấu hình thông tin cơ bản trước khi biên soạn câu hỏi chi tiết.</p>
         </div>
       </div>
 
       <form onSubmit={handleSubmit} className="space-y-6">
-        <Card className="p-4 sm:p-6">
-           {errorObj && (
-            <div className="mb-6 rounded-xl bg-red-50 px-4 py-3 text-sm font-medium text-red-700 ring-1 ring-red-200 flex items-center gap-2">
-               <EyeOff className="h-4 w-4" />
-               {errorObj.message}
-            </div>
-          )}
-
-          <div className="space-y-6">
-            <div className="space-y-2">
-              <label className="text-sm font-semibold text-slate-900 flex items-center gap-2">
-                 <BookOpen className="h-4 w-4 text-slate-500" />
-                 Tên bài tập
-              </label>
-              <input
-                type="text"
-                name="title"
-                required
-                className="w-full rounded-xl border border-slate-200 px-4 py-2.5 text-sm transition focus:border-indigo-400 focus:outline-none focus:ring-4 focus:ring-indigo-100"
-                placeholder="VD: Kiểm tra Toán - Hàm số bậc nhất 15 phút"
-              />
-            </div>
-
-            <div className="grid gap-6 md:grid-cols-2">
-              <div className="space-y-2">
-                <label className="text-sm font-semibold text-slate-900 flex items-center gap-2">
-                   <Target className="h-4 w-4 text-slate-500" />
-                   Môn học
-                </label>
-                <div className="flex flex-col gap-2">
-                  <select
-                    name="subjectSelect"
-                    value={subjectSelect}
-                    onChange={(e) => setSubjectSelect(e.target.value)}
-                    className="w-full bg-white text-slate-900 rounded-xl border border-slate-200 px-4 py-2.5 text-sm"
-                    required
-                  >
-                    {SUBJECT_OPTIONS.map((s) => <option key={s} value={s}>{s}</option>)}
-                    <option value={CUSTOM_VALUE}>Khác</option>
-                  </select>
-                  {subjectSelect === CUSTOM_VALUE && (
-                    <input
-                      type="text"
-                      name="subjectCustom"
-                      value={subjectCustom}
-                      onChange={(e) => setSubjectCustom(e.target.value)}
-                      required
-                      className="w-full rounded-xl border border-slate-200 px-4 py-2.5 text-sm"
-                      placeholder="Nhập môn khác"
-                    />
-                  )}
-                </div>
-              </div>
-
-              <div className="space-y-2">
-                <label className="text-sm font-semibold text-slate-900 flex items-center gap-2">
-                   <LayoutTemplate className="h-4 w-4 text-slate-500" />
-                   Phân loại Lớp
-                </label>
-                <div className="flex flex-col gap-2">
-                  <select
-                    name="gradeSelect"
-                    value={gradeSelect}
-                    onChange={(e) => setGradeSelect(e.target.value)}
-                    className="w-full bg-white text-slate-900 rounded-xl border border-slate-200 px-4 py-2.5 text-sm"
-                    required
-                  >
-                    {GRADE_OPTIONS.map((g) => <option key={g} value={g}>{g}</option>)}
-                    <option value={CUSTOM_VALUE}>Khác</option>
-                  </select>
-                  {gradeSelect === CUSTOM_VALUE && (
-                    <input
-                      type="text"
-                      name="gradeCustom"
-                      value={gradeCustom}
-                      onChange={(e) => setGradeCustom(e.target.value)}
-                      required
-                      className="w-full bg-white text-slate-900 rounded-xl border border-slate-200 px-4 py-2.5 text-sm"
-                      placeholder="Nhập lớp khác (vd: Lớp 10 nâng cao)"
-                    />
-                  )}
-                </div>
-              </div>
-            </div>
-
-            <div className="grid gap-4 sm:gap-6 grid-cols-1 sm:grid-cols-3">
-              <div className="space-y-2">
-                <label className="text-sm font-semibold text-slate-900 flex items-center gap-2">
-                   <Clock className="h-4 w-4 text-slate-500" />
-                   Hạn nộp bài
-                </label>
-                <input
-                  type="datetime-local"
-                  name="dueAt"
-                  className="w-full bg-white text-slate-900 rounded-xl border border-slate-200 px-4 py-2.5 text-sm"
-                />
-              </div>
-              <div className="space-y-2">
-                <label className="text-sm font-semibold text-slate-900 flex items-center gap-2">
-                   <Clock className="h-4 w-4 text-slate-500" />
-                   Thời gian (phút)
-                </label>
-                <input
-                  type="number"
-                  name="durationMinutes"
-                  className="w-full bg-white text-slate-900 rounded-xl border border-slate-200 px-4 py-2.5 text-sm"
-                  placeholder="Để trống nếu không đếm ngược"
-                />
-              </div>
-              <div className="space-y-2">
-                <label className="text-sm font-semibold text-slate-900 flex items-center gap-2">
-                   <Settings2 className="h-4 w-4 text-slate-500" />
-                   Tổng điểm
-                </label>
-                <input
-                  type="number"
-                  name="totalScore"
-                  step="0.5"
-                  defaultValue="10"
-                  required
-                  className="w-full bg-white text-slate-900 rounded-xl border border-slate-200 px-4 py-2.5 text-sm"
-                />
-              </div>
-            </div>
+        {errorObj && (
+          <div className="rounded-xl bg-red-50 px-4 py-3 text-sm font-medium text-red-700 ring-1 ring-red-200 flex items-center gap-2">
+            <EyeOff className="h-4 w-4" />
+            {errorObj.message}
           </div>
-        </Card>
+        )}
 
-        {/* Cài đặt nâng cao */}
-        <div className="grid gap-6 md:grid-cols-2 items-start">
-           <Card className="p-5 flex gap-4 h-full border-indigo-100 bg-indigo-50/30">
-              <div className="mt-0.5">
-                 <input
-                  type="checkbox"
-                  id="hideScoreCheck"
-                  checked={hideScore}
-                  onChange={(e) => setHideScore(e.target.checked)}
-                  className="h-5 w-5 rounded border-slate-300 text-indigo-600 focus:ring-indigo-600 cursor-pointer"
-                />
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+          <div className="lg:col-span-2 space-y-6">
+            {/* Thông tin cơ bản */}
+            <Card className="p-5 sm:p-6">
+              <div className="flex items-center gap-3 border-b border-slate-100 dark:border-white/5 pb-4 mb-5">
+                <div className="p-2 bg-[#0066cc]/10 text-[#0066cc] rounded-lg">
+                  <BookOpen className="h-5 w-5" />
+                </div>
+                <h2 className="text-[17px] font-bold text-slate-800 dark:text-white tracking-[-0.01em]">Thông tin cơ bản</h2>
               </div>
-              <div>
-                 <label htmlFor="hideScoreCheck" className="text-sm font-bold text-slate-900 cursor-pointer block">
-                    Ẩn điểm sau khi nộp
-                 </label>
-                 <p className="text-sm text-slate-500 mt-1 leading-relaxed">
-                    Học sinh sẽ thấy thông báo "Đã nhận bài" thay vì điểm số cụ thể. Hữu ích cho bài thi cần tự luận.
-                 </p>
-              </div>
-           </Card>
+              
+              <div className="space-y-5">
+                <div className="space-y-2">
+                  <label className="text-sm font-semibold text-slate-900 dark:text-slate-200">Tên bài tập <span className="text-red-500">*</span></label>
+                  <input
+                    type="text"
+                    name="title"
+                    required
+                    className="w-full rounded-2xl border border-slate-200 dark:border-white/10 bg-slate-50 dark:bg-[#1d1d1f]/50 px-4 py-3 text-[15px] text-slate-900 dark:text-white transition focus:border-[#0066cc] focus:bg-white dark:focus:bg-[#1d1d1f] focus:outline-none focus:ring-4 focus:ring-blue-100 dark:focus:ring-blue-900/30"
+                    placeholder="VD: Kiểm tra Toán - Hàm số bậc nhất 15 phút"
+                  />
+                </div>
 
-           <Card className="p-5 h-full">
-               <div className="flex items-center justify-between mb-4">
-                 <h3 className="text-sm font-bold text-slate-900">Chia điểm theo nhóm câu</h3>
-                 <Button type="button" variant="outline" size="sm" onClick={() => setPointRanges(p => [...p, { fromQuestion: 1, toQuestion: 10, totalPoints: 5 }])}>
-                    Thêm nhóm
-                 </Button>
-               </div>
-               
-               {pointRanges.length === 0 ? (
-                  <div className="text-sm text-slate-500 bg-slate-50 rounded-xl p-4 text-center">
-                    Mặc định chia đều tổng điểm cho từng câu. Thêm nhóm nếu muốn chia khác biệt.
+                <div className="grid gap-5 md:grid-cols-2">
+                  <div className="space-y-2">
+                    <label className="text-sm font-semibold text-slate-900 dark:text-slate-200">Môn học <span className="text-red-500">*</span></label>
+                    <div className="flex flex-col gap-2">
+                      <select
+                        name="subjectSelect"
+                        value={subjectSelect}
+                        onChange={(e) => setSubjectSelect(e.target.value)}
+                        className="w-full bg-slate-50 dark:bg-[#1d1d1f]/50 text-slate-900 dark:text-white rounded-2xl border border-slate-200 dark:border-white/10 px-4 py-3 text-[15px] transition focus:border-[#0066cc] focus:bg-white dark:focus:bg-[#1d1d1f] focus:outline-none focus:ring-4 focus:ring-blue-100 dark:focus:ring-blue-900/30"
+                        required
+                      >
+                        {SUBJECT_OPTIONS.map((s) => <option key={s} value={s}>{s}</option>)}
+                        <option value={CUSTOM_VALUE}>Khác</option>
+                      </select>
+                      {subjectSelect === CUSTOM_VALUE && (
+                        <input
+                          type="text"
+                          name="subjectCustom"
+                          value={subjectCustom}
+                          onChange={(e) => setSubjectCustom(e.target.value)}
+                          required
+                          className="w-full rounded-2xl border border-slate-200 dark:border-white/10 bg-slate-50 dark:bg-[#1d1d1f]/50 px-4 py-3 text-[15px] text-slate-900 dark:text-white transition focus:border-[#0066cc] focus:outline-none focus:ring-4 focus:ring-blue-100 dark:focus:ring-blue-900/30"
+                          placeholder="Nhập môn khác"
+                        />
+                      )}
+                    </div>
                   </div>
-               ) : (
-                  <div className="space-y-3">
-                    {pointRanges.map((range, idx) => (
-                      <div key={idx} className="flex flex-wrap items-center gap-2 bg-slate-50 rounded-lg p-2 border border-slate-100">
-                        <span className="text-xs text-slate-600 font-medium whitespace-nowrap">Từ câu</span>
+
+                  <div className="space-y-2">
+                    <label className="text-sm font-semibold text-slate-900 dark:text-slate-200">Phân loại Lớp <span className="text-red-500">*</span></label>
+                    <div className="flex flex-col gap-2">
+                      <select
+                        name="gradeSelect"
+                        value={gradeSelect}
+                        onChange={(e) => setGradeSelect(e.target.value)}
+                        className="w-full bg-slate-50 dark:bg-[#1d1d1f]/50 text-slate-900 dark:text-white rounded-2xl border border-slate-200 dark:border-white/10 px-4 py-3 text-[15px] transition focus:border-[#0066cc] focus:bg-white dark:focus:bg-[#1d1d1f] focus:outline-none focus:ring-4 focus:ring-blue-100 dark:focus:ring-blue-900/30"
+                        required
+                      >
+                        {GRADE_OPTIONS.map((g) => <option key={g} value={g}>{g}</option>)}
+                        <option value={CUSTOM_VALUE}>Khác</option>
+                      </select>
+                      {gradeSelect === CUSTOM_VALUE && (
                         <input
-                          type="number"
-                          min={1}
-                          value={range.fromQuestion || ""}
-                          onChange={(e) => setPointRanges(p => {
-                            const updated = [...p];
-                            updated[idx] = { ...updated[idx], fromQuestion: e.target.value === "" ? "" : parseInt(e.target.value) } as any;
-                            return updated;
-                          })}
-                          className="w-14 rounded border border-slate-200 px-2 py-1 text-sm text-center"
+                          type="text"
+                          name="gradeCustom"
+                          value={gradeCustom}
+                          onChange={(e) => setGradeCustom(e.target.value)}
+                          required
+                          className="w-full rounded-2xl border border-slate-200 dark:border-white/10 bg-slate-50 dark:bg-[#1d1d1f]/50 px-4 py-3 text-[15px] text-slate-900 dark:text-white transition focus:border-[#0066cc] focus:outline-none focus:ring-4 focus:ring-blue-100 dark:focus:ring-blue-900/30"
+                          placeholder="Nhập lớp khác (vd: Lớp 10 nâng cao)"
                         />
-                        <span className="text-xs text-slate-600 font-medium whitespace-nowrap">đến</span>
-                        <input
-                          type="number"
-                          min={1}
-                          value={range.toQuestion || ""}
-                          onChange={(e) => setPointRanges(p => {
-                            const updated = [...p];
-                            updated[idx] = { ...updated[idx], toQuestion: e.target.value === "" ? "" : parseInt(e.target.value) } as any;
-                            return updated;
-                          })}
-                          className="w-14 rounded border border-slate-200 px-2 py-1 text-sm text-center"
-                        />
-                        <span className="text-xs text-slate-600 font-medium whitespace-nowrap">tổng</span>
-                        <input
-                          type="number"
-                          min={0}
-                          step={0.5}
-                          value={range.totalPoints}
-                          onChange={(e) => setPointRanges(p => {
-                            const updated = [...p];
-                            updated[idx] = { ...updated[idx], totalPoints: e.target.value === "" ? 0 : parseFloat(e.target.value) };
-                            return updated;
-                          })}
-                          className="w-16 rounded border border-slate-200 px-2 py-1 text-sm text-center"
-                        />
-                        <button
-                          type="button"
-                          onClick={() => setPointRanges(p => p.filter((_, i) => i !== idx))}
-                          className="ml-auto text-red-500 hover:text-red-700 text-xs font-bold px-2 py-1 rounded hover:bg-red-50"
-                        >
-                          ✕ Lược bỏ
-                        </button>
-                      </div>
-                    ))}
+                      )}
+                    </div>
                   </div>
-               )}
-           </Card>
+                </div>
+              </div>
+            </Card>
+
+            {/* Cấu hình làm bài */}
+            <Card className="p-5 sm:p-6">
+              <div className="flex items-center gap-3 border-b border-slate-100 dark:border-white/5 pb-4 mb-5">
+                <div className="p-2 bg-amber-50 dark:bg-amber-900/20 text-amber-600 dark:text-amber-400 rounded-lg">
+                  <Settings2 className="h-5 w-5" />
+                </div>
+                <h2 className="text-[17px] font-bold text-slate-800 dark:text-white tracking-[-0.01em]">Cấu hình làm bài</h2>
+              </div>
+              
+              <div className="grid gap-5 md:grid-cols-3">
+                <div className="space-y-2">
+                  <label className="text-sm font-semibold text-slate-900 dark:text-slate-200">Hạn nộp bài</label>
+                  <input
+                    type="datetime-local"
+                    name="dueAt"
+                    className="w-full rounded-2xl border border-slate-200 dark:border-white/10 bg-slate-50 dark:bg-[#1d1d1f]/50 px-4 py-3 text-[15px] text-slate-900 dark:text-white transition focus:border-[#0066cc] focus:bg-white dark:focus:bg-[#1d1d1f] focus:outline-none focus:ring-4 focus:ring-blue-100 dark:focus:ring-blue-900/30"
+                  />
+                </div>
+                <div className="space-y-2">
+                  <label className="text-sm font-semibold text-slate-900 dark:text-slate-200">Thời gian (phút)</label>
+                  <input
+                    type="number"
+                    name="durationMinutes"
+                    className="w-full rounded-2xl border border-slate-200 dark:border-white/10 bg-slate-50 dark:bg-[#1d1d1f]/50 px-4 py-3 text-[15px] text-slate-900 dark:text-white transition focus:border-[#0066cc] focus:bg-white dark:focus:bg-[#1d1d1f] focus:outline-none focus:ring-4 focus:ring-blue-100 dark:focus:ring-blue-900/30"
+                    placeholder="Không giới hạn"
+                  />
+                </div>
+                <div className="space-y-2">
+                  <label className="text-sm font-semibold text-slate-900 dark:text-slate-200">Tổng điểm <span className="text-red-500">*</span></label>
+                  <input
+                    type="number"
+                    name="totalScore"
+                    step="0.5"
+                    defaultValue="10"
+                    required
+                    className="w-full rounded-2xl border border-slate-200 dark:border-white/10 bg-slate-50 dark:bg-[#1d1d1f]/50 px-4 py-3 text-[15px] text-slate-900 dark:text-white transition focus:border-[#0066cc] focus:bg-white dark:focus:bg-[#1d1d1f] focus:outline-none focus:ring-4 focus:ring-blue-100 dark:focus:ring-blue-900/30"
+                  />
+                </div>
+              </div>
+
+              <div className="mt-6 pt-5 border-t border-slate-100 dark:border-white/5">
+                <label className="flex items-start sm:items-center gap-3 cursor-pointer group p-3 rounded-2xl hover:bg-slate-50 dark:hover:bg-white/5 transition border border-transparent hover:border-slate-100 dark:hover:border-white/10">
+                  <div className="mt-0.5 sm:mt-0">
+                    <input
+                      type="checkbox"
+                      checked={hideScore}
+                      onChange={(e) => setHideScore(e.target.checked)}
+                      className="h-5 w-5 rounded border-slate-300 dark:border-white/20 text-[#0066cc] focus:ring-[#0066cc] cursor-pointer"
+                    />
+                  </div>
+                  <div>
+                    <span className="text-[15px] font-bold text-slate-800 dark:text-white block group-hover:text-[#0066cc] dark:group-hover:text-blue-400 transition-colors tracking-[-0.01em]">Ẩn điểm sau khi nộp</span>
+                    <span className="text-xs text-slate-500 dark:text-slate-400 mt-1 block leading-relaxed">Học sinh chỉ thấy thông báo đã nhận bài (Hữu ích cho bài thi tự luận).</span>
+                  </div>
+                </label>
+              </div>
+            </Card>
+          </div>
+
+          <div className="lg:col-span-1">
+            <Card className="p-5 sm:p-6 h-full max-h-[650px] flex flex-col">
+              <div className="flex items-center justify-between border-b border-slate-100 dark:border-white/5 pb-4 mb-4 shrink-0">
+                <div className="flex items-center gap-3">
+                  <div className="p-2 bg-emerald-50 dark:bg-emerald-900/20 text-emerald-600 dark:text-emerald-400 rounded-lg">
+                    <Users className="h-5 w-5" />
+                  </div>
+                  <h2 className="text-[17px] font-bold text-slate-800 dark:text-white tracking-[-0.01em]">Giao bài</h2>
+                </div>
+                <Button 
+                  type="button" 
+                  variant="ghost" 
+                  size="sm" 
+                  onClick={() => setAssignedIds(assignedIds.length === students.length ? [] : students.map(s => s.id))}
+                  className="text-xs h-8 px-3 text-[#0066cc] dark:text-blue-400 bg-[#0066cc]/5 dark:bg-blue-400/10 hover:bg-[#0066cc]/10 dark:hover:bg-blue-400/20 rounded-full"
+                >
+                  {assignedIds.length === students.length ? "Bỏ chọn" : "Chọn tất cả"}
+                </Button>
+              </div>
+              
+              <div className="flex-1 overflow-y-auto pr-2 space-y-1.5 custom-scrollbar min-h-[300px]">
+                {loadingStudents ? (
+                  <div className="text-sm text-slate-500 text-center py-8">Đang tải danh sách học sinh...</div>
+                ) : students.length === 0 ? (
+                  <div className="text-sm text-slate-500 text-center py-8 bg-slate-50 dark:bg-[#1d1d1f]/50 rounded-2xl">Chưa có học sinh nào.</div>
+                ) : (
+                  students.map(s => (
+                    <label key={s.id} className="flex items-center gap-3 p-3 rounded-2xl hover:bg-slate-50 dark:hover:bg-white/5 border border-transparent hover:border-slate-200 dark:hover:border-white/10 cursor-pointer transition">
+                      <input
+                        type="checkbox"
+                        checked={assignedIds.includes(s.id)}
+                        onChange={(e) => {
+                          if (e.target.checked) setAssignedIds(prev => [...prev, s.id]);
+                          else setAssignedIds(prev => prev.filter(id => id !== s.id));
+                        }}
+                        className="h-4 w-4 rounded border-slate-300 dark:border-white/20 text-[#0066cc] focus:ring-[#0066cc]"
+                      />
+                      <span className="text-[15px] font-medium text-slate-700 dark:text-slate-200 truncate">{s.full_name}</span>
+                    </label>
+                  ))
+                )}
+              </div>
+              <div className="pt-4 mt-2 border-t border-slate-100 dark:border-white/5 text-xs text-slate-500 dark:text-slate-400 text-center shrink-0">
+                Đã chọn <span className="font-bold text-slate-900 dark:text-white">{assignedIds.length}</span> học sinh
+              </div>
+            </Card>
+          </div>
         </div>
 
-        {/* Giao bài */}
-        <Card className="p-5">
-           <div className="flex items-center justify-between mb-4">
-             <div>
-               <h3 className="text-sm font-bold text-slate-900">Giao bài cho học sinh</h3>
-               <p className="text-xs text-slate-500 mt-1">Chọn học sinh được phép nhìn thấy và làm bài tập này.</p>
-             </div>
-             <Button 
-               type="button" 
-               variant="outline" 
-               size="sm" 
-               onClick={() => {
-                 if (assignedIds.length === students.length) {
-                   setAssignedIds([]);
-                 } else {
-                   setAssignedIds(students.map(s => s.id));
-                 }
-               }}
-             >
-               {assignedIds.length === students.length ? "Bỏ chọn tất cả" : "Chọn tất cả"}
-             </Button>
-           </div>
-           
-           {loadingStudents ? (
-             <div className="text-sm text-slate-500 bg-slate-50 rounded-xl p-4 text-center">Đang tải danh sách học sinh...</div>
-           ) : students.length === 0 ? (
-             <div className="text-sm text-slate-500 bg-slate-50 rounded-xl p-4 text-center">Chưa có học sinh nào trên hệ thống.</div>
-           ) : (
-             <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3 max-h-60 overflow-y-auto p-2 border border-slate-100 rounded-xl bg-slate-50/50">
-               {students.map(s => (
-                 <label key={s.id} className="flex items-center gap-2 p-2 rounded-lg hover:bg-slate-100 cursor-pointer transition border border-transparent hover:border-slate-200">
-                   <input
-                     type="checkbox"
-                     className="h-4 w-4 rounded border-slate-300 text-indigo-600 focus:ring-indigo-600"
-                     checked={assignedIds.includes(s.id)}
-                     onChange={(e) => {
-                       if (e.target.checked) setAssignedIds(prev => [...prev, s.id]);
-                       else setAssignedIds(prev => prev.filter(id => id !== s.id));
-                     }}
-                   />
-                   <span className="text-sm font-medium text-slate-700 truncate">{s.full_name}</span>
-                 </label>
-               ))}
-             </div>
-           )}
-        </Card>
-
-        <div className="flex justify-end pt-4">
-           <Link href="/admin/dashboard">
-             <Button type="button" variant="ghost" className="mr-3">
-               Hủy
-             </Button>
+        <div className="fixed bottom-0 left-0 right-0 z-20 flex items-center justify-end gap-3 p-4 border-t border-slate-200 dark:border-white/10 bg-white/80 dark:bg-[#1d1d1f]/80 backdrop-blur-xl shadow-[0_-4px_6px_-1px_rgba(0,0,0,0.05)] md:static md:shadow-none md:border-0 md:bg-transparent md:p-0">
+           <Link href="/admin/assignments">
+             <Button type="button" variant="secondary" className="px-6 rounded-full">Hủy bỏ</Button>
            </Link>
-           <Button type="submit" variant="brand" size="lg" disabled={loading} className="px-8 shadow-md hover:shadow-lg">
+           <Button type="submit" variant="brand" disabled={loading} className="px-8 rounded-full shadow-lg shadow-blue-500/20 hover:-translate-y-0.5 transition-all">
              {loading ? "Đang xử lý..." : "Lưu & Biên soạn câu hỏi"}
              {!loading && <ArrowLeft className="h-4 w-4 ml-2 rotate-180" />}
            </Button>

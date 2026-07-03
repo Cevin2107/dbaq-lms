@@ -248,11 +248,11 @@ export default function TeachingSchedulePage() {
   return (
     <div className="p-4 md:p-8 max-w-6xl mx-auto space-y-8 animate-in fade-in duration-500 pb-16">
       <div>
-        <h1 className="text-2xl font-bold text-slate-800 flex items-center gap-2">
-          <Clock className="h-6 w-6 text-indigo-600" />
-          Đăng ký lịch dạy
+        <h1 className="text-2xl sm:text-3xl font-bold text-slate-900 dark:text-white flex items-center gap-2 tracking-[-0.02em]">
+          <Clock className="h-6 w-6 text-[#0066cc]" />
+          Đăng ký
         </h1>
-        <p className="text-slate-500 mt-1">Quản lý ca học, lịch rảnh và danh sách học sinh đăng ký.</p>
+        <p className="text-[15px] text-slate-500 dark:text-slate-400 mt-2">Quản lý ca học, lịch rảnh và danh sách học sinh đăng ký.</p>
       </div>
 
       {message.text && (
@@ -262,9 +262,9 @@ export default function TeachingSchedulePage() {
       )}
 
       {/* 1. Shifts */}
-      <div className="bg-white rounded-2xl shadow-sm border border-slate-200 p-6">
-        <h2 className="text-lg font-semibold text-slate-800 mb-4 flex items-center gap-2">
-          <Clock className="h-5 w-5" /> Quản lý Ca học
+      <div className="rounded-[2rem] bg-white/80 dark:bg-[#1d1d1f]/80 backdrop-blur-xl border border-black/5 dark:border-white/5 shadow-[0_4px_20px_rgba(0,0,0,0.03)] p-6 sm:p-8">
+        <h2 className="text-[17px] font-bold text-slate-900 dark:text-white mb-5 flex items-center gap-2">
+          <Clock className="h-5 w-5 text-[#0066cc]" /> Quản lý Ca học
         </h2>
         <div className="space-y-4 max-w-2xl">
           {shifts.map(shift => (
@@ -292,13 +292,13 @@ export default function TeachingSchedulePage() {
       </div>
 
       {/* 2. Availability Matrix */}
-      <div className="bg-white rounded-2xl shadow-sm border border-slate-200 p-6 overflow-x-auto">
+      <div className="rounded-[2rem] bg-white/80 dark:bg-[#1d1d1f]/80 backdrop-blur-xl border border-black/5 dark:border-white/5 shadow-[0_4px_20px_rgba(0,0,0,0.03)] p-6 sm:p-8 overflow-x-auto">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
-          <h2 className="text-lg font-semibold text-slate-800">Chọn lịch rảnh</h2>
+          <h2 className="text-[17px] font-bold text-slate-900 dark:text-white flex items-center gap-2">Chọn lịch rảnh</h2>
           <button 
             onClick={handleSaveAvailability} 
             disabled={saving}
-            className="w-full sm:w-auto flex items-center justify-center gap-2 px-4 py-2 bg-indigo-600 text-white font-medium rounded-xl hover:bg-indigo-700 transition disabled:opacity-50"
+            className="w-full sm:w-auto flex items-center justify-center gap-2 px-5 py-2.5 bg-[#0066cc] text-white text-[14px] font-medium rounded-full shadow-lg shadow-blue-500/20 hover:bg-[#005bb5] transition-all disabled:opacity-50 hover:-translate-y-0.5"
           >
             {saving ? <RefreshCw className="h-4 w-4 animate-spin" /> : <Save className="h-4 w-4" />}
             Lưu lịch rảnh
@@ -352,10 +352,10 @@ export default function TeachingSchedulePage() {
       </div>
 
       {/* 3. Proxy Registration */}
-      <div className="bg-white rounded-2xl shadow-sm border border-slate-200 p-6">
+      <div className="rounded-[2rem] bg-white/80 dark:bg-[#1d1d1f]/80 backdrop-blur-xl border border-black/5 dark:border-white/5 shadow-[0_4px_20px_rgba(0,0,0,0.03)] p-6 sm:p-8">
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-6">
-          <h2 className="text-lg font-semibold text-slate-800 flex items-center gap-2">
-            <Edit2 className="h-5 w-5" /> Đăng ký hộ lịch cho học sinh
+          <h2 className="text-[17px] font-bold text-slate-900 dark:text-white flex items-center gap-2">
+            <Edit2 className="h-5 w-5 text-[#0066cc]" /> Đăng ký hộ lịch cho học sinh
           </h2>
           <select 
             value={selectedProxyStudent} 
@@ -457,9 +457,9 @@ export default function TeachingSchedulePage() {
       </div>
 
       {/* 4. Students Limits & Registrations */}
-      <div className="bg-white rounded-2xl shadow-sm border border-slate-200 p-6">
-        <h2 className="text-lg font-semibold text-slate-800 mb-4 flex items-center gap-2">
-          <Users className="h-5 w-5" /> Cấu hình giới hạn & Danh sách Học sinh đã đăng ký
+      <div className="rounded-[2rem] bg-white/80 dark:bg-[#1d1d1f]/80 backdrop-blur-xl border border-black/5 dark:border-white/5 shadow-[0_4px_20px_rgba(0,0,0,0.03)] p-6 sm:p-8">
+        <h2 className="text-[17px] font-bold text-slate-900 dark:text-white mb-6 flex items-center gap-2">
+          <Users className="h-5 w-5 text-[#0066cc]" /> Cấu hình giới hạn & Danh sách Học sinh đã đăng ký
         </h2>
 
         {studentLimits.length === 0 ? (
@@ -467,7 +467,10 @@ export default function TeachingSchedulePage() {
         ) : (
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
             {studentLimits.map(student => {
-              const regs = registrationsByStudent[student.id] || [];
+              const regs = (registrationsByStudent[student.id] || []).sort((a, b) => {
+                if (a.day_of_week !== b.day_of_week) return a.day_of_week - b.day_of_week;
+                return (a.shift?.start_time || "").localeCompare(b.shift?.start_time || "");
+              });
               return (
                 <div key={student.id} className="bg-slate-50 rounded-xl border border-slate-200 p-4">
                   <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-4">

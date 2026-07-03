@@ -23,11 +23,11 @@ export function StudentTabs({
       <button
         onClick={onSelectOverview}
         className={`
-          flex items-center gap-2 px-3 sm:px-4 py-2 rounded-full font-medium text-sm sm:text-base transition-all duration-200 whitespace-nowrap
+          flex items-center gap-2 px-3 sm:px-4 py-2 rounded-full font-medium text-sm sm:text-[15px] transition-all duration-200 whitespace-nowrap
           ${
             selectedTab === "overview"
-              ? "bg-gradient-to-r from-blue-500 to-indigo-600 text-white shadow-md"
-              : "bg-gray-100 text-gray-700 hover:bg-gray-200"
+              ? "bg-[#0066cc] text-white shadow-lg shadow-blue-500/20"
+              : "bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-200 hover:bg-slate-200 dark:hover:bg-slate-700"
           }
         `}
       >
@@ -40,11 +40,11 @@ export function StudentTabs({
           key={student.id}
           onClick={() => onSelectStudent(student.id)}
           className={`
-            flex items-center gap-2 px-3 sm:px-4 py-2 rounded-full font-medium text-sm sm:text-base transition-all duration-200 whitespace-nowrap
+            flex items-center gap-2 px-3 sm:px-4 py-2 rounded-full font-medium text-sm sm:text-[15px] transition-all duration-200 whitespace-nowrap
             ${
               selectedTab === "student" && selectedStudentId === student.id
-                ? "text-white shadow-md"
-                : "bg-gray-100 text-gray-700 hover:bg-gray-200"
+                ? "text-white shadow-lg"
+                : "bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-200 hover:bg-slate-200 dark:hover:bg-slate-700"
             }
           `}
           style={{
@@ -64,7 +64,7 @@ export function StudentTabs({
 
       <button
         onClick={onAddStudent}
-        className="flex items-center gap-2 px-3 sm:px-4 py-2 rounded-full font-medium text-sm sm:text-base bg-green-100 text-green-700 hover:bg-green-200 transition-all duration-200 whitespace-nowrap"
+        className="flex items-center gap-2 px-3 sm:px-4 py-2 rounded-full font-medium text-sm sm:text-[15px] bg-emerald-100 dark:bg-emerald-900/30 text-emerald-700 dark:text-emerald-400 hover:bg-emerald-200 dark:hover:bg-emerald-900/50 transition-all duration-200 whitespace-nowrap"
       >
         <Plus className="w-4 h-4" />
         Thêm học sinh

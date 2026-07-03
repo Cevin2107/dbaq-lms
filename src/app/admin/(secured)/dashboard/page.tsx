@@ -40,11 +40,11 @@ export default function AdminDashboardPage() {
   return (
     <div className="container-custom py-6 md:py-8 space-y-6 animate-fade-in">
       {/* Header with Glassmorphic Card */}
-      <div className="rounded-2xl sm:rounded-3xl bg-white/70 backdrop-blur-xl border border-white/80 shadow-xl shadow-slate-200/50 p-4 sm:p-6 md:p-8">
-        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+      <div className="rounded-[2rem] bg-white/80 dark:bg-[#1d1d1f]/80 backdrop-blur-xl border border-black/5 dark:border-white/5 shadow-[0_4px_20px_rgba(0,0,0,0.03)] p-6 sm:p-8 md:p-10">
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-5">
           <div>
-            <h1 className="text-xl sm:text-2xl md:text-3xl font-bold bg-gradient-to-r from-indigo-600 to-violet-600 bg-clip-text text-transparent">Tổng quan hệ thống</h1>
-            <p className="text-sm text-slate-600 mt-1.5">Quản lý bài tập và theo dõi số liệu chung.</p>
+            <h1 className="text-2xl sm:text-3xl font-bold text-slate-900 dark:text-white tracking-[-0.02em]">Tổng quan hệ thống</h1>
+            <p className="text-[15px] text-slate-500 dark:text-slate-400 mt-2">Quản lý bài tập và theo dõi số liệu chung.</p>
           </div>
           <div className="flex items-center gap-2 sm:gap-3">
             <Button 
@@ -53,13 +53,13 @@ export default function AdminDashboardPage() {
               onClick={() => refetch()} 
               disabled={isRefetching} 
               loading={isRefetching}
-              className="bg-white/50 backdrop-blur-sm border-white/80 hover:bg-white/80"
+              className="rounded-full bg-white/50 dark:bg-slate-800/50 backdrop-blur-sm border-slate-200 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-800 px-4"
             >
               <RefreshCw className="h-4 w-4" />
               <span className="hidden sm:inline">Làm mới</span>
             </Button>
             <Link href="/admin/assignments/new">
-              <Button variant="brand" size="sm" className="bg-gradient-to-r from-indigo-600 to-violet-600 hover:from-indigo-700 hover:to-violet-700 shadow-lg shadow-indigo-500/30">
+              <Button variant="brand" size="sm" className="rounded-full bg-[#0066cc] hover:bg-[#005bb5] shadow-lg shadow-blue-500/20 px-5">
                 <Plus className="h-4 w-4" />
                 <span className="hidden sm:inline">Tạo bài mới</span>
                 <span className="sm:hidden">Tạo mới</span>
@@ -79,28 +79,28 @@ export default function AdminDashboardPage() {
           </>
         ) : (
           <>
-            <div className="group rounded-2xl sm:rounded-3xl bg-white/70 backdrop-blur-xl border border-white/80 shadow-xl shadow-slate-200/50 p-4 sm:p-6 hover:shadow-2xl hover:shadow-indigo-200/40 transition-all duration-300">
-              <div className="relative inline-flex h-10 w-10 sm:h-14 sm:w-14 items-center justify-center rounded-xl sm:rounded-2xl bg-gradient-to-br from-indigo-500 via-violet-500 to-purple-600 text-white mb-3 sm:mb-4 shadow-xl shadow-indigo-500/40 group-hover:scale-110 transition-transform duration-300">
-                <LayoutList className="h-5 w-5 sm:h-7 sm:w-7" />
+            <div className="group rounded-[2rem] bg-white/80 dark:bg-[#1d1d1f]/80 backdrop-blur-xl border border-black/5 dark:border-white/5 shadow-[0_4px_20px_rgba(0,0,0,0.03)] p-6 hover:shadow-[0_8px_30px_rgba(0,0,0,0.06)] transition-all duration-300">
+              <div className="relative inline-flex h-12 w-12 sm:h-14 sm:w-14 items-center justify-center rounded-[18px] bg-[#0066cc] text-white mb-4 shadow-lg shadow-blue-500/30 group-hover:scale-110 transition-transform duration-300">
+                <LayoutList className="h-6 w-6 sm:h-7 sm:w-7" />
               </div>
-              <p className="text-2xl sm:text-4xl font-bold bg-gradient-to-r from-indigo-600 to-violet-600 bg-clip-text text-transparent">{assignments.length}</p>
-              <p className="text-xs sm:text-sm font-semibold text-slate-500 mt-1 sm:mt-2">Tổng bài tập</p>
+              <p className="text-3xl sm:text-4xl font-bold text-slate-900 dark:text-white tracking-tight">{assignments.length}</p>
+              <p className="text-[14px] font-medium text-slate-500 dark:text-slate-400 mt-1">Tổng bài tập</p>
             </div>
             
-            <div className="group rounded-2xl sm:rounded-3xl bg-white/70 backdrop-blur-xl border border-white/80 shadow-xl shadow-slate-200/50 p-4 sm:p-6 hover:shadow-2xl hover:shadow-emerald-200/40 transition-all duration-300">
-              <div className="relative inline-flex h-10 w-10 sm:h-14 sm:w-14 items-center justify-center rounded-xl sm:rounded-2xl bg-gradient-to-br from-emerald-500 to-teal-500 text-white mb-3 sm:mb-4 shadow-xl shadow-emerald-500/40 group-hover:scale-110 transition-transform duration-300">
-                <Eye className="h-5 w-5 sm:h-7 sm:w-7" />
+            <div className="group rounded-[2rem] bg-white/80 dark:bg-[#1d1d1f]/80 backdrop-blur-xl border border-black/5 dark:border-white/5 shadow-[0_4px_20px_rgba(0,0,0,0.03)] p-6 hover:shadow-[0_8px_30px_rgba(0,0,0,0.06)] transition-all duration-300">
+              <div className="relative inline-flex h-12 w-12 sm:h-14 sm:w-14 items-center justify-center rounded-[18px] bg-emerald-500 text-white mb-4 shadow-lg shadow-emerald-500/30 group-hover:scale-110 transition-transform duration-300">
+                <Eye className="h-6 w-6 sm:h-7 sm:w-7" />
               </div>
-              <p className="text-2xl sm:text-4xl font-bold bg-gradient-to-r from-emerald-600 to-teal-600 bg-clip-text text-transparent">{visibleCount}</p>
-              <p className="text-xs sm:text-sm font-semibold text-slate-500 mt-1 sm:mt-2">Đang công khai</p>
+              <p className="text-3xl sm:text-4xl font-bold text-slate-900 dark:text-white tracking-tight">{visibleCount}</p>
+              <p className="text-[14px] font-medium text-slate-500 dark:text-slate-400 mt-1">Đang công khai</p>
             </div>
             
-            <div className="group rounded-2xl sm:rounded-3xl bg-white/70 backdrop-blur-xl border border-white/80 shadow-xl shadow-slate-200/50 p-4 sm:p-6 hover:shadow-2xl hover:shadow-slate-200/40 transition-all duration-300 col-span-2 sm:col-span-1">
-              <div className="relative inline-flex h-10 w-10 sm:h-14 sm:w-14 items-center justify-center rounded-xl sm:rounded-2xl bg-gradient-to-br from-slate-400 to-slate-500 text-white mb-3 sm:mb-4 shadow-xl shadow-slate-400/30 group-hover:scale-110 transition-transform duration-300">
-                <EyeOff className="h-5 w-5 sm:h-7 sm:w-7" />
+            <div className="group rounded-[2rem] bg-white/80 dark:bg-[#1d1d1f]/80 backdrop-blur-xl border border-black/5 dark:border-white/5 shadow-[0_4px_20px_rgba(0,0,0,0.03)] p-6 hover:shadow-[0_8px_30px_rgba(0,0,0,0.06)] transition-all duration-300 col-span-2 sm:col-span-1">
+              <div className="relative inline-flex h-12 w-12 sm:h-14 sm:w-14 items-center justify-center rounded-[18px] bg-slate-400 dark:bg-slate-600 text-white mb-4 shadow-lg shadow-slate-400/30 group-hover:scale-110 transition-transform duration-300">
+                <EyeOff className="h-6 w-6 sm:h-7 sm:w-7" />
               </div>
-              <p className="text-2xl sm:text-4xl font-bold text-slate-700">{hiddenCount}</p>
-              <p className="text-xs sm:text-sm font-semibold text-slate-500 mt-1 sm:mt-2">Đang ẩn</p>
+              <p className="text-3xl sm:text-4xl font-bold text-slate-700 dark:text-slate-200 tracking-tight">{hiddenCount}</p>
+              <p className="text-[14px] font-medium text-slate-500 dark:text-slate-400 mt-1">Đang ẩn</p>
             </div>
           </>
         )}
@@ -111,46 +111,46 @@ export default function AdminDashboardPage() {
         {/* Assignment list */}
         <div className="lg:col-span-2 space-y-4">
           <div className="flex items-center justify-between">
-            <h2 className="text-lg font-bold text-slate-900">Danh sách bài tập</h2>
+            <h2 className="text-[17px] font-bold text-slate-900 dark:text-white">Danh sách bài tập</h2>
             <Link href="/admin/stats">
-              <Button variant="outline" size="sm" className="bg-white/50 backdrop-blur-sm border-white/80 hover:bg-white/80">
-                <BarChart3 className="h-4 w-4 mr-2 text-slate-500" />
+              <Button variant="outline" size="sm" className="rounded-full bg-white/50 dark:bg-slate-800/50 backdrop-blur-sm border-slate-200 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-800">
+                <BarChart3 className="h-4 w-4 mr-2 text-slate-500 dark:text-slate-400" />
                 Thống kê chi tiết
               </Button>
             </Link>
           </div>
 
-          <div className="rounded-2xl sm:rounded-3xl bg-white/70 backdrop-blur-xl border border-white/80 shadow-xl shadow-slate-200/50 overflow-hidden">
+          <div className="rounded-[2rem] bg-white/80 dark:bg-[#1d1d1f]/80 backdrop-blur-xl border border-black/5 dark:border-white/5 shadow-[0_4px_20px_rgba(0,0,0,0.03)] overflow-hidden">
             {isLoading ? (
               <div className="p-8 text-center text-slate-400 text-sm">Đang tải dữ liệu...</div>
             ) : assignments.length === 0 ? (
               <div className="flex flex-col items-center justify-center py-16 text-center px-4">
-                <div className="mb-4 flex h-16 w-16 items-center justify-center rounded-2xl bg-gradient-to-br from-slate-100 to-slate-200 ring-4 ring-slate-50">
+                <div className="mb-5 flex h-16 w-16 items-center justify-center rounded-2xl bg-slate-50 dark:bg-slate-800/50 ring-1 ring-slate-100 dark:ring-white/5">
                   <LayoutList className="h-7 w-7 text-slate-400" />
                 </div>
-                <p className="text-sm font-semibold text-slate-700">Chưa có bài tập nào</p>
-                <p className="mt-1 text-sm text-slate-500 max-w-xs">Tạo bài tập đầu tiên để bắt đầu quá trình giảng dạy!</p>
+                <p className="text-[15px] font-semibold text-slate-700 dark:text-slate-300">Chưa có bài tập nào</p>
+                <p className="mt-1 text-[14px] text-slate-500 dark:text-slate-400 max-w-xs">Tạo bài tập đầu tiên để bắt đầu quá trình giảng dạy!</p>
                 <Link href="/admin/assignments/new">
-                  <Button variant="brand" className="mt-6 bg-gradient-to-r from-indigo-600 to-violet-600 shadow-lg shadow-indigo-500/30">
+                  <Button variant="brand" className="mt-6 rounded-full bg-[#0066cc] hover:bg-[#005bb5] shadow-lg shadow-blue-500/20">
                     Tạo bài tập ngay
                   </Button>
                 </Link>
               </div>
             ) : (
-              <div className="divide-y divide-slate-100/50">
+              <div className="divide-y divide-slate-100 dark:divide-white/5">
                 {assignments.map((a: any) => (
-                  <div key={a.id} className="flex items-center justify-between px-4 sm:px-6 py-4 sm:py-5 transition hover:bg-slate-50/50 hover:backdrop-blur-sm">
+                  <div key={a.id} className="flex items-center justify-between px-5 sm:px-8 py-4 sm:py-5 transition hover:bg-slate-50/50 dark:hover:bg-white/[0.02]">
                     <div className="min-w-0 flex-1 pr-4">
                       <div className="flex items-center gap-2 mb-1.5">
-                        <h3 className="text-[15px] font-semibold text-slate-900 truncate">
+                        <h3 className="text-[15px] font-semibold text-slate-900 dark:text-white truncate tracking-[-0.01em]">
                           <MathText text={a.title} />
                         </h3>
                         {a.is_hidden && (
-                          <Badge variant="secondary" className="shrink-0 text-[10px] py-0 bg-slate-100/80 backdrop-blur-sm">Đang ẩn</Badge>
+                          <Badge variant="secondary" className="shrink-0 text-[10px] py-0 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-400">Đang ẩn</Badge>
                         )}
                       </div>
-                      <div className="flex items-center gap-2 text-xs text-slate-500">
-                        <span className="font-medium text-indigo-600 bg-indigo-50/80 backdrop-blur-sm px-2 py-0.5 rounded-lg text-[11px]">{a.subject}</span>
+                      <div className="flex items-center gap-2 text-[13px] text-slate-500 dark:text-slate-400">
+                        <span className="font-medium text-[#0066cc] dark:text-blue-400 bg-blue-50 dark:bg-blue-900/30 px-2.5 py-0.5 rounded-[10px]">{a.subject}</span>
                         <span>&bull;</span>
                         <span>{a.grade}</span>
                         <span>&bull;</span>
@@ -158,18 +158,18 @@ export default function AdminDashboardPage() {
                       </div>
                     </div>
                     <div className="flex items-center gap-2">
-                      <Button
+                        <Button
                         variant="ghost"
                         size="icon"
                         onClick={() => handleCopyLink(a.id)}
-                        className="h-9 w-9 bg-slate-50/80 text-slate-500 hover:bg-slate-100/80 hover:text-indigo-600"
+                        className="h-9 w-9 rounded-full bg-slate-50 dark:bg-slate-800 text-slate-500 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-700 hover:text-[#0066cc]"
                         aria-label="Sao chép link bài tập"
                         title="Sao chép link bài tập"
                       >
                         <Copy className="h-4 w-4" />
                       </Button>
                       <Link href={`/admin/assignments/${a.id}`}>
-                        <Button variant="secondary" size="sm" className="bg-slate-50/80 backdrop-blur-sm hover:bg-slate-100/80">
+                        <Button variant="secondary" size="sm" className="rounded-full bg-slate-50 dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-700">
                           Chi tiết
                         </Button>
                       </Link>
