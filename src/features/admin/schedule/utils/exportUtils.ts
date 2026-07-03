@@ -6,14 +6,15 @@ export async function exportToImage(elementId: string, filename: string) {
     throw new Error("Element not found");
   }
 
-  const targetWidth = 1280;
+  // Tăng width lên 1400px để đảm bảo grid không bao giờ bị cắt viền
+  const targetWidth = 1400;
 
   // ===== HIỂN THỊ OVERLAY CHE MÀN HÌNH =====
   const overlay = document.createElement("div");
   overlay.style.position = "fixed";
   overlay.style.inset = "0";
-  overlay.style.backgroundColor = "rgba(255,255,255,0.95)";
-  overlay.style.zIndex = "99999";
+  overlay.style.backgroundColor = "#ffffff"; // Che đặc 100% để không thấy hiệu ứng giật layout
+  overlay.style.zIndex = "999999";
   overlay.style.display = "flex";
   overlay.style.flexDirection = "column";
   overlay.style.alignItems = "center";
@@ -24,72 +25,47 @@ export async function exportToImage(elementId: string, filename: string) {
   overlay.style.color = "#0066cc";
   overlay.innerHTML = `
     <div style="width:44px;height:44px;border:4px solid #0066cc;border-bottom-color:transparent;border-radius:50%;animation:_spin 1s linear infinite"></div>
-    <div>Đang xuất ảnh...</div>
+    <div>Đang xử lý ảnh...</div>
     <style>@keyframes _spin{to{transform:rotate(360deg)}}</style>
   `;
   document.body.appendChild(overlay);
 
-  // ===== LƯU TRẠNG THÁI VIEWPORT =====
-  let viewportMeta = document.querySelector<HTMLMetaElement>('meta[name="viewport"]');
-  const previousViewportContent = viewportMeta?.getAttribute("content") ?? null;
-  const previousHtmlStyle = document.documentElement.style.cssText;
-  const previousBodyStyle = document.body.style.cssText;
-
-  let cloneContainer: HTMLDivElement | null = null;
+  // ===== LƯU TRẠNG THÁI CŨ =====
+  const previousCssText = element.style.cssText;
+  const previousClass = element.className;
 
   try {
-    // ===== BƯỚC 1: FORCE VIEWPORT 1280px =====
-    if (!viewportMeta) {
-      viewportMeta = document.createElement("meta");
-      viewportMeta.setAttribute("name", "viewport");
-      document.head.appendChild(viewportMeta);
-    }
-    viewportMeta.setAttribute("content", `width=${targetWidth}`);
-    document.documentElement.style.minWidth = `${targetWidth}px`;
-    document.body.style.minWidth = `${targetWidth}px`;
+    // Thêm class xuất desktop
+    element.classList.add("export-desktop");
 
-    // ===== BƯỚC 2: TẠO CLONE ĐỂ TRÁNH BỊ ẢNH HƯỞNG BỞI PARENT (PADDING/MARGIN) =====
-    // Element gốc nằm trong parent có padding (px-3) làm giới hạn chiều rộng,
-    // khi force 1280px sẽ bị tràn parent và bị lệch sang phải.
-    // Dùng clone bám trực tiếp vào body sẽ thoát khỏi mọi giới hạn này!
-    cloneContainer = document.createElement("div");
-    cloneContainer.style.position = "absolute";
-    cloneContainer.style.top = "0";
-    cloneContainer.style.left = "0";
-    cloneContainer.style.width = `${targetWidth}px`;
-    cloneContainer.style.zIndex = "-9999"; // Ẩn phía dưới
-    cloneContainer.style.backgroundColor = "#f8fafc"; // Khớp màu nền
-    cloneContainer.style.padding = "32px"; // Padding an toàn
-    cloneContainer.style.boxSizing = "border-box";
+    // ===== ÉP KÍCH THƯỚC TRỰC TIẾP =====
+    // Ép cứng width, loại bỏ margin auto để phần tử không bị lệch
+    element.style.width = `${targetWidth}px`;
+    element.style.minWidth = `${targetWidth}px`;
+    element.style.maxWidth = `${targetWidth}px`;
+    element.style.margin = "0"; 
+    element.style.boxSizing = "border-box";
 
-    const clone = element.cloneNode(true) as HTMLElement;
-    clone.classList.add("export-desktop");
-    clone.style.width = "100%";
-    clone.style.maxWidth = "100%";
-    clone.style.margin = "0";
-    clone.style.boxSizing = "border-box";
-
-    cloneContainer.appendChild(clone);
-    document.body.appendChild(cloneContainer);
-
-    // ===== BƯỚC 3: ĐỢI REFLOW =====
+    // Đợi 200ms để trình duyệt apply layout chuẩn xác
     await new Promise(resolve => setTimeout(resolve, 200));
 
-    const targetHeight = cloneContainer.scrollHeight;
+    const targetHeight = element.scrollHeight;
 
-    // ===== BƯỚC 4: CHỤP ẢNH TỪ CLONE CONTAINER =====
-    const dataUrl = await toPng(cloneContainer, {
+    // ===== CHỤP ẢNH =====
+    const dataUrl = await toPng(element, {
       backgroundColor: "#f8fafc",
       pixelRatio: 2,
       cacheBust: true,
       width: targetWidth,
       height: targetHeight,
       style: {
+        // Khôi phục margin và position trong canvas để ảnh chuẩn 0,0
+        margin: "0",
         position: "relative",
         top: "0",
         left: "0",
-        margin: "0",
         transform: "none",
+        width: `${targetWidth}px`,
       },
       filter: (node) => {
         const el = node as HTMLElement;
@@ -98,26 +74,15 @@ export async function exportToImage(elementId: string, filename: string) {
       },
     });
 
-    // ===== BƯỚC 5: TẢI ẢNH =====
+    // ===== TẢI ẢNH =====
     const link = document.createElement("a");
     link.download = filename;
     link.href = dataUrl;
     link.click();
   } finally {
     // ===== KHÔI PHỤC TẤT CẢ =====
-    if (cloneContainer && document.body.contains(cloneContainer)) {
-      document.body.removeChild(cloneContainer);
-    }
-
-    if (previousViewportContent !== null) {
-      viewportMeta?.setAttribute("content", previousViewportContent);
-    } else {
-      viewportMeta?.removeAttribute("content");
-    }
-
-    document.documentElement.style.cssText = previousHtmlStyle;
-    document.body.style.cssText = previousBodyStyle;
-
+    element.className = previousClass;
+    element.style.cssText = previousCssText;
     document.body.removeChild(overlay);
   }
 }

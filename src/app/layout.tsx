@@ -22,11 +22,20 @@ export const metadata: Metadata = {
     siteName: "Gia sư Đào Bá Anh Quân",
     type: "website",
     locale: "vi_VN",
+    images: [
+      {
+        url: "/icon.png",
+        width: 512,
+        height: 512,
+        alt: "Logo Gia sư Đào Bá Anh Quân",
+      },
+    ],
   },
   twitter: {
     card: "summary_large_image",
     title: "Gia sư Đào Bá Anh Quân",
-    description: "Hệ thống bài tập trực tuyến",
+    description: "Hệ thống bài tập trực tuyến - Giao và làm bài tập, tự động chấm điểm, theo dõi tiến độ học tập",
+    images: ["/icon.png"],
   },
 };
 
