@@ -25,7 +25,7 @@ export const metadata: Metadata = {
     locale: "vi_VN",
     images: [
       {
-        url: "/icon.png",
+        url: "/og-image.png",
         width: 512,
         height: 512,
         alt: "Logo Gia sư Đào Bá Anh Quân",
@@ -33,10 +33,10 @@ export const metadata: Metadata = {
     ],
   },
   twitter: {
-    card: "summary_large_image",
+    card: "summary",
     title: "Gia sư Đào Bá Anh Quân",
     description: "Hệ thống bài tập trực tuyến - Giao và làm bài tập, tự động chấm điểm, theo dõi tiến độ học tập",
-    images: ["/icon.png"],
+    images: ["/og-image.png"],
   },
 };
 
