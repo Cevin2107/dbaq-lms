@@ -21,6 +21,13 @@ export async function generateMetadata(
       title,
       description,
       siteName: "Gia sư Đào Bá Anh Quân",
+      images: ["/og-image.png"],
+    },
+    twitter: {
+      card: "summary_large_image",
+      title,
+      description,
+      images: ["/og-image.png"],
     },
   };
 }
