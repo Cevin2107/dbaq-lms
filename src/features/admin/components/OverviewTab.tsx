@@ -264,13 +264,6 @@ export function OverviewTab({ assignmentId, initialData }: { assignmentId: strin
 
   return (
     <div className="space-y-4 sm:space-y-5">
-      <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 xl:grid-cols-4">
-        <StatTile icon={CalendarClock} label="Hạn nộp" value={dueAtLabel} tone={editForm.due_at ? "blue" : "slate"} />
-        <StatTile icon={Clock3} label="Thời lượng" value={formatDuration(editForm.duration_minutes)} tone="amber" />
-        <StatTile icon={Target} label="Tổng điểm" value={`${editForm.total_score || 0} điểm`} tone="emerald" />
-        <StatTile icon={Layers3} label="Nhóm điểm" value={`${editForm.point_ranges.length} nhóm`} tone="slate" />
-      </div>
-
       <div className="grid grid-cols-1 gap-4 xl:grid-cols-[minmax(0,1fr)_320px]">
         <form onSubmit={handleSave} className="min-w-0">
           <Card variant="glass" className="overflow-hidden rounded-2xl">
@@ -379,15 +372,6 @@ export function OverviewTab({ assignmentId, initialData }: { assignmentId: strin
               </section>
 
               <section className="border-t border-slate-200/70 pt-6 dark:border-white/10">
-                <div className="mb-4 flex items-center gap-3">
-                  <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-emerald-50 text-emerald-600 ring-1 ring-emerald-100 dark:bg-emerald-500/10 dark:text-emerald-300 dark:ring-emerald-500/20">
-                    <Eye className="h-4 w-4" />
-                  </div>
-                  <div>
-                    <h3 className="text-[15px] font-black text-slate-900 dark:text-white">Hiển thị cho học sinh</h3>
-                    <p className="text-[12px] text-slate-500 dark:text-slate-400">Quyết định bài và điểm có xuất hiện sau khi nộp hay không.</p>
-                  </div>
-                </div>
 
                 <div className="grid grid-cols-1 gap-3 lg:grid-cols-2">
                   <SettingToggle
