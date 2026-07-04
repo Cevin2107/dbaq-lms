@@ -6,81 +6,74 @@ export async function exportToImage(elementId: string, filename: string) {
     throw new Error("Element not found");
   }
 
-  // Tăng width lên 1400px để đảm bảo grid không bao giờ bị cắt viền
-  const targetWidth = 1400;
+  // Tăng chiều rộng lên Desktop để không bị ép chật dẫn đến tràn viền
+  const targetWidth = 1280;
 
-  // ===== HIỂN THỊ OVERLAY CHE MÀN HÌNH =====
+  // Hiển thị overlay che màn hình để giấu flash khi đổi layout
   const overlay = document.createElement("div");
   overlay.style.position = "fixed";
   overlay.style.inset = "0";
-  overlay.style.backgroundColor = "#ffffff"; // Che đặc 100% để không thấy hiệu ứng giật layout
-  overlay.style.zIndex = "999999";
+  overlay.style.backgroundColor = "rgba(255, 255, 255, 0.95)";
+  overlay.style.zIndex = "99999";
   overlay.style.display = "flex";
   overlay.style.flexDirection = "column";
   overlay.style.alignItems = "center";
   overlay.style.justifyContent = "center";
-  overlay.style.gap = "16px";
-  overlay.style.fontSize = "16px";
-  overlay.style.fontWeight = "600";
+  overlay.style.fontSize = "18px";
+  overlay.style.fontWeight = "bold";
   overlay.style.color = "#0066cc";
-  overlay.innerHTML = `
-    <div style="width:44px;height:44px;border:4px solid #0066cc;border-bottom-color:transparent;border-radius:50%;animation:_spin 1s linear infinite"></div>
-    <div>Đang xử lý ảnh...</div>
-    <style>@keyframes _spin{to{transform:rotate(360deg)}}</style>
-  `;
+  overlay.innerHTML = `<div style="width:40px;height:40px;border:4px solid #0066cc;border-bottom-color:transparent;border-radius:50%;display:inline-block;animation:spin 1s linear infinite;margin-bottom:16px;"></div><div>Đang xuất ảnh...</div><style>@keyframes spin { 100% { transform: rotate(360deg); } }</style>`;
   document.body.appendChild(overlay);
 
-  // ===== LƯU TRẠNG THÁI CŨ =====
+  // Lưu lại các style hiện tại
   const previousCssText = element.style.cssText;
   const previousClass = element.className;
 
   try {
-    // Thêm class xuất desktop
+    // Thêm class export-desktop
     element.classList.add("export-desktop");
 
-    // ===== ÉP KÍCH THƯỚC TRỰC TIẾP =====
-    // Ép cứng width, loại bỏ margin auto để phần tử không bị lệch
+    // ĐO KÍCH THƯỚC ĐỒNG BỘ TRỰC TIẾP TRÊN PHẦN TỬ THẬT:
+    // Bắt buộc kích thước 1280px, thêm padding để nội dung không chạm sát viền
     element.style.width = `${targetWidth}px`;
     element.style.minWidth = `${targetWidth}px`;
     element.style.maxWidth = `${targetWidth}px`;
-    element.style.margin = "0"; 
     element.style.boxSizing = "border-box";
-
-    // Đợi 200ms để trình duyệt apply layout chuẩn xác
-    await new Promise(resolve => setTimeout(resolve, 200));
+    element.style.padding = "32px";
+    
+    // Đợi trình duyệt cập nhật layout thực tế (quan trọng để không bị cắt viền)
+    await new Promise(resolve => setTimeout(resolve, 150));
 
     const targetHeight = element.scrollHeight;
 
-    // ===== CHỤP ẢNH =====
+    // Chụp ảnh bằng html-to-image với kích thước đã đo đạc
     const dataUrl = await toPng(element, {
-      backgroundColor: "#f8fafc",
+      backgroundColor: "#f5f5f7",
       pixelRatio: 2,
       cacheBust: true,
       width: targetWidth,
       height: targetHeight,
       style: {
-        // Khôi phục margin và position trong canvas để ảnh chuẩn 0,0
-        margin: "0",
-        position: "relative",
-        top: "0",
-        left: "0",
-        transform: "none",
         width: `${targetWidth}px`,
+        minWidth: `${targetWidth}px`,
+        maxWidth: `${targetWidth}px`,
+        boxSizing: "border-box",
+        margin: "0",
+        transform: "scale(1)"
       },
       filter: (node) => {
         const el = node as HTMLElement;
         if (el?.tagName === "BUTTON") return false;
         return true;
-      },
+      }
     });
 
-    // ===== TẢI ẢNH =====
     const link = document.createElement("a");
     link.download = filename;
     link.href = dataUrl;
     link.click();
   } finally {
-    // ===== KHÔI PHỤC TẤT CẢ =====
+    // Khôi phục class và style ngay lập tức sau khi chụp xong
     element.className = previousClass;
     element.style.cssText = previousCssText;
     document.body.removeChild(overlay);

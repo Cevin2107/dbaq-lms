@@ -291,19 +291,11 @@
 
   .export-desktop .export-month-header {
     width: 100% !important;
-    justify-content: center !important;
+    justify-content: center !important; /* Căn giữa "Tháng x" */
   }
 
-  /* Ẩn nút < > bằng CSS để layout tự tính lại, thay vì dùng filter của html-to-image */
-  .export-desktop .export-month-header button {
-    display: none !important;
-  }
-
-  /* h2 "Tháng x" chiếm toàn chiều rộng và căn giữa */
   .export-desktop .export-month-header h2 {
-    width: 100% !important;
-    text-align: center !important;
-    font-size: 1.5rem !important;
+    font-size: 1.5rem !important; /* text-2xl */
     line-height: 2rem !important;
   }
 
