@@ -4,9 +4,10 @@ import { fetchAssignmentByIdAdmin } from "@/lib/supabaseHelpers";
 export async function generateMetadata({ params }: { params: Promise<{ id: string }> }): Promise<Metadata> {
   const { id } = await params;
   const appUrl = process.env.NEXT_PUBLIC_APP_URL;
-  const hasBaseUrl = Boolean(appUrl);
+  const baseUrl = appUrl || "https://dbaq-lms.vercel.app";
+  const metadataBase = new URL(baseUrl);
   const startPath = `/assignments/${id}/start`;
-  
+
   try {
     const assignment = await fetchAssignmentByIdAdmin(id);
 
@@ -15,7 +16,7 @@ export async function generateMetadata({ params }: { params: Promise<{ id: strin
       const description = `Bài tập ${assignment.subject} ${assignment.grade}. Hoàn thành đúng hạn, được làm lại nhiều lần.`;
       
       return {
-        ...(hasBaseUrl ? { metadataBase: new URL(appUrl!) } : {}),
+        metadataBase,
         title,
         description,
         alternates: {
@@ -24,15 +25,24 @@ export async function generateMetadata({ params }: { params: Promise<{ id: strin
         openGraph: {
           title,
           description,
-          ...(hasBaseUrl ? { url: startPath } : {}),
+          url: startPath,
           siteName: "Gia sư Đào Bá Anh Quân",
           locale: "vi_VN",
           type: "website",
+          images: [
+            {
+              url: "/og-image.png",
+              width: 512,
+              height: 512,
+              alt: "Gia sư Đào Bá Anh Quân",
+            }
+          ],
         },
         twitter: {
-          card: "summary",
+          card: "summary_large_image",
           title,
           description,
+          images: ["/og-image.png"],
         },
       };
     }
@@ -41,7 +51,7 @@ export async function generateMetadata({ params }: { params: Promise<{ id: strin
   }
 
   return {
-    ...(hasBaseUrl ? { metadataBase: new URL(appUrl!) } : {}),
+    metadataBase,
     title: "📝 Bài tập 🔸 Gia sư Đào Bá Anh Quân",
     description: "Hệ thống bài tập trực tuyến",
     alternates: {
@@ -50,10 +60,24 @@ export async function generateMetadata({ params }: { params: Promise<{ id: strin
     openGraph: {
       title: "📝 Bài tập 🔸 Gia sư Đào Bá Anh Quân",
       description: "Hệ thống bài tập trực tuyến",
-      ...(hasBaseUrl ? { url: startPath } : {}),
+      url: startPath,
       siteName: "Gia sư Đào Bá Anh Quân",
       locale: "vi_VN",
       type: "website",
+      images: [
+        {
+          url: "/og-image.png",
+          width: 512,
+          height: 512,
+          alt: "Gia sư Đào Bá Anh Quân",
+        }
+      ],
+    },
+    twitter: {
+      card: "summary_large_image",
+      title: "📝 Bài tập 🔸 Gia sư Đào Bá Anh Quân",
+      description: "Hệ thống bài tập trực tuyến",
+      images: ["/og-image.png"],
     },
   };
 }
