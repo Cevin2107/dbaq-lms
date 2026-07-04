@@ -8,12 +8,48 @@ import { Badge } from "@/components/ui/Badge";
 import { useQuery } from "@tanstack/react-query";
 import { formatVietnamTime } from "@/utils/date";
 import Toast from "@/components/Toast";
-import { Trash2, Save, BarChart3, Clock, Target, Calendar } from "lucide-react";
+import {
+  BarChart3,
+  CalendarClock,
+  Clock3,
+  Eye,
+  EyeOff,
+  GraduationCap,
+  Layers3,
+  Plus,
+  Save,
+  Sparkles,
+  Target,
+  Trash2,
+  Trophy,
+} from "lucide-react";
 
-export function OverviewTab({ assignmentId, initialData }: { assignmentId: string; initialData: any }) {
-  const router = useRouter();
-  const [toast, setToast] = useState<{ message: string; type: "success" | "error" } | null>(null);
-  const [editForm, setEditForm] = useState(() => ({
+type PointRange = {
+  fromQuestion: number | "";
+  toQuestion: number | "";
+  totalPoints: number | "";
+};
+
+type EditForm = {
+  title: string;
+  subject: string;
+  grade: string;
+  due_at: string | null;
+  duration_minutes: number | string | null;
+  total_score: number | string;
+  is_hidden: boolean;
+  hide_score: boolean;
+  point_ranges: PointRange[];
+};
+
+const fieldClass =
+  "mt-1.5 w-full rounded-xl border border-slate-200 bg-white px-3.5 py-2.5 text-[14px] text-slate-900 shadow-sm outline-none transition focus:border-[#0066cc] focus:ring-4 focus:ring-[#0066cc]/10 dark:border-white/10 dark:bg-white/5 dark:text-white dark:focus:border-blue-400";
+
+const compactFieldClass =
+  "w-full rounded-lg border border-slate-200 bg-white px-2.5 py-2 text-center text-sm font-semibold text-slate-900 outline-none transition focus:border-[#0066cc] focus:ring-4 focus:ring-[#0066cc]/10 dark:border-white/10 dark:bg-white/5 dark:text-white";
+
+function normalizeInitialData(initialData: any): EditForm {
+  return {
     title: initialData?.title || "",
     subject: initialData?.subject || "",
     grade: initialData?.grade || "",
@@ -23,23 +59,106 @@ export function OverviewTab({ assignmentId, initialData }: { assignmentId: strin
     is_hidden: initialData?.is_hidden ?? initialData?.isHidden ?? false,
     hide_score: initialData?.hide_score ?? initialData?.hideScore ?? false,
     point_ranges: initialData?.point_ranges ?? initialData?.pointRanges ?? [],
-  }));
+  };
+}
+
+function toDatetimeLocalValue(value: string | null) {
+  if (!value) return "";
+  const date = new Date(value);
+  if (Number.isNaN(date.getTime())) return value.substring(0, 16);
+  const offsetMs = date.getTimezoneOffset() * 60 * 1000;
+  return new Date(date.getTime() - offsetMs).toISOString().substring(0, 16);
+}
+
+function formatDuration(minutes: number | string | null) {
+  const value = Number(minutes || 0);
+  if (!value) return "Không giới hạn";
+  if (value < 60) return `${value} phút`;
+  const hours = Math.floor(value / 60);
+  const mins = value % 60;
+  return mins ? `${hours} giờ ${mins} phút` : `${hours} giờ`;
+}
+
+function StatTile({
+  icon: Icon,
+  label,
+  value,
+  tone,
+}: {
+  icon: typeof BarChart3;
+  label: string;
+  value: string;
+  tone: "blue" | "emerald" | "amber" | "slate";
+}) {
+  const tones = {
+    blue: "bg-blue-50 text-[#0066cc] ring-blue-100 dark:bg-blue-500/10 dark:text-blue-300 dark:ring-blue-500/20",
+    emerald: "bg-emerald-50 text-emerald-600 ring-emerald-100 dark:bg-emerald-500/10 dark:text-emerald-300 dark:ring-emerald-500/20",
+    amber: "bg-amber-50 text-amber-600 ring-amber-100 dark:bg-amber-500/10 dark:text-amber-300 dark:ring-amber-500/20",
+    slate: "bg-slate-100 text-slate-600 ring-slate-200 dark:bg-white/10 dark:text-slate-300 dark:ring-white/10",
+  };
+
+  return (
+    <Card variant="glass" className="rounded-2xl p-4">
+      <div className="flex items-start justify-between gap-3">
+        <div>
+          <p className="text-[12px] font-semibold text-slate-500 dark:text-slate-400">{label}</p>
+          <p className="mt-1.5 text-[19px] font-black tracking-tight text-slate-900 dark:text-white">{value}</p>
+        </div>
+        <div className={`flex h-9 w-9 shrink-0 items-center justify-center rounded-xl ring-1 ${tones[tone]}`}>
+          <Icon className="h-4 w-4" />
+        </div>
+      </div>
+    </Card>
+  );
+}
+
+function SettingToggle({
+  checked,
+  onChange,
+  icon: Icon,
+  title,
+  description,
+}: {
+  checked: boolean;
+  onChange: (checked: boolean) => void;
+  icon: typeof Eye;
+  title: string;
+  description: string;
+}) {
+  return (
+    <label className="flex cursor-pointer items-center justify-between gap-3 rounded-xl border border-slate-200 bg-slate-50/70 px-3.5 py-3 transition hover:border-blue-200 hover:bg-blue-50/50 dark:border-white/10 dark:bg-white/[0.03] dark:hover:border-blue-500/30 dark:hover:bg-blue-500/10">
+      <span className="flex min-w-0 items-center gap-3">
+        <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-white text-slate-600 ring-1 ring-slate-200 dark:bg-white/10 dark:text-slate-300 dark:ring-white/10">
+          <Icon className="h-4 w-4" />
+        </span>
+        <span className="min-w-0">
+          <span className="block text-[14px] font-bold text-slate-900 dark:text-white">{title}</span>
+          <span className="mt-0.5 block text-[12px] leading-4 text-slate-500 dark:text-slate-400">{description}</span>
+        </span>
+      </span>
+      <span className="relative inline-flex h-6 w-11 shrink-0 items-center">
+        <input
+          type="checkbox"
+          checked={checked}
+          onChange={(event) => onChange(event.target.checked)}
+          className="peer sr-only"
+        />
+        <span className="absolute inset-0 rounded-full bg-slate-300 transition peer-checked:bg-[#0066cc] dark:bg-slate-700" />
+        <span className="absolute left-1 h-4 w-4 rounded-full bg-white shadow-sm transition peer-checked:translate-x-5" />
+      </span>
+    </label>
+  );
+}
+
+export function OverviewTab({ assignmentId, initialData }: { assignmentId: string; initialData: any }) {
+  const router = useRouter();
+  const [toast, setToast] = useState<{ message: string; type: "success" | "error" } | null>(null);
+  const [editForm, setEditForm] = useState<EditForm>(() => normalizeInitialData(initialData));
   const [loading, setLoading] = useState(false);
 
-  // Sync initialData changes into editForm
   useEffect(() => {
     if (initialData) {
-      setEditForm({
-        title: initialData.title || "",
-        subject: initialData.subject || "",
-        grade: initialData.grade || "",
-        due_at: initialData.due_at || initialData.dueAt || null,
-        duration_minutes: initialData.duration_minutes ?? initialData.durationMinutes ?? null,
-        total_score: initialData.total_score ?? initialData.totalScore ?? 0,
-        is_hidden: initialData.is_hidden ?? initialData.isHidden ?? false,
-        hide_score: initialData.hide_score ?? initialData.hideScore ?? false,
-        point_ranges: initialData.point_ranges ?? initialData.pointRanges ?? [],
-      });
+      setEditForm(normalizeInitialData(initialData));
     }
   }, [initialData]);
 
@@ -72,7 +191,7 @@ export function OverviewTab({ assignmentId, initialData }: { assignmentId: strin
         dueAt: dueAtISO,
         durationMinutes: editForm.duration_minutes ? Number(editForm.duration_minutes) : null,
         totalScore: editForm.total_score ? Number(editForm.total_score) : 10,
-        isHidden: editForm.is_hidden, 
+        isHidden: editForm.is_hidden,
         hideScore: editForm.hide_score,
         pointRanges: editForm.point_ranges.length > 0 ? editForm.point_ranges : null,
       };
@@ -85,7 +204,7 @@ export function OverviewTab({ assignmentId, initialData }: { assignmentId: strin
 
       if (!res.ok) throw new Error("Cập nhật thất bại");
       setToast({ message: "Cập nhật bài tập thành công", type: "success" });
-      router.refresh(); // Refresh page data to ensure changes are reflected across React components
+      router.refresh();
     } catch (err) {
       setToast({ message: "Không thể cập nhật bài tập", type: "error" });
     } finally {
@@ -104,207 +223,322 @@ export function OverviewTab({ assignmentId, initialData }: { assignmentId: strin
     }
   };
 
+  const addPointRange = () => {
+    setEditForm((prev) => ({
+      ...prev,
+      point_ranges: [...prev.point_ranges, { fromQuestion: 1, toQuestion: 10, totalPoints: 5 }],
+    }));
+  };
+
+  const updatePointRange = (idx: number, key: keyof PointRange, value: number | "") => {
+    setEditForm((prev) => {
+      const updated = [...prev.point_ranges];
+      updated[idx] = { ...updated[idx], [key]: value };
+      return { ...prev, point_ranges: updated };
+    });
+  };
+
+  const removePointRange = (idx: number) => {
+    setEditForm((prev) => ({
+      ...prev,
+      point_ranges: prev.point_ranges.filter((_, i) => i !== idx),
+    }));
+  };
+
+  const statusBadge = editForm.is_hidden ? (
+    <Badge variant="warning" size="lg">
+      <EyeOff className="h-3.5 w-3.5" />
+      Đang ẩn
+    </Badge>
+  ) : (
+    <Badge variant="success" size="lg">
+      <Eye className="h-3.5 w-3.5" />
+      Đang mở
+    </Badge>
+  );
+
+  const dueAtLabel = editForm.due_at ? formatVietnamTime(new Date(editForm.due_at)) || "Chưa đặt hạn" : "Chưa đặt hạn";
+  const averageScore = Number(analytics?.averageScore || 0);
+  const maxScore = Number(analytics?.maxScore || 0);
+  const averageDuration = Math.round(Number(analytics?.averageDuration || 0) / 60) || 0;
+
   return (
-    <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 sm:gap-8">
-      {/* Settings Form */}
-      <div className="lg:col-span-2 space-y-6">
-        <form onSubmit={handleSave}>
-          <Card className="p-4 sm:p-6 space-y-5 sm:space-y-6">
-            <div className="flex items-center justify-between border-b border-slate-100 pb-4">
-              <h2 className="text-lg font-bold text-slate-900">Thông tin cơ bản</h2>
-              <div className="flex gap-2">
-                {Boolean(editForm.is_hidden) && <Badge variant="secondary">Đang ẩn</Badge>}
+    <div className="space-y-4 sm:space-y-5">
+      <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 xl:grid-cols-4">
+        <StatTile icon={CalendarClock} label="Hạn nộp" value={dueAtLabel} tone={editForm.due_at ? "blue" : "slate"} />
+        <StatTile icon={Clock3} label="Thời lượng" value={formatDuration(editForm.duration_minutes)} tone="amber" />
+        <StatTile icon={Target} label="Tổng điểm" value={`${editForm.total_score || 0} điểm`} tone="emerald" />
+        <StatTile icon={Layers3} label="Nhóm điểm" value={`${editForm.point_ranges.length} nhóm`} tone="slate" />
+      </div>
+
+      <div className="grid grid-cols-1 gap-4 xl:grid-cols-[minmax(0,1fr)_320px]">
+        <form onSubmit={handleSave} className="min-w-0">
+          <Card variant="glass" className="overflow-hidden rounded-2xl">
+            <div className="flex flex-col gap-3 border-b border-slate-200/70 p-4 sm:flex-row sm:items-center sm:justify-between sm:px-5 sm:py-4 dark:border-white/10">
+              <div>
+                <div className="flex flex-wrap items-center gap-2">
+                  <h2 className="text-[18px] font-black tracking-tight text-slate-900 dark:text-white">Tổng quan & cài đặt</h2>
+                  {statusBadge}
+                </div>
+                <p className="mt-1 text-[13px] leading-5 text-slate-500 dark:text-slate-400">
+                  Điều chỉnh thông tin hiển thị, thời gian làm bài và cách tính điểm.
+                </p>
               </div>
             </div>
 
-            <div className="space-y-4">
-              <div>
-                <label className="text-sm font-semibold text-slate-700">Tên bài tập</label>
-                <input
-                  type="text"
-                  value={editForm.title || ""}
-                  onChange={e => setEditForm({ ...editForm, title: e.target.value })}
-                  className="mt-1 w-full rounded-xl border border-slate-200 px-4 py-2 text-sm focus:border-indigo-400 focus:ring-4 focus:ring-indigo-100"
-                  required
-                />
-              </div>
+            <div className="space-y-6 p-4 sm:p-5">
+              <section>
+                <div className="mb-4 flex items-center gap-3">
+                  <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-blue-50 text-[#0066cc] ring-1 ring-blue-100 dark:bg-blue-500/10 dark:text-blue-300 dark:ring-blue-500/20">
+                    <Sparkles className="h-4 w-4" />
+                  </div>
+                  <div>
+                    <h3 className="text-[15px] font-black text-slate-900 dark:text-white">Thông tin bài tập</h3>
+                    <p className="text-[12px] text-slate-500 dark:text-slate-400">Tên, môn học và lớp áp dụng.</p>
+                  </div>
+                </div>
 
-              <div className="grid grid-cols-2 gap-4">
-                 <div>
-                  <label className="text-sm font-semibold text-slate-700">Môn học</label>
-                  <input
-                    type="text"
-                    value={editForm.subject || ""}
-                    onChange={e => setEditForm({ ...editForm, subject: e.target.value })}
-                    className="mt-1 w-full rounded-xl border border-slate-200 px-4 py-2 text-sm focus:border-indigo-400 focus:ring-4 focus:ring-indigo-100"
-                  />
+                <div className="grid grid-cols-1 gap-3 md:grid-cols-2">
+                  <div className="md:col-span-2">
+                    <label className="text-[13px] font-bold text-slate-700 dark:text-slate-300">Tên bài tập</label>
+                    <input
+                      type="text"
+                      value={editForm.title || ""}
+                      onChange={(event) => setEditForm({ ...editForm, title: event.target.value })}
+                      className={fieldClass}
+                      required
+                    />
+                  </div>
+                  <div>
+                    <label className="text-[13px] font-bold text-slate-700 dark:text-slate-300">Môn học</label>
+                    <input
+                      type="text"
+                      value={editForm.subject || ""}
+                      onChange={(event) => setEditForm({ ...editForm, subject: event.target.value })}
+                      className={fieldClass}
+                    />
+                  </div>
+                  <div>
+                    <label className="text-[13px] font-bold text-slate-700 dark:text-slate-300">Lớp</label>
+                    <input
+                      type="text"
+                      value={editForm.grade || ""}
+                      onChange={(event) => setEditForm({ ...editForm, grade: event.target.value })}
+                      className={fieldClass}
+                    />
+                  </div>
                 </div>
-                <div>
-                  <label className="text-sm font-semibold text-slate-700">Lớp</label>
-                  <input
-                    type="text"
-                    value={editForm.grade || ""}
-                    onChange={e => setEditForm({ ...editForm, grade: e.target.value })}
-                    className="mt-1 w-full rounded-xl border border-slate-200 px-4 py-2 text-sm focus:border-indigo-400 focus:ring-4 focus:ring-indigo-100"
-                  />
-                </div>
-              </div>
+              </section>
 
-              <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 sm:gap-4">
-                <div>
-                  <label className="text-sm font-semibold text-slate-700">Hạn nộp</label>
-                  <input
-                    type="datetime-local"
-                    value={editForm.due_at ? editForm.due_at.substring(0, 16) : ""}
-                    onChange={e => setEditForm({ ...editForm, due_at: e.target.value })}
-                    className="mt-1 w-full rounded-xl border border-slate-200 px-4 py-2 text-sm focus:border-indigo-400 focus:ring-4 focus:ring-indigo-100"
-                  />
+              <section className="border-t border-slate-200/70 pt-6 dark:border-white/10">
+                <div className="mb-4 flex items-center gap-3">
+                  <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-amber-50 text-amber-600 ring-1 ring-amber-100 dark:bg-amber-500/10 dark:text-amber-300 dark:ring-amber-500/20">
+                    <CalendarClock className="h-4 w-4" />
+                  </div>
+                  <div>
+                    <h3 className="text-[15px] font-black text-slate-900 dark:text-white">Thời gian & điểm</h3>
+                    <p className="text-[12px] text-slate-500 dark:text-slate-400">Thiết lập hạn nộp, thời lượng và thang điểm.</p>
+                  </div>
                 </div>
-                <div>
-                  <label className="text-sm font-semibold text-slate-700">Thời gian (phút)</label>
-                  <input
-                    type="number"
-                    value={editForm.duration_minutes || ""}
-                    onChange={e => setEditForm({ ...editForm, duration_minutes: e.target.value })}
-                    className="mt-1 w-full rounded-xl border border-slate-200 px-4 py-2 text-sm focus:border-indigo-400 focus:ring-4 focus:ring-indigo-100"
-                  />
-                </div>
-                <div>
-                  <label className="text-sm font-semibold text-slate-700">Tổng điểm</label>
-                  <input
-                    type="number"
-                    value={editForm.total_score || ""}
-                    onChange={e => setEditForm({ ...editForm, total_score: e.target.value })}
-                    className="mt-1 w-full rounded-xl border border-slate-200 px-4 py-2 text-sm focus:border-indigo-400 focus:ring-4 focus:ring-indigo-100"
-                  />
-                </div>
-              </div>
 
-              <div className="flex flex-col sm:flex-row sm:items-center gap-3 sm:gap-6 pt-4">
-                 <label className="flex items-center gap-2 cursor-pointer">
-                    <input type="checkbox" checked={Boolean(editForm.is_hidden)} onChange={e => setEditForm({ ...editForm, is_hidden: e.target.checked })} className="rounded border-slate-300 text-indigo-600 focus:ring-indigo-500" />
-                    <span className="text-sm text-slate-700">Ẩn bài tập (Học sinh không thấy)</span>
-                 </label>
-                 <label className="flex items-center gap-2 cursor-pointer">
-                    <input type="checkbox" checked={Boolean(editForm.hide_score)} onChange={e => setEditForm({ ...editForm, hide_score: e.target.checked })} className="rounded border-slate-300 text-indigo-600 focus:ring-indigo-500" />
-                    <span className="text-sm text-slate-700">Ẩn điểm khi nộp bài</span>
-                 </label>
-              </div>
-
-               <div className="pt-4 border-t border-slate-100">
-                 <div className="flex items-center justify-between mb-4">
-                   <h3 className="text-sm font-bold text-slate-900">Chia điểm theo nhóm câu</h3>
-                   <Button type="button" variant="outline" size="sm" onClick={() => setEditForm(prev => ({ ...prev, point_ranges: [...prev.point_ranges, { fromQuestion: 1, toQuestion: 10, totalPoints: 5 }] }))}>
-                      Thêm nhóm
-                   </Button>
-                 </div>
-                 
-                 {editForm.point_ranges.length === 0 ? (
-                    <div className="text-sm text-slate-500 bg-slate-50 rounded-xl p-4 text-center">
-                      Mặc định tự chia đều tổng điểm cho từng câu. Thêm nhóm nếu muốn chia đặc biệt.
+                <div className="grid grid-cols-1 gap-3 lg:grid-cols-3">
+                  <div>
+                    <label className="text-[13px] font-bold text-slate-700 dark:text-slate-300">Hạn nộp</label>
+                    <input
+                      type="datetime-local"
+                      value={toDatetimeLocalValue(editForm.due_at)}
+                      onChange={(event) => setEditForm({ ...editForm, due_at: event.target.value || null })}
+                      className={fieldClass}
+                    />
+                  </div>
+                  <div>
+                    <label className="text-[13px] font-bold text-slate-700 dark:text-slate-300">Thời gian làm bài</label>
+                    <div className="relative">
+                      <input
+                        type="number"
+                        min={0}
+                        value={editForm.duration_minutes || ""}
+                        onChange={(event) => setEditForm({ ...editForm, duration_minutes: event.target.value })}
+                        className={`${fieldClass} pr-16`}
+                      />
+                      <span className="pointer-events-none absolute right-3.5 top-[1rem] text-[12px] font-semibold text-slate-400">phút</span>
                     </div>
-                 ) : (
-                    <div className="space-y-3">
-                      {editForm.point_ranges.map((range: any, idx: number) => (
-                        <div key={idx} className="flex flex-wrap items-center gap-2 bg-slate-50 rounded-lg p-2 border border-slate-100">
-                          <span className="text-xs text-slate-600 font-medium whitespace-nowrap">Từ câu</span>
+                  </div>
+                  <div>
+                    <label className="text-[13px] font-bold text-slate-700 dark:text-slate-300">Tổng điểm</label>
+                    <input
+                      type="number"
+                      min={0}
+                      step={0.25}
+                      value={editForm.total_score || ""}
+                      onChange={(event) => setEditForm({ ...editForm, total_score: event.target.value })}
+                      className={fieldClass}
+                    />
+                  </div>
+                </div>
+              </section>
+
+              <section className="border-t border-slate-200/70 pt-6 dark:border-white/10">
+                <div className="mb-4 flex items-center gap-3">
+                  <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-emerald-50 text-emerald-600 ring-1 ring-emerald-100 dark:bg-emerald-500/10 dark:text-emerald-300 dark:ring-emerald-500/20">
+                    <Eye className="h-4 w-4" />
+                  </div>
+                  <div>
+                    <h3 className="text-[15px] font-black text-slate-900 dark:text-white">Hiển thị cho học sinh</h3>
+                    <p className="text-[12px] text-slate-500 dark:text-slate-400">Quyết định bài và điểm có xuất hiện sau khi nộp hay không.</p>
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-1 gap-3 lg:grid-cols-2">
+                  <SettingToggle
+                    checked={Boolean(editForm.is_hidden)}
+                    onChange={(checked) => setEditForm({ ...editForm, is_hidden: checked })}
+                    icon={EyeOff}
+                    title="Ẩn bài tập"
+                    description="Học sinh sẽ không thấy bài này trong danh sách."
+                  />
+                  <SettingToggle
+                    checked={Boolean(editForm.hide_score)}
+                    onChange={(checked) => setEditForm({ ...editForm, hide_score: checked })}
+                    icon={Trophy}
+                    title="Ẩn điểm sau khi nộp"
+                    description="Kết quả vẫn được lưu để giáo viên xem trong admin."
+                  />
+                </div>
+              </section>
+
+              <section className="border-t border-slate-200/70 pt-6 dark:border-white/10">
+                <div className="mb-4 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+                  <div className="flex items-center gap-3">
+                    <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-slate-100 text-slate-600 ring-1 ring-slate-200 dark:bg-white/10 dark:text-slate-300 dark:ring-white/10">
+                      <Target className="h-4 w-4" />
+                    </div>
+                    <div>
+                      <h3 className="text-[15px] font-black text-slate-900 dark:text-white">Chia điểm theo nhóm câu</h3>
+                      <p className="text-[12px] text-slate-500 dark:text-slate-400">Để trống nếu muốn hệ thống chia đều tổng điểm.</p>
+                    </div>
+                  </div>
+                  <Button type="button" variant="outline" size="sm" onClick={addPointRange}>
+                    <Plus className="h-4 w-4" />
+                    Thêm nhóm
+                  </Button>
+                </div>
+
+                {editForm.point_ranges.length === 0 ? (
+                  <div className="rounded-xl border border-dashed border-slate-300 bg-slate-50/70 px-4 py-5 text-center dark:border-white/15 dark:bg-white/[0.03]">
+                    <Target className="mx-auto h-5 w-5 text-slate-400" />
+                    <p className="mt-2 text-[13px] font-semibold text-slate-600 dark:text-slate-300">Đang chia đều theo tổng điểm</p>
+                  </div>
+                ) : (
+                  <div className="overflow-hidden rounded-xl border border-slate-200 dark:border-white/10">
+                    <div className="hidden grid-cols-[1fr_1fr_1fr_auto] gap-2 bg-slate-50 px-3 py-2.5 text-[11px] font-black uppercase text-slate-500 dark:bg-white/[0.03] dark:text-slate-400 sm:grid">
+                      <span>Từ câu</span>
+                      <span>Đến câu</span>
+                      <span>Tổng điểm</span>
+                      <span className="text-right">Xóa</span>
+                    </div>
+                    <div className="divide-y divide-slate-200 dark:divide-white/10">
+                      {editForm.point_ranges.map((range, idx) => (
+                        <div key={idx} className="grid grid-cols-[1fr_1fr_1fr_auto] items-center gap-2 px-3 py-3">
+                          <label className="sr-only">Từ câu</label>
                           <input
                             type="number"
                             min={1}
-                            value={range.fromQuestion || ""}
-                            onChange={(e) => setEditForm(prev => {
-                              const updated = [...prev.point_ranges];
-                              updated[idx] = { ...updated[idx], fromQuestion: e.target.value === "" ? "" : parseInt(e.target.value) };
-                              return { ...prev, point_ranges: updated };
-                            })}
-                            className="w-14 rounded border border-slate-200 px-2 py-1 text-sm text-center focus:border-indigo-400 focus:ring-2 focus:ring-indigo-100"
+                            value={range.fromQuestion}
+                            onChange={(event) => updatePointRange(idx, "fromQuestion", event.target.value === "" ? "" : parseInt(event.target.value, 10))}
+                            className={compactFieldClass}
                           />
-                          <span className="text-xs text-slate-600 font-medium whitespace-nowrap">đến</span>
+                          <label className="sr-only">Đến câu</label>
                           <input
                             type="number"
                             min={1}
-                            value={range.toQuestion || ""}
-                            onChange={(e) => setEditForm(prev => {
-                              const updated = [...prev.point_ranges];
-                              updated[idx] = { ...updated[idx], toQuestion: e.target.value === "" ? "" : parseInt(e.target.value) };
-                              return { ...prev, point_ranges: updated };
-                            })}
-                            className="w-14 rounded border border-slate-200 px-2 py-1 text-sm text-center focus:border-indigo-400 focus:ring-2 focus:ring-indigo-100"
+                            value={range.toQuestion}
+                            onChange={(event) => updatePointRange(idx, "toQuestion", event.target.value === "" ? "" : parseInt(event.target.value, 10))}
+                            className={compactFieldClass}
                           />
-                          <span className="text-xs text-slate-600 font-medium whitespace-nowrap">tổng điểm</span>
+                          <label className="sr-only">Tổng điểm</label>
                           <input
                             type="number"
                             min={0}
                             step={0.5}
-                            value={range.totalPoints === "" ? "" : range.totalPoints}
-                            onChange={(e) => setEditForm(prev => {
-                              const updated = [...prev.point_ranges];
-                              updated[idx] = { ...updated[idx], totalPoints: e.target.value === "" ? "" : parseFloat(e.target.value) };
-                              return { ...prev, point_ranges: updated };
-                            })}
-                            className="w-16 rounded border border-slate-200 px-2 py-1 text-sm text-center focus:border-indigo-400 focus:ring-2 focus:ring-indigo-100"
+                            value={range.totalPoints}
+                            onChange={(event) => updatePointRange(idx, "totalPoints", event.target.value === "" ? "" : parseFloat(event.target.value))}
+                            className={compactFieldClass}
                           />
-                          <button
-                            type="button"
-                            onClick={() => setEditForm(prev => ({ ...prev, point_ranges: prev.point_ranges.filter((_: any, i: number) => i !== idx) }))}
-                            className="ml-auto text-red-500 hover:text-red-700 text-xs font-bold px-2 py-1 rounded hover:bg-red-50"
-                          >
-                            ✕ Lược bỏ
-                          </button>
+                          <Button type="button" variant="ghost" size="icon" onClick={() => removePointRange(idx)} className="justify-self-end text-red-500 hover:bg-red-50 hover:text-red-600 dark:hover:bg-red-500/10">
+                            <Trash2 className="h-4 w-4" />
+                          </Button>
                         </div>
                       ))}
                     </div>
-                 )}
-               </div>
-            </div>
+                  </div>
+                )}
+              </section>
 
-            <div className="flex items-center justify-between pt-4 border-t border-slate-100">
-               <Button type="button" variant="destructive" size="sm" onClick={handleDelete}>
-                 <Trash2 className="h-4 w-4 mr-2" /> Xóa bài
-               </Button>
-               <Button type="submit" variant="brand" disabled={loading}>
-                 <Save className="h-4 w-4 mr-2" /> {loading ? "Đang lưu..." : "Lưu thay đổi"}
-               </Button>
+              <div className="flex flex-col-reverse gap-3 border-t border-slate-200/70 pt-5 sm:flex-row sm:items-center sm:justify-between dark:border-white/10">
+                <Button type="button" variant="destructive" size="sm" onClick={handleDelete} className="w-full sm:w-auto">
+                  <Trash2 className="h-4 w-4" />
+                  Xóa bài
+                </Button>
+                <Button type="submit" variant="brand" size="sm" loading={loading} disabled={loading} className="w-full sm:w-auto">
+                  <Save className="h-4 w-4" />
+                  {loading ? "Đang lưu" : "Lưu thay đổi"}
+                </Button>
+              </div>
             </div>
           </Card>
         </form>
+
+        <aside className="space-y-4">
+          <Card variant="glass" className="overflow-hidden rounded-2xl">
+            <div className="border-b border-slate-200/70 p-4 dark:border-white/10">
+              <div className="flex items-center gap-3">
+                <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-blue-50 text-[#0066cc] ring-1 ring-blue-100 dark:bg-blue-500/10 dark:text-blue-300 dark:ring-blue-500/20">
+                  <BarChart3 className="h-4 w-4" />
+                </div>
+                <div>
+                  <h2 className="text-[15px] font-black text-slate-900 dark:text-white">Thống kê chung</h2>
+                  <p className="text-[12px] text-slate-500 dark:text-slate-400">Dữ liệu nộp bài hiện tại.</p>
+                </div>
+              </div>
+            </div>
+
+            {analyticsLoading ? (
+              <div className="space-y-2.5 p-4">
+                {[1, 2, 3, 4].map((item) => (
+                  <div key={item} className="h-10 animate-pulse rounded-xl bg-slate-100 dark:bg-white/10" />
+                ))}
+              </div>
+            ) : analytics ? (
+              <div className="divide-y divide-slate-200/70 dark:divide-white/10">
+                {[
+                  { label: "Lượt nộp", value: analytics.submissionCount || 0, icon: GraduationCap },
+                  { label: "Điểm trung bình", value: averageScore.toFixed(2), icon: Target },
+                  { label: "Điểm cao nhất", value: maxScore.toFixed(2), icon: Trophy },
+                  { label: "Thời gian TB", value: `${averageDuration} phút`, icon: Clock3 },
+                ].map((item) => {
+                  const Icon = item.icon;
+                  return (
+                    <div key={item.label} className="flex items-center justify-between gap-3 px-4 py-3">
+                      <div className="flex items-center gap-2.5">
+                        <span className="flex h-8 w-8 items-center justify-center rounded-full bg-slate-100 text-slate-500 dark:bg-white/10 dark:text-slate-300">
+                          <Icon className="h-4 w-4" />
+                        </span>
+                        <span className="text-[13px] font-semibold text-slate-600 dark:text-slate-300">{item.label}</span>
+                      </div>
+                      <span className="text-[15px] font-black text-slate-900 dark:text-white">{item.value}</span>
+                    </div>
+                  );
+                })}
+              </div>
+            ) : (
+              <div className="p-4 text-center text-[13px] text-slate-500 dark:text-slate-400">Chưa có dữ liệu thống kê</div>
+            )}
+          </Card>
+
+        </aside>
       </div>
 
-      {/* Analytics sidebar */}
-      <div className="lg:col-span-1 space-y-6">
-        <Card className="p-6">
-           <div className="flex items-center gap-2 border-b border-slate-100 pb-4 mb-4">
-             <BarChart3 className="h-5 w-5 text-indigo-600" />
-             <h2 className="text-lg font-bold text-slate-900">Thống kê chung</h2>
-           </div>
-           
-           {analyticsLoading ? (
-             <div className="text-sm text-slate-500 py-4 text-center">Đang tải thống kê...</div>
-           ) : analytics ? (
-             <div className="space-y-4">
-               <div className="flex justify-between items-center bg-slate-50 p-3 rounded-xl border border-slate-100">
-                 <span className="text-sm text-slate-600">Số lượt nộp bài</span>
-                 <span className="text-base font-bold text-slate-900">{analytics.submissionCount}</span>
-               </div>
-               <div className="flex justify-between items-center bg-emerald-50 p-3 rounded-xl border border-emerald-100">
-                 <span className="text-sm text-emerald-700">Điểm trung bình</span>
-                 <span className="text-base font-bold text-emerald-700">{analytics.averageScore?.toFixed(2) || 0}</span>
-               </div>
-               <div className="flex justify-between items-center bg-slate-50 p-3 rounded-xl border border-slate-100">
-                 <span className="text-sm text-slate-600">Điểm cao nhất</span>
-                 <span className="text-base font-bold text-slate-900">{analytics.maxScore?.toFixed(2) || 0}</span>
-               </div>
-               <div className="flex justify-between items-center bg-slate-50 p-3 rounded-xl border border-slate-100">
-                 <span className="text-sm text-slate-600">Thời gian làm TB</span>
-                 <span className="text-base font-bold text-slate-900">{Math.round(analytics.averageDuration / 60) || 0} phút</span>
-               </div>
-             </div>
-           ) : (
-             <div className="text-sm text-slate-500 py-4 text-center">Chưa có dữ liệu thống kê</div>
-           )}
-        </Card>
-      </div>
-      
       {toast && <Toast message={toast.message} type={toast.type} onClose={() => setToast(null)} />}
     </div>
   );
