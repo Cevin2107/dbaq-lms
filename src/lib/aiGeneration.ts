@@ -375,7 +375,7 @@ function normalizeLatexText(text: string): string {
     .replace(/(?:\\\s*)?√\s*\{([^{}]+)\}/g, "\\\\sqrt{$1}")
     .replace(/\\\s*times/gi, "\\\\times")
     // Normalize escaped spacing like "\\ frac"
-    .replace(/\\\s+([a-zA-Z]+)/g, "\\\\$1");
+    .replace(/(?<!\\)\\\s+([a-zA-Z]+)/g, "\\$1");
 }
 
 function toHumanReadableMath(text: string): string {
