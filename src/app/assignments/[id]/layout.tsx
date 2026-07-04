@@ -21,13 +21,20 @@ export async function generateMetadata(
       title,
       description,
       siteName: "Gia sư Đào Bá Anh Quân",
-      images: ["/og-image.png"],
+      images: [
+        {
+          url: "https://dbaq-lms.vercel.app/og-image.png",
+          width: 512,
+          height: 512,
+          alt: "Gia sư Đào Bá Anh Quân",
+        }
+      ],
     },
     twitter: {
       card: "summary_large_image",
       title,
       description,
-      images: ["/og-image.png"],
+      images: ["https://dbaq-lms.vercel.app/og-image.png"],
     },
   };
 }

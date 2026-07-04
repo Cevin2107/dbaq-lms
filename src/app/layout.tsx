@@ -23,11 +23,20 @@ export const metadata: Metadata = {
     siteName: "Gia sư Đào Bá Anh Quân",
     type: "website",
     locale: "vi_VN",
+    images: [
+      {
+        url: "https://dbaq-lms.vercel.app/og-image.png",
+        width: 512,
+        height: 512,
+        alt: "Gia sư Đào Bá Anh Quân",
+      }
+    ],
   },
   twitter: {
     card: "summary",
     title: "Gia sư Đào Bá Anh Quân",
     description: "Hệ thống bài tập trực tuyến - Giao và làm bài tập, tự động chấm điểm, theo dõi tiến độ học tập",
+    images: ["https://dbaq-lms.vercel.app/og-image.png"],
   },
 };
 
