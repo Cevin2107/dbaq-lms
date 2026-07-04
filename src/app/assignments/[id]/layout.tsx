@@ -1,4 +1,4 @@
-import type { Metadata, ResolvingMetadata } from "next";
+import type { Metadata } from "next";
 import { fetchAssignmentById } from "@/lib/supabaseHelpers";
 
 type Props = {
@@ -7,15 +7,12 @@ type Props = {
 };
 
 export async function generateMetadata(
-  { params }: { params: Promise<{ id: string }> },
-  parent: ResolvingMetadata
+  { params }: { params: Promise<{ id: string }> }
 ): Promise<Metadata> {
   const { id } = await params;
   const assignment = await fetchAssignmentById(id);
   const title = assignment ? `📝 ${assignment.title} 🔸 Gia sư Đào Bá Anh Quân` : "📝 Bài tập 🔸 Gia sư Đào Bá Anh Quân";
   const description = assignment ? `Làm bài tập: ${assignment.title} - Môn học: ${assignment.subject}.` : "Hệ thống bài tập trực tuyến.";
-
-  const previousImages = (await parent).openGraph?.images || [];
 
   return {
     title,
@@ -24,12 +21,20 @@ export async function generateMetadata(
       title,
       description,
       siteName: "Gia sư Đào Bá Anh Quân",
-      images: previousImages,
+      images: [
+        {
+          url: "/og-image.png",
+          width: 512,
+          height: 512,
+          alt: "Gia sư Đào Bá Anh Quân",
+        }
+      ],
     },
     twitter: {
+      card: "summary_large_image",
       title,
       description,
-      images: previousImages,
+      images: ["/og-image.png"],
     }
   };
 }
