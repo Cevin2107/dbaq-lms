@@ -69,7 +69,7 @@ export function HomeTabs({ assignments, studentName, greeting, greetingKind }: H
       {activeTab === "home" && (
         <div className="space-y-8 animate-slide-up">
           <div className="relative w-full rounded-[2rem] sm:rounded-[3rem] overflow-hidden bg-gradient-to-br from-[#ffffff] via-[#f0f9ff] to-[#e0f2fe] dark:from-[#1a1c23] dark:via-[#151921] dark:to-[#0f172a] border border-[#bae6fd]/30 dark:border-white/10 shadow-[0_8px_30px_rgba(0,102,204,0.08)]">
-            <div className="relative z-10 py-16 sm:py-24 md:py-28 px-6 sm:px-12 lg:px-20 flex flex-col md:flex-row items-center justify-between gap-12 md:gap-8">
+            <div className="relative z-10 py-10 sm:py-14 md:py-16 px-6 sm:px-12 lg:px-20 flex flex-col md:flex-row items-center justify-between gap-12 md:gap-8">
               <div className="flex-1 text-center md:text-left max-w-2xl flex flex-col items-center md:items-start w-full">
                 <div className="mb-6 inline-flex px-4 py-1.5 rounded-full bg-black/5 dark:bg-white/10 border border-black/5 dark:border-white/10 order-1">
                   <span className="text-[12px] font-medium tracking-tight text-[#1d1d1f] dark:text-white/90 uppercase">
@@ -88,7 +88,10 @@ export function HomeTabs({ assignments, studentName, greeting, greetingKind }: H
                 </div>
 
                 <div className="mb-4 md:mb-8 relative z-10 -mt-6 md:-mt-0 order-3">
-                  <h1 className="text-[22px] sm:text-[32px] md:text-[56px] lg:text-[72px] font-bold md:font-semibold leading-[1.07] tracking-[-0.02em] text-[#1d1d1f] dark:text-white whitespace-nowrap bg-white/70 dark:bg-black/70 backdrop-blur-md md:bg-transparent md:backdrop-blur-none px-4 py-2 rounded-2xl md:p-0 md:rounded-none border border-white/40 md:border-transparent shadow-sm md:shadow-none">
+                  <h1 
+                    className="font-bold md:font-semibold leading-[1.07] tracking-[-0.02em] text-[#1d1d1f] dark:text-white whitespace-nowrap bg-white/70 dark:bg-black/70 backdrop-blur-md md:bg-transparent md:backdrop-blur-none px-4 py-2 rounded-2xl md:p-0 md:rounded-none border border-white/40 md:border-transparent shadow-sm md:shadow-none"
+                    style={{ fontSize: "clamp(22px, 4.2vw, 72px)" }}
+                  >
                     Gia sư Đào Bá Anh Quân
                   </h1>
                 </div>
@@ -100,9 +103,14 @@ export function HomeTabs({ assignments, studentName, greeting, greetingKind }: H
                       {greeting}, <span className="font-semibold text-[#1d1d1f] dark:text-white">{studentName || "Học sinh"}</span>.
                     </h2>
                   </div>
-                  <p className="mt-3 text-[15px] sm:text-[17px] text-[#1d1d1f]/60 dark:text-white/50 tracking-tight text-center md:text-left max-w-[90%] md:max-w-lg">
-                    Nền tảng phát triển bởi <a href="https://dbaq.dev" target="_blank" rel="noopener noreferrer" className="font-semibold text-[#1d1d1f] dark:text-white hover:underline">Đào Bá Anh Quân</a>. Chúc em học tốt 💯
-                  </p>
+                  <div className="mt-3 text-[15px] sm:text-[17px] text-[#1d1d1f]/60 dark:text-white/50 tracking-tight text-center md:text-left max-w-[90%] md:max-w-lg">
+                    <div className="flex flex-col items-center">
+                      😎 Cố gắng lên nhé học trò của tôi ơi 😎
+                    </div>
+                    <div className="flex flex-col items-center">
+                      Chúc em học tốt <span className="text-[40px]">💯</span>
+                    </div>
+                  </div>
                 </div>
               </div>
 

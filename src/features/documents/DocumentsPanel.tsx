@@ -210,6 +210,48 @@ export function DocumentsPanel() {
   const uploadWaitTimerRef = useRef<ReturnType<typeof setInterval> | null>(null);
   const pdfObjectUrlRef = useRef<string | null>(null);
   const pdfAbortControllerRef = useRef<AbortController | null>(null);
+  const [containerWidth, setContainerWidth] = useState<number>(0);
+  const pdfContainerRef = useRef<HTMLDivElement | null>(null);
+
+  const cleanupOrphanedProgress = (activeDocuments: LmsDocument[]) => {
+    try {
+      const activeIds = new Set(activeDocuments.map((d) => d.id));
+      const keysToRemove: string[] = [];
+      for (let i = 0; i < window.localStorage.length; i++) {
+        const key = window.localStorage.key(i);
+        if (key && key.startsWith(READING_PROGRESS_PREFIX)) {
+          const docId = key.substring(READING_PROGRESS_PREFIX.length);
+          if (!activeIds.has(docId)) {
+            keysToRemove.push(key);
+          }
+        }
+      }
+      keysToRemove.forEach((key) => window.localStorage.removeItem(key));
+    } catch (e) {
+      console.error("Error cleaning up orphaned progress:", e);
+    }
+  };
+
+  const cleanupOrphanedCache = async (activeDocuments: LmsDocument[]) => {
+    try {
+      if (!("caches" in window)) return;
+      const cache = await window.caches.open(DOCUMENT_CACHE_NAME);
+      const keys = await cache.keys();
+      const activeIds = new Set(activeDocuments.map((d) => d.id));
+      for (const request of keys) {
+        const url = new URL(request.url);
+        const match = url.pathname.match(/\/api\/documents\/([^\/]+)\/file/);
+        if (match && match[1]) {
+          const docId = match[1];
+          if (!activeIds.has(docId)) {
+            await cache.delete(request);
+          }
+        }
+      }
+    } catch (e) {
+      console.error("Error cleaning up orphaned cache:", e);
+    }
+  };
 
   const fetchDocuments = async () => {
     setLoading(true);
@@ -217,7 +259,10 @@ export function DocumentsPanel() {
       const res = await fetch("/api/documents");
       const data = await res.json();
       if (!res.ok) throw new Error(data.error || "Không thể tải tài liệu");
-      setDocuments(data.documents || []);
+      const fetchedDocs = data.documents || [];
+      setDocuments(fetchedDocs);
+      cleanupOrphanedProgress(fetchedDocs);
+      cleanupOrphanedCache(fetchedDocs);
     } catch (error) {
       setMessage({ type: "error", text: error instanceof Error ? error.message : "Không thể tải tài liệu" });
     } finally {
@@ -231,7 +276,25 @@ export function DocumentsPanel() {
       clearUploadWaitTimer();
       clearPdfObjectUrl();
     };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
+  useEffect(() => {
+    if (!pdfContainerRef.current) return;
+    const updateWidth = () => {
+      if (pdfContainerRef.current) {
+        setContainerWidth(pdfContainerRef.current.clientWidth);
+      }
+    };
+    updateWidth();
+    const resizeObserver = new ResizeObserver(() => {
+      updateWidth();
+    });
+    resizeObserver.observe(pdfContainerRef.current);
+    return () => {
+      resizeObserver.disconnect();
+    };
+  }, [viewerDocument]);
 
   useEffect(() => {
     setSubjectFilter(ALL);
@@ -607,7 +670,7 @@ export function DocumentsPanel() {
         </div>
 
         <div className="space-y-4">
-          <div className="flex flex-wrap items-center gap-2 bg-slate-100 dark:bg-[#2a2a2c] p-1 rounded-[1.5rem] sm:rounded-full w-full sm:w-fit">
+          <div className="flex items-center gap-2 bg-slate-100 dark:bg-[#2a2a2c] p-1 rounded-[1.5rem] sm:rounded-full w-full sm:w-fit overflow-x-auto no-scrollbar max-w-full">
             {[ALL, ...grades.map((grade) => `Lớp ${grade}`)].map((label) => {
               const value = label === ALL ? ALL : label.replace(/^Lớp\s+/, "");
               return (
@@ -615,7 +678,7 @@ export function DocumentsPanel() {
                   key={label}
                   onClick={() => setGradeFilter(value)}
                   className={clsx(
-                    "rounded-full px-5 py-2 text-[14px] font-medium transition-all duration-300",
+                    "rounded-full px-5 py-2 text-[14px] font-medium transition-all duration-300 whitespace-nowrap",
                     gradeFilter === value
                       ? "bg-white dark:bg-[#444] text-[#1d1d1f] dark:text-white shadow-sm"
                       : "text-slate-500 dark:text-slate-400 hover:text-[#1d1d1f] dark:hover:text-white"
@@ -628,13 +691,13 @@ export function DocumentsPanel() {
           </div>
 
           {subjects.length > 0 && (
-            <div className="flex flex-wrap items-center gap-2">
+            <div className="flex items-center gap-2 overflow-x-auto no-scrollbar max-w-full">
               {[ALL, ...subjects].map((subject) => (
                 <button
                   key={subject}
                   onClick={() => setSubjectFilter(subject)}
                   className={clsx(
-                    "rounded-full px-4 py-2 text-[14px] font-semibold transition-all border",
+                    "rounded-full px-4 py-2 text-[14px] font-semibold transition-all border whitespace-nowrap",
                     subjectFilter === subject
                       ? "bg-[#0066cc] text-white border-[#0066cc] shadow-md shadow-blue-500/20"
                       : "bg-white dark:bg-[#2a2a2c] border-slate-200 dark:border-white/10 text-slate-600 dark:text-slate-300 hover:border-[#0066cc]/30"
@@ -747,8 +810,8 @@ export function DocumentsPanel() {
 
       {uploadOpen && (
         <div className="fixed inset-0 z-[70] flex items-center justify-center bg-black/50 backdrop-blur-sm p-4">
-          <div className="w-full max-w-xl rounded-[2rem] bg-white dark:bg-[#1d1d1f] border border-black/5 dark:border-white/10 shadow-2xl overflow-hidden">
-            <div className="flex items-center justify-between border-b border-slate-100 dark:border-white/10 p-6">
+          <div className="w-full max-w-xl rounded-[2rem] bg-white dark:bg-[#1d1d1f] border border-black/5 dark:border-white/10 shadow-2xl overflow-hidden max-h-[90vh] flex flex-col">
+            <div className="flex items-center justify-between border-b border-slate-100 dark:border-white/10 p-6 shrink-0">
               <h3 className="text-xl font-bold text-[#1d1d1f] dark:text-white">Upload tài liệu</h3>
               <button
                 onClick={() => {
@@ -763,7 +826,7 @@ export function DocumentsPanel() {
               </button>
             </div>
 
-            <form onSubmit={handleUpload} className="space-y-5 p-6">
+            <form onSubmit={handleUpload} className="space-y-5 p-6 overflow-y-auto">
               <label className="block">
                 <span className="mb-2 block text-[14px] font-semibold text-slate-700 dark:text-slate-200">Chọn file</span>
                 <input
@@ -842,79 +905,95 @@ export function DocumentsPanel() {
           isViewerOpen ? "opacity-100 pointer-events-auto scale-100" : "opacity-0 pointer-events-none scale-95"
         )}>
           <div className="mx-auto flex h-full w-full max-w-[1280px] flex-col overflow-hidden rounded-[2rem] bg-white dark:bg-[#1d1d1f] border border-white/10 shadow-2xl">
-            <div className="flex flex-wrap items-center justify-between gap-3 border-b border-slate-100 dark:border-white/10 p-4">
-              <div className="min-w-0">
-                <h3 className="truncate text-[17px] font-bold text-[#1d1d1f] dark:text-white">{viewerDocument.title}</h3>
-                <p className="text-[13px] text-slate-500 dark:text-slate-400">
-                  Lớp {viewerDocument.grade} · {viewerDocument.subject}
-                </p>
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-slate-100 dark:border-white/10 p-4 shrink-0">
+              <div className="flex items-center justify-between w-full sm:w-auto gap-3">
+                <div className="min-w-0 flex-1">
+                  <h3 className="truncate text-[17px] font-bold text-[#1d1d1f] dark:text-white">{viewerDocument.title}</h3>
+                  <p className="text-[13px] text-slate-500 dark:text-slate-400">
+                    Lớp {viewerDocument.grade} · {viewerDocument.subject}
+                  </p>
+                </div>
+                <div className="flex items-center gap-1 sm:hidden">
+                  <a href={`/api/documents/${viewerDocument.id}/file?download=1`} target="_blank" rel="noreferrer" className="rounded-full p-2 hover:bg-slate-100 dark:hover:bg-white/10" title="Tải xuống">
+                    <Download className="h-5 w-5" />
+                  </a>
+                  <button type="button" onClick={closeViewer} className="rounded-full p-2 hover:bg-slate-100 dark:hover:bg-white/10" title="Đóng">
+                    <X className="h-5 w-5" />
+                  </button>
+                </div>
               </div>
 
-              <div className="flex items-center gap-2">
+              <div className="flex flex-wrap items-center justify-center sm:justify-end gap-2 w-full sm:w-auto">
                 {viewerDocument.fileType === "pdf" && (
                   <>
-                    <button onClick={() => setPdfZoom((value) => Math.max(50, value - 10))} className="rounded-full p-2 hover:bg-slate-100 dark:hover:bg-white/10" title="Thu nhỏ">
-                      <ZoomOut className="h-5 w-5" />
-                    </button>
-                    <span className="w-14 text-center text-[13px] font-semibold text-slate-600 dark:text-slate-300">{pdfZoom}%</span>
-                    <button onClick={() => setPdfZoom((value) => Math.min(200, value + 10))} className="rounded-full p-2 hover:bg-slate-100 dark:hover:bg-white/10" title="Phóng to">
-                      <ZoomIn className="h-5 w-5" />
-                    </button>
+                    <div className="flex items-center bg-slate-100 dark:bg-[#2a2a2c] rounded-full px-2 py-0.5">
+                      <button onClick={() => setPdfZoom((value) => Math.max(50, value - 10))} className="rounded-full p-1.5 hover:bg-white dark:hover:bg-[#1d1d1f]" title="Thu nhỏ">
+                        <ZoomOut className="h-4 w-4" />
+                      </button>
+                      <span className="w-12 text-center text-[12px] font-semibold text-slate-600 dark:text-slate-300">{pdfZoom}%</span>
+                      <button onClick={() => setPdfZoom((value) => Math.min(200, value + 10))} className="rounded-full p-1.5 hover:bg-white dark:hover:bg-[#1d1d1f]" title="Phóng to">
+                        <ZoomIn className="h-4 w-4" />
+                      </button>
+                    </div>
 
-                    <button
-                      onClick={() => setPdfPage((p) => Math.max(1, p - 1))}
-                      disabled={pdfPage <= 1}
-                      className="rounded-full p-2 hover:bg-slate-100 dark:hover:bg-white/10 disabled:opacity-40"
-                      title="Trang trước"
-                    >
-                      <ChevronLeft className="h-5 w-5" />
-                    </button>
+                    <div className="flex items-center gap-1 bg-slate-100 dark:bg-[#2a2a2c] rounded-full px-2 py-0.5">
+                      <button
+                        onClick={() => setPdfPage((p) => Math.max(1, p - 1))}
+                        disabled={pdfPage <= 1}
+                        className="rounded-full p-1.5 hover:bg-white dark:hover:bg-[#1d1d1f] disabled:opacity-40"
+                        title="Trang trước"
+                      >
+                        <ChevronLeft className="h-4 w-4" />
+                      </button>
 
-                    <label className="flex items-center gap-2 rounded-full bg-slate-100 dark:bg-[#2a2a2c] px-3 py-2 text-[13px] text-slate-600 dark:text-slate-300">
-                      Trang
-                      <input
-                        type="number"
-                        min={1}
-                        max={numPages || undefined}
-                        value={pdfPage}
-                        onChange={(event) => {
-                          const page = Math.max(1, Number(event.target.value || 1));
-                          setPdfPage(numPages ? Math.min(numPages, page) : page);
-                        }}
-                        className="w-16 rounded-full bg-white dark:bg-[#1d1d1f] px-2 py-1 text-center"
-                      />
-                      {numPages && <span className="text-slate-400 dark:text-slate-500">/ {numPages}</span>}
-                    </label>
+                      <label className="flex items-center gap-1 text-[12px] text-slate-600 dark:text-slate-300">
+                        <span>Trang</span>
+                        <input
+                          type="number"
+                          min={1}
+                          max={numPages || undefined}
+                          value={pdfPage}
+                          onChange={(event) => {
+                            const page = Math.max(1, Number(event.target.value || 1));
+                            setPdfPage(numPages ? Math.min(numPages, page) : page);
+                          }}
+                          className="w-10 rounded-full bg-white dark:bg-[#1d1d1f] px-1 py-0.5 text-center font-semibold"
+                        />
+                        {numPages && <span className="text-slate-400 dark:text-slate-500">/ {numPages}</span>}
+                      </label>
 
-                    <button
-                      onClick={() => setPdfPage((p) => (numPages ? Math.min(numPages, p + 1) : p + 1))}
-                      disabled={!!numPages && pdfPage >= numPages}
-                      className="rounded-full p-2 hover:bg-slate-100 dark:hover:bg-white/10 disabled:opacity-40"
-                      title="Trang sau"
-                    >
-                      <ChevronRight className="h-5 w-5" />
-                    </button>
+                      <button
+                        onClick={() => setPdfPage((p) => (numPages ? Math.min(numPages, p + 1) : p + 1))}
+                        disabled={!!numPages && pdfPage >= numPages}
+                        className="rounded-full p-1.5 hover:bg-white dark:hover:bg-[#1d1d1f] disabled:opacity-40"
+                        title="Trang sau"
+                      >
+                        <ChevronRight className="h-4 w-4" />
+                      </button>
+                    </div>
                   </>
                 )}
 
                 {viewerDocument.fileType === "image" && (
-                  <>
-                    <button type="button" onClick={() => setImageZoom((value) => Math.max(0.5, value - 0.25))} className="rounded-full p-2 hover:bg-slate-100 dark:hover:bg-white/10" title="Thu nhỏ">
-                      <ZoomOut className="h-5 w-5" />
+                  <div className="flex items-center bg-slate-100 dark:bg-[#2a2a2c] rounded-full px-2 py-0.5">
+                    <button type="button" onClick={() => setImageZoom((value) => Math.max(0.5, value - 0.25))} className="rounded-full p-1.5 hover:bg-white dark:hover:bg-[#1d1d1f]" title="Thu nhỏ">
+                      <ZoomOut className="h-4 w-4" />
                     </button>
-                    <span className="w-14 text-center text-[13px] font-semibold text-slate-600 dark:text-slate-300">{Math.round(imageZoom * 100)}%</span>
-                    <button type="button" onClick={() => setImageZoom((value) => Math.min(3, value + 0.25))} className="rounded-full p-2 hover:bg-slate-100 dark:hover:bg-white/10" title="Phóng to">
-                      <ZoomIn className="h-5 w-5" />
+                    <span className="w-12 text-center text-[12px] font-semibold text-slate-600 dark:text-slate-300">{Math.round(imageZoom * 100)}%</span>
+                    <button type="button" onClick={() => setImageZoom((value) => Math.min(3, value + 0.25))} className="rounded-full p-1.5 hover:bg-white dark:hover:bg-[#1d1d1f]" title="Phóng to">
+                      <ZoomIn className="h-4 w-4" />
                     </button>
-                  </>
+                  </div>
                 )}
 
-                <a href={`/api/documents/${viewerDocument.id}/file?download=1`} target="_blank" rel="noreferrer" className="rounded-full p-2 hover:bg-slate-100 dark:hover:bg-white/10" title="Tải xuống">
-                  <Download className="h-5 w-5" />
-                </a>
-                <button type="button" onClick={closeViewer} className="rounded-full p-2 hover:bg-slate-100 dark:hover:bg-white/10" title="Đóng">
-                  <X className="h-5 w-5" />
-                </button>
+                <div className="hidden sm:flex items-center gap-1">
+                  <a href={`/api/documents/${viewerDocument.id}/file?download=1`} target="_blank" rel="noreferrer" className="rounded-full p-2 hover:bg-slate-100 dark:hover:bg-white/10" title="Tải xuống">
+                    <Download className="h-5 w-5" />
+                  </a>
+                  <button type="button" onClick={closeViewer} className="rounded-full p-2 hover:bg-slate-100 dark:hover:bg-white/10" title="Đóng">
+                    <X className="h-5 w-5" />
+                  </button>
+                </div>
               </div>
             </div>
 
@@ -942,7 +1021,7 @@ export function DocumentsPanel() {
                 </div>
               ) : viewerDocument.fileType === "pdf" ? (
                 pdfUrl ? (
-                  <div className="flex flex-col items-center justify-start p-4 min-h-[70vh]">
+                  <div className="flex flex-col items-center justify-start p-4 min-h-[70vh] w-full" ref={pdfContainerRef}>
                     <Document
                       file={pdfSourceBaseUrl}
                       options={DOCUMENT_OPTIONS}
@@ -968,6 +1047,7 @@ export function DocumentsPanel() {
                     >
                       <Page
                         pageNumber={pdfPage}
+                        width={containerWidth ? Math.max(200, containerWidth - 32) : undefined}
                         scale={pdfZoom / 100}
                         renderAnnotationLayer={false}
                         renderTextLayer={false}
@@ -1005,12 +1085,18 @@ export function DocumentsPanel() {
                   </div>
                 )
               ) : (
-                <div className="flex min-h-full items-center justify-center p-6">
+                <div className="flex min-h-full items-center justify-center p-6 overflow-auto">
                   <img
                     src={`/api/documents/${viewerDocument.id}/file`}
                     alt={viewerDocument.title}
-                    className="max-h-none max-w-none rounded-[1.5rem] shadow-2xl transition-transform"
-                    style={{ transform: `scale(${imageZoom})`, transformOrigin: "center" }}
+                    className="rounded-[1.5rem] shadow-2xl transition-all duration-200"
+                    style={{
+                      maxWidth: "100%",
+                      maxHeight: "80vh",
+                      transform: `scale(${imageZoom})`,
+                      transformOrigin: "center",
+                      objectFit: "contain",
+                    }}
                   />
                 </div>
               )}

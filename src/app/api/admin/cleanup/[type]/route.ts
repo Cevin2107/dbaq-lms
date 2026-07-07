@@ -144,6 +144,23 @@ export async function GET(
         break;
       }
 
+      case "documents": {
+        const { data, error } = await supabase
+          .from("documents")
+          .select("id, title, file_type, file_extension, file_size_bytes, grade, subject")
+          .order("created_at", { ascending: false });
+
+        if (error) throw error;
+
+        items = ((data as any[]) || []).map((d) => ({
+          id: d.id,
+          name: d.title,
+          info: `${d.subject} - Lớp ${d.grade} (${d.file_extension.toUpperCase()})`,
+          size: formatBytes(d.file_size_bytes),
+        }));
+        break;
+      }
+
       default:
         return NextResponse.json({ error: "Invalid type" }, { status: 400 });
     }
@@ -233,6 +250,16 @@ export async function DELETE(
         break;
       }
 
+      case "documents": {
+        for (const id of ids) {
+          const { error } = await (supabase.from("documents") as any)
+            .delete()
+            .eq("id", id);
+          if (error) console.error(`Error deleting document ${id}:`, error);
+        }
+        break;
+      }
+
       default:
         return NextResponse.json({ error: "Invalid type" }, { status: 400 });
     }
@@ -245,4 +272,12 @@ export async function DELETE(
       { status: 500 }
     );
   }
+}
+
+function formatBytes(bytes: number) {
+  if (!bytes) return "0 B";
+  const k = 1024;
+  const sizes = ["B", "KB", "MB", "GB"];
+  const i = Math.floor(Math.log(bytes) / Math.log(k));
+  return parseFloat((bytes / Math.pow(k, i)).toFixed(1)) + " " + sizes[i];
 }
