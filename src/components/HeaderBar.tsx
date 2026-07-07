@@ -1,23 +1,16 @@
 "use client";
 
 import Link from "next/link";
-import { useEffect, useState } from "react";
 import { useRouter, usePathname } from "next/navigation";
 import { ThemeToggle } from "@/components/ThemeToggle";
-import { LogOut, CalendarPlus } from "lucide-react";
+import { LogOut } from "lucide-react";
+import { useState } from "react";
 
 export function HeaderBar({ studentName }: { studentName?: string }) {
-  const [greeting, setGreeting] = useState("");
-  const [greetingEmoji, setGreetingEmoji] = useState("");
   const [loggingOut, setLoggingOut] = useState(false);
   const router = useRouter();
-
-  useEffect(() => {
-    const hour = new Date().getHours();
-    if (hour < 12) { setGreeting("Chào buổi sáng"); setGreetingEmoji("🌤️"); }
-    else if (hour < 18) { setGreeting("Chào buổi chiều"); setGreetingEmoji("☀️"); }
-    else { setGreeting("Chào buổi tối"); setGreetingEmoji("🌙"); }
-  }, []);
+  const pathname = usePathname();
+  const isAdminPath = pathname?.startsWith("/admin");
 
   const handleLogout = async () => {
     setLoggingOut(true);
@@ -32,9 +25,6 @@ export function HeaderBar({ studentName }: { studentName?: string }) {
     }
   };
 
-  const pathname = usePathname();
-  const isAdminPath = pathname?.startsWith('/admin');
-
   return (
     <div className="fixed top-0 left-0 right-0 z-50 px-4 pt-4 sm:px-6 pointer-events-none">
       <header className="mx-auto w-full max-w-[1440px] rounded-full bg-white/80 dark:bg-[#1d1d1f]/80 backdrop-blur-md border border-black/10 dark:border-white/10 shadow-[0_8px_30px_rgba(0,0,0,0.08)] pointer-events-auto transition-colors duration-500">
@@ -45,26 +35,20 @@ export function HeaderBar({ studentName }: { studentName?: string }) {
                 <path strokeLinecap="round" strokeLinejoin="round" d="M12 6.042A8.967 8.967 0 006 3.75c-1.052 0-2.062.18-3 .512v14.25A8.987 8.987 0 016 18c2.305 0 4.408.867 6 2.292m0-14.25a8.966 8.966 0 016-2.292c1.052 0 2.062.18 3 .512v14.25A8.987 8.987 0 0018 18a8.967 8.967 0 00-6 2.292m0-14.25v14.25" />
               </svg>
             </div>
-            <span className="hidden sm:inline text-[15px] font-semibold tracking-tight text-[#1d1d1f] dark:text-white">Gia sư Đào Bá Anh Quân</span>
+            <span className="hidden sm:inline text-[15px] font-semibold tracking-tight text-[#1d1d1f] dark:text-white">
+              Gia sư Đào Bá Anh Quân
+            </span>
           </Link>
 
           <div className="flex items-center gap-2 sm:gap-3 text-[14px] font-medium">
             {!isAdminPath && <ThemeToggle />}
-            
-            {pathname === "/register-schedule" ? (
+
+            {pathname === "/register-schedule" && (
               <Link
                 href="/"
                 className="flex items-center gap-1.5 rounded-full px-4 py-2 text-[#1d1d1f] dark:text-white hover:bg-black/5 dark:hover:bg-white/10 transition-colors"
               >
                 Về trang chủ
-              </Link>
-            ) : (
-              <Link
-                href="/register-schedule"
-                className="flex items-center gap-1.5 rounded-full bg-sky-50 dark:bg-sky-500/10 text-sky-600 dark:text-sky-400 px-4 py-2 hover:bg-sky-100 dark:hover:bg-sky-500/20 transition-colors border border-sky-100 dark:border-sky-500/20"
-              >
-                <CalendarPlus className="h-4 w-4" />
-                <span className="hidden sm:inline">Đăng ký lịch học</span>
               </Link>
             )}
 
@@ -74,6 +58,7 @@ export function HeaderBar({ studentName }: { studentName?: string }) {
             >
               Quản lý
             </Link>
+
             <button
               onClick={handleLogout}
               disabled={loggingOut}

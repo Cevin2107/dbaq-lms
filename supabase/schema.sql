@@ -18,6 +18,10 @@ drop table if exists student_profiles cascade;
 drop table if exists assignments cascade;
 drop table if exists admin_settings cascade;
 drop table if exists admin_passkeys cascade;
+drop table if exists schedule_registrations cascade;
+drop table if exists available_schedules cascade;
+drop table if exists shifts cascade;
+drop table if exists documents cascade;
 
 -- Drop old triggers and functions
 drop trigger if exists on_auth_user_created on auth.users;
@@ -477,4 +481,114 @@ CREATE POLICY "Service role manage schedule_registrations" on schedule_registrat
 -- 14. REALTIME CONFIGURATION
 -- ============================================
 ALTER PUBLICATION supabase_realtime ADD TABLE student_sessions;
+
+-- ==============================================================
+-- 15. TABLE: documents - Tài liệu & Tài liệu đính kèm
+-- ==============================================================
+create table public.documents (
+  id uuid primary key default gen_random_uuid(),
+  title text not null check (length(trim(title)) > 0),
+  file_url text not null check (file_url ~* '^https?://'),
+  thumbnail_url text check (thumbnail_url is null or thumbnail_url ~* '^https?://'),
+  file_type text not null check (file_type in ('pdf', 'image', 'office')),
+  file_extension text not null check (
+    lower(regexp_replace(file_extension, '^\.', '')) in (
+      'pdf',
+      'png', 'jpg', 'jpeg', 'webp', 'gif',
+      'doc', 'docx', 'ppt', 'pptx', 'xls', 'xlsx'
+    )
+  ),
+  mime_type text,
+  file_size_bytes bigint not null check (
+    file_size_bytes > 0
+    and file_size_bytes < 200 * 1024 * 1024
+  ),
+  grade text not null check (length(trim(grade)) > 0),
+  subject text not null check (length(trim(subject)) > 0),
+  uploader_id uuid references auth.users(id) on delete set null,
+  uploader_name text,
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  constraint documents_file_type_extension_match check (
+    (
+      file_type = 'pdf'
+      and lower(regexp_replace(file_extension, '^\.', '')) = 'pdf'
+    )
+    or (
+      file_type = 'image'
+      and lower(regexp_replace(file_extension, '^\.', '')) in ('png', 'jpg', 'jpeg', 'webp', 'gif')
+    )
+    or (
+      file_type = 'office'
+      and lower(regexp_replace(file_extension, '^\.', '')) in ('doc', 'docx', 'ppt', 'pptx', 'xls', 'xlsx')
+    )
+  )
+);
+
+drop trigger if exists set_documents_updated_at on public.documents;
+create trigger set_documents_updated_at
+  before update on public.documents
+  for each row execute function public.set_updated_at();
+
+-- Indexes
+create index if not exists idx_documents_created_at
+  on public.documents(created_at desc);
+
+create index if not exists idx_documents_grade_subject_created_at
+  on public.documents(grade, subject, created_at desc);
+
+create index if not exists idx_documents_file_type
+  on public.documents(file_type);
+
+create index if not exists idx_documents_uploader_id
+  on public.documents(uploader_id);
+
+-- Row Level Security (RLS)
+alter table public.documents enable row level security;
+
+drop policy if exists "Public read documents" on public.documents;
+drop policy if exists "Authenticated users can insert documents" on public.documents;
+drop policy if exists "Users can update their own documents" on public.documents;
+drop policy if exists "Users can delete their own documents" on public.documents;
+drop policy if exists "Service role manage documents" on public.documents;
+
+create policy "Public read documents" on public.documents
+  for select using (true);
+
+create policy "Authenticated users can insert documents" on public.documents
+  for insert to authenticated
+  with check (uploader_id = auth.uid());
+
+create policy "Users can update their own documents" on public.documents
+  for update to authenticated
+  using (uploader_id = auth.uid())
+  with check (uploader_id = auth.uid());
+
+create policy "Users can delete their own documents" on public.documents
+  for delete to authenticated
+  using (uploader_id = auth.uid());
+
+create policy "Service role manage documents" on public.documents
+  for all using (auth.role() = 'service_role') with check (true);
+
+-- API grants
+grant select on public.documents to anon, authenticated;
+grant insert, update, delete on public.documents to authenticated;
+
+-- Realtime Configuration
+do $$
+begin
+  if exists (select 1 from pg_publication where pubname = 'supabase_realtime') then
+    if not exists (
+      select 1
+      from pg_publication_tables
+      where pubname = 'supabase_realtime'
+        and schemaname = 'public'
+        and tablename = 'documents'
+    ) then
+      alter publication supabase_realtime add table public.documents;
+    end if;
+  end if;
+end;
+$$;
 

@@ -48,3 +48,31 @@ export interface SubmissionSummary {
   score: number;
   status: "pending" | "scored";
 }
+
+export type DocumentFileType = "pdf" | "image" | "office";
+
+export interface LmsDocument {
+  id: string;
+  title: string;
+  fileUrl: string;
+  thumbnailUrl?: string | null;
+  fileType: DocumentFileType;
+  fileExtension: string;
+  mimeType?: string | null;
+  fileSizeBytes: number;
+  grade: string;
+  subject: string;
+  uploaderId?: string | null;
+  uploaderName?: string | null;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface DocumentReadingProgress {
+  id: string;
+  userId: string;
+  documentId: string;
+  lastPage: number;
+  lastScrollPosition: number;
+  updatedAt: string;
+}

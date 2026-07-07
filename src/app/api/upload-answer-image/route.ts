@@ -2,8 +2,6 @@ import { NextResponse } from "next/server";
 import { createSupabaseAdmin } from "@/lib/supabaseAdmin";
 import { randomUUID } from "crypto";
 
-import FormDataNode from "form-data";
-
 export const runtime = "nodejs";
 
 export async function POST(req: Request) {
@@ -27,23 +25,18 @@ export async function POST(req: Request) {
     let catboxUrl: string | null = null;
     
     try {
-      const form = new FormDataNode();
+      const form = new FormData();
       form.append("reqtype", "fileupload");
       if (process.env.CATBOX_USERHASH) {
         form.append("userhash", process.env.CATBOX_USERHASH);
       }
       
-      const arrayBuffer = await file.arrayBuffer();
-      form.append("fileToUpload", Buffer.from(arrayBuffer), {
-        filename: file.name || "upload.png",
-        contentType: file.type || "image/png"
-      });
+      form.append("fileToUpload", file);
 
       const catboxRes = await fetch("https://catbox.moe/user/api.php", {
         method: "POST",
-        body: form as any,
+        body: form,
         headers: {
-          ...form.getHeaders(),
           "User-Agent": "SGUET-Photobooth/1.0"
         }
       });
