@@ -473,7 +473,7 @@ export function DocumentsPanel() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [viewerDocument?.id, pdfPage, pdfZoom]);
 
-  const handleUpload = (event: FormEvent) => {
+  const handleUpload = async (event: FormEvent) => {
     event.preventDefault();
     if (!upload.file) {
       setMessage({ type: "error", text: "Vui lòng chọn file." });
@@ -484,63 +484,109 @@ export function DocumentsPanel() {
       return;
     }
 
-    const formData = new FormData();
-    formData.append("file", upload.file);
-    formData.append("title", upload.title.trim());
-    formData.append("grade", upload.grade.trim());
-    formData.append("subject", upload.subject.trim());
-
     setUploading(true);
     setUploadProgress(0);
-    setUploadStatus("Đang gửi file lên server...");
+    setUploadStatus("Đang chuẩn bị upload...");
     setMessage(null);
+    clearUploadWaitTimer();
 
-    const xhr = new XMLHttpRequest();
-    xhr.open("POST", "/api/documents");
-    xhr.timeout = 10 * 60 * 1000;
-    xhr.upload.onprogress = (event) => {
-      if (event.lengthComputable) {
-        setUploadProgress(Math.min(90, Math.round((event.loaded / event.total) * 90)));
+    try {
+      // Step 1: Lấy signed URL từ server
+      const signedUrlRes = await fetch("/api/documents/upload-url", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          fileName: upload.file.name,
+          fileType: upload.file.type,
+        }),
+      });
+
+      if (!signedUrlRes.ok) {
+        const errorData = await signedUrlRes.json();
+        throw new Error(errorData.error || "Không thể lấy link upload từ server.");
       }
-    };
-    xhr.upload.onload = () => {
-      setUploadProgress(91);
-      setUploadStatus("Đang lưu tài liệu lên Catbox...");
-      clearUploadWaitTimer();
-      uploadWaitTimerRef.current = setInterval(() => {
-        setUploadProgress((current) => Math.min(98, current + 1));
-      }, 2500);
-    };
-    xhr.onload = () => {
-      clearUploadWaitTimer();
-      setUploading(false);
-      try {
-        const data = JSON.parse(xhr.responseText || "{}");
-        if (xhr.status >= 200 && xhr.status < 300) {
-          setUploadProgress(100);
-          setUploadStatus("Hoàn tất.");
-          setDocuments((current) => [data.document, ...current]);
-          setMessage({ type: "success", text: "Upload tài liệu thành công." });
-          setUploadOpen(false);
-          resetUpload();
-        } else {
-          throw new Error(data.error || "Upload tài liệu thất bại");
+
+      const { signedUrl, publicUrl } = await signedUrlRes.json();
+
+      setUploadStatus("Đang tải file lên storage...");
+      
+      // Step 2: Upload trực tiếp lên Supabase Storage qua signed URL bằng XMLHttpRequest (để track progress)
+      const xhr = new XMLHttpRequest();
+      xhr.open("PUT", signedUrl);
+      xhr.setRequestHeader("Content-Type", upload.file.type || "application/octet-stream");
+      xhr.timeout = 15 * 60 * 1000; // 15 phút cho file lớn
+
+      xhr.upload.onprogress = (event) => {
+        if (event.lengthComputable) {
+          // Upload chiếm 90% quá trình
+          setUploadProgress(Math.min(90, Math.round((event.loaded / event.total) * 90)));
         }
-      } catch (error) {
-        setMessage({ type: "error", text: error instanceof Error ? error.message : "Upload tài liệu thất bại" });
-      }
-    };
-    xhr.onerror = () => {
-      clearUploadWaitTimer();
+      };
+
+      xhr.upload.onload = () => {
+        setUploadProgress(92);
+        setUploadStatus("Đang đồng bộ dữ liệu...");
+      };
+
+      xhr.onload = async () => {
+        if (xhr.status >= 200 && xhr.status < 300) {
+          // Step 3: Gọi API lưu metadata vào Database
+          setUploadProgress(95);
+          try {
+            const formData = new FormData();
+            formData.append("fileUrl", publicUrl);
+            formData.append("fileSize", String(upload.file!.size));
+            formData.append("fileExtension", getExtension(upload.file!.name));
+            formData.append("mimeType", upload.file!.type);
+            formData.append("title", upload.title.trim());
+            formData.append("grade", upload.grade.trim());
+            formData.append("subject", upload.subject.trim());
+
+            const saveRes = await fetch("/api/documents", {
+              method: "POST",
+              body: formData,
+            });
+
+            const data = await saveRes.json();
+            if (saveRes.ok) {
+              setUploadProgress(100);
+              setUploadStatus("Hoàn tất.");
+              setDocuments((current) => [data.document, ...current]);
+              setMessage({ type: "success", text: "Upload tài liệu thành công." });
+              setUploadOpen(false);
+              resetUpload();
+            } else {
+              throw new Error(data.error || "Lưu metadata thất bại.");
+            }
+          } catch (saveErr) {
+            setMessage({
+              type: "error",
+              text: saveErr instanceof Error ? saveErr.message : "Đồng bộ dữ liệu thất bại.",
+            });
+          } finally {
+            setUploading(false);
+          }
+        } else {
+          setUploading(false);
+          setMessage({ type: "error", text: "Tải file lên storage thất bại." });
+        }
+      };
+
+      xhr.onerror = () => {
+        setUploading(false);
+        setMessage({ type: "error", text: "Lỗi kết nối khi tải file lên storage." });
+      };
+
+      xhr.ontimeout = () => {
+        setUploading(false);
+        setMessage({ type: "error", text: "Tải file lên storage quá hạn thời gian." });
+      };
+
+      xhr.send(upload.file);
+    } catch (err) {
       setUploading(false);
-      setMessage({ type: "error", text: "Lỗi mạng khi upload tài liệu." });
-    };
-    xhr.ontimeout = () => {
-      clearUploadWaitTimer();
-      setUploading(false);
-      setMessage({ type: "error", text: "Upload quá lâu. Vui lòng thử lại hoặc chọn file nhỏ hơn." });
-    };
-    xhr.send(formData);
+      setMessage({ type: "error", text: err instanceof Error ? err.message : "Khởi tạo upload thất bại." });
+    }
   };
 
   const openDocument = async (document: LmsDocument) => {

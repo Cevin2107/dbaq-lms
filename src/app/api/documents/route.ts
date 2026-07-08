@@ -145,48 +145,68 @@ export async function POST(req: Request) {
     } = await supabase.auth.getUser();
 
     if (!user) {
-      return NextResponse.json({ error: "Ban can dang nhap de upload tai lieu" }, { status: 401 });
+      return NextResponse.json({ error: "Bạn cần đăng nhập để upload tài liệu" }, { status: 401 });
     }
 
     const formData = await req.formData();
-    const file = formData.get("file") as File | null;
+    const fileUrlParam = formData.get("fileUrl") as string | null;
     const title = String(formData.get("title") || "").trim();
     const grade = String(formData.get("grade") || "").trim();
     const subject = String(formData.get("subject") || "").trim();
 
-    if (!file) {
-      return NextResponse.json({ error: "Chua chon file" }, { status: 400 });
-    }
-
     if (!title || !grade || !subject) {
-      return NextResponse.json({ error: "Vui long nhap day du ten tai lieu, lop va mon hoc" }, { status: 400 });
-    }
-
-    if (file.size >= MAX_FILE_SIZE) {
-      return NextResponse.json({ error: "File phai nho hon 200 MB" }, { status: 400 });
-    }
-
-    const extension = getExtension(file.name);
-    const fileType = EXTENSION_TO_TYPE[extension];
-    if (!fileType) {
-      return NextResponse.json({ error: "Dinh dang file khong duoc ho tro" }, { status: 400 });
+      return NextResponse.json({ error: "Vui lòng nhập đầy đủ tên tài liệu, lớp và môn học" }, { status: 400 });
     }
 
     let fileUrl: string;
-    try {
-      fileUrl = await uploadToCatbox(file);
-    } catch (error) {
-      console.error("Catbox document upload failed:", error);
-      return NextResponse.json(
-        {
-          error:
-            error instanceof CatboxUploadError
-              ? `Catbox upload failed: ${error.message}`
-              : "Catbox upload failed",
-        },
-        { status: 502 }
-      );
+    let extension: string;
+    let fileType: "pdf" | "image" | "office";
+    let mimeType: string | null = null;
+    let fileSizeBytes: number = 0;
+
+    if (fileUrlParam) {
+      fileUrl = fileUrlParam;
+      fileSizeBytes = Number(formData.get("fileSize") || 0);
+      extension = String(formData.get("fileExtension") || "").toLowerCase();
+      fileType = EXTENSION_TO_TYPE[extension];
+      mimeType = String(formData.get("mimeType") || "") || null;
+      if (!fileType) {
+        return NextResponse.json({ error: "Định dạng file không được hỗ trợ" }, { status: 400 });
+      }
+    } else {
+      const file = formData.get("file") as File | null;
+      if (!file) {
+        return NextResponse.json({ error: "Chưa chọn file" }, { status: 400 });
+      }
+
+      if (file.size >= MAX_FILE_SIZE) {
+        return NextResponse.json({ error: "File phải nhỏ hơn 200 MB" }, { status: 400 });
+      }
+
+      extension = getExtension(file.name);
+      fileType = EXTENSION_TO_TYPE[extension];
+      if (!fileType) {
+        return NextResponse.json({ error: "Định dạng file không được hỗ trợ" }, { status: 400 });
+      }
+      mimeType = file.type || null;
+      fileSizeBytes = file.size;
+
+      try {
+        fileUrl = await uploadToCatbox(file);
+      } catch (error) {
+        console.error("Catbox document upload failed:", error);
+        return NextResponse.json(
+          {
+            error:
+              error instanceof CatboxUploadError
+                ? `Catbox upload failed: ${error.message}`
+                : "Catbox upload failed",
+          },
+          { status: 502 }
+        );
+      }
     }
+
     const uploaderName =
       (user.user_metadata?.full_name as string | undefined)?.trim() ||
       user.email ||
@@ -201,8 +221,8 @@ export async function POST(req: Request) {
         thumbnail_url: thumbnailUrl,
         file_type: fileType,
         file_extension: extension,
-        mime_type: file.type || null,
-        file_size_bytes: file.size,
+        mime_type: mimeType,
+        file_size_bytes: fileSizeBytes,
         grade,
         subject,
         uploader_id: user.id,
@@ -218,6 +238,6 @@ export async function POST(req: Request) {
     return NextResponse.json({ document: mapDocument(data) }, { status: 201 });
   } catch (error) {
     console.error("Document upload error:", error);
-    return NextResponse.json({ error: "Upload tai lieu that bai" }, { status: 500 });
+    return NextResponse.json({ error: "Upload tài liệu thất bại" }, { status: 500 });
   }
 }
