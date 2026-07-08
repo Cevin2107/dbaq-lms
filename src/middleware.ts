@@ -6,6 +6,13 @@ export async function middleware(request: NextRequest) {
     request,
   })
 
+  const pathname = request.nextUrl.pathname
+
+  // Bỏ qua tất cả API routes ở middleware để tránh lỗi buffer body (413 Payload Too Large) khi upload file
+  if (pathname.startsWith('/api/')) {
+    return supabaseResponse
+  }
+
   const supabase = createServerClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
     process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
@@ -33,8 +40,6 @@ export async function middleware(request: NextRequest) {
   const {
     data: { user },
   } = await supabase.auth.getUser()
-
-  const pathname = request.nextUrl.pathname
 
   // Public routes (no auth required)
   const publicRoutes = ['/login', '/signup', '/forgot-password', '/reset-password', '/auth/callback']
@@ -78,11 +83,12 @@ export const config = {
      * Match all request paths except for the ones starting with:
      * - _next/static (static files)
      * - _next/image (image optimization files)
+     * - api (API routes - bypass middleware to allow large payloads)
      * - favicon.ico (favicon file)
      * - public (public files)
      */
     // Exclude common static asset patterns (images, json, manifest) so middleware
     // won't intercept requests for them and accidentally redirect to /login.
-    '/((?!_next/static|_next/image|favicon.ico|manifest.json|.*\\.(?:svg|png|jpg|jpeg|gif|webp|json|webmanifest)$).*)',
+    '/((?!_next/static|_next/image|api/|favicon.ico|manifest.json|.*\\.(?:svg|png|jpg|jpeg|gif|webp|json|webmanifest)$).*)',
   ],
 }
