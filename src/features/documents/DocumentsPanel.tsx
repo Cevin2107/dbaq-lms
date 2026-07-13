@@ -192,6 +192,8 @@ export function DocumentsPanel() {
   const [subjectFilter, setSubjectFilter] = useState(ALL);
   const [uploadOpen, setUploadOpen] = useState(false);
   const [upload, setUpload] = useState<UploadState>(initialUploadState);
+  const [uploadType, setUploadType] = useState<"file" | "url">("file");
+  const [embedUrl, setEmbedUrl] = useState("");
   const [uploading, setUploading] = useState(false);
   const [uploadProgress, setUploadProgress] = useState(0);
   const [uploadStatus, setUploadStatus] = useState("");
@@ -351,6 +353,8 @@ export function DocumentsPanel() {
     setUpload(initialUploadState);
     setUploadProgress(0);
     setUploadStatus("");
+    setUploadType("file");
+    setEmbedUrl("");
   };
 
   const clearUploadWaitTimer = () => {
@@ -475,8 +479,12 @@ export function DocumentsPanel() {
 
   const handleUpload = async (event: FormEvent) => {
     event.preventDefault();
-    if (!upload.file) {
+    if (uploadType === "file" && !upload.file) {
       setMessage({ type: "error", text: "Vui lòng chọn file." });
+      return;
+    }
+    if (uploadType === "url" && !embedUrl.trim()) {
+      setMessage({ type: "error", text: "Vui lòng nhập đường dẫn liên kết." });
       return;
     }
     if (!upload.title.trim() || !upload.grade.trim() || !upload.subject.trim()) {
@@ -491,72 +499,204 @@ export function DocumentsPanel() {
     clearUploadWaitTimer();
 
     try {
-      const formData = new FormData();
-      formData.append("file", upload.file);
-      formData.append("title", upload.title.trim());
-      formData.append("grade", upload.grade.trim());
-      formData.append("subject", upload.subject.trim());
+      if (uploadType === "url") {
+        setUploadStatus("Đang liên kết tài liệu...");
+        const ext = embedUrl.split(".").pop()?.split(/[?#]/)[0]?.toLowerCase() || "bin";
+        const mime = ext === "pdf" ? "application/pdf" : ext === "png" ? "image/png" : ext === "jpg" || ext === "jpeg" ? "image/jpeg" : "application/octet-stream";
+        
+        const formData = new FormData();
+        formData.append("fileUrl", embedUrl.trim());
+        formData.append("fileSize", "0");
+        formData.append("fileExtension", ext);
+        formData.append("mimeType", mime);
+        formData.append("title", upload.title.trim());
+        formData.append("grade", upload.grade.trim());
+        formData.append("subject", upload.subject.trim());
 
-      const xhr = new XMLHttpRequest();
-      xhr.open("POST", "/api/documents");
-      xhr.timeout = 15 * 60 * 1000; // 15 phút cho file lớn
+        const saveRes = await fetch("/api/documents", {
+          method: "POST",
+          body: formData,
+        });
 
-      xhr.upload.onprogress = (event) => {
-        if (event.lengthComputable) {
-          // Upload chiếm 90% quá trình
-          setUploadProgress(Math.min(90, Math.round((event.loaded / event.total) * 90)));
-        }
-      };
-
-      xhr.upload.onload = () => {
-        setUploadProgress(92);
-        setUploadStatus("Đang đồng bộ dữ liệu...");
-      };
-
-      xhr.onload = async () => {
-        if (xhr.status >= 200 && xhr.status < 300) {
-          try {
-            const data = JSON.parse(xhr.responseText);
-            if (data.document) {
-              setUploadProgress(100);
-              setUploadStatus("Hoàn tất.");
-              setDocuments((current) => [data.document, ...current]);
-              setMessage({ type: "success", text: "Upload tài liệu thành công." });
-              setUploadOpen(false);
-              resetUpload();
-            } else {
-              throw new Error(data.error || "Lưu metadata thất bại.");
-            }
-          } catch (saveErr) {
-            setMessage({
-              type: "error",
-              text: saveErr instanceof Error ? saveErr.message : "Đồng bộ dữ liệu thất bại.",
-            });
-          } finally {
-            setUploading(false);
-          }
+        const data = await saveRes.json();
+        if (saveRes.ok) {
+          setUploadProgress(100);
+          setUploadStatus("Hoàn tất.");
+          setDocuments((current) => [data.document, ...current]);
+          setMessage({ type: "success", text: "Liên kết tài liệu thành công." });
+          setUploadOpen(false);
+          resetUpload();
         } else {
-          setUploading(false);
-          let errorText = "Tải tài liệu thất bại.";
-          try {
-            const data = JSON.parse(xhr.responseText);
-            errorText = data.error || errorText;
-          } catch (_) {}
-          setMessage({ type: "error", text: errorText });
+          throw new Error(data.error || "Lưu tài liệu thất bại.");
         }
-      };
+        return;
+      }
 
-      xhr.onerror = () => {
-        setUploading(false);
-        setMessage({ type: "error", text: "Lỗi kết nối khi tải file." });
-      };
+      const isLargeFile = upload.file!.size > 4 * 1024 * 1024; // 4 MB limit for Vercel Serverless Function body limit
 
-      xhr.ontimeout = () => {
-        setUploading(false);
-        setMessage({ type: "error", text: "Tải file quá hạn thời gian." });
-      };
+      if (isLargeFile) {
+        // Luồng 1: Cho file lớn (> 4MB) - Upload trực tiếp lên Supabase Storage qua signed URL để tránh giới hạn Vercel 4.5MB
+        setUploadStatus("File lớn, đang chuẩn bị upload trực tiếp lên Supabase...");
+        
+        // Step 1: Lấy signed URL từ server
+        const signedUrlRes = await fetch("/api/documents/upload-url", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            fileName: upload.file!.name,
+            fileType: upload.file!.type,
+          }),
+        });
 
-      xhr.send(formData);
+        if (!signedUrlRes.ok) {
+          const errorData = await signedUrlRes.json();
+          throw new Error(errorData.error || "Không thể lấy link upload từ server.");
+        }
+
+        const { signedUrl, publicUrl } = await signedUrlRes.json();
+
+        setUploadStatus("Đang tải file trực tiếp lên Supabase Storage...");
+        
+        const xhr = new XMLHttpRequest();
+        xhr.open("PUT", signedUrl);
+        xhr.setRequestHeader("Content-Type", upload.file!.type || "application/octet-stream");
+        xhr.timeout = 15 * 60 * 1000; // 15 phút cho file lớn
+
+        xhr.upload.onprogress = (event) => {
+          if (event.lengthComputable) {
+            setUploadProgress(Math.min(90, Math.round((event.loaded / event.total) * 90)));
+          }
+        };
+
+        xhr.upload.onload = () => {
+          setUploadProgress(92);
+          setUploadStatus("Đang đồng bộ dữ liệu...");
+        };
+
+        xhr.onload = async () => {
+          if (xhr.status >= 200 && xhr.status < 300) {
+            setUploadProgress(95);
+            try {
+              const formData = new FormData();
+              formData.append("fileUrl", publicUrl);
+              formData.append("fileSize", String(upload.file!.size));
+              formData.append("fileExtension", getExtension(upload.file!.name));
+              formData.append("mimeType", upload.file!.type);
+              formData.append("title", upload.title.trim());
+              formData.append("grade", upload.grade.trim());
+              formData.append("subject", upload.subject.trim());
+
+              const saveRes = await fetch("/api/documents", {
+                method: "POST",
+                body: formData,
+              });
+
+              const data = await saveRes.json();
+              if (saveRes.ok) {
+                setUploadProgress(100);
+                setUploadStatus("Hoàn tất.");
+                setDocuments((current) => [data.document, ...current]);
+                setMessage({ type: "success", text: "Upload tài liệu thành công." });
+                setUploadOpen(false);
+                resetUpload();
+              } else {
+                throw new Error(data.error || "Lưu metadata thất bại.");
+              }
+            } catch (saveErr) {
+              setMessage({
+                type: "error",
+                text: saveErr instanceof Error ? saveErr.message : "Đồng bộ dữ liệu thất bại.",
+              });
+            } finally {
+              setUploading(false);
+            }
+          } else {
+            setUploading(false);
+            setMessage({ type: "error", text: "Tải file lên storage thất bại." });
+          }
+        };
+
+        xhr.onerror = () => {
+          setUploading(false);
+          setMessage({ type: "error", text: "Lỗi kết nối khi tải file lên storage." });
+        };
+
+        xhr.ontimeout = () => {
+          setUploading(false);
+          setMessage({ type: "error", text: "Tải file lên storage quá hạn thời gian." });
+        };
+
+        xhr.send(upload.file!);
+      } else {
+        // Luồng 2: Cho file nhỏ (<= 4MB) - Upload qua API của chúng ta (sẽ ưu tiên Catbox, fallback Supabase)
+        setUploadStatus("Đang tải file lên máy chủ (ưu tiên lưu Catbox)...");
+        
+        const formData = new FormData();
+        formData.append("file", upload.file!);
+        formData.append("title", upload.title.trim());
+        formData.append("grade", upload.grade.trim());
+        formData.append("subject", upload.subject.trim());
+
+        const xhr = new XMLHttpRequest();
+        xhr.open("POST", "/api/documents");
+        xhr.timeout = 15 * 60 * 1000;
+
+        xhr.upload.onprogress = (event) => {
+          if (event.lengthComputable) {
+            setUploadProgress(Math.min(90, Math.round((event.loaded / event.total) * 90)));
+          }
+        };
+
+        xhr.upload.onload = () => {
+          setUploadProgress(92);
+          setUploadStatus("Đang lưu trữ và đồng bộ dữ liệu...");
+        };
+
+        xhr.onload = async () => {
+          if (xhr.status >= 200 && xhr.status < 300) {
+            try {
+              const data = JSON.parse(xhr.responseText);
+              if (data.document) {
+                setUploadProgress(100);
+                setUploadStatus("Hoàn tất.");
+                setDocuments((current) => [data.document, ...current]);
+                setMessage({ type: "success", text: "Upload tài liệu thành công." });
+                setUploadOpen(false);
+                resetUpload();
+              } else {
+                throw new Error(data.error || "Lưu metadata thất bại.");
+              }
+            } catch (saveErr) {
+              setMessage({
+                type: "error",
+                text: saveErr instanceof Error ? saveErr.message : "Đồng bộ dữ liệu thất bại.",
+              });
+            } finally {
+              setUploading(false);
+            }
+          } else {
+            setUploading(false);
+            let errorText = "Tải tài liệu thất bại.";
+            try {
+              const data = JSON.parse(xhr.responseText);
+              errorText = data.error || errorText;
+            } catch (_) {}
+            setMessage({ type: "error", text: errorText });
+          }
+        };
+
+        xhr.onerror = () => {
+          setUploading(false);
+          setMessage({ type: "error", text: "Lỗi kết nối khi tải file." });
+        };
+
+        xhr.ontimeout = () => {
+          setUploading(false);
+          setMessage({ type: "error", text: "Tải file quá hạn thời gian." });
+        };
+
+        xhr.send(formData);
+      }
     } catch (err) {
       setUploading(false);
       setMessage({ type: "error", text: err instanceof Error ? err.message : "Khởi tạo upload thất bại." });
@@ -847,19 +987,64 @@ export function DocumentsPanel() {
             </div>
 
             <form onSubmit={handleUpload} className="space-y-5 p-6 overflow-y-auto">
-              <label className="block">
-                <span className="mb-2 block text-[14px] font-semibold text-slate-700 dark:text-slate-200">Chọn file</span>
-                <input
-                  type="file"
-                  accept={ACCEPTED_EXTENSIONS.map((item) => `.${item}`).join(",")}
-                  onChange={handleFileChange}
-                  disabled={uploading}
-                  className="block w-full rounded-[1.25rem] border border-slate-200 dark:border-white/10 bg-slate-50 dark:bg-[#2a2a2c] p-3 text-[14px] text-slate-700 dark:text-slate-200"
-                />
-                <span className="mt-2 block text-[12px] text-slate-500 dark:text-slate-400">
-                  PDF, ảnh hoặc Office. Dung lượng nhỏ hơn 200 MB.
-                </span>
-              </label>
+              <div className="flex items-center gap-2 bg-slate-100 dark:bg-[#2a2a2c] p-1 rounded-full w-full">
+                <button
+                  type="button"
+                  onClick={() => setUploadType("file")}
+                  className={clsx(
+                    "flex-1 rounded-full py-2 text-[14px] font-semibold transition-all",
+                    uploadType === "file"
+                      ? "bg-white dark:bg-[#444] text-[#1d1d1f] dark:text-white shadow-sm"
+                      : "text-slate-500 dark:text-slate-400 hover:text-[#1d1d1f] dark:hover:text-white"
+                  )}
+                >
+                  Tải lên tệp
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setUploadType("url")}
+                  className={clsx(
+                    "flex-1 rounded-full py-2 text-[14px] font-semibold transition-all",
+                    uploadType === "url"
+                      ? "bg-white dark:bg-[#444] text-[#1d1d1f] dark:text-white shadow-sm"
+                      : "text-slate-500 dark:text-slate-400 hover:text-[#1d1d1f] dark:hover:text-white"
+                  )}
+                >
+                  Dán link Catbox
+                </button>
+              </div>
+
+              {uploadType === "file" ? (
+                <label className="block">
+                  <span className="mb-2 block text-[14px] font-semibold text-slate-700 dark:text-slate-200">Chọn file</span>
+                  <input
+                    type="file"
+                    accept={ACCEPTED_EXTENSIONS.map((item) => `.${item}`).join(",")}
+                    onChange={handleFileChange}
+                    disabled={uploading}
+                    className="block w-full rounded-[1.25rem] border border-slate-200 dark:border-white/10 bg-slate-50 dark:bg-[#2a2a2c] p-3 text-[14px] text-slate-700 dark:text-slate-200"
+                  />
+                  <span className="mt-2 block text-[12px] text-slate-500 dark:text-slate-400">
+                    PDF, ảnh hoặc Office. Dung lượng nhỏ hơn 200 MB (Tự động up Catbox cho file ≤ 4MB).
+                  </span>
+                </label>
+              ) : (
+                <label className="block">
+                  <span className="mb-2 block text-[14px] font-semibold text-slate-700 dark:text-slate-200">Đường dẫn liên kết (URL)</span>
+                  <input
+                    type="url"
+                    value={embedUrl}
+                    onChange={(event) => setEmbedUrl(event.target.value)}
+                    disabled={uploading}
+                    className="w-full rounded-full border border-slate-200 dark:border-white/10 bg-slate-50 dark:bg-[#2a2a2c] px-4 py-3 text-slate-800 dark:text-white focus:outline-none focus:ring-4 focus:ring-[#0066cc]/10"
+                    placeholder="https://files.catbox.moe/..."
+                    required
+                  />
+                  <span className="mt-2 block text-[12px] text-slate-500 dark:text-slate-400">
+                    Dán link file bạn đã upload thủ công lên Catbox.moe hoặc link công khai bất kỳ.
+                  </span>
+                </label>
+              )}
 
               <label className="block">
                 <span className="mb-2 block text-[14px] font-semibold text-slate-700 dark:text-slate-200">Tên tài liệu</span>
