@@ -168,6 +168,9 @@ export async function POST(req: Request) {
     if (fileUrlParam) {
       fileUrl = fileUrlParam;
       fileSizeBytes = Number(formData.get("fileSize") || 0);
+      if (fileSizeBytes <= 0) {
+        fileSizeBytes = 1;
+      }
       extension = String(formData.get("fileExtension") || "").toLowerCase();
       fileType = EXTENSION_TO_TYPE[extension];
       mimeType = String(formData.get("mimeType") || "") || null;

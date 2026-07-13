@@ -506,7 +506,7 @@ export function DocumentsPanel() {
         
         const formData = new FormData();
         formData.append("fileUrl", embedUrl.trim());
-        formData.append("fileSize", "0");
+        formData.append("fileSize", "1");
         formData.append("fileExtension", ext);
         formData.append("mimeType", mime);
         formData.append("title", upload.title.trim());
