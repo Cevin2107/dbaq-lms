@@ -2,6 +2,7 @@ import { createServerClient } from "@supabase/ssr";
 import { NextResponse } from "next/server";
 import { cookies } from "next/headers";
 import { createSupabaseAdmin } from "@/lib/supabaseAdmin";
+import { randomUUID } from "crypto";
 
 export const runtime = "nodejs";
 
@@ -191,19 +192,57 @@ export async function POST(req: Request) {
       mimeType = file.type || null;
       fileSizeBytes = file.size;
 
+      let catboxUrl: string | null = null;
       try {
-        fileUrl = await uploadToCatbox(file);
+        catboxUrl = await uploadToCatbox(file);
       } catch (error) {
-        console.error("Catbox document upload failed:", error);
-        return NextResponse.json(
-          {
-            error:
-              error instanceof CatboxUploadError
-                ? `Catbox upload failed: ${error.message}`
-                : "Catbox upload failed",
-          },
-          { status: 502 }
-        );
+        console.error("Catbox document upload failed, checking fallback:", error);
+      }
+
+      if (catboxUrl) {
+        fileUrl = catboxUrl;
+      } else {
+        // Fallback to Supabase Storage if backup is enabled
+        if (process.env.ENABLE_SUPABASE_IMAGE_BACKUP === "true") {
+          try {
+            console.log("Catbox failed. Falling back to Supabase upload for document...");
+            const admin = createSupabaseAdmin();
+            const arrayBuffer = await file.arrayBuffer();
+            const uniquePath = `doc-${randomUUID()}.${extension}`;
+            
+            const { error: uploadError } = await admin.storage
+              .from("documents")
+              .upload(uniquePath, Buffer.from(arrayBuffer), {
+                contentType: file.type || "application/octet-stream",
+                upsert: false,
+              });
+
+            if (uploadError) {
+              throw uploadError;
+            }
+
+            const { data: publicUrlData } = admin.storage
+              .from("documents")
+              .getPublicUrl(uniquePath);
+
+            fileUrl = publicUrlData.publicUrl;
+          } catch (supabaseError) {
+            console.error("Supabase document fallback upload failed:", supabaseError);
+            return NextResponse.json(
+              {
+                error: "Cả Catbox và Supabase upload đều thất bại",
+              },
+              { status: 502 }
+            );
+          }
+        } else {
+          return NextResponse.json(
+            {
+              error: "Catbox upload thất bại và Supabase backup bị tắt",
+            },
+            { status: 502 }
+          );
+        }
       }
     }
 

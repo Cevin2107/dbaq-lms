@@ -491,29 +491,14 @@ export function DocumentsPanel() {
     clearUploadWaitTimer();
 
     try {
-      // Step 1: Lấy signed URL từ server
-      const signedUrlRes = await fetch("/api/documents/upload-url", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          fileName: upload.file.name,
-          fileType: upload.file.type,
-        }),
-      });
+      const formData = new FormData();
+      formData.append("file", upload.file);
+      formData.append("title", upload.title.trim());
+      formData.append("grade", upload.grade.trim());
+      formData.append("subject", upload.subject.trim());
 
-      if (!signedUrlRes.ok) {
-        const errorData = await signedUrlRes.json();
-        throw new Error(errorData.error || "Không thể lấy link upload từ server.");
-      }
-
-      const { signedUrl, publicUrl } = await signedUrlRes.json();
-
-      setUploadStatus("Đang tải file lên storage...");
-      
-      // Step 2: Upload trực tiếp lên Supabase Storage qua signed URL bằng XMLHttpRequest (để track progress)
       const xhr = new XMLHttpRequest();
-      xhr.open("PUT", signedUrl);
-      xhr.setRequestHeader("Content-Type", upload.file.type || "application/octet-stream");
+      xhr.open("POST", "/api/documents");
       xhr.timeout = 15 * 60 * 1000; // 15 phút cho file lớn
 
       xhr.upload.onprogress = (event) => {
@@ -530,25 +515,9 @@ export function DocumentsPanel() {
 
       xhr.onload = async () => {
         if (xhr.status >= 200 && xhr.status < 300) {
-          // Step 3: Gọi API lưu metadata vào Database
-          setUploadProgress(95);
           try {
-            const formData = new FormData();
-            formData.append("fileUrl", publicUrl);
-            formData.append("fileSize", String(upload.file!.size));
-            formData.append("fileExtension", getExtension(upload.file!.name));
-            formData.append("mimeType", upload.file!.type);
-            formData.append("title", upload.title.trim());
-            formData.append("grade", upload.grade.trim());
-            formData.append("subject", upload.subject.trim());
-
-            const saveRes = await fetch("/api/documents", {
-              method: "POST",
-              body: formData,
-            });
-
-            const data = await saveRes.json();
-            if (saveRes.ok) {
+            const data = JSON.parse(xhr.responseText);
+            if (data.document) {
               setUploadProgress(100);
               setUploadStatus("Hoàn tất.");
               setDocuments((current) => [data.document, ...current]);
@@ -568,21 +537,26 @@ export function DocumentsPanel() {
           }
         } else {
           setUploading(false);
-          setMessage({ type: "error", text: "Tải file lên storage thất bại." });
+          let errorText = "Tải tài liệu thất bại.";
+          try {
+            const data = JSON.parse(xhr.responseText);
+            errorText = data.error || errorText;
+          } catch (_) {}
+          setMessage({ type: "error", text: errorText });
         }
       };
 
       xhr.onerror = () => {
         setUploading(false);
-        setMessage({ type: "error", text: "Lỗi kết nối khi tải file lên storage." });
+        setMessage({ type: "error", text: "Lỗi kết nối khi tải file." });
       };
 
       xhr.ontimeout = () => {
         setUploading(false);
-        setMessage({ type: "error", text: "Tải file lên storage quá hạn thời gian." });
+        setMessage({ type: "error", text: "Tải file quá hạn thời gian." });
       };
 
-      xhr.send(upload.file);
+      xhr.send(formData);
     } catch (err) {
       setUploading(false);
       setMessage({ type: "error", text: err instanceof Error ? err.message : "Khởi tạo upload thất bại." });
