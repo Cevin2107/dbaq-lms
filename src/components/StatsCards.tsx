@@ -29,7 +29,7 @@ export function StatsCards({ type, stats }: StatsCardsProps) {
             <div>
               <p className="text-xs font-medium text-slate-600">Điểm số</p>
               <p className="text-2xl font-bold bg-gradient-to-r from-indigo-600 to-violet-600 bg-clip-text text-transparent">
-                {stats.score?.toFixed(1)}/{stats.maxScore || 10}
+                {stats.score !== undefined ? parseFloat(stats.score.toFixed(2)).toString().replace(".", ",") : "0"}/{stats.maxScore || 10}
               </p>
             </div>
           </div>

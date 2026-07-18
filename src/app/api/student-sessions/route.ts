@@ -121,6 +121,23 @@ export async function PUT(req: Request) {
       return NextResponse.json({ success: true, skipped: true });
     }
 
+    const answers = currentSession?.draft_answers || {};
+    const answeredCount = Object.keys(answers).filter(k => k !== "__sessionMeta").length;
+
+    if (status === "exited" && answeredCount === 0) {
+      const { error: deleteError } = await supabase
+        .from("student_sessions")
+        .delete()
+        .eq("id", sessionId);
+
+      if (deleteError) {
+        console.error("Session deletion error for empty session:", deleteError);
+        return NextResponse.json({ error: "Failed to delete empty session" }, { status: 500 });
+      }
+
+      return NextResponse.json({ success: true, deleted: true });
+    }
+
     const updateData: {
       status: string;
       last_activity_at: string;
@@ -254,6 +271,22 @@ export async function GET(req: Request) {
       const staleSessions = rawSessions.filter((session) => staleActiveIds.includes(session.id));
 
       for (const session of staleSessions) {
+        const answers = session.draft_answers || {};
+        const answeredCount = Object.keys(answers).filter(k => k !== "__sessionMeta").length;
+
+        if (answeredCount === 0) {
+          await supabase
+            .from("student_sessions")
+            .delete()
+            .eq("id", session.id);
+          
+          const idx = rawSessions.findIndex(s => s.id === session.id);
+          if (idx !== -1) {
+            rawSessions.splice(idx, 1);
+          }
+          continue;
+        }
+
           const { activeSince, activeDurationSeconds } = getSessionMeta(session.draft_answers);
           const activeSinceMs = activeSince ? new Date(activeSince).getTime() : NaN;
         const lastRelevantMs = new Date(session.last_activity_at || session.started_at || 0).getTime();

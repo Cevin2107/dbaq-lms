@@ -131,7 +131,7 @@ export const AssignmentQuestion = memo(function AssignmentQuestion({
             "shrink-0 rounded-xl px-2.5 py-1.5 text-xs sm:text-sm font-black ring-1 shadow-sm",
             isDark ? "bg-amber-500/10 text-amber-400 ring-amber-500/20" : "bg-gradient-to-b from-amber-50 to-orange-50 text-amber-700 ring-amber-200"
           )}>
-            {Number(q.points ?? 0).toFixed(2)}đ
+            {parseFloat(Number(q.points ?? 0).toFixed(2)).toString().replace(".", ",")}đ
           </span>
         )}
       </div>

@@ -24,7 +24,10 @@ export default async function ResultPage({
   params: Promise<{ id: string }>;
   searchParams: Promise<{ sid?: string }>;
 }) {
-  const formatPoints = (value: number | null | undefined) => Number(value ?? 0).toFixed(3);
+  const formatPoints = (value: number | null | undefined) => {
+    if (value == null) return "0";
+    return parseFloat(Number(value).toFixed(2)).toString().replace(".", ",");
+  };
   await _params;
   const { sid } = await searchParams;
 
@@ -174,7 +177,7 @@ export default async function ResultPage({
             ) : (
               <div>
                 <div className="text-7xl font-bold tracking-tight tabular-nums">
-                  {score}<span className="text-3xl font-medium text-blue-200">/{totalPoints}</span>
+                  {formatPoints(score)}<span className="text-3xl font-medium text-blue-200">/{formatPoints(totalPoints)}</span>
                 </div>
                 <div className="mt-3 text-2xl font-bold text-blue-100">{percentage}%</div>
               </div>
@@ -266,9 +269,9 @@ export default async function ResultPage({
                 "bg-slate-50 dark:bg-white/5 text-slate-600 dark:text-slate-300"
               )}>
                 {history[0].score > history[1].score
-                  ? `🎉 Cải thiện +${(history[0].score - history[1].score).toFixed(3)} so với lần trước!`
+                  ? `🎉 Cải thiện +${formatPoints(history[0].score - history[1].score)} so với lần trước!`
                   : history[0].score < history[1].score
-                  ? `Giảm ${(history[1].score - history[0].score).toFixed(3)} điểm. Cố gắng hơn nhé!`
+                  ? `Giảm ${formatPoints(history[1].score - history[0].score)} điểm. Cố gắng hơn nhé!`
                   : "Điểm không đổi so với lần trước."}
               </div>
             )}
@@ -287,7 +290,7 @@ export default async function ResultPage({
                   <div className="flex items-center gap-4">
                     <div className="flex h-10 w-10 items-center justify-center rounded-full bg-slate-100 dark:bg-white/5 text-[13px] font-bold text-slate-500 dark:text-slate-400">#{history.length - idx}</div>
                     <div>
-                      <p className={clsx("text-[15px] font-bold", h.id === sid ? "text-[#0066cc] dark:text-blue-400" : "text-slate-900 dark:text-slate-200")}>{h.score ?? 0}/{totalPoints} điểm</p>
+                      <p className={clsx("text-[15px] font-bold", h.id === sid ? "text-[#0066cc] dark:text-blue-400" : "text-slate-900 dark:text-slate-200")}>{formatPoints(h.score)}/{formatPoints(totalPoints)} điểm</p>
                       <p className="text-[13px] font-medium text-slate-500 dark:text-slate-400 mt-0.5">{new Date(h.submitted_at).toLocaleString("vi-VN")}</p>
                     </div>
                   </div>

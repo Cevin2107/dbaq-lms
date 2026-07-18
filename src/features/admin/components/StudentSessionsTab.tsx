@@ -3,7 +3,7 @@ import clsx from "clsx";
 import { useQuery } from "@tanstack/react-query";
 import { createClient } from "@supabase/supabase-js";
 import { formatVietnamTime } from "@/utils/date";
-import { formatDuration, getSessionDurationSeconds } from "@/lib/sessionTime";
+import { getSessionDurationSeconds } from "@/lib/sessionTime";
 import { useToast } from "@/components/ui/Toast";
 import { StudentWorkReviewPanel } from "./StudentWorkReviewPanel";
 import { 
@@ -12,15 +12,13 @@ import {
   CheckCircle2, 
   AlertCircle, 
   RefreshCw, 
-  ArrowLeft, 
   User, 
   Eye, 
   Search,
-  Target,
-  Timer,
   Zap,
-  FileCheck,
-  LogOut,
+  X,
+  Trophy,
+  FileText,
   Download
 } from "lucide-react";
 
@@ -138,116 +136,7 @@ export function StudentSessionsTab({ assignmentId }: { assignmentId: string }) {
     currentPage * itemsPerPage
   );
 
-  if (selectedSessionId) {
-    const session = sessions.find((s: any) => s.id === selectedSessionId);
-    if (!session) return null;
-    const isSubmitted = !!session.submissions?.id;
-    
-    return (
-      <div className="space-y-4 animate-fade-in">
-        {/* Header Section - Glassmorphism */}
-        <div className="relative overflow-hidden rounded-[2rem] bg-white/80 dark:bg-[#1d1d1f]/80 backdrop-blur-xl border border-black/5 dark:border-white/5 shadow-[0_4px_20px_rgba(0,0,0,0.03)] p-4 sm:p-6">
-          <div className="absolute inset-0 bg-gradient-to-br from-slate-50 via-indigo-50/40 to-violet-50/40 pointer-events-none" />
-          
-          <div className="relative flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
-            <div className="flex items-center gap-3">
-              <button
-                onClick={() => setSelectedSessionId(null)}
-                className="flex-shrink-0 flex items-center justify-center h-10 w-10 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 hover:text-[#0066cc] dark:hover:text-[#0066cc] hover:bg-blue-50 dark:hover:bg-blue-900/20 transition-all duration-300 group"
-              >
-                <ArrowLeft className="h-4 w-4 group-hover:-translate-x-0.5 transition-transform" />
-              </button>
-              
-              <div className="flex items-center gap-2.5">
-                <div className="relative group">
-                  <div className="relative flex h-11 w-11 items-center justify-center rounded-2xl bg-[#0066cc]/10 text-[#0066cc]">
-                    <User className="h-5 w-5" />
-                  </div>
-                </div>
-                
-                <div className="min-w-0">
-                  <h2 className="text-[17px] font-bold text-slate-900 dark:text-white tracking-[-0.01em] truncate">
-                    {session.student_name}
-                  </h2>
-                  <div className="flex items-center gap-1.5 mt-0.5">
-                    <Clock className="h-3 w-3 text-slate-400" />
-                    <p className="text-[13px] text-slate-500 dark:text-slate-400">Bắt đầu: {formatVietnamTime(new Date(session.started_at))}</p>
-                  </div>
-                </div>
-              </div>
-            </div>
-            
-            <div className="flex items-center gap-2 flex-shrink-0">
-              {isSubmitted ? (
-                <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-gradient-to-r from-emerald-500 to-teal-500 text-white shadow-md shadow-emerald-500/30">
-                  <FileCheck className="h-4 w-4" />
-                  <span className="font-bold text-xs">Đã nộp · {session.submissions.score}đ</span>
-                </div>
-              ) : session.status === "exited" ? (
-                <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-gradient-to-r from-rose-500 to-red-500 text-white shadow-md shadow-rose-500/30">
-                  <LogOut className="h-4 w-4" />
-                  <span className="font-bold text-xs">Đã thoát</span>
-                </div>
-              ) : (
-                <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-gradient-to-r from-amber-500 to-orange-500 text-white shadow-md shadow-amber-500/30 animate-pulse">
-                  <Zap className="h-4 w-4" />
-                  <span className="font-bold text-xs">Đang làm</span>
-                </div>
-              )}
-            </div>
-          </div>
-        </div>
 
-        {/* Detail Card - Glassmorphism */}
-        <div className="relative overflow-hidden rounded-[2rem] bg-white/80 dark:bg-[#1d1d1f]/80 backdrop-blur-xl border border-black/5 dark:border-white/5 shadow-[0_4px_20px_rgba(0,0,0,0.03)] p-4 sm:p-6">
-          <div className="absolute inset-0 bg-gradient-to-br from-slate-50 via-blue-50/30 to-purple-50/30 pointer-events-none" />
-          
-          <div className="relative">
-            {detailLoading ? (
-              <div className="py-12 flex flex-col items-center justify-center">
-                <div className="relative">
-                  <div className="absolute inset-0 bg-indigo-500/20 rounded-full blur-xl animate-pulse" />
-                  <RefreshCw className="relative h-10 w-10 text-indigo-500 animate-spin" />
-                </div>
-                <p className="text-slate-600 text-xs mt-4 font-medium">Đang tải chi tiết bài làm...</p>
-              </div>
-            ) : detailData ? (
-              <div className="space-y-4">
-                <StudentWorkReviewPanel
-                  questions={detailData.questions || []}
-                  startedAt={session.started_at}
-                  isSubmitted={isSubmitted}
-                  isPaused={session.status === "exited"}
-                  pausedAt={session.last_activity_at}
-                  submissionId={session.submissions?.id}
-                  submissionScore={session.submissions?.score}
-                  submissionDurationSeconds={detailData?.submission?.durationSeconds}
-                  durationSeconds={detailData?.submission?.durationSeconds ?? detailData?.session?.durationSeconds ?? getSessionDurationSeconds(session)}
-                  answeredCountOverride={
-                    detailData?.draft_answers
-                      ? Object.keys(detailData.draft_answers).filter(k => k !== "__sessionMeta").length
-                      : undefined
-                  }
-                  exitCount={session.exit_count || 0}
-                  onRefresh={async () => {
-                    await Promise.all([refetchDetail(), refetch()]);
-                  }}
-                  notify={(message, type) => {
-                    addToast({ title: message, variant: type });
-                  }}
-                />
-              </div>
-            ) : (
-              <div className="text-center py-10">
-                <AlertCircle className="h-10 w-10 text-slate-300 mx-auto mb-3" />
-                <p className="text-slate-500 font-medium text-sm">Không tìm thấy chi tiết bài làm.</p>
-              </div>
-            )}
-          </div>
-        </div>
-      </div>
-    );
-  }
 
   // Main sessions list view
   return (
@@ -340,119 +229,116 @@ export function StudentSessionsTab({ assignmentId }: { assignmentId: string }) {
         </div>
       ) : (
         <div className="grid grid-cols-1 gap-4">
-          {paginatedSessions.map((s: any) => (
-            <div 
-              key={s.id} 
-              className="group relative overflow-hidden rounded-[2rem] bg-white/80 dark:bg-[#1d1d1f]/80 backdrop-blur-xl border border-black/5 dark:border-white/5 shadow-[0_4px_20px_rgba(0,0,0,0.03)] hover:shadow-lg transition-all duration-300 p-4 sm:p-5"
-            >
-              {/* Top gradient indicator */}
-              <div className={`absolute top-0 left-0 right-0 h-1 ${
-                s.submissions?.id 
-                  ? 'bg-gradient-to-r from-emerald-500 to-teal-500'
-                  : s.status === "exited"
-                  ? 'bg-gradient-to-r from-rose-500 to-red-500'
-                  : 'bg-gradient-to-r from-amber-500 to-orange-500'
-              }`} />
-              
-              <div className="relative flex flex-col sm:flex-row sm:items-center justify-between gap-3 sm:gap-4">
-                {/* Student Info */}
-                <div className="flex-1 min-w-0">
-                  <div className="flex items-start gap-3 mb-3">
-                    {/* Avatar */}
-                    <div className="relative group/avatar flex-shrink-0">
-                      <div className="relative flex h-11 w-11 items-center justify-center rounded-2xl bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-400">
-                        <User className="h-5 w-5" />
-                      </div>
+          {paginatedSessions.map((s: any) => {
+            const isSubmitted = !!s.submissions?.id;
+            const duration = s.submissions?.id 
+              ? Math.round((s.submissions.duration_seconds || s.submissions.durationSeconds || 0) / 60)
+              : Math.round(getSessionDurationSeconds(s) / 60);
+
+            // Score color based on value
+            const score = s.submissions?.score ?? 0;
+            let scoreColorClass = "from-slate-500 to-slate-600";
+            if (score >= 8) scoreColorClass = "from-emerald-500 to-teal-600";
+            else if (score >= 6) scoreColorClass = "from-blue-500 to-cyan-600";
+            else if (score >= 4) scoreColorClass = "from-amber-500 to-orange-600";
+            else scoreColorClass = "from-rose-500 to-red-600";
+
+            const questionsAnswered = s.draft_answers
+              ? Object.keys(s.draft_answers || {}).filter(k => k !== "__sessionMeta").length
+              : 0;
+
+            const cardBorderClass = isSubmitted 
+              ? 'border-slate-200/50 dark:border-white/5 shadow-indigo-200/10' 
+              : s.status === "exited"
+              ? 'border-rose-200/50 dark:border-rose-800/30 shadow-rose-200/10'
+              : 'border-amber-200/50 dark:border-amber-800/30 shadow-amber-200/10';
+
+            const cardBgHoverClass = isSubmitted
+              ? 'hover:shadow-indigo-200/30 dark:hover:shadow-indigo-900/20'
+              : s.status === "exited"
+              ? 'hover:shadow-rose-200/30 dark:hover:shadow-rose-900/20'
+              : 'hover:shadow-amber-200/30 dark:hover:shadow-amber-900/20';
+
+            return (
+              <div 
+                key={s.id} 
+                className={`group relative overflow-hidden rounded-2xl border p-4 text-sm transition-all duration-300 bg-white/60 dark:bg-[#1d1d1f]/60 backdrop-blur-sm hover:bg-white/80 dark:hover:bg-[#1d1d1f]/80 hover:shadow-lg ${cardBorderClass} ${cardBgHoverClass} cursor-pointer`}
+                onClick={() => setSelectedSessionId(s.id)}
+              >
+                <div className="flex items-start gap-3">
+                  {/* Avatar */}
+                  <div className="relative group/avatar flex-shrink-0">
+                    <div className="relative flex h-11 w-11 items-center justify-center rounded-2xl bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-400">
+                      <User className="h-5 w-5" />
                     </div>
-                    
-                    {/* Info */}
-                    <div className="flex-1 min-w-0">
-                      <div className="flex items-center gap-2 mb-1.5 flex-wrap">
-                        <h3 className="text-[17px] font-bold text-slate-900 dark:text-white truncate tracking-[-0.01em]">{s.student_name}</h3>
-                        {s.submissions?.id ? (
-                          <div className="flex items-center gap-1 px-2.5 py-0.5 rounded-lg bg-gradient-to-r from-emerald-500 to-teal-500 text-white text-xs font-bold shadow-md shadow-emerald-500/30">
-                            <FileCheck className="h-3 w-3" />
-                            Đã nộp
-                          </div>
-                        ) : s.status === "exited" ? (
-                          <div className="flex items-center gap-1 px-2.5 py-0.5 rounded-lg bg-gradient-to-r from-rose-500 to-red-500 text-white text-xs font-bold shadow-md shadow-rose-500/30">
-                            <LogOut className="h-3 w-3" />
-                            Đã thoát
-                          </div>
-                        ) : (
-                          <div className="flex items-center gap-1 px-2.5 py-0.5 rounded-lg bg-gradient-to-r from-amber-500 to-orange-500 text-white text-xs font-bold shadow-md shadow-amber-500/30 animate-pulse">
-                            <Zap className="h-3 w-3" />
-                            Đang làm
-                          </div>
-                        )}
-                      </div>
-                      
-                      <div className="grid grid-cols-1 sm:grid-cols-3 gap-1.5 sm:gap-2 text-xs text-slate-500 mt-2">
-                        <div className="flex items-center gap-1.5">
-                          <Clock className="h-3 w-3 flex-shrink-0 text-blue-500" />
-                          <span className="truncate">Bắt đầu: {formatVietnamTime(new Date(s.started_at))}</span>
-                        </div>
-                        <div className="flex items-center gap-1.5">
-                          <RefreshCw className="h-3 w-3 flex-shrink-0 text-emerald-500" />
-                          <span className="truncate">Cập nhật lúc: {formatVietnamTime(new Date(s.last_activity_at))}</span>
-                        </div>
-                        <div className="flex items-center gap-1.5">
-                          <AlertCircle className="h-3 w-3 flex-shrink-0 text-rose-500" />
-                          <span className="truncate">Số lần thoát: <strong className="text-rose-600">{s.exit_count || 0}</strong> lần</span>
-                        </div>
-                      </div>
-                      
-                      {/* Real-time stats for active sessions */}
-                      {!s.submissions?.id && (
-                        <div className="mt-2 flex items-center gap-3 flex-wrap">
-                          {s.draft_answers && Object.keys(s.draft_answers || {}).filter(k => k !== "__sessionMeta").length > 0 && (
-                            <div className="flex items-center gap-1.5 text-sm font-medium text-indigo-600 bg-indigo-50 px-2.5 py-1 rounded-lg">
-                              <Target className="h-3 w-3" />
-                              <span>{Object.keys(s.draft_answers || {}).filter(k => k !== "__sessionMeta").length} câu đã lưu</span>
-                            </div>
+                  </div>
+
+                  <div className="flex-1 min-w-0">
+                    <div className="flex items-start justify-between gap-4">
+                      <div className="flex-1 min-w-0">
+                        <div className="flex items-center gap-2 mb-1 flex-wrap">
+                          <h3 className="text-[17px] font-bold text-slate-900 dark:text-white truncate tracking-[-0.01em] group-hover:text-[#0066cc] dark:group-hover:text-blue-400 transition-colors">
+                            {s.student_name}
+                          </h3>
+                          {isSubmitted ? (
+                            <span className="px-2 py-0.5 rounded-lg bg-emerald-100/60 dark:bg-emerald-900/20 backdrop-blur-sm text-xs font-semibold text-emerald-700 dark:text-emerald-400">
+                              Đã nộp
+                            </span>
+                          ) : s.status === "exited" ? (
+                            <span className="px-2 py-0.5 rounded-lg bg-rose-100/60 dark:bg-rose-900/20 backdrop-blur-sm text-xs font-semibold text-rose-700 dark:text-rose-400">
+                              Đã thoát
+                            </span>
+                          ) : (
+                            <span className="px-2 py-0.5 rounded-lg bg-amber-100/60 dark:bg-amber-900/20 backdrop-blur-sm text-xs font-semibold text-amber-700 dark:text-amber-400 animate-pulse">
+                              Đang làm
+                            </span>
                           )}
-                          <div className="flex items-center gap-1.5 text-sm font-medium text-purple-600 bg-purple-50 px-2.5 py-1 rounded-lg">
-                            <Timer className="h-3 w-3" />
-                            <span>{formatDuration(getSessionDurationSeconds(s))}</span>
-                          </div>
                         </div>
-                      )}
-                      
-                      {s.submissions?.id && (
-                        <div className="mt-2 flex items-center gap-1.5">
-                          <div className="px-3 py-1.5 rounded-lg bg-gradient-to-r from-indigo-50 to-violet-50 border border-indigo-200/50">
-                            <span className="text-base font-bold bg-gradient-to-r from-indigo-600 to-violet-600 bg-clip-text text-transparent">
-                              {s.submissions.score} điểm
+
+                        <div className="flex flex-wrap items-center gap-x-3 gap-y-1.5 text-xs text-slate-500 mt-1.5">
+                          <span className="inline-flex items-center gap-1">
+                            <Clock className="h-3.5 w-3.5" />
+                            {duration} phút
+                          </span>
+                          <span>•</span>
+                          <span>Bắt đầu: {formatVietnamTime(new Date(s.started_at))}</span>
+                          <span>•</span>
+                          <span>Cập nhật: {formatVietnamTime(new Date(s.last_activity_at))}</span>
+                          {s.exit_count > 0 && (
+                            <>
+                              <span>•</span>
+                              <span className="text-rose-600 dark:text-rose-400 font-medium">Thoát: {s.exit_count} lần</span>
+                            </>
+                          )}
+                        </div>
+                      </div>
+
+                      <div className="text-right flex-shrink-0 flex items-center gap-2">
+                        {isSubmitted ? (
+                          <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-xl bg-gradient-to-r shadow-md backdrop-blur-sm border border-white/50 dark:border-white/5 bg-slate-50 dark:bg-slate-800">
+                            <div className={`inline-flex h-6 w-6 items-center justify-center rounded-lg bg-gradient-to-br ${scoreColorClass}`}>
+                              <Trophy className="h-3.5 w-3.5 text-white" />
+                            </div>
+                            <span className={`font-bold text-lg bg-gradient-to-r ${scoreColorClass} bg-clip-text text-transparent`}>
+                              {parseFloat(Number(score).toFixed(2)).toString().replace(".", ",")}
                             </span>
                           </div>
+                        ) : (
+                          <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-xl bg-amber-100/80 dark:bg-amber-900/20 backdrop-blur-sm border border-amber-200/50 dark:border-amber-800/30">
+                            <FileText className="h-4 w-4 text-amber-700 dark:text-amber-400" />
+                            <span className="font-bold text-amber-900 dark:text-amber-200">{questionsAnswered} câu</span>
+                          </div>
+                        )}
+                        <div className="flex h-9 w-9 items-center justify-center rounded-full bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-400 group-hover:bg-[#0066cc]/10 dark:group-hover:bg-blue-900/30 group-hover:text-[#0066cc] dark:group-hover:text-blue-400 transition-all">
+                          <Eye className="h-4 w-4" />
                         </div>
-                      )}
+                      </div>
                     </div>
                   </div>
                 </div>
-
-                {/* Actions */}
-                <div className="flex items-center gap-2 flex-shrink-0">
-                  <button
-                    onClick={() => setSelectedSessionId(s.id)}
-                    className="group/btn flex items-center gap-1.5 px-4 py-2.5 bg-[#0066cc] hover:bg-[#005bb5] text-white rounded-full font-semibold text-[14px] shadow-lg shadow-blue-500/20 transition-all duration-300"
-                  >
-                    <Eye className="h-4 w-4" />
-                    <span className="hidden sm:inline">Xem chi tiết</span>
-                    <span className="sm:hidden">Chi tiết</span>
-                  </button>
-                  
-                  <button
-                    onClick={() => handleDeleteSession(s.id)}
-                    className="group/del flex items-center justify-center h-10 w-10 bg-slate-100 dark:bg-slate-800 rounded-full text-slate-500 hover:text-red-600 hover:bg-red-50 dark:hover:bg-red-900/20 transition-all duration-300"
-                    aria-label="Xóa phiên làm bài"
-                  >
-                    <Trash2 className="h-3.5 w-3.5 group-hover/del:scale-110 transition-transform" />
-                  </button>
-                </div>
               </div>
-            </div>
-          ))}
+            );
+          })}
         </div>
       )}
 
@@ -488,6 +374,100 @@ export function StudentSessionsTab({ assignmentId }: { assignmentId: string }) {
           </button>
         </div>
       )}
+      {/* Detail Modal - Glassmorphic */}
+      {selectedSessionId && (() => {
+        const session = sessions.find((s: any) => s.id === selectedSessionId);
+        if (!session) return null;
+        const isSubmitted = !!session.submissions?.id;
+        return (
+          <div className="fixed inset-0 bg-black/50 dark:bg-black/70 backdrop-blur-sm flex items-center justify-center z-50 p-4 overflow-y-auto animate-fade-in">
+            <div className="bg-white dark:bg-[#1d1d1f] rounded-3xl shadow-2xl border border-black/5 dark:border-white/10 max-w-5xl w-full max-h-[90vh] overflow-hidden flex flex-col animate-scale-in">
+              {detailLoading ? (
+                <div className="p-12 text-center flex-1 flex items-center justify-center">
+                  <div className="space-y-4">
+                    <div className="inline-flex h-16 w-16 items-center justify-center rounded-2xl bg-gradient-to-br from-indigo-100 to-violet-100 dark:from-indigo-900/30 dark:to-violet-900/30">
+                      <div className="h-8 w-8 border-3 border-indigo-600 dark:border-indigo-400 border-t-transparent rounded-full animate-spin" />
+                    </div>
+                    <p className="text-slate-600 dark:text-slate-400 font-medium">Đang tải chi tiết...</p>
+                  </div>
+                </div>
+              ) : detailData ? (
+                <>
+                  {/* Sticky Header */}
+                  <div className="sticky top-0 bg-white/95 dark:bg-[#1d1d1f]/95 backdrop-blur-xl border-b border-black/5 dark:border-white/5 p-6 flex items-center justify-between z-10">
+                    <div className="flex items-center gap-4">
+                      <div className="relative">
+                        <div className="absolute inset-0 bg-gradient-to-br from-indigo-500 to-violet-600 rounded-2xl blur opacity-30" />
+                        <div className={`relative flex h-12 w-12 items-center justify-center rounded-2xl shadow-lg ${
+                          isSubmitted 
+                            ? 'bg-gradient-to-br from-emerald-500 to-teal-600 shadow-emerald-500/30' 
+                            : 'bg-gradient-to-br from-amber-500 to-orange-600 shadow-amber-500/30'
+                        }`}>
+                          {isSubmitted ? (
+                            <CheckCircle2 className="h-6 w-6 text-white" />
+                          ) : (
+                            <Clock className="h-6 w-6 text-white" />
+                          )}
+                        </div>
+                      </div>
+                      <div>
+                        <h2 className="text-xl font-bold bg-gradient-to-r from-slate-900 to-slate-700 dark:from-white dark:to-slate-300 bg-clip-text text-transparent">
+                          {isSubmitted ? 'Bài đã nộp' : 'Bài đang làm'}
+                        </h2>
+                        <p className="text-sm text-slate-600 dark:text-slate-400 font-medium">
+                          {session.student_name}
+                        </p>
+                      </div>
+                    </div>
+                    <button
+                      onClick={() => setSelectedSessionId(null)}
+                      className="flex h-10 w-10 items-center justify-center rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 hover:bg-red-100 hover:text-red-600 dark:hover:bg-red-900/30 dark:hover:text-red-400 transition-all"
+                    >
+                      <X className="h-5 w-5" />
+                    </button>
+                  </div>
+
+                  <div className="flex-1 overflow-y-auto p-6 space-y-4 bg-slate-50/50 dark:bg-black/20">
+                    <StudentWorkReviewPanel
+                      questions={detailData.questions || []}
+                      startedAt={session.started_at}
+                      isSubmitted={isSubmitted}
+                      isPaused={session.status === "exited"}
+                      pausedAt={session.last_activity_at}
+                      submissionId={session.submissions?.id}
+                      submissionScore={session.submissions?.score}
+                      submissionDurationSeconds={detailData?.submission?.durationSeconds}
+                      durationSeconds={detailData?.submission?.durationSeconds ?? detailData?.session?.durationSeconds ?? getSessionDurationSeconds(session)}
+                      answeredCountOverride={
+                        detailData?.draft_answers
+                          ? Object.keys(detailData.draft_answers).filter(k => k !== "__sessionMeta").length
+                          : undefined
+                      }
+                      exitCount={session.exit_count || 0}
+                      onRefresh={async () => {
+                        await Promise.all([refetchDetail(), refetch()]);
+                      }}
+                      notify={(message, type) => {
+                        addToast({ title: message, variant: type });
+                      }}
+                    />
+                  </div>
+                </>
+              ) : (
+                <div className="p-12 text-center flex-1 flex items-center justify-center">
+                  <div className="space-y-4">
+                    <div className="inline-flex h-16 w-16 items-center justify-center rounded-2xl bg-gradient-to-br from-red-100 to-rose-100">
+                      <AlertCircle className="h-8 w-8 text-red-600" />
+                    </div>
+                    <p className="text-red-600 font-semibold">Không thể tải dữ liệu</p>
+                    <p className="text-sm text-slate-600">Vui lòng thử lại sau</p>
+                  </div>
+                </div>
+              )}
+            </div>
+          </div>
+        );
+      })()}
     </div>
   );
 }

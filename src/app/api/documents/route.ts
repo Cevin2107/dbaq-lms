@@ -212,7 +212,7 @@ export async function POST(req: Request) {
             const admin = createSupabaseAdmin();
             const arrayBuffer = await file.arrayBuffer();
             const uniquePath = `doc-${randomUUID()}.${extension}`;
-            
+
             const { error: uploadError } = await admin.storage
               .from("documents")
               .upload(uniquePath, Buffer.from(arrayBuffer), {

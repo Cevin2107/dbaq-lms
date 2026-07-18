@@ -27,7 +27,10 @@ export function ResultQuestionsAccordion({
 
   const answerMap = new Map(answers?.map((a) => [a.question_id, a]) || []);
 
-  const formatPoints = (value: number | null | undefined) => Number(value ?? 0).toFixed(3);
+  const formatPoints = (value: number | null | undefined) => {
+    if (value == null) return "0";
+    return parseFloat(Number(value).toFixed(2)).toString().replace(".", ",");
+  };
 
   if (isScoreHidden) {
     return (

@@ -497,8 +497,8 @@ export function OverviewTab({ assignmentId, initialData }: { assignmentId: strin
               <div className="divide-y divide-slate-200/70 dark:divide-white/10">
                 {[
                   { label: "Lượt nộp", value: analytics.submissionCount || 0, icon: GraduationCap },
-                  { label: "Điểm trung bình", value: averageScore.toFixed(2), icon: Target },
-                  { label: "Điểm cao nhất", value: maxScore.toFixed(2), icon: Trophy },
+                  { label: "Điểm trung bình", value: averageScore.toFixed(2).replace(".", ","), icon: Target },
+                  { label: "Điểm cao nhất", value: maxScore.toFixed(2).replace(".", ","), icon: Trophy },
                   { label: "Thời gian TB", value: `${averageDuration} phút`, icon: Clock3 },
                 ].map((item) => {
                   const Icon = item.icon;

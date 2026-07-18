@@ -23,14 +23,14 @@ export async function POST(req: Request) {
     }
 
     let catboxUrl: string | null = null;
-    
+
     try {
       const form = new FormData();
       form.append("reqtype", "fileupload");
       if (process.env.CATBOX_USERHASH) {
         form.append("userhash", process.env.CATBOX_USERHASH);
       }
-      
+
       form.append("fileToUpload", file);
 
       const catboxRes = await fetch("https://catbox.moe/user/api.php", {
@@ -61,7 +61,7 @@ export async function POST(req: Request) {
 
     // Fallback to Supabase if enabled
     if (process.env.ENABLE_SUPABASE_IMAGE_BACKUP !== "true") {
-       return NextResponse.json({ error: "Catbox upload failed and Supabase backup is disabled" }, { status: 500 });
+      return NextResponse.json({ error: "Catbox upload failed and Supabase backup is disabled" }, { status: 500 });
     }
 
     const supabase = createSupabaseAdmin();

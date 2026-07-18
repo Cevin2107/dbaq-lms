@@ -103,7 +103,14 @@ export function AssignmentTaking({ assignment, questions: initialQuestions, init
     }).catch(err => console.error(err));
 
     fetch(`/api/student-sessions/check-deadline?sessionId=${savedSessionId}`)
-      .then(res => res.json())
+      .then(res => {
+        if (res.status === 404) {
+          localStorage.removeItem(`session-${assignment.id}`);
+          router.push(`/assignments/${assignment.id}/start`);
+          throw new Error("Session not found");
+        }
+        return res.json();
+      })
       .then(data => {
         if (data.deadlineAt) setServerDeadline(new Date(data.deadlineAt));
       })
@@ -124,7 +131,13 @@ export function AssignmentTaking({ assignment, questions: initialQuestions, init
     const fetchDeadline = async () => {
       try {
         const res = await fetch(`/api/student-sessions/check-deadline?sessionId=${sessionId}`);
-        if (!res.ok) return;
+        if (!res.ok) {
+          if (res.status === 404) {
+            localStorage.removeItem(`session-${assignment.id}`);
+            router.push(`/assignments/${assignment.id}/start`);
+          }
+          return;
+        }
         const data = await res.json();
         if (data.deadlineAt) {
           setServerDeadline(prev => {

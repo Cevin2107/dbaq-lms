@@ -15,8 +15,8 @@ import {
   FileText, 
   Trash2,
   RefreshCw,
-  BarChart3,
-  Edit3
+  Edit3,
+  BarChart3
 } from "lucide-react";
 
 interface StudentStats {
@@ -569,11 +569,11 @@ export default function AdminStatsPage() {
                 return (
                   <>
                     {paginatedStudents.map((student) => {
+                const avgScoreVal = student.submissions.length
+                  ? student.submissions.reduce((sum, s) => sum + s.score, 0) / student.submissions.length
+                  : 0;
                 const avgScore = student.submissions.length
-                  ? (
-                      student.submissions.reduce((sum, s) => sum + s.score, 0) /
-                      student.submissions.length
-                    ).toFixed(1)
+                  ? parseFloat(avgScoreVal.toFixed(2)).toString().replace(".", ",")
                   : "0";
                 const isExpanded = expandedStudent === student.studentName;
 
@@ -827,7 +827,7 @@ export default function AdminStatsPage() {
                                                   <Trophy className="h-3.5 w-3.5 text-white" />
                                                 </div>
                                                 <span className={`font-bold text-lg bg-gradient-to-r ${scoreColorClass} bg-clip-text text-transparent`}>
-                                                  {sub.score}
+                                                  {parseFloat(Number(sub.score ?? 0).toFixed(2)).toString().replace(".", ",")}
                                                 </span>
                                               </div>
                                             </div>
@@ -972,21 +972,21 @@ export default function AdminStatsPage() {
 
       {/* Detail Modal - Glassmorphic */}
       {selectedItem && (
-        <div className="fixed inset-0 bg-slate-900/60 backdrop-blur-sm flex items-center justify-center z-50 p-4 overflow-y-auto animate-fade-in">
-          <div className="bg-slate-50/95 backdrop-blur-2xl rounded-3xl shadow-2xl shadow-slate-300/40 border border-slate-200/80 max-w-5xl w-full max-h-[90vh] overflow-hidden flex flex-col animate-scale-in">
+        <div className="fixed inset-0 bg-black/50 dark:bg-black/70 backdrop-blur-sm flex items-center justify-center z-50 p-4 overflow-y-auto animate-fade-in">
+          <div className="bg-white dark:bg-[#1d1d1f] rounded-3xl shadow-2xl border border-black/5 dark:border-white/10 max-w-5xl w-full max-h-[90vh] overflow-hidden flex flex-col animate-scale-in">
             {loadingDetail ? (
               <div className="p-12 text-center flex-1 flex items-center justify-center">
                 <div className="space-y-4">
-                  <div className="inline-flex h-16 w-16 items-center justify-center rounded-2xl bg-gradient-to-br from-indigo-100 to-violet-100">
-                    <div className="h-8 w-8 border-3 border-indigo-600 border-t-transparent rounded-full animate-spin" />
+                  <div className="inline-flex h-16 w-16 items-center justify-center rounded-2xl bg-gradient-to-br from-indigo-100 to-violet-100 dark:from-indigo-900/30 dark:to-violet-900/30">
+                    <div className="h-8 w-8 border-3 border-indigo-600 dark:border-indigo-400 border-t-transparent rounded-full animate-spin" />
                   </div>
-                  <p className="text-slate-600 font-medium">Đang tải chi tiết...</p>
+                  <p className="text-slate-600 dark:text-slate-400 font-medium">Đang tải chi tiết...</p>
                 </div>
               </div>
             ) : detailData ? (
               <>
                 {/* Sticky Header */}
-                <div className="sticky top-0 bg-slate-50/95 backdrop-blur-xl border-b border-slate-200/80 p-6 flex items-center justify-between z-10">
+                <div className="sticky top-0 bg-white/95 dark:bg-[#1d1d1f]/95 backdrop-blur-xl border-b border-black/5 dark:border-white/5 p-6 flex items-center justify-between z-10">
                   <div className="flex items-center gap-4">
                     <div className="relative">
                       <div className="absolute inset-0 bg-gradient-to-br from-indigo-500 to-violet-600 rounded-2xl blur opacity-30" />
@@ -1003,17 +1003,17 @@ export default function AdminStatsPage() {
                       </div>
                     </div>
                     <div>
-                      <h2 className="text-xl font-bold bg-gradient-to-r from-slate-900 to-slate-700 bg-clip-text text-transparent">
+                      <h2 className="text-xl font-bold bg-gradient-to-r from-slate-900 to-slate-700 dark:from-white dark:to-slate-300 bg-clip-text text-transparent">
                         {selectedItem.type === 'submission' ? 'Bài đã nộp' : 'Bài đang làm'}
                       </h2>
-                      <p className="text-sm text-slate-600 font-medium">
+                      <p className="text-sm text-slate-600 dark:text-slate-400 font-medium">
                         {selectedItem.type === 'submission' 
                           ? `${detailData.submission?.studentName || ''} - ${detailData.submission?.assignmentTitle || ''}`
                           : `${detailData.session?.studentName || ''} - ${detailData.session?.assignmentTitle || ''}`
                         }
                       </p>
                       {selectedItem.type === 'session' && autoRefresh && (
-                        <p className="text-xs text-emerald-600 mt-1 flex items-center gap-1.5">
+                        <p className="text-xs text-emerald-600 dark:text-emerald-400 mt-1 flex items-center gap-1.5">
                           <span className="h-2 w-2 rounded-full bg-emerald-500 animate-pulse block" />
                           Cập nhật tự động (3s)
                         </p>
@@ -1022,13 +1022,13 @@ export default function AdminStatsPage() {
                   </div>
                   <button
                     onClick={closeDetail}
-                    className="flex h-10 w-10 items-center justify-center rounded-xl bg-slate-100/80 backdrop-blur-sm text-slate-600 hover:bg-red-100 hover:text-red-600 hover:shadow-md transition-all"
+                    className="flex h-10 w-10 items-center justify-center rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 hover:bg-red-100 hover:text-red-600 dark:hover:bg-red-900/30 dark:hover:text-red-400 transition-all"
                   >
                     <CloseIcon className="h-5 w-5" />
                   </button>
                 </div>
 
-                <div className="flex-1 overflow-y-auto p-6 space-y-4 bg-gradient-to-b from-slate-50 to-indigo-50/30">
+                <div className="flex-1 overflow-y-auto p-6 space-y-4 bg-slate-50/50 dark:bg-black/20">
                   <StudentWorkReviewPanel
                     questions={detailData.questions}
                     isSubmitted={selectedItem.type === 'submission'}

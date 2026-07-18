@@ -67,7 +67,7 @@ export function QuestionDetailCard({
           </span>
           <span className="inline-flex items-center gap-1.5 text-xs font-semibold text-indigo-600 px-2.5 py-1 rounded-lg bg-indigo-100/60 backdrop-blur-sm border border-indigo-200/50">
             <Trophy className="h-3 w-3" />
-            {q.points.toFixed(1)} điểm
+            {parseFloat(q.points.toFixed(2)).toString().replace(".", ",")} điểm
           </span>
         </div>
         <div className="flex items-center gap-2">
