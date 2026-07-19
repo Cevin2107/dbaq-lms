@@ -8,9 +8,6 @@ export async function DELETE(
   { params }: { params: Promise<{ id: string }> }
 ) {
   const isAuth = await checkAdminAuth();
-  if (!isAuth) {
-    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-  }
 
   try {
     const { id } = await params;
@@ -26,9 +23,14 @@ export async function DELETE(
       .eq("id", id)
       .single();
 
-    if (fetchError) {
+    if (fetchError || !session) {
       console.error("Session fetch error:", fetchError);
       return NextResponse.json({ error: "Failed to fetch session" }, { status: 500 });
+    }
+
+    // Nếu không phải Admin và session đã nộp bài rồi -> không cho phép xóa
+    if (!isAuth && session.submission_id) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
     // Nếu có submission, xóa submission trước (cascade sẽ xóa answers)

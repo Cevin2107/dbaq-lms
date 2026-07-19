@@ -388,7 +388,9 @@ export function AssignmentTaking({ assignment, questions: initialQuestions, init
       localStorage.removeItem(`session-${assignment.id}`);
       localStorage.removeItem(`student-name-${assignment.id}`);
     } else {
-      if (sessionId) fetch(`/api/student-sessions/${sessionId}`, { method: "DELETE" }).catch(e=>e);
+      if (sessionId) {
+        try { await fetch(`/api/student-sessions/${sessionId}`, { method: "DELETE" }); } catch(e){}
+      }
       localStorage.removeItem(draftKey);
       localStorage.removeItem(`session-${assignment.id}`);
       localStorage.removeItem(`student-name-${assignment.id}`);
@@ -499,7 +501,7 @@ export function AssignmentTaking({ assignment, questions: initialQuestions, init
                 Lưu và thoát (Tiếp tục sau)
               </button>
               <button onClick={() => handleExitConfirm(false)} className={clsx("w-full rounded-full border px-4 py-3.5 text-[15px] font-bold transition-all active:scale-[0.98]", isDark ? "border-red-500/20 text-red-400 bg-red-500/10 hover:bg-red-500/20" : "border-red-200 text-red-600 bg-red-50 hover:bg-red-100")}>
-                Xoá bài (Làm lại cữ đầu)
+                Xoá bài (Làm lại từ đầu)
               </button>
               <button onClick={() => setShowExitConfirm(false)} className={clsx("w-full rounded-full px-4 py-3.5 text-[15px] font-bold transition-all active:scale-[0.98]", isDark ? "text-slate-400 hover:text-white hover:bg-white/10" : "text-slate-500 hover:text-slate-800 hover:bg-slate-100")} >
                 Hủy, quay lại bài
