@@ -84,9 +84,7 @@ export const AssignmentQuestion = memo(function AssignmentQuestion({
                   </div>
                 )}
                 <div className={clsx("prose prose-sm sm:prose-base max-w-none font-medium leading-relaxed", isDark ? "text-slate-200" : "text-slate-700")}>
-                  {q.content?.split('\n').map((line, i) => (
-                    <p key={i} className="mb-2 last:mb-0"><MathText text={line} /></p>
-                  ))}
+                  <MathText text={q.content || ""} />
                 </div>
               </div>
             </div>
@@ -118,9 +116,7 @@ export const AssignmentQuestion = memo(function AssignmentQuestion({
               )}
               {q.content && (
                 <div className={clsx("prose prose-sm sm:prose-base max-w-none font-semibold leading-relaxed mb-4", isDark ? "text-slate-200" : "text-slate-800")}>
-                  {q.content?.split('\n').map((line, i) => (
-                    <p key={i} className="mb-2 last:mb-0"><MathText text={line} /></p>
-                  ))}
+                  <MathText text={q.content} />
                 </div>
               )}
             </>
@@ -148,28 +144,25 @@ export const AssignmentQuestion = memo(function AssignmentQuestion({
                 className={clsx(
                   "group relative flex cursor-pointer items-start sm:items-center gap-3 rounded-2xl border px-4 py-3 sm:py-4 transition-all duration-300 overflow-hidden",
                   checked
-                    ? isDark 
-                      ? "border-blue-500 bg-blue-500/20 shadow-[0_4px_20px_rgba(0,102,204,0.15)] ring-1 ring-blue-500/50 z-10 scale-[1.02]" 
-                      : "border-transparent bg-[#0066cc] text-white shadow-md shadow-blue-500/30 z-10 scale-[1.02]"
+                    ? "border-transparent bg-[#0066cc] text-white shadow-md shadow-blue-500/30 z-10 scale-[1.02]"
                     : isDark 
-                      ? "border-white/10 bg-[#1d1d1f]/50 hover:bg-white/5 hover:border-white/20" 
+                      ? "border-white/10 bg-[#1d1d1f]/60 text-slate-200 hover:bg-white/10 hover:border-white/20 hover:text-white" 
                       : "border-black/5 bg-slate-50/50 text-slate-700 hover:border-[#0066cc]/30 hover:bg-white hover:shadow-sm"
                 )}
               >
-                {/* Background glow on selected */}
-                {checked && isDark && <div className="absolute inset-0 bg-gradient-to-br from-indigo-500/20 to-violet-500/20 animate-pulse pointer-events-none" style={{ animationDuration: '3s' }}/>}
-                {checked && !isDark && <div className="absolute inset-0 bg-gradient-to-r from-white/0 via-white/10 to-white/0 translate-x-[-100%] animate-[shimmer_2s_infinite] pointer-events-none" />}
+                {/* Background shimmer on selected */}
+                {checked && <div className="absolute inset-0 bg-gradient-to-r from-white/0 via-white/15 to-white/0 translate-x-[-100%] animate-[shimmer_2s_infinite] pointer-events-none" />}
 
                 <span className={clsx(
                   "flex h-6 w-6 sm:h-7 sm:w-7 shrink-0 items-center justify-center rounded-full text-xs sm:text-[13px] font-bold transition-all duration-300 relative z-10",
                   checked 
-                    ? isDark ? "bg-[#0066cc] text-white shadow-sm scale-110" : "bg-white text-[#0066cc] shadow-sm scale-110" 
-                    : isDark ? "bg-white/10 text-slate-400 group-hover:bg-white/20 group-hover:text-slate-200" : "bg-white text-slate-500 shadow-sm border border-black/5 group-hover:border-[#0066cc]/30 group-hover:text-[#0066cc]"
+                    ? "bg-white text-[#0066cc] shadow-sm scale-110" 
+                    : isDark ? "bg-white/10 text-slate-300 group-hover:bg-white/20 group-hover:text-white" : "bg-white text-slate-500 shadow-sm border border-black/5 group-hover:border-[#0066cc]/30 group-hover:text-[#0066cc]"
                 )}>
                   {val}
                 </span>
                 <input type="radio" name={`q-${q.id}`} className="sr-only" checked={checked} disabled={locked} onChange={() => onSetChoice(q.id, val)} />
-                {choice && <span className={clsx("flex-1 font-medium sm:text-[15px] pt-0.5 sm:pt-0 relative z-10", checked && isDark && "text-indigo-100")}><MathText text={choice} /></span>}
+                {choice && <span className="flex-1 font-medium sm:text-[15px] pt-0.5 sm:pt-0 relative z-10"><MathText text={choice} /></span>}
               </label>
             );
           })}

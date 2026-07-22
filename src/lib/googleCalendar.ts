@@ -1,7 +1,5 @@
-import { google } from "googleapis";
-
 // Setup Google auth
-const getCalendarClient = () => {
+const getCalendarClient = async () => {
   const email = process.env.GOOGLE_SERVICE_ACCOUNT_EMAIL;
   const privateKey = process.env.GOOGLE_PRIVATE_KEY;
   const calendarId = process.env.GOOGLE_CALENDAR_ID;
@@ -12,6 +10,7 @@ const getCalendarClient = () => {
   }
 
   try {
+    const { google } = await import("googleapis");
     const auth = new google.auth.JWT({
       email: email,
       key: privateKey.replace(/\\n/g, "\n"),
@@ -83,7 +82,7 @@ export async function createCalendarEvent(
   startTimeStr: string,
   endTimeStr: string
 ): Promise<string | null> {
-  const calendar = getCalendarClient();
+  const calendar = await getCalendarClient();
   if (!calendar) return null;
 
   try {
@@ -130,7 +129,7 @@ export async function createCalendarEvent(
  * If the event hasn't started yet, it deletes the event entirely.
  */
 export async function deleteCalendarEvent(eventId: string): Promise<void> {
-  const calendar = getCalendarClient();
+  const calendar = await getCalendarClient();
   if (!calendar) return;
 
   try {

@@ -1,9 +1,22 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   reactStrictMode: true,
-  // Disable caching để tránh hiện bài tập cũ
+  // Tránh bundle các thư viện Node server nặng làm chậm build & dev compile
+  serverExternalPackages: [
+    "googleapis",
+    "pdf-parse",
+    "sharp",
+    "bcryptjs",
+    "@simplewebauthn/server"
+  ],
   experimental: {
     middlewareClientMaxBodySize: "210mb",
+    optimizePackageImports: [
+      "lucide-react",
+      "date-fns",
+      "@tanstack/react-query",
+      "katex"
+    ],
     staleTimes: {
       dynamic: 0,
       static: 0

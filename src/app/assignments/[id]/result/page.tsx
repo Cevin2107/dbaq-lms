@@ -137,8 +137,8 @@ export default async function ResultPage({
       </div>
 
       {/* Header */}
-      <div className="sticky top-0 z-40 border-b border-black/5 dark:border-white/5 bg-white/80 dark:bg-[#1d1d1f]/80 shadow-sm backdrop-blur-xl">
-        <div className="mx-auto flex max-w-4xl items-center justify-between px-4 py-4">
+      <div className="sticky top-0 z-40 border-b border-black/5 dark:border-white/10 bg-white/80 dark:bg-[#1d1d1f]/80 shadow-sm backdrop-blur-xl">
+        <div className="w-full max-w-[1440px] mx-auto flex items-center justify-between px-4 sm:px-6 md:px-8 py-4">
           <div className="flex items-center gap-3">
             <div className="flex h-10 w-10 items-center justify-center rounded-2xl bg-[#0066cc] shadow-sm">
               <svg className="h-5 w-5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
@@ -156,7 +156,7 @@ export default async function ResultPage({
         </div>
       </div>
 
-      <div className="mx-auto max-w-4xl px-4 py-8 space-y-6 relative" suppressHydrationWarning>
+      <div className="w-full max-w-[1440px] mx-auto px-4 sm:px-6 md:px-8 py-8 space-y-6 relative" suppressHydrationWarning>
         {/* Score card */}
         <div className="overflow-hidden rounded-[2rem] bg-white/80 dark:bg-[#1d1d1f]/80 backdrop-blur-xl shadow-[0_4px_20px_rgba(0,0,0,0.03)] border border-black/5 dark:border-white/5" suppressHydrationWarning>
           <div className="bg-[#0066cc] p-8 text-center text-white relative overflow-hidden">

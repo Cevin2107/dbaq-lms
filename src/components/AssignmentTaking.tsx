@@ -401,13 +401,13 @@ export function AssignmentTaking({ assignment, questions: initialQuestions, init
 
   return (
     <main className={clsx(
-      "min-h-[100dvh] transition-colors duration-500 font-sans",
-      isDark ? "bg-[#0B1120] text-slate-200" : "bg-[#f8fafc] text-slate-800"
+      "min-h-[100dvh] transition-colors duration-500 font-sans relative",
+      isDark ? "bg-[#000000] text-slate-100" : "bg-[#f5f5f7] text-slate-800"
     )}>
       {isDark && (
         <div className="fixed inset-0 pointer-events-none overflow-hidden">
-          <div className="absolute top-[-20%] left-[-10%] w-[50%] h-[50%] bg-indigo-900/20 blur-[120px] rounded-full mix-blend-screen" />
-          <div className="absolute bottom-[-20%] right-[-10%] w-[50%] h-[50%] bg-violet-900/20 blur-[120px] rounded-full mix-blend-screen" />
+          <div className="absolute top-[-10%] left-[-5%] w-[45%] h-[45%] bg-blue-900/15 blur-[140px] rounded-full mix-blend-screen" />
+          <div className="absolute bottom-[-10%] right-[-5%] w-[45%] h-[45%] bg-indigo-900/15 blur-[140px] rounded-full mix-blend-screen" />
         </div>
       )}
 
@@ -417,9 +417,9 @@ export function AssignmentTaking({ assignment, questions: initialQuestions, init
       {/* Top Navigation */}
       <div className={clsx(
         "sticky top-0 z-40 transition-all duration-300",
-        isDark ? "bg-[#1d1d1f]/80 border-b border-white/5 backdrop-blur-xl shadow-sm" : "bg-white/80 border-b border-black/5 backdrop-blur-xl shadow-[0_4px_20px_rgba(0,0,0,0.03)]"
+        isDark ? "bg-[#1d1d1f]/80 border-b border-white/10 backdrop-blur-xl shadow-sm" : "bg-white/80 border-b border-black/5 backdrop-blur-xl shadow-[0_4px_20px_rgba(0,0,0,0.03)]"
       )}>
-        <div className="mx-auto max-w-7xl px-4 sm:px-6">
+        <div className="w-full max-w-[1440px] mx-auto px-4 sm:px-6 md:px-8">
           <div className="flex items-center justify-between gap-4 py-3 sm:py-4">
             <div className="flex-1 min-w-0 flex items-center gap-3">
               <div className={clsx("hidden sm:flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl shadow-sm bg-[#0066cc] text-white")}>
@@ -557,7 +557,7 @@ export function AssignmentTaking({ assignment, questions: initialQuestions, init
         </div>
       )}
 
-      <div className="mx-auto max-w-7xl px-4 sm:px-6 py-6 sm:py-8 lg:py-10">
+      <div className="w-full max-w-[1440px] mx-auto px-4 sm:px-6 md:px-8 py-6 sm:py-8 lg:py-10">
         <div className="grid gap-6 lg:gap-8 lg:grid-cols-[1fr,340px] items-start">
           
           <div className="space-y-4 sm:space-y-6 min-w-0 pb-20 lg:pb-0">

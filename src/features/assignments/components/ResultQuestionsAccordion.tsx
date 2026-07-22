@@ -101,7 +101,7 @@ export function ResultQuestionsAccordion({
                    )}
                    {q.type !== "mcq" && (
                       <p className="text-[14px] font-bold text-slate-600 dark:text-slate-300 transition-colors">
-                         {q.type === 'essay' ? 'Tự luận' : q.type === 'short_answer' ? (isCorrect ? 'Điền từ - Đúng' : 'Điền từ - Sai') : q.type === 'true_false' ? 'Đúng/Sai' : 'Đọc hiểu'}
+                         {q.type === 'essay' ? 'Tự luận' : q.type === 'short_answer' ? (isCorrect ? 'Trả lời ngắn - Đúng' : 'Trả lời ngắn - Sai') : q.type === 'true_false' ? 'Đúng/Sai' : 'Đọc hiểu'}
                       </p>
                    )}
                 </div>

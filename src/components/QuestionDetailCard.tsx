@@ -1,4 +1,5 @@
 import { Trophy, FileText, CheckCircle2, XCircle } from "lucide-react";
+import { MathText } from "@/components/MathText";
 
 export interface QuestionDetail {
   questionId: string;
@@ -62,7 +63,7 @@ export function QuestionDetailCard({
             <FileText className="h-3 w-3" />
             {q.type === "mcq" ? "Trắc nghiệm" : 
              q.type === "true_false" ? "Đúng/Sai" : 
-             q.type === "short_answer" ? "Ngắn gọn" : 
+             q.type === "short_answer" ? "Trả lời ngắn" : 
              "Tự luận"}
           </span>
           <span className="inline-flex items-center gap-1.5 text-xs font-semibold text-indigo-600 px-2.5 py-1 rounded-lg bg-indigo-100/60 backdrop-blur-sm border border-indigo-200/50">
@@ -131,7 +132,7 @@ export function QuestionDetailCard({
       )}
 
       {q.content && (
-        <p className="text-base font-semibold text-slate-900 mb-4 leading-relaxed">{q.content}</p>
+        <div className="text-base font-semibold text-slate-900 mb-4 leading-relaxed"><MathText text={q.content} /></div>
       )}
 
       {(q.type === "mcq" || q.type === "true_false") && (
@@ -167,7 +168,7 @@ export function QuestionDetailCard({
                   <span className="inline-flex items-center justify-center h-6 w-6 rounded-lg bg-slate-200/80 text-xs font-bold text-slate-700 flex-shrink-0">
                     {choiceLetter}
                   </span>
-                  <span className="flex-1">{choice || <em className="text-slate-400">Không có nội dung</em>}</span>
+                  <span className="flex-1">{choice ? <MathText text={choice} /> : <em className="text-slate-400">Không có nội dung</em>}</span>
                   {isCorrectAnswer && (
                     <span className="flex items-center gap-1 text-emerald-700 font-bold text-xs whitespace-nowrap">
                       <CheckCircle2 className="h-4 w-4" />

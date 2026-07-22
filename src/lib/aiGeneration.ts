@@ -1,6 +1,6 @@
 import sharp from "sharp";
 
-const OPENROUTER_EXTRACT_MODEL = process.env.MATH_EXTRACT_MODEL || "openrouter/owl-alpha";
+const OPENROUTER_EXTRACT_MODEL = process.env.MATH_EXTRACT_MODEL || "nvidia/nemotron-3-ultra-550b-a55b:free";
 const OPENROUTER_EXTRACT_MODELS = (process.env.MATH_EXTRACT_MODELS || `${OPENROUTER_EXTRACT_MODEL}`)
   .split(",")
   .map((x) => x.trim())
@@ -8,12 +8,12 @@ const OPENROUTER_EXTRACT_MODELS = (process.env.MATH_EXTRACT_MODELS || `${OPENROU
 const GROQ_SOLVE_MODEL = "qwen/qwen3-32b";
 const EXTRACT_MODEL_RETRIES = 2;
 const OPENROUTER_SOLVE_MODEL = process.env.MATH_SOLVER_MODEL || "qwen/qwen-plus";
-const OPENROUTER_SOLVE_MODELS = (process.env.MATH_SOLVER_MODELS || `${OPENROUTER_SOLVE_MODEL},openrouter/owl-alpha`)
+const OPENROUTER_SOLVE_MODELS = (process.env.MATH_SOLVER_MODELS || `${OPENROUTER_SOLVE_MODEL},nvidia/nemotron-3-ultra-550b-a55b:free`)
   .split(",")
   .map((x) => x.trim())
   .filter((x) => Boolean(x) && x !== "stepfun/step-3.5-flash:free");
 const OPENROUTER_BASE_URL = "https://openrouter.ai/api/v1/chat/completions";
-const OPENROUTER_RECHECK_MODEL = "openrouter/owl-alpha";
+const OPENROUTER_RECHECK_MODEL = "nvidia/nemotron-3-ultra-550b-a55b:free";
 const OCR_SPACE_API_URL = "https://api.ocr.space/parse/image";
 const IS_VERCEL_RUNTIME = process.env.VERCEL === "1" || Boolean(process.env.VERCEL_ENV);
 const REQUEST_TIME_BUDGET_MS = IS_VERCEL_RUNTIME ? 55000 : 180000;
@@ -21,17 +21,18 @@ const MIN_REMAINING_FOR_EXTRACTION_MS = IS_VERCEL_RUNTIME ? 18000 : 10000;
 const MIN_REMAINING_FOR_RECOVERY_MS = IS_VERCEL_RUNTIME ? 15000 : 8000;
 const MIN_REMAINING_FOR_SOLVE_MS = IS_VERCEL_RUNTIME ? 20000 : 10000;
 
-const MAX_TEXT_LENGTH = 15000;
-const TEXT_CHUNK_SIZE = 3500;
+const MAX_TEXT_LENGTH = 45000;
+const TEXT_CHUNK_SIZE = 15000;
 const OCR_TIMEOUT_MS = IS_VERCEL_RUNTIME ? 14000 : 22000;
 const AI_TIMEOUT_MS = IS_VERCEL_RUNTIME ? 18000 : 105000;
+const SOLVE_TIMEOUT_MS = IS_VERCEL_RUNTIME ? 12000 : 18000;
 const ENABLE_ANSWER_SOLVING = process.env.AI_ENABLE_ANSWER_SOLVING !== "false";
 const SOLVE_BATCH_SIZE = 8;
-const EXTRACT_SOURCE_CONTEXT_MAX_CHARS = 3000;
-const RECOVERY_SOURCE_CONTEXT_MAX_CHARS = 2800;
-const SOLVE_SOURCE_CONTEXT_MAX_CHARS = 1400;
-const MAX_SOLVE_QUESTION_TEXT_CHARS = 320;
-const MAX_SOLVE_OPTION_TEXT_CHARS = 140;
+const EXTRACT_SOURCE_CONTEXT_MAX_CHARS = 12000;
+const RECOVERY_SOURCE_CONTEXT_MAX_CHARS = 12000;
+const SOLVE_SOURCE_CONTEXT_MAX_CHARS = 6000;
+const MAX_SOLVE_QUESTION_TEXT_CHARS = 1000;
+const MAX_SOLVE_OPTION_TEXT_CHARS = 300;
 
 // OCR optimization settings
 const MAX_IMAGE_WIDTH = 1600; // Giảm kích thước để tăng tốc OCR
@@ -129,7 +130,7 @@ async function callOcrSpaceApi(imageBuffer: Buffer): Promise<string> {
   formData.append("apikey", apiKey);
   formData.append("OCREngine", "2");
   formData.append("scale", "true"); // Auto-scale để tăng độ chính xác
-  formData.append("isTable", "false"); // Tắt table detection để nhanh hơn
+  formData.append("isTable", "true"); // Bật table detection để nhận diện bảng tốt hơn
 
   const res = await fetchWithTimeout(OCR_SPACE_API_URL, {
     method: "POST",
@@ -155,8 +156,6 @@ async function callOcrSpaceApi(imageBuffer: Buffer): Promise<string> {
   
   return text;
 }
-
-
 
 async function extractPdfText(file: File) {
   const pdfParseModule = await import("pdf-parse");
@@ -202,14 +201,45 @@ function cleanOcrText(chunks: string[]): string {
   return filtered.join("\n").slice(0, MAX_TEXT_LENGTH);
 }
 
-function chunkText(text: string) {
+function chunkText(text: string): string[] {
+  if (!text) return [];
+  if (text.length <= TEXT_CHUNK_SIZE) return [text];
+
   const chunks: string[] = [];
-  let cursor = 0;
-  while (cursor < text.length) {
-    chunks.push(text.slice(cursor, cursor + TEXT_CHUNK_SIZE));
-    cursor += TEXT_CHUNK_SIZE;
+  let remaining = text;
+
+  while (remaining.length > 0) {
+    if (remaining.length <= TEXT_CHUNK_SIZE) {
+      chunks.push(remaining);
+      break;
+    }
+
+    let splitIdx = -1;
+    const targetSlice = remaining.slice(0, TEXT_CHUNK_SIZE);
+    
+    // Tìm ranh giới phân cách câu hỏi tự nhiên (\n--- hoặc \nCâu \d+) gần vị trí 15000 chars
+    const matchBoundary = targetSlice.search(/\n(?:\s*[-*_]{3,}|\s*(?:\*\*)?(?:#+\s*)?Câu\s*\d+)\b/i);
+    if (matchBoundary > 1000) {
+      splitIdx = matchBoundary;
+    } else {
+      const lastDoubleNewline = targetSlice.lastIndexOf("\n\n");
+      if (lastDoubleNewline > 1000) {
+        splitIdx = lastDoubleNewline;
+      } else {
+        const lastNewline = targetSlice.lastIndexOf("\n");
+        if (lastNewline > 1000) {
+          splitIdx = lastNewline;
+        } else {
+          splitIdx = TEXT_CHUNK_SIZE;
+        }
+      }
+    }
+
+    chunks.push(remaining.slice(0, splitIdx).trim());
+    remaining = remaining.slice(splitIdx).trim();
   }
-  return chunks;
+
+  return chunks.filter(Boolean);
 }
 
 function extractJsonArray(raw: string) {
@@ -341,15 +371,26 @@ function parseProviderResponseLenient(raw: string): unknown {
 }
 
 function detectQuestionIndices(text: string): number[] {
-  const regex = /(?:^|\n)\s*(?:Câu\s*)?(\d{1,3})\s*[\).:-]/gim;
+  const cauRegex = /(?:^|\n)\s*(?:\*\*)?(?:#+\s*)?(?:Câu|Question|Q|Bài)\s*(\d{1,4})\b/gim;
+  const cauMatches = [...text.matchAll(cauRegex)];
+  if (cauMatches.length > 0) {
+    const found = new Set<number>();
+    for (const m of cauMatches) {
+      const num = Number.parseInt(m[1], 10);
+      if (Number.isFinite(num) && num > 0) found.add(num);
+    }
+    return Array.from(found).sort((a, b) => a - b);
+  }
+
+  const bareRegex = /(?:^|\n)\s*(\d{1,3})\s*[\).:-]\s+\S/gim;
   const found = new Set<number>();
-  let match: RegExpExecArray | null = regex.exec(text);
+  let match: RegExpExecArray | null = bareRegex.exec(text);
   while (match) {
     const num = Number.parseInt(match[1], 10);
     if (Number.isFinite(num) && num > 0) {
       found.add(num);
     }
-    match = regex.exec(text);
+    match = bareRegex.exec(text);
   }
   return Array.from(found).sort((a, b) => a - b);
 }
@@ -396,7 +437,7 @@ function toHumanReadableMath(text: string): string {
     .replace(/\\beta/gi, "β")
     .replace(/\\gamma/gi, "γ")
     .replace(/\*\*/g, "")
-    .replace(/\s{2,}/g, " ")
+    .replace(/[ \t]{2,}/g, " ")
     .trim();
 }
 
@@ -508,6 +549,8 @@ function parseQuestionsHeuristically(text: string): ExtractedQuestion[] {
     .map((line) => line.trim())
     .filter(Boolean);
 
+  const hasExplicitCauKeywords = /(?:\*\*)?(?:#+\s*)?(?:Câu|Question|Q|Bài)\s*\d+\b/i.test(text);
+
   const results: ExtractedQuestion[] = [];
   let current: ExtractedQuestion | null = null;
   let currentOption: "A" | "B" | "C" | "D" | null = null;
@@ -529,8 +572,30 @@ function parseQuestionsHeuristically(text: string): ExtractedQuestion[] {
   };
 
   for (const line of lines) {
-    const questionStart = line.match(/^(?:Câu\s*)?(\d{1,3})\s*[\).:-]\s*(.*)$/i);
-    if (questionStart) {
+    // 1. Skip horizontal rule dividers (e.g., ---, ***, ___) and finalize current question
+    if (/^\s*[-*_]{3,}\s*$/.test(line)) {
+      pushCurrent();
+      current = null;
+      currentOption = null;
+      continue;
+    }
+
+    // Clean markdown symbols (**, ##) for regex matching
+    const cleanLine = line.replace(/^\s*(?:\*\*)?(?:#+\s*)?/, "").replace(/(?:\*\*)?\s*$/, "").trim();
+    const hasKeyword = /^(?:Câu|Question|Q|Bài)\b/i.test(cleanLine);
+    const questionStart = cleanLine.match(/^(?:Câu|Question|Q|Bài)?\s*(\d{1,4})\b(?:\s*\([^)]*\))?\s*[\).:-]?\s*(.*)$/i);
+
+    // If text has explicit "Câu" keywords, ONLY lines with "Câu" (or lines after full options) start a new question.
+    // Bare "1. ", "2. " inside a question stem (before options A,B,C,D) are treated as stem text (statements)!
+    const isNewQuestionStart = Boolean(
+      questionStart &&
+        (hasKeyword ||
+          !hasExplicitCauKeywords ||
+          !current ||
+          Boolean(current.options.A && current.options.B && current.options.C && current.options.D))
+    );
+
+    if (isNewQuestionStart && questionStart) {
       pushCurrent();
       current = {
         source_index: Number.parseInt(questionStart[1], 10),
@@ -542,7 +607,9 @@ function parseQuestionsHeuristically(text: string): ExtractedQuestion[] {
       continue;
     }
 
-    const optionMatch = line.match(/^([ABCD])\s*[\).:-]\s*(.*)$/i);
+    const cleanOptionLine = line.replace(/^\s*[-*+]\s*/, "").replace(/^\s*(?:\*\*)?/, "").trim();
+    const optionMatch = cleanOptionLine.match(/^([ABCD])\s*[\).:-]\s*(?:\*\*)?\s*(.*)$/i);
+
     if (optionMatch && !current) {
       current = {
         question: "",
@@ -592,9 +659,13 @@ function parseQuestionsHeuristically(text: string): ExtractedQuestion[] {
     }
 
     if (currentOption) {
-      current.options[currentOption] = `${current.options[currentOption]} ${line}`.trim();
+      current.options[currentOption] = current.options[currentOption]
+        ? `${current.options[currentOption]}\n${line}`.trim()
+        : line;
     } else {
-      current.question = `${current.question} ${line}`.trim();
+      current.question = current.question
+        ? `${current.question}\n${line}`.trim()
+        : line;
     }
   }
 
@@ -725,15 +796,14 @@ function stripLeadingQuestionPrefix(text: string, sourceIndex?: number): string 
   for (let i = 0; i < 4; i++) {
     const previous = cleaned;
     cleaned = cleaned
-      .replace(/^(?:\*\*)?Câu\s*\d{1,4}\s*[\).:\-]\s*/i, "")
-      .replace(/^(?:\*\*)?Q(?:uestion)?\s*\d{1,4}\s*[\).:\-]\s*/i, "")
-      .replace(/^\d{1,4}\s*[\).:\-]\s*/, "")
+      .replace(/^(?:\*\*)?(?:Câu|Question|Q)?\s*\d{1,4}\b(?:\s*\([^)]*\))?\s*[\).:-]?\s*(?:\*\*)?\s*/i, "")
+      .replace(/^\d{1,4}\s*[\).:-]\s*/, "")
       .trim();
     if (cleaned === previous) break;
   }
 
   if (sourceIndex && Number.isFinite(sourceIndex) && sourceIndex > 0) {
-    const sourceIndexPrefix = new RegExp(`^(?:\\*\\*)?Câu\\s*${sourceIndex}\\s*[\\).:\\-]\\s*`, "i");
+    const sourceIndexPrefix = new RegExp(`^(?:\\*\\*)?(?:Câu|Question|Q)?\\s*${sourceIndex}\\b(?:\\s*\\([^)]*\\))?\\s*[\\).:-]?\\s*(?:\\*\\*)?\\s*`, "i");
     cleaned = cleaned.replace(sourceIndexPrefix, "").trim();
   }
 
@@ -851,7 +921,7 @@ async function callQuestionExtractionModel(prompt: string, preferredModel?: stri
               {
                 role: "system",
                 content:
-                  "Bạn là bộ trích xuất câu hỏi trắc nghiệm. Chỉ trả về JSON hợp lệ, không thêm chữ ngoài JSON. Giữ nguyên tiếng Việt và giữ nguyên ký hiệu LaTeX (ví dụ $...$, \\(...\\), \\[...\\], \\frac).",
+                  "Bạn là bộ trích xuất câu hỏi trắc nghiệm. Chỉ trả về JSON hợp lệ, không thêm chữ ngoài JSON. Giữ nguyên tiếng Việt và giữ nguyên ký hiệu LaTeX (ví dụ $...$, \\(...\\), \\[...\\], \\frac). Nếu đề có bảng dữ liệu (bảng tần số, bảng biến thiên, bảng giá trị, v.v.), BẮT BUỘC nhận diện và chuyển thành BẢNG MARKDOWN chuẩn (ví dụ: | Hàng 1 | Hàng 2 |\\n|---|---|\\n| Ô 1 | Ô 2 |) trong trường question.",
               },
               { role: "user", content: prompt },
             ],
@@ -1010,9 +1080,16 @@ async function resolveAnswersWithAi(
     for (let start = 0; start < questions.length; start += SOLVE_BATCH_SIZE) {
       const end = Math.min(start + SOLVE_BATCH_SIZE, questions.length);
       const batch = questions.slice(start, end);
-      const solvedBatch = await resolveAnswersWithAi(batch, sourceText, preferredModel, deadlineAt);
-      for (let i = 0; i < solvedBatch.length; i++) {
-        merged[start + i] = solvedBatch[i];
+      try {
+        const solvedBatch = await resolveAnswersWithAi(batch, sourceText, preferredModel, deadlineAt);
+        for (let i = 0; i < solvedBatch.length; i++) {
+          merged[start + i] = solvedBatch[i];
+        }
+      } catch (err) {
+        aiLog("warn", "SOLVE", "Batch solve failed, using default unsolved state", {
+          batchStart: start,
+          message: (err as Error).message,
+        });
       }
 
       if (!hasTimeBudget(deadlineAt, MIN_REMAINING_FOR_SOLVE_MS)) {
@@ -1090,7 +1167,7 @@ ${buildContextSnippet(sourceText, SOLVE_SOURCE_CONTEXT_MAX_CHARS)}`;
           reasoning: { enabled: true },
           messages: openRouterMessages,
         }),
-      }, AI_TIMEOUT_MS);
+      }, SOLVE_TIMEOUT_MS);
 
       if (!res.ok) {
         const body = await res.text();
@@ -1135,7 +1212,7 @@ ${buildContextSnippet(sourceText, SOLVE_SOURCE_CONTEXT_MAX_CHARS)}`;
             max_tokens: 800,
             messages: continuationMessages,
           }),
-        }, AI_TIMEOUT_MS);
+        }, SOLVE_TIMEOUT_MS);
 
         if (res2.ok) {
           const data2 = await res2.json();
@@ -1192,7 +1269,7 @@ ${buildContextSnippet(sourceText, SOLVE_SOURCE_CONTEXT_MAX_CHARS)}`;
           { role: "user", content: solvePrompt },
         ],
       }),
-    }, AI_TIMEOUT_MS);
+    }, SOLVE_TIMEOUT_MS);
 
     if (!groqRes.ok) {
       const body = await groqRes.text();
@@ -1227,22 +1304,31 @@ async function generateQuestionsFromChunk(text: string, limit: number, deadlineA
     limit,
   });
 
-  const heuristic = parseQuestionsHeuristically(text).slice(0, limit);
+  const heuristic = parseQuestionsHeuristically(text);
   aiLog("info", "PIPELINE", "Heuristic extraction result", {
     extracted: heuristic.length,
     limit,
   });
 
-  if (heuristic.length >= limit) {
+  const detectedCount = detectQuestionIndices(text).length;
+  if (heuristic.length > 0 && (heuristic.length >= detectedCount || heuristic.length >= limit)) {
     aiLog("info", "PIPELINE", "Heuristic extraction satisfied chunk", {
       extracted: heuristic.length,
+      detectedCount,
       limit,
     });
 
     if (ENABLE_ANSWER_SOLVING) {
-      const solved = await resolveAnswersWithAi(heuristic, text, undefined, deadlineAt);
-      aiLog("info", "PIPELINE", "Chunk completed", { extracted: solved.length, solved: true, mode: "heuristic" });
-      return solved.slice(0, limit);
+      try {
+        const solved = await resolveAnswersWithAi(heuristic, text, undefined, deadlineAt);
+        aiLog("info", "PIPELINE", "Chunk completed", { extracted: solved.length, solved: true, mode: "heuristic" });
+        return solved;
+      } catch (solveErr) {
+        aiLog("warn", "PIPELINE", "Answer solving encountered error, returning extracted questions with default answers", {
+          message: (solveErr as Error).message,
+        });
+        return markAllUnsolved(heuristic);
+      }
     }
 
     aiLog("info", "PIPELINE", "Chunk completed", { extracted: heuristic.length, solved: false, mode: "heuristic" });
@@ -1256,10 +1342,11 @@ async function generateQuestionsFromChunk(text: string, limit: number, deadlineA
 
 Yêu cầu bắt buộc:
 1) Giữ nguyên tiếng Việt và giữ nguyên LaTeX trong question/options.
-2) Mỗi câu phải có đủ options A/B/C/D (nếu thiếu thì để chuỗi rỗng).
-3) Nếu không chắc đáp án đúng thì đặt correct_answer = "A".
-4) Nếu thấy chỉ số câu trong đề (ví dụ Câu 1, 2.), điền vào source_index.
-5) Nếu có danh sách chỉ số bên dưới, phải trả đủ các chỉ số đó, không bỏ sót.
+2) Nếu xuất hiện bảng dữ liệu (bảng tần số, bảng biến thiên, bảng giá trị), BẮT BUỘC nhận diện và định dạng thành BẢNG MARKDOWN (ví dụ: | Cột 1 | Cột 2 |\n|---|---|\n| Giá trị 1 | Giá trị 2 |) trong question. Giữ nguyên ký tự xuống dòng (\n) của bảng.
+3) Mỗi câu phải có đủ options A/B/C/D (nếu thiếu thì để chuỗi rỗng).
+4) Nếu không chắc đáp án đúng thì đặt correct_answer = "A".
+5) Nếu thấy chỉ số câu trong đề (ví dụ Câu 1, 2.), điền vào source_index.
+6) Nếu có danh sách chỉ số bên dưới, phải trả đủ các chỉ số đó, không bỏ sót.
 
 Schema JSON:
 [
