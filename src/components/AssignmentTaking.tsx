@@ -379,7 +379,11 @@ export function AssignmentTaking({ assignment, questions: initialQuestions, init
 
   const handleExitClick = (e: React.MouseEvent) => {
     e.preventDefault();
-    if (answeredCount > 0) setShowExitConfirm(true); else router.push("/");
+    if (answeredCount > 0) {
+      setShowExitConfirm(true);
+    } else {
+      handleExitConfirm(false);
+    }
   };
 
   const handleExitConfirm = async (saveProgress: boolean) => {
