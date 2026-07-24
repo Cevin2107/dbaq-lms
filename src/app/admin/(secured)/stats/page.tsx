@@ -16,7 +16,8 @@ import {
   Trash2,
   RefreshCw,
   Edit3,
-  BarChart3
+  BarChart3,
+  User
 } from "lucide-react";
 
 interface StudentStats {
@@ -575,6 +576,11 @@ export default function AdminStatsPage() {
                 const avgScore = student.submissions.length
                   ? parseFloat(avgScoreVal.toFixed(2)).toString().replace(".", ",")
                   : "0";
+                const isRegistered = authStudents.some(
+                  (a) => a.full_name?.toLowerCase().trim() === student.studentName.toLowerCase().trim() ||
+                         a.email?.toLowerCase().trim() === student.studentName.toLowerCase().trim()
+                );
+                const isGuestStudent = !isRegistered || student.inProgress.some((s: any) => s.isGuest || s.draftAnswers?.__sessionMeta?.isGuest);
                 const isExpanded = expandedStudent === student.studentName;
 
                 return (
@@ -597,9 +603,17 @@ export default function AdminStatsPage() {
 
                         {/* Student Info */}
                         <div className="flex-1">
-                          <h3 className="text-[19px] font-bold text-slate-900 dark:text-white tracking-[-0.01em]">
-                            {student.studentName}
-                          </h3>
+                          <div className="flex items-center gap-2 mb-1 flex-wrap">
+                            <h3 className="text-[19px] font-bold text-slate-900 dark:text-white tracking-[-0.01em]">
+                              {student.studentName}
+                            </h3>
+                            {isGuestStudent && (
+                              <span className="px-2.5 py-0.5 rounded-full text-xs font-bold bg-amber-100/90 dark:bg-amber-900/40 text-amber-800 dark:text-amber-300 border border-amber-300/70 dark:border-amber-700/50 shadow-sm flex items-center gap-1">
+                                <User className="h-3 w-3" />
+                                Học sinh ngoài
+                              </span>
+                            )}
+                          </div>
                           <div className="flex flex-wrap items-center gap-3 mt-1">
                             <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-xl bg-emerald-100/80 backdrop-blur-sm text-xs font-semibold text-emerald-700 border border-emerald-200/50">
                               <Trophy className="h-3.5 w-3.5" />

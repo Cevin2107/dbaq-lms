@@ -100,9 +100,8 @@ export function AssignmentTaking({ assignment, questions: initialQuestions, init
       method: "PUT",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ sessionId: savedSessionId, status: "active" }),
-    }).catch(err => console.error(err));
-
-    fetch(`/api/student-sessions/check-deadline?sessionId=${savedSessionId}`)
+    })
+      .then(() => fetch(`/api/student-sessions/check-deadline?sessionId=${savedSessionId}`))
       .then(res => {
         if (res.status === 404) {
           localStorage.removeItem(`session-${assignment.id}`);

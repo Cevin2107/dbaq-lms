@@ -89,22 +89,25 @@ function getScoreBadge(isCorrect: boolean | null, pointsAwarded: number | undefi
   const displayTotal = formatScore(totalPoints);
   if (isCorrect === true) {
     return {
-      bg: "bg-emerald-50 border-emerald-200 text-emerald-700",
+      bg: "bg-emerald-50 border-emerald-200 text-emerald-700 dark:bg-emerald-950/30 dark:border-emerald-800 dark:text-emerald-300",
       icon: CheckCircle2,
-      label: `Đúng · ${pointsAwarded !== undefined ? displayAwarded : displayTotal}/${displayTotal}đ`,
+      shortStatus: "Đúng",
+      scoreText: `${pointsAwarded !== undefined ? displayAwarded : displayTotal}/${displayTotal}đ`,
     };
   }
   if (isCorrect === false) {
     return {
-      bg: "bg-rose-50 border-rose-200 text-rose-700",
+      bg: "bg-rose-50 border-rose-200 text-rose-700 dark:bg-rose-950/30 dark:border-rose-800 dark:text-rose-300",
       icon: XCircle,
-      label: `Sai · ${displayAwarded}/${displayTotal}đ`,
+      shortStatus: "Sai",
+      scoreText: `${displayAwarded}/${displayTotal}đ`,
     };
   }
   return {
-    bg: "bg-slate-50 border-slate-200 text-slate-500",
+    bg: "bg-slate-50 border-slate-200 text-slate-500 dark:bg-slate-800 dark:border-slate-700 dark:text-slate-400",
     icon: HelpCircle,
-    label: `Chưa chấm · 0/${displayTotal}đ`,
+    shortStatus: "Chưa chấm",
+    scoreText: `0/${displayTotal}đ`,
   };
 }
 
@@ -135,25 +138,25 @@ export function StudentAnswerReviewList({
 
                 <div className="relative p-4 sm:p-5">
                   <div className="flex justify-between items-start mb-3">
-                    <div className="flex items-center gap-2.5">
-                      <div className="flex items-center justify-center h-8 w-8 rounded-xl bg-gradient-to-br from-[#0066cc] to-cyan-500 text-white shadow-lg shadow-blue-500/20">
+                    <div className="flex items-center gap-2">
+                      <div className="flex items-center justify-center h-7 w-7 sm:h-8 sm:w-8 rounded-xl bg-gradient-to-br from-[#0066cc] to-cyan-500 text-white shadow-lg shadow-blue-500/20">
                         <BookOpen className="h-4 w-4" />
                       </div>
                       <div>
                         <div className="flex items-center gap-1.5">
-                          <span className="text-[13px] font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider">
+                          <span className="text-[12px] sm:text-[13px] font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider">
                             Đoạn văn / Ghi chú
                           </span>
-                          <span className="text-[13px] text-slate-400">•</span>
-                          <span className="text-[14px] font-bold text-slate-600 dark:text-slate-300">
-                            {q.points}đ
+                          <span className="text-xs text-slate-400">•</span>
+                          <span className="text-xs sm:text-[14px] font-bold text-slate-600 dark:text-slate-300">
+                            {formatScore(q.points)}đ
                           </span>
                         </div>
                       </div>
                     </div>
 
                     <div className="flex items-center gap-2">
-                      <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-bold bg-sky-50 border border-sky-200 text-sky-600">
+                      <div className="flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-bold bg-sky-50 border border-sky-200 text-sky-600">
                         <Lightbulb className="h-3 w-3" />
                         <span>Thông tin</span>
                       </div>
@@ -217,44 +220,42 @@ export function StudentAnswerReviewList({
           return (
             <div
               key={q.questionId}
-              className="group relative overflow-hidden rounded-[2rem] bg-white/80 dark:bg-[#1d1d1f]/80 backdrop-blur-xl border border-black/5 dark:border-white/5 shadow-[0_4px_20px_rgba(0,0,0,0.03)] hover:shadow-lg hover:-translate-y-0.5 transition-all duration-300"
+              className="group relative overflow-hidden rounded-[1.5rem] sm:rounded-[2rem] bg-white/80 dark:bg-[#1d1d1f]/80 backdrop-blur-xl border border-black/5 dark:border-white/5 shadow-[0_4px_20px_rgba(0,0,0,0.03)] hover:shadow-lg transition-all duration-300"
             >
               <div className={`absolute top-0 left-0 right-0 h-1 ${topBarColor}`} />
 
-              <div className="relative p-4 sm:p-5">
+              <div className="relative p-3.5 sm:p-5">
                 {/* Header: Question number + Type + Score */}
-                <div className="flex justify-between items-start mb-3">
-                  <div className="flex items-center gap-2.5">
+                <div className="flex flex-wrap sm:flex-nowrap justify-between items-center gap-2 mb-3">
+                  <div className="flex items-center gap-2">
                     <div
-                      className={`flex items-center justify-center h-8 w-8 rounded-xl font-bold text-[14px] shadow-lg ${numberCircleColor}`}
+                      className={`flex items-center justify-center h-7 w-7 sm:h-8 sm:w-8 rounded-xl font-bold text-xs sm:text-sm shadow-md ${numberCircleColor}`}
                     >
                       {questionNumber}
                     </div>
-                    <div>
-                      <div className="flex items-center gap-1.5">
-                        <span
-                          className={`text-xs font-semibold px-2 py-0.5 rounded-full border ${typeInfo.colorClass}`}
-                        >
-                          {typeInfo.label}
-                        </span>
-                        <span className="text-xs text-slate-400">•</span>
-                        <span className="text-sm font-bold text-slate-600 dark:text-slate-300">
-                          {q.points}đ
-                        </span>
-                      </div>
+                    <div className="flex items-center gap-1.5">
+                      <span
+                        className={`text-[11px] sm:text-xs font-semibold px-2 py-0.5 rounded-full border ${typeInfo.colorClass}`}
+                      >
+                        {typeInfo.label}
+                      </span>
+                      <span className="text-xs text-slate-400">•</span>
+                      <span className="text-xs sm:text-sm font-bold text-slate-600 dark:text-slate-300">
+                        {formatScore(q.points)}đ
+                      </span>
                     </div>
                   </div>
 
-                  <div className="flex items-center gap-2">
+                  <div className="flex items-center gap-1.5 shrink-0 ml-auto sm:ml-0">
                     {isSubmitted && hasAnswer && (
                       <>
                         {regradingMode && onToggleAnswerCorrectness ? (
                           <button
                             onClick={() => onToggleAnswerCorrectness(q.questionId, q.points)}
-                            className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-bold shadow-md transition-all duration-200 ${
+                            className={`inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-bold shadow-sm transition-all duration-200 ${
                               displayIsCorrect
-                                ? "bg-emerald-50 border border-emerald-200 text-emerald-700 hover:bg-emerald-100 shadow-emerald-300/20"
-                                : "bg-rose-50 border border-rose-200 text-rose-700 hover:bg-rose-100 shadow-rose-300/20"
+                                ? "bg-emerald-50 border border-emerald-200 text-emerald-700 hover:bg-emerald-100"
+                                : "bg-rose-50 border border-rose-200 text-rose-700 hover:bg-rose-100"
                             }`}
                           >
                             {displayIsCorrect ? (
@@ -263,24 +264,28 @@ export function StudentAnswerReviewList({
                               <XCircle className="h-3.5 w-3.5" />
                             )}
                             <span>
-                              {displayIsCorrect ? "Đúng" : "Sai"} · {formatScore(displayPointsAwarded)}/{formatScore(q.points)}đ
+                              <span className="hidden sm:inline">{displayIsCorrect ? "Đúng · " : "Sai · "}</span>
+                              {formatScore(displayPointsAwarded)}/{formatScore(q.points)}đ
                             </span>
                           </button>
                         ) : (
                           <div
-                            className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-bold shadow-md ${scoreBadge.bg}`}
+                            className={`inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-bold shadow-sm ${scoreBadge.bg}`}
                           >
                             <scoreBadge.icon className="h-3.5 w-3.5" />
-                            <span>{scoreBadge.label}</span>
+                            <span>
+                              <span className="hidden sm:inline">{scoreBadge.shortStatus} · </span>
+                              {scoreBadge.scoreText}
+                            </span>
                           </div>
                         )}
                       </>
                     )}
 
-                    {!isSubmitted && q.type === "mcq" && q.studentAnswer && (
-                      <div className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-bold bg-amber-50 border border-amber-200 text-amber-700 shadow-md">
+                    {!isSubmitted && (q.type === "mcq" || q.type === "short_answer") && q.studentAnswer && (
+                      <div className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-bold bg-amber-50 border border-amber-200 text-amber-700 shadow-sm">
                         <Zap className="h-3.5 w-3.5" />
-                        {q.isCorrect ? "Đúng (tạm)" : "Sai (tạm)"}
+                        <span>{q.isCorrect ? "Đúng (tạm)" : "Sai (tạm)"}</span>
                       </div>
                     )}
                   </div>
@@ -397,14 +402,14 @@ export function StudentAnswerReviewList({
                                       </span>
                                     </div>
 
-                                    <div className="shrink-0 flex flex-col items-end gap-1">
+                                    <div className="shrink-0 flex flex-row flex-wrap sm:flex-nowrap items-center justify-end gap-1 sm:gap-1.5">
                                       {isSelected && (
-                                        <span className="rounded-full border border-blue-300 dark:border-blue-700 bg-blue-100 dark:bg-blue-900/40 px-2 py-0.5 text-[11px] font-bold text-blue-800 dark:text-blue-300">
+                                        <span className="rounded-full border border-blue-300 dark:border-blue-700 bg-blue-100 dark:bg-blue-900/40 px-1.5 sm:px-2 py-0.5 text-[10px] sm:text-[11px] font-bold text-blue-800 dark:text-blue-300 whitespace-nowrap">
                                           HS chọn
                                         </span>
                                       )}
                                       {isKey && (
-                                        <span className="rounded-full border border-emerald-300 dark:border-emerald-700 bg-emerald-100 dark:bg-emerald-900/40 px-2 py-0.5 text-[11px] font-bold text-emerald-800 dark:text-emerald-300">
+                                        <span className="rounded-full border border-emerald-300 dark:border-emerald-700 bg-emerald-100 dark:bg-emerald-900/40 px-1.5 sm:px-2 py-0.5 text-[10px] sm:text-[11px] font-bold text-emerald-800 dark:text-emerald-300 whitespace-nowrap">
                                           Đáp án
                                         </span>
                                       )}
@@ -570,7 +575,70 @@ export function StudentAnswerReviewList({
                       );
                     })}
                   </div>
-                ) : q.type !== "mcq" && q.studentAnswer ? (
+                ) : q.type === "short_answer" ? (
+                  /* ===== SHORT ANSWER TYPE ===== */
+                  <div className="space-y-2 mt-3">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                      <div className="flex items-center justify-between rounded-xl border border-blue-200 bg-blue-50/80 dark:bg-blue-900/20 dark:border-blue-800/30 px-3 py-2.5">
+                        <span className="text-xs font-semibold text-blue-700 dark:text-blue-300 shrink-0 mr-2">
+                          <FileCheck className="h-3.5 w-3.5 inline mr-1" />
+                          Lựa chọn HS:
+                        </span>
+                        <span className="text-xs font-bold text-blue-900 dark:text-blue-100 break-words text-right">
+                          {hasAnswer ? (
+                            <MathText text={toMathRenderableText(q.studentAnswer || "")} />
+                          ) : (
+                            <em className="text-slate-400 font-normal">Chưa trả lời</em>
+                          )}
+                        </span>
+                      </div>
+                      <div className="flex items-center justify-between rounded-xl border border-emerald-200 bg-emerald-50/80 dark:bg-emerald-900/20 dark:border-emerald-800/30 px-3 py-2.5">
+                        <span className="text-xs font-semibold text-emerald-700 dark:text-emerald-300 shrink-0 mr-2">
+                          <CheckCircle2 className="h-3.5 w-3.5 inline mr-1" />
+                          Đáp án đúng:
+                        </span>
+                        <span className="text-xs font-bold text-emerald-900 dark:text-emerald-100 break-words text-right">
+                          {q.correctAnswer || q.answerKey ? (
+                            <MathText text={toMathRenderableText(q.correctAnswer || q.answerKey || "")} />
+                          ) : (
+                            <em className="text-slate-400 font-normal">Chưa có</em>
+                          )}
+                        </span>
+                      </div>
+                    </div>
+
+                    {/* Regrade controls for short_answer */}
+                    {regradingMode && onSetAnswerPoints && (
+                      <div className="p-2.5 rounded-xl bg-slate-50 dark:bg-slate-800/50 border border-slate-200/60 dark:border-slate-700/50 flex items-center justify-between gap-2">
+                        <span className="text-xs font-semibold text-slate-700 dark:text-slate-300">
+                          Chấm lại:
+                        </span>
+                        <div className="flex items-center gap-2">
+                          <button
+                            onClick={() => onSetAnswerPoints(q.questionId, q.points, q.points)}
+                            className={`px-3 py-1 text-xs font-bold rounded-lg transition-all ${
+                              regradeAnswer?.pointsAwarded === q.points
+                                ? "bg-emerald-600 text-white shadow-sm"
+                                : "bg-white dark:bg-slate-800 border border-emerald-300 text-emerald-700 hover:bg-emerald-50"
+                            }`}
+                          >
+                            ✓ Đúng ({q.points}đ)
+                          </button>
+                          <button
+                            onClick={() => onSetAnswerPoints(q.questionId, 0, q.points)}
+                            className={`px-3 py-1 text-xs font-bold rounded-lg transition-all ${
+                              regradeAnswer?.pointsAwarded === 0
+                                ? "bg-rose-600 text-white shadow-sm"
+                                : "bg-white dark:bg-slate-800 border border-rose-300 text-rose-700 hover:bg-rose-50"
+                            }`}
+                          >
+                            ✗ Sai (0đ)
+                          </button>
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                ) : q.type === "essay" && q.studentAnswer ? (
                   /* ===== ESSAY TYPE ===== */
                   <div className="mt-3 space-y-2.5">
                     <div className="p-3 sm:p-4 rounded-2xl bg-gradient-to-br from-indigo-50 to-violet-50 dark:from-indigo-900/20 dark:to-violet-900/20 border border-indigo-200/50 dark:border-indigo-800/30">

@@ -43,8 +43,8 @@ export async function middleware(request: NextRequest) {
 
   // Public routes (no auth required)
   const publicRoutes = ['/login', '/signup', '/forgot-password', '/reset-password', '/auth/callback']
-  const isAssignmentStartRoute = pathname.startsWith('/assignments/') && pathname.endsWith('/start')
-  const isPublicRoute = publicRoutes.some(route => pathname === route) || isAssignmentStartRoute
+  const isAssignmentRoute = pathname.startsWith('/assignments/')
+  const isPublicRoute = publicRoutes.some(route => pathname === route) || isAssignmentRoute
 
   // Admin routes (handled separately by admin auth)
   const isAdminRoute = pathname.startsWith('/admin') || pathname.startsWith('/api/admin')

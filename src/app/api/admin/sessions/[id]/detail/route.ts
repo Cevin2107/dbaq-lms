@@ -62,7 +62,14 @@ export async function GET(
     // Map câu hỏi với draft answers
     const questionDetails = (questions || []).map((q: { id: string; order: number; type: string; content: string; choices?: string[]; answer_key?: string; points: number; image_url?: string; sub_questions?: unknown }) => {
       const studentAnswer = draftAnswers[q.id] || null;
-      const isCorrect = q.type === "mcq" && studentAnswer ? studentAnswer === q.answer_key : null;
+      let isCorrect: boolean | null = null;
+      if (studentAnswer && q.answer_key) {
+        if (q.type === "mcq") {
+          isCorrect = studentAnswer === q.answer_key;
+        } else if (q.type === "short_answer") {
+          isCorrect = String(studentAnswer).trim().toLowerCase() === String(q.answer_key).trim().toLowerCase();
+        }
+      }
       
       return {
         questionId: q.id,

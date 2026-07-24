@@ -130,7 +130,7 @@ export function ResultQuestionsAccordion({
                         <img src={imgUrl} alt="Câu hỏi" className="max-h-64 w-auto object-contain bg-slate-50 dark:bg-slate-900 mx-auto" />
                       </div>
                     )}
-                    {q.content && <p className="text-[15px] font-semibold text-slate-800 dark:text-slate-200 mt-4 mb-5 leading-relaxed"><MathText text={q.content} /></p>}
+                    {q.content && <div className="text-[15px] font-semibold text-slate-800 dark:text-slate-200 mt-4 mb-5 leading-relaxed"><MathText text={q.content} /></div>}
 
                     {/* MCQ Choices */}
                     {q.type === "mcq" && (() => {

@@ -70,15 +70,15 @@ export async function POST(
     // 4. Lấy tổng điểm của assignment (dựa trên các câu hỏi hiện tại)
     const { data: questions, error: questionsError } = await (supabase
       .from("questions") as any)
-      .select("points")
+      .select("points, type")
       .eq("assignment_id", submission.assignment_id);
 
     if (questionsError) throw questionsError;
 
-    const totalAssignmentPoints = (questions || []).reduce(
-      (sum: number, q: any) => sum + (q.points || 0),
-      0
-    );
+    const totalAssignmentPoints = (questions || []).reduce((sum: number, q: any) => {
+      if (q.type === "section") return sum;
+      return sum + Number(q.points !== undefined && q.points !== null && q.points > 0 ? q.points : 1);
+    }, 0) || 1;
 
     // 5. Tính điểm thang 10
     let finalScore = 0;

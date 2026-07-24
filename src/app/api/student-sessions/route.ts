@@ -7,26 +7,30 @@ const ACTIVE_SESSION_TIMEOUT_MS = 45 * 1000;
 
 function getSessionMeta(draftAnswers: unknown) {
   if (!draftAnswers || typeof draftAnswers !== "object") {
-    return { activeSince: null as string | null, activeDurationSeconds: 0 };
+    return { activeSince: null as string | null, activeDurationSeconds: 0, isGuest: false };
   }
 
   const sessionMeta = (draftAnswers as Record<string, unknown>).__sessionMeta;
   if (!sessionMeta || typeof sessionMeta !== "object") {
-    return { activeSince: null as string | null, activeDurationSeconds: 0 };
+    return { activeSince: null as string | null, activeDurationSeconds: 0, isGuest: false };
   }
 
-  const meta = sessionMeta as { activeSince?: string | null; activeDurationSeconds?: number | null };
+  const meta = sessionMeta as { activeSince?: string | null; activeDurationSeconds?: number | null; isGuest?: boolean };
   return {
     activeSince: meta.activeSince ?? null,
     activeDurationSeconds: Math.max(0, Math.floor(Number(meta.activeDurationSeconds ?? 0))),
+    isGuest: Boolean(meta.isGuest),
   };
 }
 
-function setSessionMeta(draftAnswers: unknown, activeSince: string | null, activeDurationSeconds: number) {
+function setSessionMeta(draftAnswers: unknown, activeSince: string | null, activeDurationSeconds: number, isGuest?: boolean) {
   const answers = draftAnswers && typeof draftAnswers === "object" ? { ...(draftAnswers as Record<string, unknown>) } : {};
+  const existingMeta = (answers.__sessionMeta as Record<string, unknown>) || {};
   answers.__sessionMeta = {
+    ...existingMeta,
     activeSince,
     activeDurationSeconds: Math.max(0, Math.floor(activeDurationSeconds)),
+    isGuest: isGuest !== undefined ? Boolean(isGuest) : Boolean(existingMeta.isGuest),
   };
   return answers;
 }
@@ -35,7 +39,7 @@ function setSessionMeta(draftAnswers: unknown, activeSince: string | null, activ
 export async function POST(req: Request) {
   try {
     const body = await req.json();
-    const { assignmentId, studentName, status = "active" } = body;
+    const { assignmentId, studentName, status = "active", isGuest = false } = body;
 
     if (!assignmentId || !studentName) {
       return NextResponse.json({ error: "Missing required fields" }, { status: 400 });
@@ -78,7 +82,7 @@ export async function POST(req: Request) {
         started_at: startedAt.toISOString(),
         deadline_at: deadlineAt?.toISOString() || null,
         last_activity_at: startedAt.toISOString(),
-        draft_answers: setSessionMeta({}, startedAt.toISOString(), 0),
+        draft_answers: setSessionMeta({}, startedAt.toISOString(), 0, Boolean(isGuest)),
       })
       .select()
       .single();
@@ -112,7 +116,7 @@ export async function PUT(req: Request) {
     // Lấy trạng thái hiện tại để kiểm tra
     const { data: currentSession } = await supabase
       .from("student_sessions")
-      .select("status, exit_count, draft_answers")
+      .select("status, exit_count, draft_answers, assignment_id, deadline_at")
       .eq("id", sessionId)
       .single();
 
@@ -121,13 +125,12 @@ export async function PUT(req: Request) {
       return NextResponse.json({ success: true, skipped: true });
     }
 
-    const answers = currentSession?.draft_answers || {};
-
     const updateData: {
       status: string;
       last_activity_at: string;
       exit_count?: number;
       draft_answers?: Record<string, unknown>;
+      deadline_at?: string | null;
     } = {
       status,
       last_activity_at: new Date().toISOString(),
@@ -137,10 +140,12 @@ export async function PUT(req: Request) {
     const { activeSince, activeDurationSeconds } = getSessionMeta(currentSession?.draft_answers);
     const activeSinceMs = activeSince ? new Date(activeSince).getTime() : NaN;
     const shouldAccumulate = currentSession?.status === "active" && Number.isFinite(activeSinceMs);
+    
+    let currentAccumulated = Number(activeDurationSeconds ?? 0);
     if (shouldAccumulate) {
-      const accumulated = Number(activeDurationSeconds ?? 0);
       const extraSeconds = Math.max(0, Math.floor((now.getTime() - activeSinceMs) / 1000));
-      updateData.draft_answers = setSessionMeta(currentSession?.draft_answers, null, accumulated + extraSeconds);
+      currentAccumulated += extraSeconds;
+      updateData.draft_answers = setSessionMeta(currentSession?.draft_answers, null, currentAccumulated);
     }
 
     // Nếu chuyển từ active → exited, tăng exit_count
@@ -148,16 +153,41 @@ export async function PUT(req: Request) {
       updateData.exit_count = (currentSession.exit_count || 0) + 1;
     }
 
-    if (status === "active" && currentSession?.status === "exited") {
-      updateData.draft_answers = setSessionMeta(currentSession?.draft_answers, now.toISOString(), Number(activeDurationSeconds ?? 0));
-    }
+    if (status === "active") {
+      updateData.draft_answers = setSessionMeta(
+        updateData.draft_answers || currentSession?.draft_answers,
+        now.toISOString(),
+        currentAccumulated
+      );
 
-    if (status === "active" && currentSession?.status === "active" && !activeSince) {
-      updateData.draft_answers = setSessionMeta(currentSession?.draft_answers, now.toISOString(), Number(activeDurationSeconds ?? 0));
+      // Recalculate deadline_at based on remaining active work duration + hard due_at
+      if (currentSession?.assignment_id) {
+        const { data: assignment } = await supabase
+          .from("assignments")
+          .select("duration_minutes, due_at")
+          .eq("id", currentSession.assignment_id)
+          .single();
+
+        if (assignment?.duration_minutes) {
+          const remainingWorkSec = Math.max(0, Math.floor(assignment.duration_minutes * 60 - currentAccumulated));
+          let calculatedDeadline = new Date(now.getTime() + remainingWorkSec * 1000);
+          if (assignment.due_at) {
+            const dueAtDate = new Date(assignment.due_at);
+            if (dueAtDate < calculatedDeadline) {
+              calculatedDeadline = dueAtDate;
+            }
+          }
+          updateData.deadline_at = calculatedDeadline.toISOString();
+        }
+      }
     }
 
     if (status === "submitted") {
-      updateData.draft_answers = setSessionMeta(currentSession?.draft_answers, null, Number(activeDurationSeconds ?? 0));
+      updateData.draft_answers = setSessionMeta(
+        updateData.draft_answers || currentSession?.draft_answers,
+        null,
+        currentAccumulated
+      );
     }
 
     // Cập nhật session

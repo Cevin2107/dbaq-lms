@@ -13,7 +13,6 @@ const DocumentsPanel = dynamic(
   { ssr: false }
 );
 import type { Assignment } from "@/lib/types";
-import bgImg from "@/app/bg.jpg";
 
 type HomeTabsProps = {
   assignments: Assignment[];
@@ -79,7 +78,7 @@ export function HomeTabs({ assignments, studentName, greeting, greetingKind }: H
 
                 <div className="md:hidden w-[240px] h-[240px] sm:w-[280px] sm:h-[280px] rounded-[24px] overflow-hidden mb-0 relative shadow-[rgba(0,0,0,0.22)_3px_5px_30px_0px] order-2">
                   <Image
-                    src={bgImg}
+                    src="/app-icon.png"
                     alt="Đào Bá Anh Quân"
                     fill
                     className="object-cover object-[center_35%]"
@@ -117,7 +116,7 @@ export function HomeTabs({ assignments, studentName, greeting, greetingKind }: H
               <div className="hidden md:block shrink-0 relative w-72 h-72 lg:w-[380px] lg:h-[380px]">
                 <div className="relative w-full h-full rounded-[18px] overflow-hidden shadow-[rgba(0,0,0,0.22)_3px_5px_30px_0px]">
                   <Image
-                    src={bgImg}
+                    src="/app-icon.png"
                     alt="Đào Bá Anh Quân"
                     fill
                     className="object-cover object-[center_35%]"

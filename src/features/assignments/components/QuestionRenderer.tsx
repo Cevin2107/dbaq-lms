@@ -58,7 +58,7 @@ export const QuestionRenderer: React.FC<QuestionRendererProps> = React.memo(({
 
           <div className="flex-1 min-w-0">
             {/* Question text */}
-            <p className="text-base font-semibold text-white leading-relaxed mb-5"><MathText text={question.content || ""} /></p>
+            <div className="text-base font-semibold text-white leading-relaxed mb-5"><MathText text={question.content || ""} /></div>
 
             {question.imageUrl && (
               <img src={question.imageUrl} alt="Câu hỏi" className="mb-5 max-w-full rounded-xl shadow-md border border-white/10 max-h-80 object-contain bg-black/20" />

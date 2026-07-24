@@ -30,37 +30,11 @@ export default async function AssignmentPage({ params }: {
   );
 
   const { data: { user } } = await supabase.auth.getUser();
-  if (!user) {
-    redirect('/login');
-  }
 
   const assignment = await fetchAssignmentById(id);
   if (!assignment) return notFound();
 
-  // Validate if student is assigned
-  const supabaseAdmin = createServerClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.SUPABASE_SERVICE_ROLE_KEY!,
-    {
-      cookies: {
-        getAll: () => [],
-        setAll: () => {},
-      },
-    }
-  );
-
-  const { data: isAssigned } = await supabaseAdmin
-    .from("assignment_assignments")
-    .select("id")
-    .eq("assignment_id", id)
-    .eq("student_id", user.id)
-    .single();
-
-  if (!isAssigned) {
-    return notFound();
-  }
-
   const questions = await fetchQuestions(assignment.id);
 
-  return <AssignmentTaking assignment={assignment} questions={questions} initialStudentName={user.user_metadata?.full_name || 'Học sinh'} />;
+  return <AssignmentTaking assignment={assignment} questions={questions} initialStudentName={user?.user_metadata?.full_name || 'Học sinh'} />;
 }

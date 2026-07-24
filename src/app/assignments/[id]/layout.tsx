@@ -10,12 +10,11 @@ export async function generateMetadata(
   { params }: { params: Promise<{ id: string }> }
 ): Promise<Metadata> {
   const { id } = await params;
-  console.log("=== GENERATING METADATA FOR ID:", id);
   const assignment = await fetchAssignmentById(id);
   const title = assignment ? `📝 ${assignment.title} 🔸 Gia sư Đào Bá Anh Quân` : "📝 Bài tập 🔸 Gia sư Đào Bá Anh Quân";
   const description = assignment ? `Làm bài tập: ${assignment.title} - Môn học: ${assignment.subject}.` : "Hệ thống bài tập trực tuyến.";
 
-  const result = {
+  return {
     metadataBase: new URL("https://dbaq-lms.vercel.app"),
     title,
     description,
@@ -32,8 +31,6 @@ export async function generateMetadata(
       images: ["https://dbaq-lms.vercel.app/og-image.png"],
     }
   };
-  console.log("=== METADATA RESULT ===", JSON.stringify(result, null, 2));
-  return result;
 }
 
 export default function AssignmentLayout({ children }: Props) {

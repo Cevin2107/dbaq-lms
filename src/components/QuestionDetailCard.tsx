@@ -188,7 +188,30 @@ export function QuestionDetailCard({
         </div>
       )}
 
-      {(q.type === "essay" || q.type === "short_answer") && (
+      {q.type === "short_answer" && (
+        <div className="mt-3 grid grid-cols-1 sm:grid-cols-2 gap-2">
+          <div className="flex items-center justify-between rounded-xl border border-blue-200 bg-blue-50/80 px-3 py-2.5 text-xs">
+            <span className="font-semibold text-blue-700 flex items-center gap-1 shrink-0 mr-2">
+              <FileText className="h-3.5 w-3.5" />
+              Lựa chọn HS:
+            </span>
+            <span className="font-bold text-blue-900 break-words text-right">
+              {hasAnswer ? q.studentAnswer : <em className="text-slate-400 font-normal">Chưa trả lời</em>}
+            </span>
+          </div>
+          <div className="flex items-center justify-between rounded-xl border border-emerald-200 bg-emerald-50/80 px-3 py-2.5 text-xs">
+            <span className="font-semibold text-emerald-700 flex items-center gap-1 shrink-0 mr-2">
+              <CheckCircle2 className="h-3.5 w-3.5" />
+              Đáp án đúng:
+            </span>
+            <span className="font-bold text-emerald-900 break-words text-right">
+              {q.answerKey ? q.answerKey : <em className="text-slate-400 font-normal">Chưa có</em>}
+            </span>
+          </div>
+        </div>
+      )}
+
+      {q.type === "essay" && (
         <div className="mt-4">
           <p className="text-xs font-bold text-slate-700 mb-2 flex items-center gap-2">
             <FileText className="h-4 w-4" />

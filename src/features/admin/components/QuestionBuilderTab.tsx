@@ -286,6 +286,15 @@ export function QuestionBuilderTab({ assignmentId, initialQuestions }: { assignm
                     ))}
                   </div>
                 )}
+
+                {q.type === "short_answer" && (
+                  <div className="mt-3 flex items-center gap-2 text-sm rounded-xl px-3 py-2 bg-emerald-50 text-emerald-700 font-semibold border border-emerald-200/70">
+                    <span className="text-xs font-bold text-emerald-600 uppercase tracking-wider">Đáp án:</span>
+                    <span className="break-words">
+                      <MathText text={q.answerKey || q.answer_key || "(Chưa thiết lập)"} />
+                    </span>
+                  </div>
+                )}
               </div>
               
               <div className="flex flex-col gap-2 shrink-0">

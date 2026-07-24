@@ -6,10 +6,12 @@ import Link from "next/link";
 import { Badge } from "@/components/ui/Badge";
 import { Button } from "@/components/ui/Button";
 import { useToast } from "@/components/ui/Toast";
-import { Copy, CheckCircle2, Clock, Award, Calendar, Share2 } from "lucide-react";
+import { Copy, CheckCircle2, Clock, Award, Calendar, Share2, User, LogIn } from "lucide-react";
 
 export default function StartAssignmentPage({ params }: { params: Promise<{ id: string }> }) {
   const [studentName, setStudentName] = useState("");
+  const [isAuthUser, setIsAuthUser] = useState(false);
+  const [checkingUser, setCheckingUser] = useState(true);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [incompleteSession, setIncompleteSession] = useState<{ id: string; student_name: string; started_at: string } | null>(null);
@@ -27,11 +29,22 @@ export default function StartAssignmentPage({ params }: { params: Promise<{ id: 
 
   useEffect(() => {
     const fetchUser = async () => {
-      const { createSupabaseBrowserClient } = await import("@/lib/supabaseClient");
-      const supabase = createSupabaseBrowserClient();
-      const { data: { user } } = await supabase.auth.getUser();
-      if (user) {
-        setStudentName(user.user_metadata?.full_name || "Học sinh");
+      setCheckingUser(true);
+      try {
+        const { createSupabaseBrowserClient } = await import("@/lib/supabaseClient");
+        const supabase = createSupabaseBrowserClient();
+        const { data: { user } } = await supabase.auth.getUser();
+        if (user) {
+          setIsAuthUser(true);
+          setStudentName(user.user_metadata?.full_name || "Học sinh");
+        } else {
+          setIsAuthUser(false);
+          setStudentName("");
+        }
+      } catch {
+        setIsAuthUser(false);
+      } finally {
+        setCheckingUser(false);
       }
     };
     fetchUser();
@@ -88,7 +101,10 @@ export default function StartAssignmentPage({ params }: { params: Promise<{ id: 
 
   const handleStart = async (resumeSessionId?: string) => {
     const trimmedName = studentName.trim();
-    if (!trimmedName) { setError("Đang tải thông tin..."); return; }
+    if (!trimmedName) { 
+      setError("Vui lòng nhập họ và tên trước khi bắt đầu làm bài"); 
+      return; 
+    }
 
     setLoading(true);
     setError("");
@@ -98,7 +114,12 @@ export default function StartAssignmentPage({ params }: { params: Promise<{ id: 
         const res = await fetch("/api/student-sessions", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ assignmentId, studentName: trimmedName, status: "active" }),
+          body: JSON.stringify({ 
+            assignmentId, 
+            studentName: trimmedName, 
+            status: "active",
+            isGuest: !isAuthUser,
+          }),
         });
         if (!res.ok) {
           const errData = await res.json().catch(() => ({}));
@@ -117,6 +138,9 @@ export default function StartAssignmentPage({ params }: { params: Promise<{ id: 
       if (!sessionId) throw new Error("Không thể lấy session ID");
       localStorage.setItem(`session-${assignmentId}`, sessionId);
       localStorage.setItem(`student-name-${assignmentId}`, trimmedName);
+      if (!isAuthUser) {
+        localStorage.setItem(`is-guest-${assignmentId}`, "true");
+      }
       router.push(`/assignments/${assignmentId}`);
     } catch (err) {
       setError(err instanceof Error ? err.message : "Có lỗi xảy ra");
@@ -262,10 +286,44 @@ export default function StartAssignmentPage({ params }: { params: Promise<{ id: 
         {/* Input Card */}
         <div className="rounded-[2rem] bg-white/80 dark:bg-[#1d1d1f]/80 backdrop-blur-xl border border-black/5 dark:border-white/5 shadow-[0_4px_20px_rgba(0,0,0,0.03)] p-6 sm:p-8 hover:shadow-[0_8px_30px_rgba(0,0,0,0.05)] transition-shadow">
           <div className="space-y-6">
-            <div className="text-center p-5 bg-slate-50 dark:bg-slate-800/50 rounded-2xl border border-slate-100 dark:border-slate-800">
-              <p className="text-[14px] font-medium text-slate-500 dark:text-slate-400 mb-1">Đăng nhập với tư cách:</p>
-              <p className="text-[19px] font-bold text-[#0066cc] dark:text-blue-400">{studentName || "Đang tải..."}</p>
-            </div>
+            {checkingUser ? (
+              <div className="p-5 bg-slate-50 dark:bg-slate-800/50 rounded-2xl border border-slate-100 dark:border-slate-800 animate-pulse space-y-2">
+                <div className="h-4 w-1/3 bg-slate-200 dark:bg-slate-700 rounded mx-auto" />
+                <div className="h-6 w-1/2 bg-slate-200 dark:bg-slate-700 rounded mx-auto" />
+              </div>
+            ) : isAuthUser ? (
+              <div className="text-center p-5 bg-slate-50 dark:bg-slate-800/50 rounded-2xl border border-slate-100 dark:border-slate-800">
+                <p className="text-[14px] font-medium text-slate-500 dark:text-slate-400 mb-1">Đăng nhập với tư cách:</p>
+                <p className="text-[19px] font-bold text-[#0066cc] dark:text-blue-400">{studentName}</p>
+              </div>
+            ) : (
+              <div className="rounded-2xl border border-blue-200/80 dark:border-blue-800/40 bg-gradient-to-br from-blue-50/70 to-indigo-50/70 dark:from-blue-900/20 dark:to-indigo-900/20 p-5 space-y-4">
+                <div className="flex items-start gap-3">
+                  <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-[#0066cc]/10 text-[#0066cc] dark:bg-blue-500/20 dark:text-blue-300 shrink-0">
+                    <User className="h-5 w-5" />
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <h3 className="text-[15px] font-bold text-slate-900 dark:text-white">Bạn chưa đăng nhập</h3>
+                    <p className="text-[13px] text-slate-600 dark:text-slate-300 mt-0.5">
+                      Vui lòng <Link href={`/login?redirect=${encodeURIComponent(`/assignments/${assignmentId}/start`)}`} className="font-bold text-[#0066cc] dark:text-blue-400 hover:underline inline-flex items-center gap-1">Đăng nhập tài khoản <LogIn className="h-3.5 w-3.5 inline" /></Link> hoặc điền họ và tên bên dưới để làm bài ngay.
+                    </p>
+                  </div>
+                </div>
+
+                <div>
+                  <label className="block text-[12px] font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400 mb-1.5">
+                    Họ và tên của bạn
+                  </label>
+                  <input
+                    type="text"
+                    value={studentName}
+                    onChange={(e) => setStudentName(e.target.value)}
+                    placeholder="Nhập họ và tên (ví dụ: Nguyễn Văn A)..."
+                    className="w-full h-12 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-[#2c2c2e] px-4 text-[15px] font-medium text-slate-900 dark:text-white placeholder:text-slate-400 focus:border-[#0066cc] focus:outline-none focus:ring-2 focus:ring-[#0066cc]/20 transition"
+                  />
+                </div>
+              </div>
+            )}
             
             {error && (
               <div className="flex items-center gap-2.5 rounded-2xl bg-red-50 dark:bg-red-900/20 px-4 py-3 text-[14px] font-medium text-red-700 dark:text-red-400 border border-red-100 dark:border-red-900/30">
@@ -319,7 +377,7 @@ export default function StartAssignmentPage({ params }: { params: Promise<{ id: 
             {!incompleteSession && (
               <button
                 onClick={() => handleStart()}
-                disabled={loading || !studentName.trim() || checkingIncomplete}
+                disabled={loading || !studentName.trim() || checkingIncomplete || checkingUser}
                 className="w-full flex items-center justify-center h-[52px] rounded-full bg-[#0066cc] shadow-md shadow-blue-500/20 hover:bg-[#005bb5] hover:shadow-lg disabled:opacity-60 px-4 py-3 text-[15px] font-bold text-white transition active:scale-[0.98]"
               >
                 {loading ? (

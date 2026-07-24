@@ -280,6 +280,12 @@ export function StudentSessionsTab({ assignmentId }: { assignmentId: string }) {
                           <h3 className="text-[17px] font-bold text-slate-900 dark:text-white truncate tracking-[-0.01em] group-hover:text-[#0066cc] dark:group-hover:text-blue-400 transition-colors">
                             {s.student_name}
                           </h3>
+                          {Boolean(s.is_guest || s.draft_answers?.__sessionMeta?.isGuest) && (
+                            <span className="px-2.5 py-0.5 rounded-full text-xs font-bold bg-amber-100/90 dark:bg-amber-900/40 text-amber-800 dark:text-amber-300 border border-amber-300/70 dark:border-amber-700/50 shadow-sm flex items-center gap-1">
+                              <User className="h-3 w-3" />
+                              Học sinh ngoài
+                            </span>
+                          )}
                           {isSubmitted ? (
                             <span className="px-2 py-0.5 rounded-lg bg-emerald-100/60 dark:bg-emerald-900/20 backdrop-blur-sm text-xs font-semibold text-emerald-700 dark:text-emerald-400">
                               Đã nộp
@@ -380,10 +386,10 @@ export function StudentSessionsTab({ assignmentId }: { assignmentId: string }) {
         if (!session) return null;
         const isSubmitted = !!session.submissions?.id;
         return (
-          <div className="fixed inset-0 bg-black/50 dark:bg-black/70 backdrop-blur-sm flex items-center justify-center z-50 p-4 overflow-y-auto animate-fade-in">
-            <div className="bg-white dark:bg-[#1d1d1f] rounded-3xl shadow-2xl border border-black/5 dark:border-white/10 max-w-5xl w-full max-h-[90vh] overflow-hidden flex flex-col animate-scale-in">
+          <div className="fixed inset-0 bg-black/50 dark:bg-black/70 backdrop-blur-sm flex items-center justify-center z-50 p-2 sm:p-4 overflow-y-auto animate-fade-in">
+            <div className="bg-white dark:bg-[#1d1d1f] rounded-2xl sm:rounded-3xl shadow-2xl border border-black/5 dark:border-white/10 max-w-5xl w-full max-h-[95vh] sm:max-h-[90vh] overflow-hidden flex flex-col animate-scale-in">
               {detailLoading ? (
-                <div className="p-12 text-center flex-1 flex items-center justify-center">
+                <div className="p-8 sm:p-12 text-center flex-1 flex items-center justify-center">
                   <div className="space-y-4">
                     <div className="inline-flex h-16 w-16 items-center justify-center rounded-2xl bg-gradient-to-br from-indigo-100 to-violet-100 dark:from-indigo-900/30 dark:to-violet-900/30">
                       <div className="h-8 w-8 border-3 border-indigo-600 dark:border-indigo-400 border-t-transparent rounded-full animate-spin" />
@@ -394,40 +400,48 @@ export function StudentSessionsTab({ assignmentId }: { assignmentId: string }) {
               ) : detailData ? (
                 <>
                   {/* Sticky Header */}
-                  <div className="sticky top-0 bg-white/95 dark:bg-[#1d1d1f]/95 backdrop-blur-xl border-b border-black/5 dark:border-white/5 p-6 flex items-center justify-between z-10">
-                    <div className="flex items-center gap-4">
+                  <div className="sticky top-0 bg-white/95 dark:bg-[#1d1d1f]/95 backdrop-blur-xl border-b border-black/5 dark:border-white/5 p-3.5 sm:p-6 flex items-center justify-between z-10">
+                    <div className="flex items-center gap-3">
                       <div className="relative">
                         <div className="absolute inset-0 bg-gradient-to-br from-indigo-500 to-violet-600 rounded-2xl blur opacity-30" />
-                        <div className={`relative flex h-12 w-12 items-center justify-center rounded-2xl shadow-lg ${
+                        <div className={`relative flex h-10 w-10 sm:h-12 sm:w-12 items-center justify-center rounded-xl sm:rounded-2xl shadow-lg ${
                           isSubmitted 
                             ? 'bg-gradient-to-br from-emerald-500 to-teal-600 shadow-emerald-500/30' 
                             : 'bg-gradient-to-br from-amber-500 to-orange-600 shadow-amber-500/30'
                         }`}>
                           {isSubmitted ? (
-                            <CheckCircle2 className="h-6 w-6 text-white" />
+                            <CheckCircle2 className="h-5 w-5 sm:h-6 sm:w-6 text-white" />
                           ) : (
-                            <Clock className="h-6 w-6 text-white" />
+                            <Clock className="h-5 w-5 sm:h-6 sm:w-6 text-white" />
                           )}
                         </div>
                       </div>
                       <div>
-                        <h2 className="text-xl font-bold bg-gradient-to-r from-slate-900 to-slate-700 dark:from-white dark:to-slate-300 bg-clip-text text-transparent">
+                        <h2 className="text-base sm:text-xl font-bold bg-gradient-to-r from-slate-900 to-slate-700 dark:from-white dark:to-slate-300 bg-clip-text text-transparent">
                           {isSubmitted ? 'Bài đã nộp' : 'Bài đang làm'}
                         </h2>
-                        <p className="text-sm text-slate-600 dark:text-slate-400 font-medium">
-                          {session.student_name}
-                        </p>
+                        <div className="flex items-center gap-2">
+                          <p className="text-xs sm:text-sm text-slate-600 dark:text-slate-400 font-medium">
+                            {session.student_name}
+                          </p>
+                          {Boolean(session.is_guest || session.draft_answers?.__sessionMeta?.isGuest) && (
+                            <span className="px-2 py-0.5 rounded-full text-[11px] font-bold bg-amber-100 dark:bg-amber-900/40 text-amber-800 dark:text-amber-300 border border-amber-300/80 dark:border-amber-700/60 shadow-sm flex items-center gap-1">
+                              <User className="h-3 w-3" />
+                              Học sinh ngoài
+                            </span>
+                          )}
+                        </div>
                       </div>
                     </div>
                     <button
                       onClick={() => setSelectedSessionId(null)}
-                      className="flex h-10 w-10 items-center justify-center rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 hover:bg-red-100 hover:text-red-600 dark:hover:bg-red-900/30 dark:hover:text-red-400 transition-all"
+                      className="flex h-9 w-9 sm:h-10 sm:w-10 items-center justify-center rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 hover:bg-red-100 hover:text-red-600 dark:hover:bg-red-900/30 dark:hover:text-red-400 transition-all"
                     >
                       <X className="h-5 w-5" />
                     </button>
                   </div>
 
-                  <div className="flex-1 overflow-y-auto p-6 space-y-4 bg-slate-50/50 dark:bg-black/20">
+                  <div className="flex-1 overflow-y-auto p-3 sm:p-6 space-y-4 bg-slate-50/50 dark:bg-black/20">
                     <StudentWorkReviewPanel
                       questions={detailData.questions || []}
                       startedAt={session.started_at}

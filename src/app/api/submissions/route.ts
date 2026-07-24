@@ -137,6 +137,15 @@ export async function POST(req: Request) {
     }, 0) || 1;
     let totalScoreRaw = 0;
 
+    const answersToInsert: Array<{
+      submission_id: string;
+      question_id: string;
+      answer: string;
+      answer_image_url: string | null;
+      is_correct: boolean | null;
+      points_awarded: number;
+    }> = [];
+
     for (const q of questions) {
       const studentAnswer = answers[q.id];
       let isCorrect = false;
@@ -187,7 +196,7 @@ export async function POST(req: Request) {
 
       totalScoreRaw += pointsAwarded;
 
-      await supabase.from("answers").insert({
+      answersToInsert.push({
         submission_id: submission.id,
         question_id: q.id,
         answer: studentAnswer || "",
@@ -195,6 +204,17 @@ export async function POST(req: Request) {
         is_correct: (q.type === "mcq" || q.type === "short_answer" || q.type === "true_false") ? (isSkipped ? null : isCorrect) : null,
         points_awarded: pointsAwarded,
       });
+    }
+
+    if (answersToInsert.length > 0) {
+      const { error: answersInsertError } = await supabase
+        .from("answers")
+        .insert(answersToInsert);
+
+      if (answersInsertError) {
+        console.error("Error inserting answers batch:", answersInsertError);
+        return NextResponse.json({ error: "Failed to record answers" }, { status: 500 });
+      }
     }
 
     const normalizedScore = Math.round(((totalScoreRaw / totalPossiblePoints) * 10 + Number.EPSILON) * 100) / 100;
