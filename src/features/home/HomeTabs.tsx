@@ -13,6 +13,7 @@ const DocumentsPanel = dynamic(
   { ssr: false }
 );
 import type { Assignment } from "@/lib/types";
+import bgImg from "@/app/bg.jpg";
 
 type HomeTabsProps = {
   assignments: Assignment[];
@@ -42,19 +43,19 @@ export function HomeTabs({ assignments, studentName, greeting, greetingKind }: H
   return (
     <div className="w-full max-w-[1440px] mx-auto px-4 sm:px-6 md:px-8 pb-16">
       <div className="mb-6 rounded-full bg-white/80 dark:bg-[#1d1d1f]/80 backdrop-blur-md border border-black/5 dark:border-white/10 p-1 shadow-[0_4px_20px_rgba(0,0,0,0.03)] overflow-x-auto no-scrollbar">
-        <div className="flex min-w-max items-center gap-1">
+        <div className="flex items-center gap-1 min-w-max">
           {tabs.map((tab) => {
             const Icon = tab.icon;
-            const active = activeTab === tab.id;
+            const isActive = activeTab === tab.id;
             return (
               <button
                 key={tab.id}
                 onClick={() => setActiveTab(tab.id)}
                 className={clsx(
-                  "inline-flex items-center justify-center gap-2 rounded-full px-5 py-3 text-[14px] font-semibold transition-all",
-                  active
+                  "flex items-center gap-2 px-5 py-2.5 rounded-full text-sm font-semibold transition-all duration-200",
+                  isActive
                     ? "bg-[#0066cc] text-white shadow-md shadow-blue-500/20"
-                    : "text-slate-500 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-white/10 hover:text-[#1d1d1f] dark:hover:text-white"
+                    : "text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-white/5"
                 )}
               >
                 <Icon className="h-4 w-4" />
@@ -67,18 +68,17 @@ export function HomeTabs({ assignments, studentName, greeting, greetingKind }: H
 
       {activeTab === "home" && (
         <div className="space-y-8 animate-slide-up">
-          <div className="relative w-full rounded-[2rem] sm:rounded-[3rem] overflow-hidden bg-gradient-to-br from-[#ffffff] via-[#f0f9ff] to-[#e0f2fe] dark:from-[#1a1c23] dark:via-[#151921] dark:to-[#0f172a] border border-[#bae6fd]/30 dark:border-white/10 shadow-[0_8px_30px_rgba(0,102,204,0.08)]">
-            <div className="relative z-10 py-10 sm:py-14 md:py-16 px-6 sm:px-12 lg:px-20 flex flex-col md:flex-row items-center justify-between gap-12 md:gap-8">
-              <div className="flex-1 text-center md:text-left max-w-2xl flex flex-col items-center md:items-start w-full">
-                <div className="mb-6 inline-flex px-4 py-1.5 rounded-full bg-black/5 dark:bg-white/10 border border-black/5 dark:border-white/10 order-1">
-                  <span className="text-[12px] font-medium tracking-tight text-[#1d1d1f] dark:text-white/90 uppercase">
-                    Hệ thống bài tập trực tuyến
-                  </span>
+          <div className="relative overflow-hidden rounded-[2rem] bg-gradient-to-br from-blue-50/80 via-indigo-50/50 to-sky-50/80 dark:from-blue-950/40 dark:via-slate-900/40 dark:to-indigo-950/40 border border-blue-100/80 dark:border-blue-900/30 p-6 sm:p-10 shadow-[0_4px_20px_rgba(0,0,0,0.03)]">
+            <div className="flex flex-col md:flex-row items-center justify-between gap-6">
+              <div className="flex flex-col items-center md:items-start text-center md:text-left flex-1 min-w-0">
+                <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-[#0066cc]/10 text-[#0066cc] dark:bg-blue-500/20 dark:text-blue-300 text-xs font-bold mb-4 order-1">
+                  <BookOpen className="h-3.5 w-3.5" />
+                  <span>Hệ thống bài tập trực tuyến</span>
                 </div>
 
                 <div className="md:hidden w-[240px] h-[240px] sm:w-[280px] sm:h-[280px] rounded-[24px] overflow-hidden mb-0 relative shadow-[rgba(0,0,0,0.22)_3px_5px_30px_0px] order-2">
                   <Image
-                    src="/app-icon.png"
+                    src={bgImg}
                     alt="Đào Bá Anh Quân"
                     fill
                     className="object-cover object-[center_35%]"
@@ -116,7 +116,7 @@ export function HomeTabs({ assignments, studentName, greeting, greetingKind }: H
               <div className="hidden md:block shrink-0 relative w-72 h-72 lg:w-[380px] lg:h-[380px]">
                 <div className="relative w-full h-full rounded-[18px] overflow-hidden shadow-[rgba(0,0,0,0.22)_3px_5px_30px_0px]">
                   <Image
-                    src="/app-icon.png"
+                    src={bgImg}
                     alt="Đào Bá Anh Quân"
                     fill
                     className="object-cover object-[center_35%]"
