@@ -587,7 +587,7 @@ function normalizeGeneratedQuestions(raw: unknown, questionType: QuestionType): 
   for (const item of raw) {
     if (!item || typeof item !== "object") continue;
     const q = item as Record<string, unknown>;
-    let stem = stripQuestionPrefix(String(q.question || q.stem || "").trim());
+    const stem = stripQuestionPrefix(String(q.question || q.stem || "").trim());
     if (!stem) continue;
 
     if (questionType === "mcq") {
