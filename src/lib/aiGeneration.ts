@@ -48,6 +48,18 @@ export function stripQuestionPrefix(text: string): string {
     if (cleaned === prev) break;
   }
 
+  // Remove trailing **KQ:** or KQ: with dotted lines, underscores, or horizontal rules ---
+  cleaned = cleaned
+    .replace(/(?:\r?\n|\s)*(?:\*\*|\\\\\*)?\s*(?:KQ|Kết quả|Đáp số|Answer)\s*(?::|:)?\s*(?:\*\*|\\\\\*)?\s*[\.\_\-\s]*$/gi, "")
+    .replace(/(?:\r?\n|\s)*(?:\*\*|\\\\\*)?\s*(?:KQ|Kết quả|Đáp số|Answer)\s*(?::|:)?\s*(?:\*\*|\\\\\*)?[\s\S]*$/gi, (match) => {
+      if (/\.{2,}|_{2,}|-{2,}/.test(match)) {
+        return "";
+      }
+      return match;
+    })
+    .replace(/(?:\r?\n|\s)*-{3,}\s*$/g, "")
+    .trim();
+
   return cleaned;
 }
 
@@ -631,12 +643,11 @@ function normalizeGeneratedQuestions(raw: unknown, questionType: QuestionType): 
         ai_solve_status: "solved",
       });
     } else if (questionType === "short_answer") {
-      const ansKey = String(q.answer_key || q.answerKey || q.correct_answer || q.answer || "").trim();
       result.push({
         type: "short_answer",
         question: stem,
-        answer_key: ansKey,
-        ai_solve_status: "solved",
+        answer_key: "",
+        ai_solve_status: "unsolved",
       });
     } else if (questionType === "essay") {
       const ansKey = String(q.answer_key || q.answerKey || q.explanation || q.solution || "").trim();

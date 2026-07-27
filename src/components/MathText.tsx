@@ -322,6 +322,23 @@ function splitMathSegments(text: string) {
   return parts;
 }
 
+function renderTextWithRedHighlights(text: string) {
+  if (!text || !text.includes("**")) return text;
+
+  const parts = text.split(/(\*\*[\s\S]+?\*\*)/g);
+  return parts.map((part, i) => {
+    if (part.startsWith("**") && part.endsWith("**") && part.length >= 4) {
+      const content = part.slice(2, -2);
+      return (
+        <span key={i} className="font-bold text-red-600 dark:text-red-400">
+          {content}
+        </span>
+      );
+    }
+    return part;
+  });
+}
+
 function renderContentBlock(text: string, className?: string) {
   const segments = splitMathSegments(text || "");
 
@@ -331,7 +348,7 @@ function renderContentBlock(text: string, className?: string) {
         if (segment.type === "text") {
           return (
             <span key={index} className="whitespace-pre-wrap">
-              {segment.value}
+              {renderTextWithRedHighlights(segment.value)}
             </span>
           );
         }
