@@ -274,9 +274,9 @@ export function StudentSessionsTab({ assignmentId }: { assignmentId: string }) {
                   </div>
 
                   <div className="flex-1 min-w-0">
-                    <div className="flex items-start justify-between gap-4">
+                    <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
                       <div className="flex-1 min-w-0">
-                        <div className="flex items-center gap-2 mb-1 flex-wrap">
+                        <div className="flex items-center gap-2 mb-1.5 flex-wrap">
                           <h3 className="text-[17px] font-bold text-slate-900 dark:text-white truncate tracking-[-0.01em] group-hover:text-[#0066cc] dark:group-hover:text-blue-400 transition-colors">
                             {s.student_name}
                           </h3>
@@ -287,46 +287,47 @@ export function StudentSessionsTab({ assignmentId }: { assignmentId: string }) {
                             </span>
                           )}
                           {isSubmitted ? (
-                            <span className="px-2 py-0.5 rounded-lg bg-emerald-100/60 dark:bg-emerald-900/20 backdrop-blur-sm text-xs font-semibold text-emerald-700 dark:text-emerald-400">
+                            <span className="px-2.5 py-0.5 rounded-lg bg-emerald-100/80 dark:bg-emerald-900/30 backdrop-blur-sm text-xs font-bold text-emerald-700 dark:text-emerald-400 border border-emerald-200/50 dark:border-emerald-800/30">
                               Đã nộp
                             </span>
                           ) : s.status === "exited" ? (
-                            <span className="px-2 py-0.5 rounded-lg bg-rose-100/60 dark:bg-rose-900/20 backdrop-blur-sm text-xs font-semibold text-rose-700 dark:text-rose-400">
+                            <span className="px-2.5 py-0.5 rounded-lg bg-rose-100/80 dark:bg-rose-900/30 backdrop-blur-sm text-xs font-bold text-rose-700 dark:text-rose-400 border border-rose-200/50 dark:border-rose-800/30">
                               Đã thoát
                             </span>
                           ) : (
-                            <span className="px-2 py-0.5 rounded-lg bg-amber-100/60 dark:bg-amber-900/20 backdrop-blur-sm text-xs font-semibold text-amber-700 dark:text-amber-400 animate-pulse">
+                            <span className="px-2.5 py-0.5 rounded-lg bg-amber-100/80 dark:bg-amber-900/30 backdrop-blur-sm text-xs font-bold text-amber-700 dark:text-amber-400 border border-amber-200/50 dark:border-amber-800/30 animate-pulse">
                               Đang làm
                             </span>
                           )}
                         </div>
 
-                        <div className="flex flex-wrap items-center gap-x-3 gap-y-1.5 text-xs text-slate-500 mt-1.5">
-                          <span className="inline-flex items-center gap-1">
-                            <Clock className="h-3.5 w-3.5" />
+                        <div className="flex flex-wrap items-center gap-1.5 text-xs text-slate-500 mt-2">
+                          <span className="inline-flex items-center gap-1 bg-slate-100 dark:bg-slate-800/80 px-2.5 py-1 rounded-full font-medium text-slate-600 dark:text-slate-300">
+                            <Clock className="h-3.5 w-3.5 text-[#0066cc]" />
                             {duration} phút
                           </span>
-                          <span>•</span>
-                          <span>Bắt đầu: {formatVietnamTime(new Date(s.started_at))}</span>
-                          <span>•</span>
-                          <span>Cập nhật: {formatVietnamTime(new Date(s.last_activity_at))}</span>
+                          <span className="bg-slate-100 dark:bg-slate-800/80 px-2.5 py-1 rounded-full font-medium text-slate-600 dark:text-slate-300">
+                            Bắt đầu: {formatVietnamTime(new Date(s.started_at))}
+                          </span>
+                          <span className="bg-slate-100 dark:bg-slate-800/80 px-2.5 py-1 rounded-full font-medium text-slate-600 dark:text-slate-300">
+                            Cập nhật: {formatVietnamTime(new Date(s.last_activity_at))}
+                          </span>
                           {s.exit_count > 0 && (
-                            <>
-                              <span>•</span>
-                              <span className="text-rose-600 dark:text-rose-400 font-medium">Thoát: {s.exit_count} lần</span>
-                            </>
+                            <span className="bg-rose-50 dark:bg-rose-950/40 text-rose-600 dark:text-rose-400 font-semibold px-2.5 py-1 rounded-full border border-rose-200/50 dark:border-rose-800/30">
+                              Thoát: {s.exit_count} lần
+                            </span>
                           )}
                         </div>
                       </div>
 
-                      <div className="text-right flex-shrink-0 flex items-center gap-2">
+                      <div className="text-right flex-shrink-0 flex items-center justify-between sm:justify-end gap-3.5 pt-2 sm:pt-0 border-t sm:border-t-0 border-slate-100 dark:border-white/5">
                         {isSubmitted ? (
                           <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-xl bg-gradient-to-r shadow-md backdrop-blur-sm border border-white/50 dark:border-white/5 bg-slate-50 dark:bg-slate-800">
                             <div className={`inline-flex h-6 w-6 items-center justify-center rounded-lg bg-gradient-to-br ${scoreColorClass}`}>
                               <Trophy className="h-3.5 w-3.5 text-white" />
                             </div>
                             <span className={`font-bold text-lg bg-gradient-to-r ${scoreColorClass} bg-clip-text text-transparent`}>
-                              {parseFloat(Number(score).toFixed(2)).toString().replace(".", ",")}
+                              {parseFloat(Number(score).toFixed(2)).toString().replace(".", ",")} điểm
                             </span>
                           </div>
                         ) : (

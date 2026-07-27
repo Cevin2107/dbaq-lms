@@ -19,7 +19,7 @@ export function StudentTabs({
   onAddStudent,
 }: StudentTabsProps) {
   return (
-    <div className="flex flex-nowrap gap-2 mb-4 pb-2 border-b border-gray-200 overflow-x-auto no-scrollbar">
+    <div className="flex flex-nowrap gap-2 mb-4 pb-2 border-b border-slate-200 dark:border-white/5 overflow-x-auto no-scrollbar touch-pan-x scroll-smooth -mx-4 px-4 sm:mx-0 sm:px-0">
       <button
         onClick={onSelectOverview}
         className={`
