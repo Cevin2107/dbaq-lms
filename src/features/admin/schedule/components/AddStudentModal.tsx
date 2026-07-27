@@ -1,4 +1,5 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { createPortal } from "react-dom";
 import { X, UserPlus } from "lucide-react";
 
 interface AddStudentModalProps {
@@ -18,9 +19,14 @@ const PRESET_COLORS = [
 ];
 
 export function AddStudentModal({ onAdd, onClose }: AddStudentModalProps) {
+  const [mounted, setMounted] = useState(false);
   const [name, setName] = useState("");
   const [salary, setSalary] = useState(200000);
   const [selectedColor, setSelectedColor] = useState(PRESET_COLORS[0]);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -42,9 +48,12 @@ export function AddStudentModal({ onAdd, onClose }: AddStudentModalProps) {
     }).format(amount);
   };
 
-  return (
-    <div className="fixed inset-0 bg-slate-900/40 backdrop-blur-sm flex items-center justify-center z-50 p-4 animate-in fade-in duration-200">
-      <div className="bg-white/90 dark:bg-[#1d1d1f]/90 backdrop-blur-xl rounded-[2rem] shadow-[0_8px_32px_rgba(0,0,0,0.12)] border border-black/5 dark:border-white/5 max-w-md w-full animate-in zoom-in-95 duration-200 overflow-hidden">
+  if (!mounted) return null;
+
+  return createPortal(
+    <div className="fixed inset-0 bg-slate-950/60 backdrop-blur-md flex items-center justify-center z-[9999] p-4 animate-in fade-in duration-200">
+      <div className="absolute inset-0 bg-slate-950/60 backdrop-blur-md" onClick={onClose} />
+      <div className="relative z-10 bg-white/90 dark:bg-[#1d1d1f]/90 backdrop-blur-xl rounded-[2rem] shadow-[0_12px_40px_rgba(0,0,0,0.25)] border border-black/5 dark:border-white/10 max-w-md w-full animate-in zoom-in-95 duration-200 overflow-hidden">
         <div className="flex items-center justify-between p-6 border-b border-black/5 dark:border-white/5">
           <div className="flex items-center gap-3">
             <UserPlus className="w-5 h-5 text-[#0066cc]" />
@@ -148,6 +157,7 @@ export function AddStudentModal({ onAdd, onClose }: AddStudentModalProps) {
           </div>
         </form>
       </div>
-    </div>
+    </div>,
+    document.body
   );
 }

@@ -1,4 +1,5 @@
 import React, { useCallback, useState, useEffect } from "react";
+import { createPortal } from "react-dom";
 import { Button } from "@/components/ui/Button";
 import { X, Plus, Trash2, Upload, ClipboardPaste } from "lucide-react";
 
@@ -181,9 +182,9 @@ export function QuestionEditorModal({ assignmentId, isOpen, onClose, onSuccess, 
     }
   };
 
-  return (
+  return createPortal(
     <div
-      className="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-6 animate-fade-in"
+      className="fixed inset-0 z-[9999] flex items-center justify-center p-4 sm:p-6 animate-fade-in overflow-hidden"
       onPaste={(e) => {
         const consumed = handlePaste(e.clipboardData);
         if (consumed) {
@@ -192,8 +193,8 @@ export function QuestionEditorModal({ assignmentId, isOpen, onClose, onSuccess, 
       }}
       suppressHydrationWarning
     >
-      <div className="absolute inset-0 bg-slate-900/60 backdrop-blur-sm" onClick={onClose} />
-      <div className="relative w-full max-w-3xl max-h-[90vh] overflow-y-auto rounded-[2rem] bg-white/95 dark:bg-[#1d1d1f]/95 backdrop-blur-xl shadow-[0_8px_30px_rgba(0,0,0,0.12)] border border-black/5 dark:border-white/5">
+      <div className="absolute inset-0 bg-slate-950/60 backdrop-blur-md" onClick={onClose} />
+      <div className="relative z-10 w-full max-w-3xl max-h-[90vh] overflow-y-auto rounded-[2rem] bg-white/95 dark:bg-[#1d1d1f]/95 backdrop-blur-xl shadow-[0_12px_40px_rgba(0,0,0,0.25)] border border-black/5 dark:border-white/10">
         <div className="sticky top-0 z-10 flex items-center justify-between border-b border-slate-100 bg-white/95 px-6 py-4 backdrop-blur">
           <div>
             <h3 className="text-lg font-bold text-slate-900">{isEditing ? "Chỉnh sửa câu hỏi" : "Bổ sung câu hỏi mới"}</h3>
@@ -352,14 +353,30 @@ export function QuestionEditorModal({ assignmentId, isOpen, onClose, onSuccess, 
                       placeholder="Nội dung ý..."
                       className="flex-1 rounded-lg border border-slate-200 px-3 py-2 text-sm focus:ring-4 focus:ring-indigo-100 focus:outline-none transition focus:bg-white"
                     />
-                    <select
-                      value={sq.answerKey}
-                      onChange={e => { const n = [...subQuestions]; n[i].answerKey = e.target.value; setSubQuestions(n); }}
-                      className={`text-sm font-semibold rounded-lg px-3 py-2 border transition outline-none ${sq.answerKey === "true" ? "bg-emerald-50 text-emerald-700 border-emerald-200" : "bg-red-50 text-red-700 border-red-200"}`}
-                    >
-                       <option value="true">Đúng</option>
-                       <option value="false">Sai</option>
-                    </select>
+                    <div className="flex items-center gap-1.5 shrink-0">
+                      <button
+                        type="button"
+                        onClick={() => { const n = [...subQuestions]; n[i].answerKey = "true"; setSubQuestions(n); }}
+                        className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all ${
+                          sq.answerKey === "true"
+                            ? "bg-emerald-600 text-white shadow-sm"
+                            : "bg-slate-200 dark:bg-slate-700 text-slate-600 dark:text-slate-400 hover:bg-emerald-100 hover:text-emerald-700"
+                        }`}
+                      >
+                        ✓ Đúng
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => { const n = [...subQuestions]; n[i].answerKey = "false"; setSubQuestions(n); }}
+                        className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all ${
+                          sq.answerKey === "false"
+                            ? "bg-rose-600 text-white shadow-sm"
+                            : "bg-slate-200 dark:bg-slate-700 text-slate-600 dark:text-slate-400 hover:bg-rose-100 hover:text-rose-700"
+                        }`}
+                      >
+                        ✗ Sai
+                      </button>
+                    </div>
                     <button onClick={() => { if (subQuestions.length <= 1) return; const n = [...subQuestions]; n.splice(i, 1); setSubQuestions(n); }}
                       className="p-2 text-slate-400 hover:text-red-500 hover:bg-white rounded-lg transition shadow-sm" disabled={subQuestions.length <= 1}>
                       <X className="h-4 w-4" />
@@ -380,6 +397,7 @@ export function QuestionEditorModal({ assignmentId, isOpen, onClose, onSuccess, 
           </Button>
         </div>
       </div>
-    </div>
+    </div>,
+    document.body
   );
 }

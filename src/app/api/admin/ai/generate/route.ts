@@ -1,14 +1,11 @@
 import { NextRequest, NextResponse } from "next/server";
 import { checkAdminAuth } from "@/lib/adminAuth";
-import { buildQuestionsFromUploads } from "@/lib/aiGeneration";
+import { buildQuestionsFromText, QuestionType } from "@/lib/aiGeneration";
 
 export const runtime = "nodejs";
 export const maxDuration = 120;
 
-function classifyAiError(
-  error: unknown,
-  context?: { hasFiles: boolean; hasManualText: boolean }
-): { status: number; publicMessage: string; code: string } {
+function classifyAiError(error: unknown): { status: number; publicMessage: string; code: string } {
   const message = error instanceof Error ? error.message : "Unknown error";
 
   if (message.includes("Thiếu OPENROUTER_API_KEY")) {
@@ -27,21 +24,11 @@ function classifyAiError(
     };
   }
 
-  if (message.includes("Không có nội dung để xử lý")) {
-    return {
-      status: 422,
-      publicMessage: "Không đọc được nội dung từ file tải lên. Hãy thử file rõ nét hơn hoặc dán văn bản thủ công.",
-      code: "OCR_NO_TEXT",
-    };
-  }
-
   if (message.includes("AI did not return any questions")) {
-    const onlyManualText = Boolean(context?.hasManualText) && !Boolean(context?.hasFiles);
     return {
       status: 422,
-      publicMessage: onlyManualText
-        ? "AI chưa trích xuất được câu hỏi từ văn bản đã dán. Hãy thử tách ngắn hơn hoặc chuẩn hóa định dạng câu hỏi (Câu 1, A/B/C/D)."
-        : "AI chưa trích xuất được câu hỏi từ dữ liệu hiện tại. Hãy thử lại với ảnh/PDF rõ hơn hoặc dán văn bản thô.",
+      publicMessage:
+        "AI chưa trích xuất hoặc tạo được câu hỏi từ văn bản đã nhập. Vui lòng kiểm tra lại nội dung dán vào hoặc định dạng câu hỏi.",
       code: "AI_EMPTY_RESULT",
     };
   }
@@ -59,39 +46,43 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
-  let hasFiles = false;
-  let hasManualText = false;
-
   try {
-    const formData = await req.formData();
-    const files = formData
-      .getAll("files")
-      .filter((f): f is File => f instanceof File)
-      .slice(0, 12); // guard against accidental huge batches
+    let manualText = "";
+    let questionType: QuestionType = "mcq";
 
-    const manualText = (formData.get("manualText") as string | null) || "";
-    hasManualText = Boolean(manualText.trim());
-    hasFiles = files.length > 0;
-
-    if (!hasFiles && !hasManualText) {
-      return NextResponse.json({ error: "Vui lòng thêm ít nhất 1 ảnh/PDF hoặc dán văn bản." }, { status: 400 });
+    const contentType = req.headers.get("content-type") || "";
+    if (contentType.includes("application/json")) {
+      const body = await req.json();
+      manualText = (body.manualText || body.textInput || "").trim();
+      if (body.questionType && ["mcq", "true_false", "short_answer", "essay"].includes(body.questionType)) {
+        questionType = body.questionType as QuestionType;
+      }
+    } else {
+      const formData = await req.formData();
+      manualText = ((formData.get("manualText") as string) || (formData.get("textInput") as string) || "").trim();
+      const rawType = formData.get("questionType") as string;
+      if (rawType && ["mcq", "true_false", "short_answer", "essay"].includes(rawType)) {
+        questionType = rawType as QuestionType;
+      }
     }
 
-    const oversized = files.find((f) => f.size > 8 * 1024 * 1024);
-    if (oversized) {
-      return NextResponse.json({ error: `${oversized.name} vượt quá 8MB, hãy nén hoặc tách nhỏ.` }, { status: 413 });
+    if (!manualText) {
+      return NextResponse.json(
+        { error: "Vui lòng dán văn bản hoặc nhập yêu cầu để AI tạo câu hỏi." },
+        { status: 400 }
+      );
     }
 
-    const { cleanedText, questions, sources } = await buildQuestionsFromUploads(files, manualText);
+    const { cleanedText, questions } = await buildQuestionsFromText(manualText, questionType);
 
-    return NextResponse.json({ cleanedText, questions, sources });
+    return NextResponse.json({ cleanedText, questions, questionType });
   } catch (error) {
     console.error("AI generation error", error);
     const isDev = process.env.NODE_ENV !== "production";
     const message = error instanceof Error ? error.message : "Unknown error";
     const errorWithDetails = error as { details?: string };
     const details = errorWithDetails?.details || undefined;
-    const classified = classifyAiError(error, { hasFiles, hasManualText });
+    const classified = classifyAiError(error);
     return NextResponse.json(
       {
         error: isDev ? message : classified.publicMessage,
@@ -102,3 +93,4 @@ export async function POST(req: NextRequest) {
     );
   }
 }
+

@@ -1,6 +1,7 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { createPortal } from "react-dom";
 
 interface CleanupItem {
   id: string;
@@ -46,11 +47,16 @@ function CustomCheckbox({
 }
 
 export default function DatabaseCleanupModal({ onClose }: { onClose: () => void }) {
+  const [mounted, setMounted] = useState(false);
   const [activeTab, setActiveTab] = useState<"assignments" | "images" | "submissions" | "sessions" | "documents">("assignments");
   const [items, setItems] = useState<CleanupItem[]>([]);
   const [selectedItems, setSelectedItems] = useState<Set<string>>(new Set());
   const [loading, setLoading] = useState(false);
   const [deleting, setDeleting] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
   const tabs = [
     { key: "assignments" as const, label: "Bài tập", icon: "📝" },
@@ -146,9 +152,12 @@ export default function DatabaseCleanupModal({ onClose }: { onClose: () => void 
     }
   };
 
-  return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/60 backdrop-blur-md p-4 animate-fade-in">
-      <div className="w-full max-w-5xl max-h-[90vh] overflow-hidden rounded-[2.5rem] border border-slate-100 dark:border-white/5 bg-white/95 dark:bg-[#151921] shadow-2xl flex flex-col transition-all">
+  if (!mounted) return null;
+
+  return createPortal(
+    <div className="fixed inset-0 z-[9999] flex items-center justify-center p-4 sm:p-6 animate-fade-in overflow-hidden">
+      <div className="absolute inset-0 bg-slate-950/60 backdrop-blur-md" onClick={onClose} />
+      <div className="relative z-10 w-full max-w-5xl max-h-[90vh] overflow-hidden rounded-[2.5rem] border border-slate-100 dark:border-white/5 bg-white/95 dark:bg-[#151921] shadow-2xl flex flex-col transition-all">
         {/* Header */}
         <div className="relative z-20 overflow-hidden border-b border-slate-100 dark:border-white/5 px-6 py-5 shrink-0">
           <div className="absolute inset-0 bg-gradient-to-r from-blue-50/50 via-white/20 to-indigo-50/30 dark:from-blue-950/20 dark:via-[#151921]/10 dark:to-indigo-950/10" />
@@ -385,6 +394,7 @@ export default function DatabaseCleanupModal({ onClose }: { onClose: () => void 
           </div>
         </div>
       </div>
-    </div>
+    </div>,
+    document.body
   );
 }

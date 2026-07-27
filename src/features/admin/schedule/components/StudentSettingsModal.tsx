@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
+import { createPortal } from "react-dom";
 import { X, Settings, Trash2, Save } from "lucide-react";
 import type { Student } from "@/features/admin/schedule/lib/database.types";
 
@@ -10,8 +11,13 @@ interface StudentSettingsModalProps {
 }
 
 export function StudentSettingsModal({ students, onClose, onUpdate, onDelete }: StudentSettingsModalProps) {
+  const [mounted, setMounted] = useState(false);
   const initialStudentId = students[0]?.id || "";
   const [selectedId, setSelectedId] = useState(initialStudentId);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
   const selectedStudent = useMemo(
     () => students.find((student) => student.id === selectedId),
     [students, selectedId]
@@ -48,41 +54,46 @@ export function StudentSettingsModal({ students, onClose, onUpdate, onDelete }: 
     }
   };
 
+  if (!mounted) return null;
+
   if (students.length === 0) {
-    return (
-    <div className="fixed inset-0 bg-slate-900/40 backdrop-blur-sm flex items-center justify-center z-50 p-4 animate-in fade-in duration-200">
-      <div className="bg-white/90 dark:bg-[#1d1d1f]/90 backdrop-blur-xl rounded-[2rem] shadow-[0_8px_32px_rgba(0,0,0,0.12)] border border-black/5 dark:border-white/5 max-w-md w-full animate-in zoom-in-95 duration-200 overflow-hidden">
-        <div className="flex items-center justify-between p-6 border-b border-black/5 dark:border-white/5">
-          <div className="flex items-center gap-3">
-            <Settings className="w-5 h-5 text-[#0066cc]" />
-            <h3 className="text-[19px] font-bold text-slate-900 dark:text-white tracking-[-0.01em]">Cài đặt học sinh</h3>
+    return createPortal(
+      <div className="fixed inset-0 bg-slate-950/60 backdrop-blur-md flex items-center justify-center z-[9999] p-4 animate-in fade-in duration-200">
+        <div className="absolute inset-0 bg-slate-950/60 backdrop-blur-md" onClick={onClose} />
+        <div className="relative z-10 bg-white/90 dark:bg-[#1d1d1f]/90 backdrop-blur-xl rounded-[2rem] shadow-[0_12px_40px_rgba(0,0,0,0.25)] border border-black/5 dark:border-white/10 max-w-md w-full animate-in zoom-in-95 duration-200 overflow-hidden">
+          <div className="flex items-center justify-between p-6 border-b border-black/5 dark:border-white/5">
+            <div className="flex items-center gap-3">
+              <Settings className="w-5 h-5 text-[#0066cc]" />
+              <h3 className="text-[19px] font-bold text-slate-900 dark:text-white tracking-[-0.01em]">Cài đặt học sinh</h3>
+            </div>
+            <button
+              onClick={onClose}
+              className="p-2 hover:bg-slate-100 dark:hover:bg-white/10 rounded-full transition-colors duration-200"
+            >
+              <X className="w-5 h-5 text-slate-500 dark:text-slate-400" />
+            </button>
           </div>
-          <button
-            onClick={onClose}
-            className="p-2 hover:bg-slate-100 dark:hover:bg-white/10 rounded-full transition-colors duration-200"
-          >
-            <X className="w-5 h-5 text-slate-500 dark:text-slate-400" />
-          </button>
+          <div className="p-8 text-center text-slate-500 dark:text-slate-400 font-medium text-[15px]">
+            Chưa có học sinh để chỉnh sửa.
+          </div>
+          <div className="p-6 pt-0">
+            <button
+              onClick={onClose}
+              className="w-full px-6 py-3.5 bg-slate-100 dark:bg-white/10 text-slate-700 dark:text-slate-200 rounded-full font-bold hover:bg-slate-200 dark:hover:bg-white/20 transition-all duration-200 active:scale-[0.98]"
+            >
+              Đóng
+            </button>
+          </div>
         </div>
-        <div className="p-8 text-center text-slate-500 dark:text-slate-400 font-medium text-[15px]">
-          Chưa có học sinh để chỉnh sửa.
-        </div>
-        <div className="p-6 pt-0">
-          <button
-            onClick={onClose}
-            className="w-full px-6 py-3.5 bg-slate-100 dark:bg-white/10 text-slate-700 dark:text-slate-200 rounded-full font-bold hover:bg-slate-200 dark:hover:bg-white/20 transition-all duration-200 active:scale-[0.98]"
-          >
-            Đóng
-          </button>
-        </div>
-        </div>
-      </div>
+      </div>,
+      document.body
     );
   }
 
-  return (
-    <div className="fixed inset-0 bg-slate-900/40 backdrop-blur-sm flex items-center justify-center z-50 p-4 animate-in fade-in duration-200">
-      <div className="bg-white/90 dark:bg-[#1d1d1f]/90 backdrop-blur-xl rounded-[2rem] shadow-[0_8px_32px_rgba(0,0,0,0.12)] border border-black/5 dark:border-white/5 max-w-lg w-full animate-in zoom-in-95 duration-200 overflow-hidden">
+  return createPortal(
+    <div className="fixed inset-0 bg-slate-950/60 backdrop-blur-md flex items-center justify-center z-[9999] p-4 animate-in fade-in duration-200">
+      <div className="absolute inset-0 bg-slate-950/60 backdrop-blur-md" onClick={onClose} />
+      <div className="relative z-10 bg-white/90 dark:bg-[#1d1d1f]/90 backdrop-blur-xl rounded-[2rem] shadow-[0_12px_40px_rgba(0,0,0,0.25)] border border-black/5 dark:border-white/10 max-w-lg w-full animate-in zoom-in-95 duration-200 overflow-hidden">
         <div className="flex items-center justify-between p-6 border-b border-black/5 dark:border-white/5">
           <div className="flex items-center gap-3">
             <Settings className="w-5 h-5 text-[#0066cc]" />
@@ -174,6 +185,7 @@ export function StudentSettingsModal({ students, onClose, onUpdate, onDelete }: 
           </div>
         </form>
       </div>
-    </div>
+    </div>,
+    document.body
   );
 }

@@ -1,4 +1,5 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { createPortal } from "react-dom";
 import { X, Plus, Trash2 } from "lucide-react";
 import { SUBJECTS, SUBJECT_NAMES, SUBJECT_COLORS } from "@/features/admin/schedule/constants/subjects";
 import type { Subject, TeachingSession } from "@/features/admin/schedule/lib/database.types";
@@ -22,7 +23,12 @@ export function SessionModal({
   studentName,
   studentColor,
 }: SessionModalProps) {
+  const [mounted, setMounted] = useState(false);
   const [selectedSubject, setSelectedSubject] = useState<Subject>("Toan");
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
   const dateStr = date.toLocaleDateString("vi-VN", {
     day: "2-digit",
@@ -40,9 +46,12 @@ export function SessionModal({
     }
   };
 
-  return (
-    <div className="fixed inset-0 bg-slate-900/40 backdrop-blur-sm flex items-center justify-center z-50 p-4 animate-in fade-in duration-200">
-      <div className="bg-white/90 dark:bg-[#1d1d1f]/90 backdrop-blur-xl rounded-[2rem] shadow-[0_8px_32px_rgba(0,0,0,0.12)] border border-black/5 dark:border-white/5 max-w-md w-full animate-in zoom-in-95 duration-200 overflow-hidden">
+  if (!mounted) return null;
+
+  return createPortal(
+    <div className="fixed inset-0 bg-slate-950/60 backdrop-blur-md flex items-center justify-center z-[9999] p-4 animate-in fade-in duration-200">
+      <div className="absolute inset-0 bg-slate-950/60 backdrop-blur-md" onClick={onClose} />
+      <div className="relative z-10 bg-white/90 dark:bg-[#1d1d1f]/90 backdrop-blur-xl rounded-[2rem] shadow-[0_12px_40px_rgba(0,0,0,0.25)] border border-black/5 dark:border-white/10 max-w-md w-full animate-in zoom-in-95 duration-200 overflow-hidden">
         <div className="flex items-center justify-between p-6 border-b border-black/5 dark:border-white/5">
           <h3 className="text-[19px] font-bold text-slate-900 dark:text-white tracking-[-0.01em]">
             Buổi dạy ngày {dateStr}
@@ -127,6 +136,7 @@ export function SessionModal({
           </button>
         </div>
       </div>
-    </div>
+    </div>,
+    document.body
   );
 }
