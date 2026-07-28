@@ -17,31 +17,38 @@ export async function POST(req: Request) {
     let catboxUrl: string | null = null;
 
     try {
+      const arrayBuffer = await file.arrayBuffer();
+      const buffer = Buffer.from(arrayBuffer);
+      const fileExt = file.name.split(".").pop()?.toLowerCase() || "jpg";
+      const fileName = file.name || `upload_${randomUUID()}.${fileExt}`;
+      const blob = new Blob([buffer], { type: file.type || "image/jpeg" });
+
       const form = new FormData();
       form.append("reqtype", "fileupload");
       if (process.env.CATBOX_USERHASH) {
         form.append("userhash", process.env.CATBOX_USERHASH);
       }
 
-      form.append("fileToUpload", file);
+      form.append("fileToUpload", blob, fileName);
 
       const catboxRes = await fetch("https://catbox.moe/user/api.php", {
         method: "POST",
         body: form,
+        headers: {
+          "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.0.0 Safari/537.36",
+        },
       });
 
-      if (catboxRes.ok) {
-        const textResponse = await catboxRes.text();
-        if (textResponse.startsWith("http")) {
-          catboxUrl = textResponse.trim();
-        } else {
-          console.error("Catbox upload failed with response:", textResponse);
-        }
+      const textResponse = await catboxRes.text();
+      console.log(`[CATBOX-ADMIN-UPLOAD] Status: ${catboxRes.status} | Response: "${textResponse}"`);
+
+      if (catboxRes.ok && textResponse.startsWith("http")) {
+        catboxUrl = textResponse.trim();
       } else {
-        console.error("Catbox upload failed with status:", catboxRes.status);
+        console.error(`[CATBOX-ADMIN-UPLOAD-FAILED] Status: ${catboxRes.status} | Response: "${textResponse}"`);
       }
     } catch (e) {
-      console.error("Catbox API exception:", e);
+      console.error("[CATBOX-ADMIN-UPLOAD-EXCEPTION]", e);
     }
 
     if (catboxUrl) {
