@@ -193,7 +193,7 @@ export function QuestionEditorModal({ assignmentId, isOpen, onClose, onSuccess, 
       }}
       suppressHydrationWarning
     >
-      <div className="absolute inset-0 bg-slate-950/60 backdrop-blur-md" onClick={onClose} />
+      <div className="fixed inset-0 bg-slate-950/60 backdrop-blur-md" onClick={onClose} />
       <div className="relative z-10 w-full max-w-3xl max-h-[90vh] overflow-y-auto rounded-[2rem] bg-white/95 dark:bg-[#1d1d1f]/95 backdrop-blur-xl shadow-[0_12px_40px_rgba(0,0,0,0.25)] border border-black/5 dark:border-white/10">
         <div className="sticky top-0 z-10 flex items-center justify-between border-b border-slate-100 bg-white/95 px-6 py-4 backdrop-blur">
           <div>

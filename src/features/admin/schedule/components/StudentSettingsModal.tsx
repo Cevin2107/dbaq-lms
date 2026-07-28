@@ -58,8 +58,8 @@ export function StudentSettingsModal({ students, onClose, onUpdate, onDelete }: 
 
   if (students.length === 0) {
     return createPortal(
-      <div className="fixed inset-0 bg-slate-950/60 backdrop-blur-md flex items-center justify-center z-[9999] p-4 animate-in fade-in duration-200">
-        <div className="absolute inset-0 bg-slate-950/60 backdrop-blur-md" onClick={onClose} />
+      <div className="fixed inset-0 z-[9999] flex items-center justify-center p-4 animate-in fade-in duration-200">
+        <div className="fixed inset-0 bg-slate-950/60 backdrop-blur-md" onClick={onClose} />
         <div className="relative z-10 bg-white/90 dark:bg-[#1d1d1f]/90 backdrop-blur-xl rounded-[2rem] shadow-[0_12px_40px_rgba(0,0,0,0.25)] border border-black/5 dark:border-white/10 max-w-md w-full animate-in zoom-in-95 duration-200 overflow-hidden">
           <div className="flex items-center justify-between p-6 border-b border-black/5 dark:border-white/5">
             <div className="flex items-center gap-3">
@@ -91,8 +91,8 @@ export function StudentSettingsModal({ students, onClose, onUpdate, onDelete }: 
   }
 
   return createPortal(
-    <div className="fixed inset-0 bg-slate-950/60 backdrop-blur-md flex items-center justify-center z-[9999] p-4 animate-in fade-in duration-200">
-      <div className="absolute inset-0 bg-slate-950/60 backdrop-blur-md" onClick={onClose} />
+    <div className="fixed inset-0 z-[9999] flex items-center justify-center p-4 animate-in fade-in duration-200">
+      <div className="fixed inset-0 bg-slate-950/60 backdrop-blur-md" onClick={onClose} />
       <div className="relative z-10 bg-white/90 dark:bg-[#1d1d1f]/90 backdrop-blur-xl rounded-[2rem] shadow-[0_12px_40px_rgba(0,0,0,0.25)] border border-black/5 dark:border-white/10 max-w-lg w-full animate-in zoom-in-95 duration-200 overflow-hidden">
         <div className="flex items-center justify-between p-6 border-b border-black/5 dark:border-white/5">
           <div className="flex items-center gap-3">

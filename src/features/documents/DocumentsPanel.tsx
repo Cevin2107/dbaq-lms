@@ -7,6 +7,7 @@ import {
   ChevronLeft,
   ChevronRight,
   Download,
+  ExternalLink,
   FileArchive,
   FileImage,
   FileText,
@@ -969,8 +970,9 @@ export function DocumentsPanel() {
       )}
 
       {uploadOpen && (
-        <div className="fixed inset-0 z-[70] flex items-center justify-center bg-black/50 backdrop-blur-sm p-4">
-          <div className="w-full max-w-xl rounded-[2rem] bg-white dark:bg-[#1d1d1f] border border-black/5 dark:border-white/10 shadow-2xl overflow-hidden max-h-[90vh] flex flex-col">
+        <div className="fixed inset-0 z-[9999] flex items-center justify-center p-4">
+          <div className="fixed inset-0 bg-slate-950/60 backdrop-blur-md" onClick={() => { if (!uploading) { setUploadOpen(false); resetUpload(); } }} />
+          <div className="relative z-10 w-full max-w-xl rounded-[2rem] bg-white dark:bg-[#1d1d1f] border border-black/5 dark:border-white/10 shadow-2xl overflow-hidden max-h-[90vh] flex flex-col">
             <div className="flex items-center justify-between border-b border-slate-100 dark:border-white/10 p-6 shrink-0">
               <h3 className="text-xl font-bold text-[#1d1d1f] dark:text-white">Upload tài liệu</h3>
               <button
@@ -1010,7 +1012,7 @@ export function DocumentsPanel() {
                       : "text-slate-500 dark:text-slate-400 hover:text-[#1d1d1f] dark:hover:text-white"
                   )}
                 >
-                  Dán link Catbox
+                  Dán link Pone.rs
                 </button>
               </div>
 
@@ -1025,31 +1027,42 @@ export function DocumentsPanel() {
                     className="block w-full rounded-[1.25rem] border border-slate-200 dark:border-white/10 bg-slate-50 dark:bg-[#2a2a2c] p-3 text-[14px] text-slate-700 dark:text-slate-200"
                   />
                   <span className="mt-2 block text-[12px] text-slate-500 dark:text-slate-400">
-                    PDF, ảnh hoặc Office. Dung lượng nhỏ hơn 200 MB (Tự động up Catbox cho file ≤ 4MB).
+                    PDF, ảnh hoặc Office. Dung lượng nhỏ hơn 200 MB (Tự động up Pone.rs/Catbox cho file ≤ 4MB).
                   </span>
                 </label>
               ) : (
-                <label className="block">
-                  <span className="mb-2 block text-[14px] font-semibold text-slate-700 dark:text-slate-200">Đường dẫn liên kết (URL)</span>
+                <div className="space-y-3">
+                  <div className="flex items-center justify-between">
+                    <span className="text-[14px] font-semibold text-slate-700 dark:text-slate-200">Đường dẫn liên kết (URL Pone.rs / Catbox)</span>
+                    <a
+                      href="https://pone.rs"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="inline-flex items-center gap-1.5 rounded-full bg-blue-50 dark:bg-blue-500/10 px-3 py-1 text-[13px] font-semibold text-[#0066cc] dark:text-blue-400 hover:bg-blue-100 dark:hover:bg-blue-500/20 active:scale-95 transition-all"
+                    >
+                      <ExternalLink className="h-3.5 w-3.5" />
+                      Mở Pone.rs lấy link ↗
+                    </a>
+                  </div>
                   <input
                     type="url"
-                    value={embedUrl}
+                    value={embedUrl ?? ""}
                     onChange={(event) => setEmbedUrl(event.target.value)}
                     disabled={uploading}
                     className="w-full rounded-full border border-slate-200 dark:border-white/10 bg-slate-50 dark:bg-[#2a2a2c] px-4 py-3 text-slate-800 dark:text-white focus:outline-none focus:ring-4 focus:ring-[#0066cc]/10"
-                    placeholder="https://files.catbox.moe/..."
+                    placeholder="https://u.pone.rs/... hoặc https://files.catbox.moe/..."
                     required
                   />
-                  <span className="mt-2 block text-[12px] text-slate-500 dark:text-slate-400">
-                    Dán link file bạn đã upload thủ công lên Catbox.moe hoặc link công khai bất kỳ.
+                  <span className="block text-[12px] text-slate-500 dark:text-slate-400">
+                    Bấm nút <strong>&quot;Mở Pone.rs lấy link ↗&quot;</strong> ở trên để tải file lên Pone.rs, sau đó sao chép (copy) link dán vào ô này.
                   </span>
-                </label>
+                </div>
               )}
 
               <label className="block">
                 <span className="mb-2 block text-[14px] font-semibold text-slate-700 dark:text-slate-200">Tên tài liệu</span>
                 <input
-                  value={upload.title}
+                  value={upload.title ?? ""}
                   onChange={(event) => setUpload((current) => ({ ...current, title: event.target.value }))}
                   disabled={uploading}
                   className="w-full rounded-full border border-slate-200 dark:border-white/10 bg-slate-50 dark:bg-[#2a2a2c] px-4 py-3 text-slate-800 dark:text-white focus:outline-none focus:ring-4 focus:ring-[#0066cc]/10"
@@ -1061,7 +1074,7 @@ export function DocumentsPanel() {
                 <label className="block">
                   <span className="mb-2 block text-[14px] font-semibold text-slate-700 dark:text-slate-200">Lớp</span>
                   <input
-                    value={upload.grade}
+                    value={upload.grade ?? ""}
                     onChange={(event) => setUpload((current) => ({ ...current, grade: event.target.value }))}
                     disabled={uploading}
                     className="w-full rounded-full border border-slate-200 dark:border-white/10 bg-slate-50 dark:bg-[#2a2a2c] px-4 py-3 text-slate-800 dark:text-white focus:outline-none focus:ring-4 focus:ring-[#0066cc]/10"
@@ -1071,7 +1084,7 @@ export function DocumentsPanel() {
                 <label className="block">
                   <span className="mb-2 block text-[14px] font-semibold text-slate-700 dark:text-slate-200">Môn học</span>
                   <input
-                    value={upload.subject}
+                    value={upload.subject ?? ""}
                     onChange={(event) => setUpload((current) => ({ ...current, subject: event.target.value }))}
                     disabled={uploading}
                     className="w-full rounded-full border border-slate-200 dark:border-white/10 bg-slate-50 dark:bg-[#2a2a2c] px-4 py-3 text-slate-800 dark:text-white focus:outline-none focus:ring-4 focus:ring-[#0066cc]/10"
@@ -1106,10 +1119,11 @@ export function DocumentsPanel() {
 
       {viewerDocument && (
         <div className={clsx(
-          "fixed inset-0 z-[80] bg-black/70 backdrop-blur-sm p-3 sm:p-6 transition-all duration-200",
-          isViewerOpen ? "opacity-100 pointer-events-auto scale-100" : "opacity-0 pointer-events-none scale-95"
+          "fixed inset-0 z-[9999] p-3 sm:p-6 transition-all duration-200 flex items-center justify-center",
+          isViewerOpen ? "opacity-100 pointer-events-auto" : "opacity-0 pointer-events-none"
         )}>
-          <div className="mx-auto flex h-full w-full max-w-[1280px] flex-col overflow-hidden rounded-[2rem] bg-white dark:bg-[#1d1d1f] border border-white/10 shadow-2xl">
+          <div className="fixed inset-0 bg-slate-950/70 backdrop-blur-md" onClick={closeViewer} />
+          <div className="relative z-10 mx-auto flex h-full w-full max-w-[1280px] flex-col overflow-hidden rounded-[2rem] bg-white dark:bg-[#1d1d1f] border border-white/10 shadow-2xl">
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-slate-100 dark:border-white/10 p-4 shrink-0">
               <div className="flex items-center justify-between w-full sm:w-auto gap-3">
                 <div className="min-w-0 flex-1">

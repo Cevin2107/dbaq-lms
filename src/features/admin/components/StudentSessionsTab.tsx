@@ -387,8 +387,9 @@ export function StudentSessionsTab({ assignmentId }: { assignmentId: string }) {
         if (!session) return null;
         const isSubmitted = !!session.submissions?.id;
         return (
-          <div className="fixed inset-0 bg-black/50 dark:bg-black/70 backdrop-blur-sm flex items-center justify-center z-50 p-2 sm:p-4 overflow-y-auto animate-fade-in">
-            <div className="bg-white dark:bg-[#1d1d1f] rounded-2xl sm:rounded-3xl shadow-2xl border border-black/5 dark:border-white/10 max-w-5xl w-full max-h-[95vh] sm:max-h-[90vh] overflow-hidden flex flex-col animate-scale-in">
+          <div className="fixed inset-0 z-[9999] flex items-center justify-center p-2 sm:p-4 animate-fade-in">
+            <div className="fixed inset-0 bg-black/60 dark:bg-black/80 backdrop-blur-md" onClick={() => setSelectedSessionId(null)} />
+            <div className="relative z-10 bg-white dark:bg-[#1d1d1f] rounded-2xl sm:rounded-3xl shadow-2xl border border-black/5 dark:border-white/10 max-w-5xl w-full max-h-[95vh] sm:max-h-[90vh] overflow-hidden flex flex-col animate-scale-in">
               {detailLoading ? (
                 <div className="p-8 sm:p-12 text-center flex-1 flex items-center justify-center">
                   <div className="space-y-4">

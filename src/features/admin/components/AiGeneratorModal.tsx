@@ -234,7 +234,7 @@ export function AiGeneratorModal({ assignmentId, isOpen, onClose, onSuccess }: A
 
   return createPortal(
     <div className="fixed inset-0 z-[9999] flex items-center justify-center p-4 sm:p-6 animate-fade-in overflow-hidden">
-      <div className="absolute inset-0 bg-slate-950/60 backdrop-blur-md" onClick={onClose} />
+      <div className="fixed inset-0 bg-slate-950/60 backdrop-blur-md" onClick={onClose} />
       <Card className="relative z-10 flex w-full max-w-4xl flex-col max-h-[90vh] overflow-hidden rounded-[2rem] bg-white/95 dark:bg-[#1d1d1f]/95 backdrop-blur-xl shadow-[0_12px_40px_rgba(0,0,0,0.25)] border border-black/5 dark:border-white/10">
         {/* Header */}
         <div className="flex items-center justify-between border-b border-slate-100 dark:border-slate-800 px-6 py-4">

@@ -488,8 +488,9 @@ export function AssignmentTaking({ assignment, questions: initialQuestions, init
       </div>
 
       {showExitConfirm && (
-        <div className="fixed inset-0 z-[100] flex items-center justify-center bg-slate-900/40 p-4 backdrop-blur-sm animate-in fade-in duration-200">
-          <div className={clsx("w-full max-w-sm rounded-[2rem] p-6 shadow-[0_8px_32px_rgba(0,0,0,0.12)] animate-in zoom-in-95 duration-200 border", isDark ? "bg-[#1d1d1f] border-white/5" : "bg-white/90 backdrop-blur-xl border-black/5")}>
+        <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 animate-in fade-in duration-200">
+          <div className="fixed inset-0 bg-slate-950/60 backdrop-blur-md" onClick={() => setShowExitConfirm(false)} />
+          <div className={clsx("relative z-10 w-full max-w-sm rounded-[2rem] p-6 shadow-[0_8px_32px_rgba(0,0,0,0.12)] animate-in zoom-in-95 duration-200 border", isDark ? "bg-[#1d1d1f] border-white/5" : "bg-white/90 backdrop-blur-xl border-black/5")}>
             <div className="mb-6 flex flex-col items-center text-center">
               <div className="flex h-16 w-16 items-center justify-center rounded-full bg-amber-500/20 text-amber-500 mb-4 ring-8 ring-amber-500/10">
                 <svg className="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
@@ -515,8 +516,9 @@ export function AssignmentTaking({ assignment, questions: initialQuestions, init
       )}
 
       {showSubmitConfirm && (
-        <div className="fixed inset-0 z-[100] flex items-center justify-center bg-slate-900/40 p-4 backdrop-blur-sm animate-in fade-in duration-200">
-          <div className={clsx("w-full max-w-sm rounded-[2rem] p-6 shadow-[0_8px_32px_rgba(0,0,0,0.12)] animate-in zoom-in-95 duration-200 border", isDark ? "bg-[#1d1d1f] border-white/5" : "bg-white/90 backdrop-blur-xl border-black/5")}>
+        <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 animate-in fade-in duration-200">
+          <div className="fixed inset-0 bg-slate-950/60 backdrop-blur-md" onClick={() => setShowSubmitConfirm(false)} />
+          <div className={clsx("relative z-10 w-full max-w-sm rounded-[2rem] p-6 shadow-[0_8px_32px_rgba(0,0,0,0.12)] animate-in zoom-in-95 duration-200 border", isDark ? "bg-[#1d1d1f] border-white/5" : "bg-white/90 backdrop-blur-xl border-black/5")}>
             <div className="mb-6 flex flex-col items-center text-center">
               <div className="flex h-16 w-16 items-center justify-center rounded-full bg-blue-500/20 text-[#0066cc] dark:text-blue-400 mb-4 ring-8 ring-blue-500/10">
                 <svg className="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>

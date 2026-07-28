@@ -71,52 +71,77 @@ const getExtension = (fileName: string) => {
   return raw.replace(/^\./, "");
 };
 
-async function uploadToCatbox(file: File, attempts = 3) {
-  for (let attempt = 1; attempt <= attempts; attempt += 1) {
-    try {
-      const form = new FormData();
-      form.append("reqtype", "fileupload");
-      if (process.env.CATBOX_USERHASH) {
-        form.append("userhash", process.env.CATBOX_USERHASH);
+async function uploadExternalDocument(file: File): Promise<string | null> {
+  const arrayBuffer = await file.arrayBuffer();
+  const fileExt = file.name.split(".").pop()?.toLowerCase() || "pdf";
+  const mimeType = file.type || "application/octet-stream";
+  const fileName = file.name || `doc_${randomUUID()}.${fileExt}`;
+  const fileToUpload = new File([arrayBuffer], fileName, { type: mimeType });
+
+  // 1. Try Pone.rs (Primary CDN)
+  try {
+    console.log(`[PONE-DOC-UPLOAD] Attempting Pone.rs: ${fileName} (${fileToUpload.size} bytes)`);
+    const form = new FormData();
+    form.append("files[]", fileToUpload);
+
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), 6000);
+
+    const poneRes = await fetch("https://pone.rs/upload", {
+      method: "POST",
+      body: form,
+      headers: {
+        "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.0.0 Safari/537.36",
+      },
+      signal: controller.signal,
+    });
+    clearTimeout(timeoutId);
+
+    if (poneRes.ok) {
+      const json = await poneRes.json().catch(() => ({}));
+      if (json?.success && Array.isArray(json?.files) && json.files[0]?.url) {
+        const url = String(json.files[0].url).trim();
+        console.log(`[PONE-DOC-UPLOAD-SUCCESS] URL: ${url}`);
+        return url;
       }
-      form.append("fileToUpload", file);
-
-      const controller = new AbortController();
-      const timeoutId = setTimeout(() => controller.abort(), CATBOX_UPLOAD_TIMEOUT_MS);
-      const res = await fetch("https://catbox.moe/user/api.php", {
-        method: "POST",
-        body: form,
-        headers: {
-          "User-Agent": "DBAQ-LMS/1.0",
-        },
-        signal: controller.signal,
-      }).finally(() => clearTimeout(timeoutId));
-
-      const text = (await res.text()).trim();
-      if (res.ok && text.startsWith("http")) {
-        return text;
-      }
-
-      if (attempt === attempts) {
-        throw new CatboxUploadError(text || `Catbox rejected the upload with status ${res.status}`);
-      }
-    } catch (error) {
-      if (attempt === attempts) {
-        if (error instanceof CatboxUploadError) {
-          throw error;
-        }
-
-        if (error instanceof Error && error.name === "AbortError") {
-          throw new CatboxUploadError("Catbox upload timed out");
-        }
-
-        throw new CatboxUploadError(error instanceof Error ? error.message : "Catbox upload failed");
-      }
-      await new Promise((resolve) => setTimeout(resolve, 600 * attempt));
     }
+  } catch (e: any) {
+    console.warn("[PONE-DOC-UPLOAD-FAILED]", e?.message || e, "-> Trying Catbox...");
   }
 
-  throw new CatboxUploadError("Catbox upload failed");
+  // 2. Try Catbox (Secondary CDN)
+  try {
+    console.log(`[CATBOX-DOC-UPLOAD] Attempting Catbox: ${fileName} (${fileToUpload.size} bytes)`);
+    const form = new FormData();
+    form.append("reqtype", "fileupload");
+    if (process.env.CATBOX_USERHASH) {
+      form.append("userhash", process.env.CATBOX_USERHASH);
+    }
+    form.append("fileToUpload", fileToUpload);
+
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), 10000);
+
+    const catboxRes = await fetch("https://catbox.moe/user/api.php", {
+      method: "POST",
+      body: form,
+      headers: {
+        "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.0.0 Safari/537.36",
+      },
+      signal: controller.signal,
+    });
+    clearTimeout(timeoutId);
+
+    const text = (await catboxRes.text()).trim();
+    if (catboxRes.ok && text.startsWith("http")) {
+      console.log(`[CATBOX-DOC-UPLOAD-SUCCESS] URL: ${text}`);
+      return text;
+    }
+  } catch (e: any) {
+    console.warn("[CATBOX-DOC-UPLOAD-FAILED]", e?.message || e, "-> Switching to Supabase Storage");
+  }
+
+  return null;
 }
 
 export async function GET() {
@@ -195,53 +220,44 @@ export async function POST(req: Request) {
       mimeType = file.type || null;
       fileSizeBytes = file.size;
 
-      let catboxUrl: string | null = null;
+      let externalUrl: string | null = null;
       try {
-        catboxUrl = await uploadToCatbox(file);
+        externalUrl = await uploadExternalDocument(file);
       } catch (error) {
-        console.error("Catbox document upload failed, checking fallback:", error);
+        console.error("External document upload failed, checking fallback:", error);
       }
 
-      if (catboxUrl) {
-        fileUrl = catboxUrl;
+      if (externalUrl) {
+        fileUrl = externalUrl;
       } else {
-        // Fallback to Supabase Storage if backup is enabled
-        if (process.env.ENABLE_SUPABASE_IMAGE_BACKUP === "true") {
-          try {
-            console.log("Catbox failed. Falling back to Supabase upload for document...");
-            const admin = createSupabaseAdmin();
-            const arrayBuffer = await file.arrayBuffer();
-            const uniquePath = `doc-${randomUUID()}.${extension}`;
+        // Fallback to Supabase Storage if external CDN uploads fail
+        try {
+          console.log("External uploads failed. Falling back to Supabase Storage for document...");
+          const admin = createSupabaseAdmin();
+          const arrayBuffer = await file.arrayBuffer();
+          const uniquePath = `doc-${randomUUID()}.${extension}`;
 
-            const { error: uploadError } = await admin.storage
-              .from("documents")
-              .upload(uniquePath, Buffer.from(arrayBuffer), {
-                contentType: file.type || "application/octet-stream",
-                upsert: false,
-              });
+          const { error: uploadError } = await admin.storage
+            .from("documents")
+            .upload(uniquePath, new Uint8Array(arrayBuffer), {
+              contentType: file.type || "application/octet-stream",
+              upsert: true,
+            });
 
-            if (uploadError) {
-              throw uploadError;
-            }
-
-            const { data: publicUrlData } = admin.storage
-              .from("documents")
-              .getPublicUrl(uniquePath);
-
-            fileUrl = publicUrlData.publicUrl;
-          } catch (supabaseError) {
-            console.error("Supabase document fallback upload failed:", supabaseError);
-            return NextResponse.json(
-              {
-                error: "Cả Catbox và Supabase upload đều thất bại",
-              },
-              { status: 502 }
-            );
+          if (uploadError) {
+            throw uploadError;
           }
-        } else {
+
+          const { data: publicUrlData } = admin.storage
+            .from("documents")
+            .getPublicUrl(uniquePath);
+
+          fileUrl = publicUrlData.publicUrl;
+        } catch (supabaseError) {
+          console.error("Supabase document fallback upload failed:", supabaseError);
           return NextResponse.json(
             {
-              error: "Catbox upload thất bại và Supabase backup bị tắt",
+              error: "Không thể upload tệp tài liệu (Pone.rs, Catbox và Supabase đều lỗi)",
             },
             { status: 502 }
           );

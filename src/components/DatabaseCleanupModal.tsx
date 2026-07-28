@@ -156,7 +156,7 @@ export default function DatabaseCleanupModal({ onClose }: { onClose: () => void 
 
   return createPortal(
     <div className="fixed inset-0 z-[9999] flex items-center justify-center p-4 sm:p-6 animate-fade-in overflow-hidden">
-      <div className="absolute inset-0 bg-slate-950/60 backdrop-blur-md" onClick={onClose} />
+      <div className="fixed inset-0 bg-slate-950/60 backdrop-blur-md" onClick={onClose} />
       <div className="relative z-10 w-full max-w-5xl max-h-[90vh] overflow-hidden rounded-[2.5rem] border border-slate-100 dark:border-white/5 bg-white/95 dark:bg-[#151921] shadow-2xl flex flex-col transition-all">
         {/* Header */}
         <div className="relative z-20 overflow-hidden border-b border-slate-100 dark:border-white/5 px-6 py-5 shrink-0">
