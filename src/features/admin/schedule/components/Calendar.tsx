@@ -52,59 +52,61 @@ export function Calendar({
   };
 
   return (
-    <div className="bg-white/80 dark:bg-[#1d1d1f]/80 backdrop-blur-xl rounded-[2rem] shadow-[0_4px_20px_rgba(0,0,0,0.03)] border border-black/5 dark:border-white/5 overflow-hidden h-full flex flex-col">
-      {studentName && (
+    <div className="bg-white/80 dark:bg-[#1d1d1f]/80 backdrop-blur-xl rounded-[24px] shadow-sm border border-black/5 dark:border-white/5 overflow-hidden h-full flex flex-col justify-between">
+      <div>
+        {studentName && (
+          <div
+            className="px-3 sm:px-5 py-2.5 text-white text-center"
+            style={{
+              backgroundColor: studentColor ? adjustColor(studentColor, -20) : "#005bb5",
+            }}
+          >
+            <h3 className="text-sm sm:text-base font-bold tracking-widest uppercase">
+              Thống kê - {studentName}
+            </h3>
+          </div>
+        )}
+        {/* Header */}
         <div
-          className="px-3 sm:px-5 py-3 text-white text-center"
+          className="flex items-center justify-between px-3 sm:px-5 py-2.5 sm:py-3 export-month-header"
           style={{
-            backgroundColor: studentColor ? adjustColor(studentColor, -20) : "#005bb5",
+            background: `linear-gradient(135deg, ${studentColor || "#0066cc"}, ${
+              studentColor ? adjustColor(studentColor, -20) : "#005bb5"
+            })`,
           }}
         >
-          <h3 className="text-lg sm:text-[17px] font-bold tracking-widest uppercase">
-            Thống kê - {studentName}
-          </h3>
-        </div>
-      )}
-      {/* Header */}
-      <div
-        className="flex items-center justify-between px-3 sm:px-5 py-3 sm:py-4 export-month-header"
-        style={{
-          background: `linear-gradient(135deg, ${studentColor || "#0066cc"}, ${
-            studentColor ? adjustColor(studentColor, -20) : "#005bb5"
-          })`,
-        }}
-      >
-        <button
-          onClick={handlePrevMonth}
-          className="p-1.5 sm:p-2 rounded-lg hover:bg-white/20 text-white transition-colors duration-200"
-        >
-          <ChevronLeft className="w-4 h-4 sm:w-5 sm:h-5" />
-        </button>
-
-        <h2 className="text-base sm:text-xl font-bold text-white tracking-wide">
-          {getMonthName(month)} {year}
-        </h2>
-
-        <button
-          onClick={handleNextMonth}
-          className="p-1.5 sm:p-2 rounded-lg hover:bg-white/20 text-white transition-colors duration-200"
-        >
-          <ChevronRight className="w-4 h-4 sm:w-5 sm:h-5" />
-        </button>
-      </div>
-
-      {/* Weekday headers */}
-      <div className="grid grid-cols-7 bg-slate-50/50 dark:bg-slate-800/50 border-b border-black/5 dark:border-white/5">
-        {WEEKDAYS.map((day, i) => (
-          <div
-            key={day}
-            className={`py-3 text-center text-[11px] font-bold uppercase tracking-wider ${
-              i >= 5 ? "text-rose-500" : "text-slate-500 dark:text-slate-400"
-            }`}
+          <button
+            onClick={handlePrevMonth}
+            className="p-1 sm:p-1.5 rounded-lg hover:bg-white/20 text-white transition-colors duration-200"
           >
-            {day}
-          </div>
-        ))}
+            <ChevronLeft className="w-4 h-4 sm:w-5 sm:h-5" />
+          </button>
+
+          <h2 className="text-base sm:text-lg font-bold text-white tracking-wide">
+            {getMonthName(month)} {year}
+          </h2>
+
+          <button
+            onClick={handleNextMonth}
+            className="p-1 sm:p-1.5 rounded-lg hover:bg-white/20 text-white transition-colors duration-200"
+          >
+            <ChevronRight className="w-4 h-4 sm:w-5 sm:h-5" />
+          </button>
+        </div>
+
+        {/* Weekday headers */}
+        <div className="grid grid-cols-7 bg-slate-50/50 dark:bg-slate-800/50 border-b border-black/5 dark:border-white/5">
+          {WEEKDAYS.map((day, i) => (
+            <div
+              key={day}
+              className={`py-2 text-center text-[11px] font-bold uppercase tracking-wider ${
+                i >= 5 ? "text-rose-500" : "text-slate-500 dark:text-slate-400"
+              }`}
+            >
+              {day}
+            </div>
+          ))}
+        </div>
       </div>
 
       {/* Days grid */}

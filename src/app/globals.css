@@ -281,26 +281,36 @@
   }
 
   .export-desktop .export-title {
-    font-size: 2.25rem !important; /* text-4xl */
+    font-size: 2.25rem !important;
+    /* text-4xl */
     line-height: 2.5rem !important;
   }
 
   .export-desktop .export-subtitle {
-    display: block !important; /* block thay vì hidden */
+    display: block !important;
+    /* block thay vì hidden */
+  }
+
+  .export-desktop .export-qr-image {
+    width: 280px !important;
+    height: 280px !important;
   }
 
   .export-desktop .export-month-header {
     width: 100% !important;
-    justify-content: center !important; /* Căn giữa "Tháng x" */
+    justify-content: center !important;
+    /* Căn giữa "Tháng x" */
   }
 
   .export-desktop .export-month-header h2 {
-    font-size: 1.5rem !important; /* text-2xl */
+    font-size: 1.5rem !important;
+    /* text-2xl */
     line-height: 2rem !important;
   }
 
   .export-desktop .calendar-day-container {
-    min-height: 85px !important; /* md:min-h-[85px] */
+    min-height: 85px !important;
+    /* md:min-h-[85px] */
   }
 
   .export-desktop .calendar-day-dots {

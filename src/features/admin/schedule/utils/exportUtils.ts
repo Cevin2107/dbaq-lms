@@ -40,7 +40,7 @@ export async function exportToImage(elementId: string, filename: string) {
     element.style.maxWidth = `${targetWidth}px`;
     element.style.boxSizing = "border-box";
     element.style.padding = "32px";
-    
+
     // Đợi trình duyệt cập nhật layout thực tế (quan trọng để không bị cắt viền)
     await new Promise(resolve => setTimeout(resolve, 150));
 

@@ -218,7 +218,7 @@ export function ScheduleApp() {
                     </button>
                   </div>
                 ) : (
-                  <div className="grid lg:grid-cols-[minmax(0,1fr),380px] gap-4 items-stretch export-stats-grid">
+                  <div className="grid lg:grid-cols-[minmax(0,68fr),minmax(0,32fr)] gap-4 items-stretch export-stats-grid">
                     <div className="h-full">
                       <Calendar
                         year={year}
@@ -236,6 +236,9 @@ export function ScheduleApp() {
                         sessions={sessions}
                         onExport={handleExport}
                         salaryPerSession={currentStudent?.salary_per_session}
+                        studentName={currentStudent?.name}
+                        month={month}
+                        year={year}
                       />
                     </div>
                   </div>

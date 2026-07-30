@@ -26,8 +26,8 @@ export function CalendarDay({ date, currentMonth, sessions, onDayClick }: Calend
     <div
       onClick={() => onDayClick(date)}
       className={`
-        calendar-day-container min-h-[50px] sm:min-h-[70px] md:min-h-[85px] 
-        p-1 sm:p-2 flex flex-col gap-1 sm:gap-2 relative
+        calendar-day-container min-h-[50px] sm:min-h-[64px] md:min-h-[76px] 
+        p-1 sm:p-1.5 flex flex-col gap-1 relative
         border-r border-b border-black/5 dark:border-white/5
         transition-all duration-200
         ${!isCurrentMonth
@@ -39,7 +39,7 @@ export function CalendarDay({ date, currentMonth, sessions, onDayClick }: Calend
       `}
     >
       {/* Day number */}
-      <div className="flex justify-end mb-1">
+      <div className="flex justify-end mb-0.5">
         <span
           className={`
             w-5 h-5 sm:w-6 sm:h-6 flex items-center justify-center rounded-full
@@ -59,29 +59,30 @@ export function CalendarDay({ date, currentMonth, sessions, onDayClick }: Calend
       </div>
 
       {/* Sessions — dots on mobile, tags on sm+ */}
-      <div className="calendar-day-dots flex flex-wrap gap-0.5 sm:hidden">
+      <div className="calendar-day-dots flex flex-wrap gap-0.5 sm:hidden justify-center">
         {daySessions.slice(0, 3).map((session) => (
           <span
             key={session.id}
-            className={`${SUBJECT_COLORS[session.subject].bg} w-2 h-2 rounded-full block`}
+            className={`${SUBJECT_COLORS[session.subject].bg} w-1.5 h-1.5 rounded-full block`}
           />
         ))}
       </div>
-      <div className="calendar-day-tags hidden sm:block space-y-1">
+      <div className="calendar-day-tags hidden sm:flex flex-col gap-1 items-center w-full px-0.5">
         {daySessions.slice(0, 3).map((session) => (
           <div
             key={session.id}
             className={`
               ${SUBJECT_COLORS[session.subject].bg}
-              text-white text-[10px] sm:text-[11px] px-2 py-0.5 rounded-full
-              font-semibold truncate leading-tight shadow-sm
+              text-white text-[10px] sm:text-[11px] h-5 sm:h-6 w-full
+              rounded-full font-semibold flex items-center justify-center text-center
+              shadow-xs tracking-tight px-1
             `}
           >
             {SUBJECT_NAMES[session.subject]}
           </div>
         ))}
         {daySessions.length > 3 && (
-          <div className="text-xs text-gray-400 text-center font-medium">
+          <div className="text-[10px] text-gray-400 font-medium text-center">
             +{daySessions.length - 3}
           </div>
         )}

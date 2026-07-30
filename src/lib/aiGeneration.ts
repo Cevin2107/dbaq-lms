@@ -48,18 +48,6 @@ export function stripQuestionPrefix(text: string): string {
     if (cleaned === prev) break;
   }
 
-  // Remove trailing **KQ:** or KQ: with dotted lines, underscores, or horizontal rules ---
-  cleaned = cleaned
-    .replace(/(?:\r?\n|\s)*(?:\*\*|\\\\\*)?\s*(?:KQ|Kết quả|Đáp số|Answer)\s*(?::|:)?\s*(?:\*\*|\\\\\*)?\s*[\.\_\-\s]*$/gi, "")
-    .replace(/(?:\r?\n|\s)*(?:\*\*|\\\\\*)?\s*(?:KQ|Kết quả|Đáp số|Answer)\s*(?::|:)?\s*(?:\*\*|\\\\\*)?[\s\S]*$/gi, (match) => {
-      if (/\.{2,}|_{2,}|-{2,}/.test(match)) {
-        return "";
-      }
-      return match;
-    })
-    .replace(/(?:\r?\n|\s)*-{3,}\s*$/g, "")
-    .trim();
-
   return cleaned;
 }
 
@@ -599,7 +587,7 @@ function normalizeGeneratedQuestions(raw: unknown, questionType: QuestionType): 
   for (const item of raw) {
     if (!item || typeof item !== "object") continue;
     const q = item as Record<string, unknown>;
-    const stem = stripQuestionPrefix(String(q.question || q.stem || "").trim());
+    let stem = stripQuestionPrefix(String(q.question || q.stem || "").trim());
     if (!stem) continue;
 
     if (questionType === "mcq") {
@@ -643,11 +631,12 @@ function normalizeGeneratedQuestions(raw: unknown, questionType: QuestionType): 
         ai_solve_status: "solved",
       });
     } else if (questionType === "short_answer") {
+      const ansKey = String(q.answer_key || q.answerKey || q.correct_answer || q.answer || "").trim();
       result.push({
         type: "short_answer",
         question: stem,
-        answer_key: "",
-        ai_solve_status: "unsolved",
+        answer_key: ansKey,
+        ai_solve_status: "solved",
       });
     } else if (questionType === "essay") {
       const ansKey = String(q.answer_key || q.answerKey || q.explanation || q.solution || "").trim();
@@ -671,14 +660,14 @@ async function solveQuestionsAnswersBatch(
   const apiKey = process.env.OPENROUTER_API_KEY;
   const solvePrompt = `Giải & chọn đáp án đúng cho từng câu. Trả về DUY NHẤT mảng JSON theo thứ tự id:
 ${JSON.stringify(
-  questions.map((q, idx) => ({
-    id: idx + 1,
-    type: q.type,
-    question: q.question,
-    options: q.options,
-    sub_questions: q.sub_questions?.map((s) => s.content),
-  }))
-)}
+    questions.map((q, idx) => ({
+      id: idx + 1,
+      type: q.type,
+      question: q.question,
+      options: q.options,
+      sub_questions: q.sub_questions?.map((s) => s.content),
+    }))
+  )}
 
 Schema JSON bắt buộc (KHÔNG kèm lời giải dài dòng):
 [
@@ -709,7 +698,7 @@ Schema JSON bắt buộc (KHÔNG kèm lời giải dài dòng):
               body: JSON.stringify({
                 model,
                 temperature: 0.0,
-                max_tokens: 500,
+                max_tokens: 400,
                 messages: [
                   {
                     role: "system",
