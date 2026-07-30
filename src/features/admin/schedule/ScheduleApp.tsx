@@ -233,10 +233,12 @@ export function ScheduleApp() {
 
                     <div className="h-full">
                       <Statistics
+                        key={selectedStudentId || "default"}
                         sessions={sessions}
                         onExport={handleExport}
                         salaryPerSession={currentStudent?.salary_per_session}
                         studentName={currentStudent?.name}
+                        studentId={selectedStudentId || undefined}
                         month={month}
                         year={year}
                       />

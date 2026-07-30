@@ -41,8 +41,26 @@ export async function exportToImage(elementId: string, filename: string) {
     element.style.boxSizing = "border-box";
     element.style.padding = "32px";
 
+    // Đợi tất cả hình ảnh trong container (bao gồm mã QR) nạp xong 100%
+    const images = Array.from(element.querySelectorAll("img"));
+    await Promise.all(
+      images.map(
+        (img) =>
+          new Promise<void>((resolve) => {
+            if (img.complete && img.naturalWidth !== 0) {
+              resolve();
+            } else {
+              img.onload = () => resolve();
+              img.onerror = () => resolve();
+              // Timeout 1s để không treo nếu lỗi
+              setTimeout(resolve, 1000);
+            }
+          })
+      )
+    );
+
     // Đợi trình duyệt cập nhật layout thực tế (quan trọng để không bị cắt viền)
-    await new Promise(resolve => setTimeout(resolve, 150));
+    await new Promise((resolve) => setTimeout(resolve, 200));
 
     const targetHeight = element.scrollHeight;
 

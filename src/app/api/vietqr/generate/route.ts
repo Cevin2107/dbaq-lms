@@ -71,10 +71,23 @@ export async function POST(req: Request) {
       template,
     });
 
+    let base64DataUrl = qrImageUrl;
+    try {
+      const imgRes = await fetch(qrImageUrl, { cache: "no-store" });
+      if (imgRes.ok) {
+        const arrayBuffer = await imgRes.arrayBuffer();
+        const base64 = Buffer.from(arrayBuffer).toString("base64");
+        base64DataUrl = `data:image/png;base64,${base64}`;
+      }
+    } catch (fetchErr) {
+      console.warn("[VIETQR-SERVER-FETCH-WARN]", fetchErr);
+    }
+
     return NextResponse.json({
       success: true,
-      qrCode: qrImageUrl,
-      qrLink: qrImageUrl,
+      qrCode: base64DataUrl,
+      qrLink: base64DataUrl,
+      rawUrl: qrImageUrl,
       bankCode,
       bankAccount: accountNumber,
       bankOwner: DEFAULT_BANK_OWNER,

@@ -13,6 +13,7 @@ interface StatisticsProps {
   onExport: () => void;
   salaryPerSession?: number;
   studentName?: string;
+  studentId?: string;
   month?: number;
   year?: number;
 }
@@ -22,6 +23,7 @@ export function Statistics({
   onExport,
   salaryPerSession,
   studentName = "Học sinh",
+  studentId,
   month = new Date().getMonth() + 1,
   year = new Date().getFullYear(),
 }: StatisticsProps) {
@@ -29,9 +31,6 @@ export function Statistics({
   const [isLoadingQr, setIsLoadingQr] = useState<boolean>(false);
   const [qrError, setQrError] = useState<boolean>(false);
   const [copied, setCopied] = useState<boolean>(false);
-
-  // Cache key ref to avoid redundant VietQR API calls
-  const qrCacheRef = useRef<Record<string, string>>({});
 
   const totalDays = sessions.length;
 
@@ -58,17 +57,14 @@ export function Statistics({
   const bankAccountOwner = "DAO BA ANH QUAN";
   const bankName = "Techcombank (TCB)";
 
+  // Reset QR url when switching students to prevent showing previous student's QR
+  useEffect(() => {
+    setQrUrl(null);
+  }, [studentId, studentName, month, year]);
+
   useEffect(() => {
     if (totalIncome <= 0) {
       setQrUrl(null);
-      setIsLoadingQr(false);
-      setQrError(false);
-      return;
-    }
-
-    const cacheKey = `${studentName}-${month}-${year}-${totalIncome}`;
-    if (qrCacheRef.current[cacheKey]) {
-      setQrUrl(qrCacheRef.current[cacheKey]);
       setIsLoadingQr(false);
       setQrError(false);
       return;
@@ -94,7 +90,6 @@ export function Statistics({
       .then((data) => {
         if (!isMounted) return;
         if (data?.qrLink) {
-          qrCacheRef.current[cacheKey] = data.qrLink;
           setQrUrl(data.qrLink);
           setQrError(false);
         } else {
@@ -104,11 +99,10 @@ export function Statistics({
       .catch((err) => {
         console.warn("[VietQR-Fetch-Warning]", err);
         if (isMounted) {
-          // Fallback to VietQR QuickLink image directly with qr_only template
+          // Fallback to VietQR QuickLink image directly with qr_only template and unique student cachebuster
           const fallbackUrl = `https://img.vietqr.io/image/TCB-${bankAccountNo}-qr_only.png?amount=${totalIncome}&addInfo=${encodeURIComponent(
             transferContent
-          )}&accountName=${encodeURIComponent(bankAccountOwner)}`;
-          qrCacheRef.current[cacheKey] = fallbackUrl;
+          )}&accountName=${encodeURIComponent(bankAccountOwner)}&sid=${encodeURIComponent(studentId || studentName)}`;
           setQrUrl(fallbackUrl);
           setQrError(false);
         }
@@ -120,7 +114,7 @@ export function Statistics({
     return () => {
       isMounted = false;
     };
-  }, [studentName, month, year, totalIncome, transferContent]);
+  }, [studentId, studentName, month, year, totalIncome, transferContent]);
 
   const handleCopyAccount = () => {
     navigator.clipboard.writeText(bankAccountNo);
