@@ -26,7 +26,7 @@ export function CalendarDay({ date, currentMonth, sessions, onDayClick }: Calend
     <div
       onClick={() => onDayClick(date)}
       className={`
-        calendar-day-container min-h-[50px] sm:min-h-[64px] md:min-h-[76px] 
+        calendar-day-container min-h-[38px] sm:min-h-[46px] md:min-h-[52px] 
         p-1 sm:p-1.5 flex flex-col gap-1 relative
         border-r border-b border-black/5 dark:border-white/5
         transition-all duration-200
@@ -73,8 +73,8 @@ export function CalendarDay({ date, currentMonth, sessions, onDayClick }: Calend
             key={session.id}
             className={`
               ${SUBJECT_COLORS[session.subject].bg}
-              text-white text-[10px] sm:text-[11px] h-5 sm:h-6 w-full
-              rounded-full font-semibold flex items-center justify-center text-center
+              text-white text-[11px] sm:text-[12px] h-5 sm:h-6 w-full
+              rounded-full font-bold flex items-center justify-center text-center
               shadow-xs tracking-tight px-1
             `}
           >

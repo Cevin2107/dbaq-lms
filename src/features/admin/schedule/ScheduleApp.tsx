@@ -12,6 +12,7 @@ import { getSessionsByMonth, addSession, deleteSessionsByDate } from "@/features
 import { getStudents, addStudent, updateStudent, deleteStudent } from "@/features/admin/schedule/lib/studentService";
 import { exportToImage } from "@/features/admin/schedule/utils/exportUtils";
 import { formatDate, getMonthName } from "@/features/admin/schedule/utils/dateUtils";
+import { Download } from "lucide-react";
 import type { TeachingSession, Subject, Student } from "@/features/admin/schedule/lib/database.types";
 
 export function ScheduleApp() {
@@ -192,13 +193,25 @@ export function ScheduleApp() {
           </div>
         ) : (
           <div id="export-container" className="flex flex-col gap-4 p-4 sm:p-6 rounded-[2rem] bg-white/80 dark:bg-[#1d1d1f]/80 backdrop-blur-xl shadow-[0_4px_20px_rgba(0,0,0,0.03)] border border-black/5 dark:border-white/5">
-            <div className="text-center">
-              <h1 className="text-2xl sm:text-4xl font-bold text-slate-900 dark:text-white mb-1 tracking-[-0.02em] export-title">
-                Theo Dõi Lịch Dạy Học
-              </h1>
-              <p className="text-[15px] text-slate-500 dark:text-slate-400 hidden sm:block export-subtitle">
-                Gia sư Đào Bá Anh Quân
-              </p>
+            <div className="relative border-b border-black/5 dark:border-white/5 pb-3">
+              <div className="text-center">
+                <h1 className="text-2xl sm:text-3xl font-bold text-slate-900 dark:text-white tracking-[-0.02em] export-title">
+                  Theo Dõi Lịch Dạy Học
+                </h1>
+                <p className="text-xs sm:text-sm text-slate-500 dark:text-slate-400 hidden sm:block export-subtitle">
+                  Gia sư Đào Bá Anh Quân
+                </p>
+              </div>
+
+              {selectedTab === "student" && (
+                <button
+                  onClick={handleExport}
+                  className="export-hide sm:absolute sm:right-0 sm:top-1/2 sm:-translate-y-1/2 mt-2 sm:mt-0 flex items-center justify-center gap-1.5 px-3.5 py-2 mx-auto sm:mx-0 bg-[#0066cc] hover:bg-[#0052a3] active:scale-[0.98] text-white text-xs sm:text-sm font-semibold rounded-xl shadow-xs transition-all"
+                >
+                  <Download className="w-4 h-4" />
+                  <span>Xuất hóa đơn</span>
+                </button>
+              )}
             </div>
             {selectedTab === "overview" ? (
               <Overview

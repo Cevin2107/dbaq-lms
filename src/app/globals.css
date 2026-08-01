@@ -277,13 +277,14 @@
   /* GIẢ LẬP GIAO DIỆN DESKTOP KHI XUẤT ẢNH TRÊN ĐIỆN THOẠI */
   .export-desktop .export-stats-grid {
     display: grid !important;
-    grid-template-columns: minmax(0, 1fr) 380px !important;
+    grid-template-columns: minmax(0, 73.5fr) minmax(0, 26.5fr) !important;
+    align-items: stretch !important;
   }
 
   .export-desktop .export-title {
-    font-size: 2.25rem !important;
-    /* text-4xl */
-    line-height: 2.5rem !important;
+    font-size: 2rem !important;
+    /* text-3xl */
+    line-height: 2.25rem !important;
   }
 
   .export-desktop .export-subtitle {
@@ -292,8 +293,8 @@
   }
 
   .export-desktop .export-qr-image {
-    width: 280px !important;
-    height: 280px !important;
+    width: 250px !important;
+    height: 250px !important;
   }
 
   .export-desktop .export-month-header {
@@ -303,14 +304,12 @@
   }
 
   .export-desktop .export-month-header h2 {
-    font-size: 1.5rem !important;
-    /* text-2xl */
-    line-height: 2rem !important;
+    font-size: 1.35rem !important;
+    line-height: 1.75rem !important;
   }
 
   .export-desktop .calendar-day-container {
-    min-height: 85px !important;
-    /* md:min-h-[85px] */
+    min-height: 40px !important;
   }
 
   .export-desktop .calendar-day-dots {
@@ -318,7 +317,28 @@
   }
 
   .export-desktop .calendar-day-tags {
-    display: block !important;
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 2px !important;
+  }
+
+  .export-desktop .calendar-day-tags div {
+    height: 22px !important;
+    font-size: 13px !important;
+    font-weight: 800 !important;
+    letter-spacing: -0.01em !important;
+  }
+
+  .export-desktop .export-invoice-card {
+    padding-top: 0.2rem !important;
+    padding-bottom: 0.75rem !important;
+    padding-left: 1rem !important;
+    padding-right: 1rem !important;
+    gap: 0.25rem !important;
+  }
+
+  .export-desktop .export-hide {
+    display: none !important;
   }
 
   /* Vô hiệu hóa hiệu ứng blur để tránh lỗi bóng mờ đen/trắng (artifact) của html-to-image */
