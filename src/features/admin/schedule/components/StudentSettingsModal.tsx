@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState } from "react";
 import { createPortal } from "react-dom";
 import { X, Settings, Trash2, Save } from "lucide-react";
+import { useToast } from "@/components/ui/Toast";
 import type { Student } from "@/features/admin/schedule/lib/database.types";
 
 interface StudentSettingsModalProps {
@@ -14,6 +15,7 @@ export function StudentSettingsModal({ students, onClose, onUpdate, onDelete }: 
   const [mounted, setMounted] = useState(false);
   const initialStudentId = students[0]?.id || "";
   const [selectedId, setSelectedId] = useState(initialStudentId);
+  const { addToast } = useToast();
 
   useEffect(() => {
     setMounted(true);
@@ -37,11 +39,19 @@ export function StudentSettingsModal({ students, onClose, onUpdate, onDelete }: 
     event.preventDefault();
     if (!selectedStudent) return;
     if (!name.trim()) {
-      alert("Vui lòng nhập tên học sinh");
+      addToast({
+        title: "Thiếu thông tin",
+        description: "Vui lòng nhập tên học sinh",
+        variant: "warning",
+      });
       return;
     }
     if (salary <= 0) {
-      alert("Vui lòng nhập mức lương hợp lệ");
+      addToast({
+        title: "Thông tin không hợp lệ",
+        description: "Vui lòng nhập mức lương hợp lệ lớn hơn 0",
+        variant: "warning",
+      });
       return;
     }
     onUpdate(selectedStudent.id, { name: name.trim(), salary_per_session: salary });

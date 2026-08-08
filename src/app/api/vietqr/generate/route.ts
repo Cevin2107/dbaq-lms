@@ -2,8 +2,8 @@ import { NextResponse } from "next/server";
 
 export const runtime = "nodejs";
 
-const DEFAULT_BANK_CODE = process.env.BANK_CODE || "TCB";
-const DEFAULT_BANK_ACCOUNT = process.env.BANK_ACCOUNT || "19037817132016";
+const DEFAULT_BANK_CODE = process.env.BANK_CODE || "TPB";
+const DEFAULT_BANK_ACCOUNT = process.env.BANK_ACCOUNT || "10002150181";
 const DEFAULT_BANK_OWNER = process.env.BANK_OWNER || "DAO BA ANH QUAN";
 
 function buildVietQrImageUrl({

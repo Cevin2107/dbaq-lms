@@ -73,12 +73,47 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: "Assignment not found" }, { status: 404 });
     }
 
+    // Check if studentName matches an existing registered student (case-insensitive & trimmed)
+    const normalizedInput = studentName.trim().toLowerCase();
+    let matchedOfficialName: string | null = null;
+    try {
+      const [usersRes, profilesRes] = await Promise.all([
+        supabase.auth.admin.listUsers(),
+        supabase.from("student_profiles").select("id, full_name"),
+      ]);
+
+      const usersData = usersRes.data;
+      const profiles = profilesRes.data;
+
+      (usersData?.users || []).forEach((u: any) => {
+        const fn = (u.user_metadata?.full_name as string | undefined)?.trim();
+        const em = u.email?.trim();
+        if (fn && fn.toLowerCase() === normalizedInput) {
+          matchedOfficialName = fn;
+        } else if (em && em.toLowerCase() === normalizedInput) {
+          matchedOfficialName = fn || em;
+        }
+      });
+
+      if (!matchedOfficialName && profiles) {
+        (profiles as any[]).forEach((p) => {
+          if (p.full_name && p.full_name.trim().toLowerCase() === normalizedInput) {
+            matchedOfficialName = p.full_name.trim();
+          }
+        });
+      }
+    } catch (checkErr) {
+      console.warn("Error verifying student identity for submission:", checkErr);
+    }
+
+    const finalStudentName = matchedOfficialName || studentName.trim();
+
     // Kiểm tra xem đã có submission chưa
     const { data: existingSubmission } = await supabase
       .from("submissions")
       .select("id")
       .eq("assignment_id", assignmentId)
-      .eq("student_name", studentName)
+      .ilike("student_name", finalStudentName)
       .single();
 
     let submission;
@@ -114,7 +149,7 @@ export async function POST(req: Request) {
         .from("submissions")
         .insert({
           assignment_id: assignmentId,
-          student_name: studentName,
+          student_name: finalStudentName,
           submitted_at: submittedAt,
           duration_seconds: finalDurationSeconds,
           status: "pending",

@@ -104,7 +104,7 @@ export default function LoginPage() {
       window.location.assign('/admin/dashboard');
     } catch (err: any) {
       addToast({
-        title: 'Đăng nhập vân tay thất bại',
+        title: 'Đăng nhập passkey thất bại',
         description: err?.message || 'Không thể xác thực',
         variant: 'error',
         duration: 3500,
@@ -231,7 +231,7 @@ export default function LoginPage() {
               onClick={handleAdminPasskeyLogin}
               disabled={adminPasskeyLoading}
               className="inline-flex h-11 w-11 shrink-0 items-center justify-center rounded-full border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-300 shadow-[0_2px_10px_rgba(0,0,0,0.02)] transition hover:bg-slate-50 dark:hover:bg-slate-700 disabled:opacity-60"
-              aria-label="Đăng nhập admin bằng vân tay"
+              aria-label="Đăng nhập admin bằng passkey"
             >
               <Fingerprint className={`h-5 w-5 ${adminPasskeyLoading ? 'animate-pulse' : ''}`} />
             </button>

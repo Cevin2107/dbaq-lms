@@ -71,7 +71,7 @@ export default function AdminLoginPage() {
       window.location.assign("/admin/dashboard");
     } catch (err: any) {
       console.error("Passkey exception:", err);
-      setPasskeyError(err?.message || "Đăng nhập bằng vân tay thất bại");
+      setPasskeyError(err?.message || "Đăng nhập bằng passkey thất bại");
     } finally {
       setPasskeyLoading(false);
     }
@@ -149,7 +149,7 @@ export default function AdminLoginPage() {
                 onClick={handlePasskeyLogin}
                 disabled={passkeyLoading}
                 className="inline-flex h-[52px] w-[52px] shrink-0 items-center justify-center rounded-full border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-300 shadow-[0_2px_10px_rgba(0,0,0,0.02)] transition hover:bg-slate-50 dark:hover:bg-slate-700 disabled:opacity-60"
-                aria-label="Đăng nhập bằng vân tay"
+                aria-label="Đăng nhập bằng passkey"
               >
                 <Fingerprint className={`h-5 w-5 ${passkeyLoading ? "animate-pulse" : ""}`} />
               </button>

@@ -34,6 +34,17 @@ export function StudentSessionsTab({ assignmentId }: { assignmentId: string }) {
     setCurrentPage(1);
   }, [searchTerm]);
 
+  const { data: registeredStudentNames = [] } = useQuery({
+    queryKey: ["registered-student-names"],
+    queryFn: async () => {
+      const res = await fetch("/api/admin/students");
+      if (!res.ok) return [];
+      const data = await res.json();
+      return (data.students || []).map((st: any) => (st.full_name as string)?.toLowerCase().trim()).filter(Boolean);
+    },
+    staleTime: 60 * 1000,
+  });
+
   const { data: sessions = [], isLoading, refetch } = useQuery({
     queryKey: ["student-sessions", assignmentId],
     queryFn: async () => {
@@ -280,7 +291,7 @@ export function StudentSessionsTab({ assignmentId }: { assignmentId: string }) {
                           <h3 className="text-[17px] font-bold text-slate-900 dark:text-white truncate tracking-[-0.01em] group-hover:text-[#0066cc] dark:group-hover:text-blue-400 transition-colors">
                             {s.student_name}
                           </h3>
-                          {Boolean(s.is_guest || s.draft_answers?.__sessionMeta?.isGuest) && (
+                          {!registeredStudentNames.includes(s.student_name?.toLowerCase().trim()) && Boolean(s.is_guest || s.draft_answers?.__sessionMeta?.isGuest) && (
                             <span className="px-2.5 py-0.5 rounded-full text-xs font-bold bg-amber-100/90 dark:bg-amber-900/40 text-amber-800 dark:text-amber-300 border border-amber-300/70 dark:border-amber-700/50 shadow-sm flex items-center gap-1">
                               <User className="h-3 w-3" />
                               Học sinh ngoài
@@ -426,7 +437,7 @@ export function StudentSessionsTab({ assignmentId }: { assignmentId: string }) {
                           <p className="text-xs sm:text-sm text-slate-600 dark:text-slate-400 font-medium">
                             {session.student_name}
                           </p>
-                          {Boolean(session.is_guest || session.draft_answers?.__sessionMeta?.isGuest) && (
+                          {!registeredStudentNames.includes(session.student_name?.toLowerCase().trim()) && Boolean(session.is_guest || session.draft_answers?.__sessionMeta?.isGuest) && (
                             <span className="px-2 py-0.5 rounded-full text-[11px] font-bold bg-amber-100 dark:bg-amber-900/40 text-amber-800 dark:text-amber-300 border border-amber-300/80 dark:border-amber-700/60 shadow-sm flex items-center gap-1">
                               <User className="h-3 w-3" />
                               Học sinh ngoài

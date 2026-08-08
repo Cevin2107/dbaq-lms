@@ -53,9 +53,9 @@ export function Statistics({
   const invoiceCode = generateInvoiceCode(studentName, year, month);
   const dueDate = getPaymentDueDate(year, month);
 
-  const bankAccountNo = "19037817132016";
+  const bankAccountNo = "10002150181";
   const bankAccountOwner = "DAO BA ANH QUAN";
-  const bankName = "Techcombank (TCB)";
+  const bankName = "TPBank (TPB)";
 
   // Reset QR url when switching students to prevent showing previous student's QR
   useEffect(() => {
@@ -78,6 +78,8 @@ export function Statistics({
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
+        bankCode: "TPB",
+        accountNumber: bankAccountNo,
         amount: totalIncome,
         content: transferContent,
         template: "qr_only",
@@ -100,7 +102,7 @@ export function Statistics({
         console.warn("[VietQR-Fetch-Warning]", err);
         if (isMounted) {
           // Fallback to VietQR QuickLink image directly with qr_only template and unique student cachebuster
-          const fallbackUrl = `https://img.vietqr.io/image/TCB-${bankAccountNo}-qr_only.png?amount=${totalIncome}&addInfo=${encodeURIComponent(
+          const fallbackUrl = `https://img.vietqr.io/image/TPB-${bankAccountNo}-qr_only.png?amount=${totalIncome}&addInfo=${encodeURIComponent(
             transferContent
           )}&accountName=${encodeURIComponent(bankAccountOwner)}&sid=${encodeURIComponent(studentId || studentName)}`;
           setQrUrl(fallbackUrl);

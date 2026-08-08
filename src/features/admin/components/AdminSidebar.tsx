@@ -114,7 +114,7 @@ export function AdminSidebar() {
                     <GraduationCap className="h-4 w-4" />
                   </div>
                   <div>
-                    <h2 className="text-sm font-bold text-slate-900 dark:text-white">Tutor Admin</h2>
+                    <h2 className="text-sm font-bold text-slate-900 dark:text-white">Admin Đào Bá Anh Quân</h2>
                     <p className="text-[10px] text-slate-500 uppercase tracking-wider font-semibold">Workspace</p>
                   </div>
                 </div>
@@ -182,7 +182,7 @@ export function AdminSidebar() {
             </div>
           </div>
           <div className="min-w-0">
-            <h1 className="text-sm font-bold text-slate-900 dark:text-white leading-tight truncate">Tutor Admin</h1>
+            <h1 className="text-sm font-bold text-slate-900 dark:text-white leading-tight truncate">Admin Đào Bá Anh Quân</h1>
             <p className="text-[10px] text-slate-500 uppercase tracking-wider font-semibold">Workspace</p>
           </div>
         </Link>

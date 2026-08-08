@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { createPortal } from "react-dom";
 import { X, UserPlus } from "lucide-react";
+import { useToast } from "@/components/ui/Toast";
 
 interface AddStudentModalProps {
   onAdd: (name: string, salary: number, color?: string) => void;
@@ -23,6 +24,7 @@ export function AddStudentModal({ onAdd, onClose }: AddStudentModalProps) {
   const [name, setName] = useState("");
   const [salary, setSalary] = useState(200000);
   const [selectedColor, setSelectedColor] = useState(PRESET_COLORS[0]);
+  const { addToast } = useToast();
 
   useEffect(() => {
     setMounted(true);
@@ -31,11 +33,19 @@ export function AddStudentModal({ onAdd, onClose }: AddStudentModalProps) {
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (!name.trim()) {
-      alert("Vui lòng nhập tên học sinh");
+      addToast({
+        title: "Thiếu thông tin",
+        description: "Vui lòng nhập tên học sinh",
+        variant: "warning",
+      });
       return;
     }
     if (salary <= 0) {
-      alert("Vui lòng nhập mức lương hợp lệ");
+      addToast({
+        title: "Thông tin không hợp lệ",
+        description: "Vui lòng nhập mức lương / học phí lớn hơn 0",
+        variant: "warning",
+      });
       return;
     }
     onAdd(name.trim(), salary, selectedColor);

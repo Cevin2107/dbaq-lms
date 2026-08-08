@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { createPortal } from "react-dom";
+import { useToast } from "@/components/ui/Toast";
 
 interface CleanupItem {
   id: string;
@@ -53,6 +54,7 @@ export default function DatabaseCleanupModal({ onClose }: { onClose: () => void 
   const [selectedItems, setSelectedItems] = useState<Set<string>>(new Set());
   const [loading, setLoading] = useState(false);
   const [deleting, setDeleting] = useState(false);
+  const { addToast } = useToast();
 
   useEffect(() => {
     setMounted(true);
@@ -122,7 +124,11 @@ export default function DatabaseCleanupModal({ onClose }: { onClose: () => void 
 
   const handleDelete = async () => {
     if (selectedItems.size === 0) {
-      alert("Vui lòng chọn ít nhất một mục để xóa");
+      addToast({
+        title: "Chưa chọn mục",
+        description: "Vui lòng chọn ít nhất một mục để xóa",
+        variant: "warning",
+      });
       return;
     }
 
@@ -139,14 +145,22 @@ export default function DatabaseCleanupModal({ onClose }: { onClose: () => void 
       });
 
       if (res.ok) {
-        alert("Xóa thành công!");
+        addToast({
+          title: "Xóa thành công",
+          description: `Đã xóa thành công ${selectedItems.size} mục được chọn`,
+          variant: "success",
+        });
         loadItems(activeTab);
       } else {
         throw new Error("Failed to delete");
       }
     } catch (error) {
       console.error("Error deleting items:", error);
-      alert("Có lỗi xảy ra khi xóa");
+      addToast({
+        title: "Lỗi xóa dữ liệu",
+        description: "Có lỗi xảy ra khi thực hiện dọn dẹp dữ liệu",
+        variant: "error",
+      });
     } finally {
       setDeleting(false);
     }

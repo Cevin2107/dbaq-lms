@@ -49,6 +49,44 @@ export async function POST(req: Request) {
     const serviceKey = process.env.SUPABASE_SERVICE_ROLE_KEY!;
     const supabase = createClient(url, serviceKey);
 
+    // Check if studentName matches an existing registered student (case-insensitive & whitespace trimmed)
+    const normalizedInput = studentName.trim().toLowerCase();
+    
+    // Fetch registered students to verify system student identity
+    let matchedOfficialName: string | null = null;
+    try {
+      const [usersRes, profilesRes] = await Promise.all([
+        supabase.auth.admin.listUsers(),
+        supabase.from("student_profiles").select("id, full_name"),
+      ]);
+
+      const usersData = usersRes.data;
+      const profiles = profilesRes.data;
+
+      (usersData?.users || []).forEach((u: any) => {
+        const fn = (u.user_metadata?.full_name as string | undefined)?.trim();
+        const em = u.email?.trim();
+        if (fn && fn.toLowerCase() === normalizedInput) {
+          matchedOfficialName = fn;
+        } else if (em && em.toLowerCase() === normalizedInput) {
+          matchedOfficialName = fn || em;
+        }
+      });
+
+      if (!matchedOfficialName && profiles) {
+        (profiles as any[]).forEach((p) => {
+          if (p.full_name && p.full_name.trim().toLowerCase() === normalizedInput) {
+            matchedOfficialName = p.full_name.trim();
+          }
+        });
+      }
+    } catch (checkErr) {
+      console.warn("Error verifying student identity:", checkErr);
+    }
+
+    const finalStudentName = matchedOfficialName || studentName.trim();
+    const finalIsGuest = matchedOfficialName ? false : Boolean(isGuest);
+
     // Lấy thông tin assignment để tính deadline
     const { data: assignment } = await supabase
       .from("assignments")
@@ -77,12 +115,12 @@ export async function POST(req: Request) {
       .from("student_sessions")
       .insert({
         assignment_id: assignmentId,
-        student_name: studentName.trim(),
+        student_name: finalStudentName,
         status,
         started_at: startedAt.toISOString(),
         deadline_at: deadlineAt?.toISOString() || null,
         last_activity_at: startedAt.toISOString(),
-        draft_answers: setSessionMeta({}, startedAt.toISOString(), 0, Boolean(isGuest)),
+        draft_answers: setSessionMeta({}, startedAt.toISOString(), 0, finalIsGuest),
       })
       .select()
       .single();

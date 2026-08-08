@@ -48,7 +48,7 @@ npm run dev
 4. **answers** - Câu trả lời trong bài nộp
 5. **student_sessions** - Phiên làm bài (tracking: active/exited/submitted)
 6. **admin_settings** - Cài đặt mật khẩu admin
-7. **admin_passkeys** - Thiết bị passkey (vân tay)
+7. **admin_passkeys** - Thiết bị passkey (Vân tay, khuôn mặt)
 
 ### Khởi tạo Database
 Chạy file `supabase/schema.sql` trong Supabase SQL Editor để tạo tất cả bảng, indexes, RLS policies và storage bucket.

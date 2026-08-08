@@ -16,6 +16,7 @@ import {
   ChevronUp,
   Sparkles,
 } from "lucide-react";
+import { useToast } from "@/components/ui/Toast";
 
 
 interface StudentWorkReviewPanelProps {
@@ -58,6 +59,7 @@ export function StudentWorkReviewPanel({
   const [regradingMode, setRegradingMode] = useState(false);
   const [regrading, setRegrading] = useState(false);
   const [regradeAnswers, setRegradeAnswers] = useState<Map<string, RegradeAnswerState>>(new Map());
+  const { addToast } = useToast();
   const [showStatsExpanded, setShowStatsExpanded] = useState(true);
 
   const [liveNow, setLiveNow] = useState(() => Date.now());
@@ -184,7 +186,11 @@ export function StudentWorkReviewPanel({
       if (notify) {
         notify(`Chấm lại thành công! Điểm mới: ${result.newScore}/10`, "success");
       } else {
-        alert(`Chấm lại thành công! Điểm mới: ${result.newScore}/10`);
+        addToast({
+          title: "Chấm lại thành công",
+          description: `Điểm mới: ${result.newScore}/10`,
+          variant: "success",
+        });
       }
 
       await onRefresh();
@@ -194,7 +200,11 @@ export function StudentWorkReviewPanel({
       if (notify) {
         notify("Có lỗi xảy ra khi chấm lại", "error");
       } else {
-        alert("Có lỗi xảy ra khi chấm lại");
+        addToast({
+          title: "Lỗi chấm lại",
+          description: "Có lỗi xảy ra khi cập nhật điểm bài làm",
+          variant: "error",
+        });
       }
     } finally {
       setRegrading(false);

@@ -67,7 +67,7 @@ export async function getSessionsForYear(year: number) {
 
   const { data, error } = await supabase
     .from("teaching_sessions")
-    .select("teaching_date")
+    .select("teaching_date, student_id")
     .gte("teaching_date", startDate)
     .lte("teaching_date", endDate);
 

@@ -19,6 +19,7 @@ import {
   BarChart3,
   User
 } from "lucide-react";
+import { useToast } from "@/components/ui/Toast";
 
 interface StudentStats {
   studentName: string;
@@ -108,6 +109,7 @@ export default function AdminStatsPage() {
   const [savingStudent, setSavingStudent] = useState(false);
   const [newPassword, setNewPassword] = useState("");
   const [editError, setEditError] = useState<string | null>(null);
+  const { addToast } = useToast();
 
   const loadStats = useCallback(async (silent = false) => {
     if (!silent) {
@@ -135,7 +137,11 @@ export default function AdminStatsPage() {
     } catch (error) {
       console.error("Error loading stats:", error);
       if (!silent) {
-        alert(`Lỗi khi tải dữ liệu: ${error instanceof Error ? error.message : 'Unknown error'}`);
+        addToast({
+          title: "Lỗi nạp dữ liệu",
+          description: error instanceof Error ? error.message : "Unknown error",
+          variant: "error",
+        });
       }
     } finally {
       if (!silent) {
@@ -326,7 +332,11 @@ export default function AdminStatsPage() {
 
   const deleteSelectedItems = async () => {
     if (selectedSubmissions.size === 0 && selectedSessions.size === 0) {
-      alert("Vui lòng chọn ít nhất một bài để xóa");
+      addToast({
+        title: "Chưa chọn dữ liệu",
+        description: "Vui lòng chọn ít nhất một bài làm để xóa",
+        variant: "warning",
+      });
       return;
     }
 
@@ -336,25 +346,30 @@ export default function AdminStatsPage() {
 
     setDeleting(true);
     try {
-      // Xóa submissions
       for (const id of selectedSubmissions) {
         await fetch(`/api/admin/submissions/${id}`, { method: "DELETE" });
       }
 
-      // Xóa sessions
       for (const id of selectedSessions) {
         await fetch(`/api/admin/sessions/${id}`, { method: "DELETE" });
       }
 
-      // Reload stats
       await loadStats(true);
 
       setSelectedSubmissions(new Set());
       setSelectedSessions(new Set());
-      alert("Xóa thành công!");
+      addToast({
+        title: "Xóa thành công",
+        description: "Đã xóa các bài làm được chọn",
+        variant: "success",
+      });
     } catch (error) {
       console.error("Error deleting items:", error);
-      alert("Có lỗi xảy ra khi xóa");
+      addToast({
+        title: "Lỗi xóa bài làm",
+        description: "Có lỗi xảy ra trong quá trình xóa bài làm",
+        variant: "error",
+      });
     } finally {
       setDeleting(false);
     }
@@ -373,16 +388,28 @@ export default function AdminStatsPage() {
 
       if (res.ok) {
         const data = await res.json();
-        // Reload stats
         await loadStats(true);
-        alert(`Đã xóa tất cả dữ liệu của học sinh!\n\n${data.authUserDeleted ? 'Tài khoản auth đã được xóa.' : 'Không tìm thấy tài khoản auth khớp tên/email.'}`);
+        addToast({
+          title: "Đã xóa dữ liệu học sinh",
+          description: data.authUserDeleted ? 'Tài khoản auth và toàn bộ dữ liệu đã được xóa.' : 'Đã xóa dữ liệu bài làm của học sinh.',
+          variant: "info",
+        });
         setExpandedStudent(null);
       } else {
-        throw new Error("Failed to delete");
+        const errorData = await res.json();
+        addToast({
+          title: "Lỗi xóa học sinh",
+          description: errorData.error || "Không thể xóa học sinh",
+          variant: "error",
+        });
       }
     } catch (error) {
-      console.error("Error deleting student data:", error);
-      alert("Có lỗi xảy ra khi xóa");
+      console.error("Error deleting student:", error);
+      addToast({
+        title: "Lỗi hệ thống",
+        description: "Có lỗi xảy ra khi xóa học sinh",
+        variant: "error",
+      });
     } finally {
       setDeleting(false);
     }
@@ -436,7 +463,11 @@ export default function AdminStatsPage() {
     const trimmedPassword = newPassword.trim();
 
     if (!trimmedName && !trimmedEmail && !trimmedPassword) {
-      alert("Vui lòng nhập ít nhất một thay đổi");
+      addToast({
+        title: "Chưa nhập thông tin",
+        description: "Vui lòng nhập ít nhất một thay đổi để cập nhật",
+        variant: "warning",
+      });
       return;
     }
 
@@ -464,10 +495,18 @@ export default function AdminStatsPage() {
       setEditingStudent(null);
       setNewPassword("");
       setEditError(null);
-      alert("Cập nhật học sinh thành công");
+      addToast({
+        title: "Cập nhật học sinh thành công",
+        description: "Thông tin học sinh đã được cập nhật",
+        variant: "success",
+      });
     } catch (error) {
       console.error("Error updating student:", error);
-      alert(error instanceof Error ? error.message : "Có lỗi xảy ra khi cập nhật");
+      addToast({
+        title: "Lỗi cập nhật",
+        description: error instanceof Error ? error.message : "Có lỗi xảy ra khi cập nhật",
+        variant: "error",
+      });
     } finally {
       setSavingStudent(false);
     }
@@ -475,91 +514,79 @@ export default function AdminStatsPage() {
 
   if (loading) {
     return (
-      <main className="min-h-screen bg-[#f5f5f7] dark:bg-[#000000] relative overflow-hidden">
-        <div className="relative">
-          {/* Header */}
-          <div className="mb-8 px-4 py-6">
-            <div className="mx-auto max-w-6xl">
-              <div className="rounded-[2rem] bg-white/80 dark:bg-[#1d1d1f]/80 backdrop-blur-xl border border-black/5 dark:border-white/5 shadow-[0_4px_20px_rgba(0,0,0,0.03)] p-6">
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-4">
-                    <div className="relative group">
-                      <div className="absolute inset-0 bg-[#0066cc] rounded-2xl blur opacity-30" />
-                      <div className="relative flex h-12 w-12 items-center justify-center rounded-[18px] bg-[#0066cc] shadow-lg shadow-blue-500/30">
-                        <GraduationCap className="h-6 w-6 text-white" />
-                      </div>
-                    </div>
-                    <div>
-                      <h1 className="text-2xl font-bold text-slate-900 dark:text-white tracking-[-0.02em]">
-                        Quản lý học sinh
-                      </h1>
-                      <p className="text-[15px] text-slate-500 dark:text-slate-400 mt-1">Xem kết quả bài làm của học sinh</p>
-                    </div>
-                  </div>
-                  <Link
-                    href="/admin/dashboard"
-                    className="px-5 py-2 text-[14px] font-semibold text-slate-600 dark:text-slate-300 hover:text-[#0066cc] dark:hover:text-blue-400 bg-slate-50 dark:bg-slate-800 backdrop-blur-sm rounded-full border border-slate-200 dark:border-slate-700 hover:border-[#0066cc]/50 dark:hover:border-blue-500/50 transition-all"
-                  >
-                    ← Dashboard
-                  </Link>
-                </div>
+      <div className="container-custom py-6 md:py-8 space-y-6 animate-fade-in">
+        <div className="rounded-[2rem] bg-gradient-to-br from-white via-[#f0f9ff]/60 to-[#e0f2fe]/40 dark:from-[#1d1d1f]/90 dark:via-[#1d1d1f]/80 dark:to-[#0f172a]/90 backdrop-blur-xl border border-black/5 dark:border-white/5 shadow-[0_8px_30px_rgba(0,102,204,0.06)] p-6 sm:p-8 md:p-10">
+          <div className="flex items-center gap-4">
+            <div className="relative group">
+              <div className="absolute inset-0 bg-[#0066cc] rounded-2xl blur opacity-30" />
+              <div className="relative flex h-12 w-12 items-center justify-center rounded-[18px] bg-[#0066cc] shadow-lg shadow-blue-500/30">
+                <GraduationCap className="h-6 w-6 text-white" />
               </div>
             </div>
-          </div>
-
-          <div className="mx-auto max-w-6xl px-4 py-8 text-center">
-            <div className="inline-flex items-center gap-3 px-6 py-3 rounded-2xl bg-white/70 backdrop-blur-xl border border-white/80 shadow-lg">
-              <div className="h-5 w-5 border-2 border-indigo-600 border-t-transparent rounded-full animate-spin" />
-              <p className="text-slate-600 font-medium">Đang tải dữ liệu...</p>
+            <div>
+              <h1 className="text-2xl sm:text-3xl font-bold text-slate-900 dark:text-white tracking-[-0.02em]">
+                Quản lý Học sinh & Bài làm
+              </h1>
+              <p className="text-[15px] text-slate-500 dark:text-slate-400 mt-1">Đang tải dữ liệu học sinh...</p>
             </div>
           </div>
         </div>
-      </main>
+
+        <div className="py-12 text-center">
+          <div className="inline-flex items-center gap-3 px-6 py-3 rounded-full bg-white/80 dark:bg-[#1d1d1f]/80 backdrop-blur-xl border border-black/5 dark:border-white/5 shadow-md">
+            <div className="h-5 w-5 border-2 border-[#0066cc] border-t-transparent rounded-full animate-spin" />
+            <p className="text-slate-600 dark:text-slate-300 font-semibold text-sm">Đang tải tiến độ bài làm...</p>
+          </div>
+        </div>
+      </div>
     );
   }
+
   return (
-    <main className="min-h-screen bg-[#f5f5f7] dark:bg-[#000000] relative overflow-hidden">
-      <div className="relative">
-        {/* Header */}
-        <div className="mb-8 px-4 py-6">
-          <div className="mx-auto max-w-6xl">
-            <div className="rounded-[2rem] bg-white/80 dark:bg-[#1d1d1f]/80 backdrop-blur-xl border border-black/5 dark:border-white/5 shadow-[0_4px_20px_rgba(0,0,0,0.03)] p-6 hover:shadow-[0_8px_30px_rgba(0,0,0,0.06)] transition-all duration-300">
-              <div className="flex items-center justify-between">
-                <div className="flex items-center gap-4">
-                  <div className="relative group">
-                    <div className="absolute inset-0 bg-[#0066cc] rounded-[18px] blur opacity-30 group-hover:opacity-50 transition-opacity" />
-                    <div className="relative flex h-12 w-12 items-center justify-center rounded-[18px] bg-[#0066cc] shadow-lg shadow-blue-500/30">
-                      <GraduationCap className="h-6 w-6 text-white" />
-                    </div>
-                  </div>
-                  <div>
-                    <h1 className="text-2xl font-bold text-slate-900 dark:text-white tracking-[-0.02em]">
-                      Quản lý học sinh
-                    </h1>
-                    <p className="text-[15px] text-slate-500 dark:text-slate-400 mt-1">Xem kết quả bài làm của học sinh</p>
-                  </div>
-                </div>
-                <Link
-                  href="/admin/dashboard"
-                  className="px-5 py-2 text-[14px] font-semibold text-slate-600 dark:text-slate-300 hover:text-[#0066cc] dark:hover:text-blue-400 bg-slate-50 dark:bg-slate-800 backdrop-blur-sm rounded-full border border-slate-200 dark:border-slate-700 hover:border-[#0066cc]/50 dark:hover:border-blue-500/50 transition-all"
-                >
-                  ← Dashboard
-                </Link>
+    <div className="container-custom py-6 md:py-8 space-y-6 md:space-y-8 animate-fade-in pb-16">
+      {/* Header Tile Glassmorphic */}
+      <div className="rounded-[2rem] bg-gradient-to-br from-white via-[#f0f9ff]/60 to-[#e0f2fe]/40 dark:from-[#1d1d1f]/90 dark:via-[#1d1d1f]/80 dark:to-[#0f172a]/90 backdrop-blur-xl border border-black/5 dark:border-white/5 shadow-[0_8px_30px_rgba(0,102,204,0.06)] p-6 sm:p-8 md:p-10">
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-5">
+          <div className="flex items-center gap-4">
+            <div className="relative group">
+              <div className="absolute inset-0 bg-[#0066cc] rounded-2xl blur opacity-30 group-hover:opacity-50 transition-opacity" />
+              <div className="relative flex h-14 w-14 items-center justify-center rounded-[20px] bg-gradient-to-br from-[#0066cc] to-[#004bb5] text-white shadow-lg shadow-blue-500/30 shrink-0">
+                <GraduationCap className="h-7 w-7" />
               </div>
+            </div>
+            <div>
+              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-blue-50 dark:bg-blue-900/40 text-blue-600 dark:text-blue-400 text-xs font-semibold border border-blue-100 dark:border-blue-800/40 mb-1">
+                <User className="w-3.5 h-3.5" />
+                <span>Quản lý Tiến độ Học sinh LMS</span>
+              </div>
+              <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold text-slate-900 dark:text-white tracking-[-0.02em]">
+                Danh sách Học sinh & Kết quả
+              </h1>
+              <p className="text-[15px] text-slate-500 dark:text-slate-400 mt-1 max-w-xl">
+                Theo dõi lịch sử làm bài, điểm số trung bình và chi tiết đáp án của từng học sinh.
+              </p>
             </div>
           </div>
-        </div>
 
-        <div className="mx-auto max-w-6xl space-y-6 px-4 pb-8">
-          {students.length === 0 ? (
-            <div className="rounded-[2rem] bg-white/80 dark:bg-[#1d1d1f]/80 backdrop-blur-xl border border-black/5 dark:border-white/5 shadow-[0_4px_20px_rgba(0,0,0,0.03)] p-12 text-center">
-              <div className="inline-flex items-center justify-center w-16 h-16 rounded-[20px] bg-slate-50 dark:bg-slate-800 mb-4 ring-1 ring-slate-200 dark:ring-white/5">
-                <BarChart3 className="h-8 w-8 text-slate-400" />
-              </div>
-              <p className="text-[15px] text-slate-600 dark:text-slate-300 font-medium">Chưa có học sinh nào nộp bài.</p>
-              <p className="text-[14px] text-slate-500 dark:text-slate-400 mt-1">Danh sách sẽ hiển thị khi có học sinh làm bài</p>
+          <Link
+            href="/admin/dashboard"
+            className="px-5 py-2.5 text-xs font-semibold text-slate-700 dark:text-slate-200 hover:text-[#0066cc] dark:hover:text-blue-400 bg-white/80 dark:bg-slate-800/80 backdrop-blur-sm rounded-full border border-slate-200 dark:border-slate-700 hover:border-[#0066cc]/50 transition-all shadow-xs self-start sm:self-auto"
+          >
+            &larr; Dashboard
+          </Link>
+        </div>
+      </div>
+
+      <div className="space-y-6">
+        {students.length === 0 ? (
+          <div className="rounded-[2rem] bg-white/80 dark:bg-[#1d1d1f]/80 backdrop-blur-xl border border-black/5 dark:border-white/5 shadow-[0_4px_20px_rgba(0,0,0,0.03)] p-12 text-center">
+            <div className="inline-flex items-center justify-center w-16 h-16 rounded-[20px] bg-slate-50 dark:bg-slate-800 mb-4 ring-1 ring-slate-200 dark:ring-white/5">
+              <BarChart3 className="h-8 w-8 text-slate-400" />
             </div>
-          ) : (
+            <p className="text-[15px] text-slate-600 dark:text-slate-300 font-medium">Chưa có học sinh nào nộp bài.</p>
+            <p className="text-[14px] text-slate-500 dark:text-slate-400 mt-1">Danh sách sẽ hiển thị khi có học sinh làm bài</p>
+          </div>
+        ) : (
             <div className="space-y-4">
               {(() => {
                 const totalPages = Math.ceil(students.length / itemsPerPage);
@@ -580,7 +607,7 @@ export default function AdminStatsPage() {
                   (a) => a.full_name?.toLowerCase().trim() === student.studentName.toLowerCase().trim() ||
                          a.email?.toLowerCase().trim() === student.studentName.toLowerCase().trim()
                 );
-                const isGuestStudent = !isRegistered || student.inProgress.some((s: any) => s.isGuest || s.draftAnswers?.__sessionMeta?.isGuest);
+                const isGuestStudent = !isRegistered;
                 const isExpanded = expandedStudent === student.studentName;
 
                 return (
@@ -589,50 +616,50 @@ export default function AdminStatsPage() {
                     className="rounded-[2rem] bg-white/80 dark:bg-[#1d1d1f]/80 backdrop-blur-xl border border-black/5 dark:border-white/5 shadow-[0_4px_20px_rgba(0,0,0,0.03)] overflow-hidden hover:shadow-[0_8px_30px_rgba(0,0,0,0.06)] transition-all duration-300"
                   >
                     {/* Student Card Header */}
-                    <div className="flex items-center justify-between p-6 cursor-pointer group" onClick={() => toggleStudent(student.studentName)}>
-                      <div className="flex items-center gap-5 flex-1">
+                    <div className="flex flex-col sm:flex-row sm:items-center justify-between p-4 sm:p-6 gap-4 cursor-pointer group" onClick={() => toggleStudent(student.studentName)}>
+                      <div className="flex items-start sm:items-center gap-3.5 sm:gap-5 flex-1 min-w-0">
                         {/* Avatar */}
-                        <div className="relative">
+                        <div className="relative shrink-0">
                           <div className="absolute inset-0 bg-[#0066cc] rounded-[18px] blur opacity-40 group-hover:opacity-60 transition-opacity" />
-                          <div className="relative flex h-[60px] w-[60px] items-center justify-center rounded-[20px] bg-[#0066cc] shadow-lg shadow-blue-500/30">
-                            <span className="text-2xl font-bold text-white">
+                          <div className="relative flex h-[48px] w-[48px] sm:h-[60px] sm:w-[60px] items-center justify-center rounded-[16px] sm:rounded-[20px] bg-[#0066cc] shadow-lg shadow-blue-500/30">
+                            <span className="text-xl sm:text-2xl font-bold text-white">
                               {(student.studentName || "?").charAt(0).toUpperCase()}
                             </span>
                           </div>
                         </div>
 
                         {/* Student Info */}
-                        <div className="flex-1">
+                        <div className="flex-1 min-w-0">
                           <div className="flex items-center gap-2 mb-1 flex-wrap">
-                            <h3 className="text-[19px] font-bold text-slate-900 dark:text-white tracking-[-0.01em]">
+                            <h3 className="text-base sm:text-[19px] font-bold text-slate-900 dark:text-white tracking-[-0.01em] truncate">
                               {student.studentName}
                             </h3>
                             {isGuestStudent && (
-                              <span className="px-2.5 py-0.5 rounded-full text-xs font-bold bg-amber-100/90 dark:bg-amber-900/40 text-amber-800 dark:text-amber-300 border border-amber-300/70 dark:border-amber-700/50 shadow-sm flex items-center gap-1">
+                              <span className="px-2.5 py-0.5 rounded-full text-[11px] sm:text-xs font-bold bg-amber-100/90 dark:bg-amber-900/40 text-amber-800 dark:text-amber-300 border border-amber-300/70 dark:border-amber-700/50 shadow-xs flex items-center gap-1 shrink-0">
                                 <User className="h-3 w-3" />
                                 Học sinh ngoài
                               </span>
                             )}
                           </div>
-                          <div className="flex flex-wrap items-center gap-3 mt-1">
-                            <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-xl bg-emerald-100/80 backdrop-blur-sm text-xs font-semibold text-emerald-700 border border-emerald-200/50">
-                              <Trophy className="h-3.5 w-3.5" />
+                          <div className="flex flex-wrap items-center gap-2 sm:gap-3 mt-1">
+                            <span className="inline-flex items-center gap-1 px-2.5 sm:px-3 py-0.5 sm:py-1 rounded-xl bg-emerald-100/80 backdrop-blur-sm text-[11px] sm:text-xs font-semibold text-emerald-700 border border-emerald-200/50">
+                              <Trophy className="h-3 w-3 sm:h-3.5 sm:w-3.5" />
                               {student.totalSubmissions} bài
                             </span>
-                            <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-xl bg-blue-100/80 backdrop-blur-sm text-xs font-semibold text-blue-700 border border-blue-200/50">
-                              <BarChart3 className="h-3.5 w-3.5" />
+                            <span className="inline-flex items-center gap-1 px-2.5 sm:px-3 py-0.5 sm:py-1 rounded-xl bg-blue-100/80 backdrop-blur-sm text-[11px] sm:text-xs font-semibold text-blue-700 border border-blue-200/50">
+                              <BarChart3 className="h-3 w-3 sm:h-3.5 sm:w-3.5" />
                               ĐTB: {avgScore}
                             </span>
                             {student.inProgressCount > 0 && (
-                              <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-amber-100/80 backdrop-blur-sm text-xs font-semibold text-amber-700 border border-amber-200/50 animate-pulse">
-                                <Clock className="h-3.5 w-3.5" />
+                              <span className="inline-flex items-center gap-1 px-2.5 sm:px-3 py-0.5 sm:py-1 rounded-full bg-amber-100/80 backdrop-blur-sm text-[11px] sm:text-xs font-semibold text-amber-700 border border-amber-200/50 animate-pulse">
+                                <Clock className="h-3 w-3 sm:h-3.5 sm:w-3.5" />
                                 {student.inProgressCount} đang làm
                               </span>
                             )}
                             {student.inProgressCount === 0 && (
-                              <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-emerald-100/80 backdrop-blur-sm text-xs font-semibold text-emerald-700 border border-emerald-200/50">
-                                <CheckCircle2 className="h-3.5 w-3.5" />
-                                Đã nộp / đã thoát
+                              <span className="inline-flex items-center gap-1 px-2.5 sm:px-3 py-0.5 sm:py-1 rounded-full bg-emerald-100/80 backdrop-blur-sm text-[11px] sm:text-xs font-semibold text-emerald-700 border border-emerald-200/50">
+                                <CheckCircle2 className="h-3 w-3 sm:h-3.5 sm:w-3.5" />
+                                Đã xong
                               </span>
                             )}
                           </div>
@@ -640,32 +667,34 @@ export default function AdminStatsPage() {
                       </div>
 
                       {/* Actions */}
-                      <div className="flex items-center gap-2.5">
-                        <button
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            openEditStudent(student.studentName);
-                          }}
-                          onMouseDown={(e) => e.stopPropagation()}
-                          className="px-4 py-2.5 text-[13px] font-semibold text-[#0066cc] dark:text-blue-400 bg-blue-50 dark:bg-blue-900/30 backdrop-blur-sm border border-blue-200/50 dark:border-blue-800/50 rounded-full hover:bg-blue-100 dark:hover:bg-blue-900/50 transition-all flex items-center gap-2"
-                          title="Chỉnh sửa học sinh"
-                        >
-                          <Edit3 className="h-4 w-4" />
-                          Chỉnh sửa
-                        </button>
-                        <button
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            deleteAllStudentData(student.studentName);
-                          }}
-                          disabled={deleting}
-                          className="px-4 py-2.5 text-[13px] font-semibold text-red-600 dark:text-red-400 bg-red-50 dark:bg-red-900/30 backdrop-blur-sm border border-red-200/50 dark:border-red-900/50 rounded-full hover:bg-red-100 dark:hover:bg-red-900/50 disabled:opacity-50 transition-all flex items-center gap-2"
-                        >
-                          <Trash2 className="h-4 w-4" />
-                          Xóa tất cả
-                        </button>
-                        <div className={`flex h-10 w-10 items-center justify-center rounded-full bg-slate-100/80 dark:bg-slate-800/80 backdrop-blur-sm text-slate-600 dark:text-slate-400 group-hover:bg-blue-50 dark:group-hover:bg-blue-900/50 group-hover:text-[#0066cc] dark:group-hover:text-blue-400 transition-all ${isExpanded ? 'rotate-180' : ''}`}>
-                          <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <div className="flex items-center justify-between sm:justify-end gap-2.5 pt-3 sm:pt-0 border-t sm:border-t-0 border-slate-100 dark:border-white/5 w-full sm:w-auto shrink-0">
+                        <div className="flex items-center gap-2">
+                          <button
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              openEditStudent(student.studentName);
+                            }}
+                            onMouseDown={(e) => e.stopPropagation()}
+                            className="px-3.5 sm:px-4 py-2 sm:py-2.5 text-xs sm:text-[13px] font-bold text-[#0066cc] dark:text-blue-400 bg-blue-50 dark:bg-blue-900/30 backdrop-blur-sm border border-blue-200/50 dark:border-blue-800/50 rounded-full hover:bg-blue-100 dark:hover:bg-blue-900/50 transition-all flex items-center gap-1.5"
+                            title="Chỉnh sửa học sinh"
+                          >
+                            <Edit3 className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
+                            <span>Chỉnh sửa</span>
+                          </button>
+                          <button
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              deleteAllStudentData(student.studentName);
+                            }}
+                            disabled={deleting}
+                            className="px-3.5 sm:px-4 py-2 sm:py-2.5 text-xs sm:text-[13px] font-bold text-rose-600 dark:text-rose-400 bg-rose-50 dark:bg-rose-900/30 backdrop-blur-sm border border-rose-200/50 dark:border-rose-900/50 rounded-full hover:bg-rose-100 dark:hover:bg-rose-900/50 disabled:opacity-50 transition-all flex items-center gap-1.5"
+                          >
+                            <Trash2 className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
+                            <span>Xóa tất cả</span>
+                          </button>
+                        </div>
+                        <div className={`flex h-9 w-9 sm:h-10 sm:w-10 items-center justify-center rounded-full bg-slate-100/80 dark:bg-slate-800/80 backdrop-blur-sm text-slate-600 dark:text-slate-400 group-hover:bg-blue-50 dark:group-hover:bg-blue-900/50 group-hover:text-[#0066cc] dark:group-hover:text-blue-400 transition-all shrink-0 ${isExpanded ? 'rotate-180' : ''}`}>
+                          <svg className="h-4 w-4 sm:h-5 sm:w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M19 9l-7 7-7-7" />
                           </svg>
                         </div>
@@ -899,7 +928,6 @@ export default function AdminStatsPage() {
             </div>
           )}
         </div>
-      </div>
 
       {editingStudent && (
         <div className="fixed inset-0 z-[80] flex items-center justify-center bg-slate-900/40 backdrop-blur-sm px-4">
@@ -1096,6 +1124,6 @@ export default function AdminStatsPage() {
           </div>
         </div>
       )}
-    </main>
+    </div>
   );
 }

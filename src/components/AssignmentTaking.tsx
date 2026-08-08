@@ -11,6 +11,7 @@ import { Clock, Moon, Sun } from "lucide-react";
 import { createClient } from "@supabase/supabase-js";
 import { AssignmentQuestion } from "@/components/AssignmentQuestion";
 import { useTheme } from "@/providers/ThemeProvider";
+import { useToast } from "@/components/ui/Toast";
 
 interface Props {
   assignment: Assignment;
@@ -63,6 +64,7 @@ export function AssignmentTaking({ assignment, questions: initialQuestions, init
   const [isSaving, setIsSaving] = useState(false);
   const [isOnline, setIsOnline] = useState(true);
   const { theme, toggleTheme } = useTheme();
+  const { addToast } = useToast();
   const questionsRef = useRef(questions);
   const lastSyncedAnswersStr = useRef<string>("");
 
@@ -399,6 +401,12 @@ export function AssignmentTaking({ assignment, questions: initialQuestions, init
       localStorage.removeItem(`student-name-${assignment.id}`);
     }
     setShowExitConfirm(false);
+    addToast({
+      title: "Đã thoát bài làm",
+      description: saveProgress ? "Tiến trình làm bài của bạn đã được lưu lại." : "Đã thoát khỏi trang bài làm.",
+      variant: "info",
+      duration: 3500,
+    });
     router.push("/");
   };
 

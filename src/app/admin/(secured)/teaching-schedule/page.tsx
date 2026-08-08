@@ -1,7 +1,8 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { Clock, Plus, Trash2, Save, Users, RefreshCw, Edit2 } from "lucide-react";
+import { Clock, Plus, Trash2, Save, Users, RefreshCw, Edit2, Calendar, Sparkles, CheckCircle2 } from "lucide-react";
+import { Button } from "@/components/ui/Button";
 
 type Shift = { id: string; name: string; start_time: string; end_time: string };
 type AvailableSchedule = { id: string; day_of_week: number; shift_id: string };
@@ -74,7 +75,6 @@ export default function TeachingSchedulePage() {
       
       if (regsRes.ok) {
         const regsData = await regsRes.json();
-        // regsData is grouped by student_id
         const regMap: Record<string, StudentRegistration[]> = {};
         for (const r of regsData) {
           regMap[r.student_id] = r.registrations;
@@ -111,12 +111,12 @@ export default function TeachingSchedulePage() {
         body: JSON.stringify(newShift)
       });
       if (res.ok) {
-        const added = await res.json();
-        setShifts([...shifts, added]);
         setNewShift({ name: "", start_time: "", end_time: "" });
-        showMessage("success", "Đã thêm ca học.");
+        showMessage("success", "Đã thêm ca học thành công.");
+        fetchData();
       } else {
-        showMessage("error", "Không thể thêm ca học.");
+        const data = await res.json();
+        showMessage("error", data.error || "Không thể thêm ca.");
       }
     } catch {
       showMessage("error", "Lỗi kết nối.");
@@ -124,44 +124,42 @@ export default function TeachingSchedulePage() {
   };
 
   const handleDeleteShift = async (id: string) => {
-    if (!confirm("Bạn có chắc muốn xoá ca này? Lịch rảnh và đăng ký liên quan sẽ bị xoá.")) return;
+    if (!confirm("Xoá ca học này sẽ xoá luôn tất cả lịch rảnh và đăng ký liên quan. Bạn có chắc không?")) return;
     try {
-      const res = await fetch(`/api/admin/shifts/${id}`, { method: "DELETE" });
+      const res = await fetch(`/api/admin/shifts?id=${id}`, { method: "DELETE" });
       if (res.ok) {
-        setShifts(shifts.filter(s => s.id !== id));
-        fetchData(); // reload all to reflect cascade deletes
         showMessage("success", "Đã xoá ca học.");
+        fetchData();
       } else {
-        showMessage("error", "Không thể xoá ca học.");
+        showMessage("error", "Không thể xoá ca.");
       }
     } catch {
       showMessage("error", "Lỗi kết nối.");
     }
   };
 
-  const toggleAvailability = (day: number, shiftId: string) => {
-    const exists = availableSchedules.some(s => s.day_of_week === day && s.shift_id === shiftId);
+  const toggleAvailability = (day_of_week: number, shift_id: string) => {
+    const exists = availableSchedules.some(s => s.day_of_week === day_of_week && s.shift_id === shift_id);
     if (exists) {
-      setAvailableSchedules(availableSchedules.filter(s => !(s.day_of_week === day && s.shift_id === shiftId)));
+      setAvailableSchedules(availableSchedules.filter(s => !(s.day_of_week === day_of_week && s.shift_id === shift_id)));
     } else {
-      setAvailableSchedules([...availableSchedules, { id: "temp", day_of_week: day, shift_id: shiftId }]);
+      setAvailableSchedules([...availableSchedules, { id: "", day_of_week, shift_id }]);
     }
   };
 
   const handleSaveAvailability = async () => {
     setSaving(true);
     try {
-      const payload = availableSchedules.map(s => ({ day_of_week: s.day_of_week, shift_id: s.shift_id }));
       const res = await fetch("/api/admin/available-schedules", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ schedules: payload })
+        body: JSON.stringify({ schedules: availableSchedules })
       });
       if (res.ok) {
-        showMessage("success", "Đã lưu lịch rảnh.");
-        fetchData(); // refresh to get real IDs
+        showMessage("success", "Đã lưu danh sách ca mở đăng ký.");
+        fetchData();
       } else {
-        showMessage("error", "Không thể lưu lịch rảnh.");
+        showMessage("error", "Không thể lưu lịch mở.");
       }
     } catch {
       showMessage("error", "Lỗi kết nối.");
@@ -170,19 +168,16 @@ export default function TeachingSchedulePage() {
     }
   };
 
-  const handleUpdateStudentLimit = async (studentId: string, newMax: number) => {
-    if (newMax < 0) return;
+  const handleUpdateStudentLimit = async (studentId: string, maxShifts: number) => {
     try {
       const res = await fetch("/api/admin/student-limits", {
-        method: "PUT",
+        method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ id: studentId, max_shifts: newMax })
+        body: JSON.stringify({ student_id: studentId, max_shifts: maxShifts })
       });
       if (res.ok) {
-        setStudentLimits(studentLimits.map(s => s.id === studentId ? { ...s, max_shifts: newMax } : s));
-        showMessage("success", "Đã lưu số ca tối đa.");
-      } else {
-        showMessage("error", "Không thể lưu giới hạn.");
+        showMessage("success", "Đã cập nhật số ca tối đa.");
+        fetchData();
       }
     } catch {
       showMessage("error", "Lỗi kết nối.");
@@ -190,14 +185,12 @@ export default function TeachingSchedulePage() {
   };
 
   const handleResetRegistration = async (studentId: string, studentName: string) => {
-    if (!confirm(`Bạn có chắc chắn muốn huỷ toàn bộ ca học đã đăng ký của học sinh ${studentName}?`)) return;
+    if (!confirm(`Bạn có chắc chắn muốn xoá toàn bộ lịch đăng ký của học sinh ${studentName}?`)) return;
     try {
       const res = await fetch(`/api/admin/schedule-registrations?student_id=${studentId}`, { method: "DELETE" });
       if (res.ok) {
-        const newRegs = { ...registrationsByStudent };
-        delete newRegs[studentId];
-        setRegistrationsByStudent(newRegs);
         showMessage("success", `Đã xoá đăng ký của ${studentName}.`);
+        fetchData();
       } else {
         showMessage("error", "Không thể xoá lịch đăng ký.");
       }
@@ -239,54 +232,81 @@ export default function TeachingSchedulePage() {
 
   if (loading) {
     return (
-      <div className="flex h-64 items-center justify-center">
-        <RefreshCw className="h-8 w-8 animate-spin text-indigo-500" />
+      <div className="flex h-96 items-center justify-center">
+        <div className="animate-spin rounded-full h-12 w-12 border-4 border-[#0066cc] border-t-transparent" />
       </div>
     );
   }
 
   return (
-    <div className="p-4 md:p-8 max-w-6xl mx-auto space-y-8 animate-in fade-in duration-500 pb-16">
-      <div>
-        <h1 className="text-2xl sm:text-3xl font-bold text-slate-900 dark:text-white flex items-center gap-2 tracking-[-0.02em]">
-          <Clock className="h-6 w-6 text-[#0066cc]" />
-          Đăng ký
-        </h1>
-        <p className="text-[15px] text-slate-500 dark:text-slate-400 mt-2">Quản lý ca học, lịch rảnh và danh sách học sinh đăng ký.</p>
+    <div className="container-custom py-6 md:py-8 space-y-6 md:space-y-8 animate-fade-in pb-16">
+      {/* Header Tile Glassmorphic */}
+      <div className="rounded-[2rem] bg-gradient-to-br from-white via-[#f0f9ff]/60 to-[#e0f2fe]/40 dark:from-[#1d1d1f]/90 dark:via-[#1d1d1f]/80 dark:to-[#0f172a]/90 backdrop-blur-xl border border-black/5 dark:border-white/5 shadow-[0_8px_30px_rgba(0,102,204,0.06)] p-6 sm:p-8 md:p-10">
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-5">
+          <div className="space-y-2">
+            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-blue-50 dark:bg-blue-900/40 text-blue-600 dark:text-blue-400 text-xs font-semibold border border-blue-100 dark:border-blue-800/40">
+              <Clock className="w-3.5 h-3.5" />
+              <span>Cấu hình Ca học & Phân lịch Đăng ký</span>
+            </div>
+            <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold text-slate-900 dark:text-white tracking-[-0.02em]">
+              Quản lý Đăng ký Ca dạy
+            </h1>
+            <p className="text-[15px] text-slate-500 dark:text-slate-400 max-w-xl">
+              Cấu hình các ca học, mở khung lịch rảnh và hỗ trợ đăng ký lịch cố định cho học sinh.
+            </p>
+          </div>
+
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={fetchData}
+            className="rounded-full bg-white/80 dark:bg-slate-800/80 backdrop-blur-sm border-slate-200 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-800 px-4 py-2 text-xs font-semibold self-start sm:self-auto"
+          >
+            <RefreshCw className="h-4 w-4 mr-1.5" />
+            <span>Làm mới dữ liệu</span>
+          </Button>
+        </div>
       </div>
 
       {message.text && (
-        <div className={`p-4 rounded-xl font-medium ${message.type === 'success' ? 'bg-green-50 text-green-700' : 'bg-red-50 text-red-700'}`}>
+        <div className={`p-4 rounded-2xl font-semibold text-sm ${message.type === 'success' ? 'bg-emerald-50 text-emerald-800 border border-emerald-200' : 'bg-rose-50 text-rose-800 border border-rose-200'}`}>
           {message.text}
         </div>
       )}
 
       {/* 1. Shifts */}
       <div className="rounded-[2rem] bg-white/80 dark:bg-[#1d1d1f]/80 backdrop-blur-xl border border-black/5 dark:border-white/5 shadow-[0_4px_20px_rgba(0,0,0,0.03)] p-6 sm:p-8">
-        <h2 className="text-[17px] font-bold text-slate-900 dark:text-white mb-5 flex items-center gap-2">
-          <Clock className="h-5 w-5 text-[#0066cc]" /> Quản lý Ca học
+        <h2 className="text-lg font-bold text-slate-900 dark:text-white mb-5 flex items-center gap-2">
+          <Clock className="h-5 w-5 text-[#0066cc]" /> Quản lý Khung Ca học
         </h2>
         <div className="space-y-4 max-w-2xl">
-          {shifts.map(shift => (
-            <div key={shift.id} className="flex items-center justify-between bg-slate-50 p-3 rounded-xl border border-slate-100">
-              <div>
-                <span className="font-semibold text-slate-800">{shift.name}</span>
-                <span className="text-sm text-slate-500 ml-2">({shift.start_time.substring(0,5)} - {shift.end_time.substring(0,5)})</span>
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+            {shifts.map(shift => (
+              <div key={shift.id} className="flex items-center justify-between bg-slate-50 dark:bg-slate-800/50 p-3.5 rounded-2xl border border-slate-200/60 dark:border-white/5">
+                <div>
+                  <span className="font-bold text-slate-900 dark:text-white text-sm">{shift.name}</span>
+                  <span className="text-xs font-mono font-semibold text-[#0066cc] dark:text-blue-400 ml-2">
+                    ({shift.start_time.substring(0,5)} – {shift.end_time.substring(0,5)})
+                  </span>
+                </div>
+                <button onClick={() => handleDeleteShift(shift.id)} className="text-rose-500 hover:text-rose-700 p-1.5 hover:bg-rose-50 rounded-xl transition">
+                  <Trash2 className="h-4 w-4" />
+                </button>
               </div>
-              <button onClick={() => handleDeleteShift(shift.id)} className="text-red-500 hover:text-red-700 p-1">
-                <Trash2 className="h-4 w-4" />
-              </button>
-            </div>
-          ))}
+            ))}
+          </div>
 
-          <div className="flex flex-wrap gap-2 items-center mt-2">
-            <input type="text" placeholder="Tên ca (Ca 1)" value={newShift.name} onChange={e => setNewShift({...newShift, name: e.target.value})} className="flex-1 min-w-[120px] px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-sm outline-none" />
-            <input type="time" value={newShift.start_time} onChange={e => setNewShift({...newShift, start_time: e.target.value})} className="w-24 px-2 py-2 bg-slate-50 border border-slate-200 rounded-xl text-sm outline-none" />
-            <span className="text-slate-400">-</span>
-            <input type="time" value={newShift.end_time} onChange={e => setNewShift({...newShift, end_time: e.target.value})} className="w-24 px-2 py-2 bg-slate-50 border border-slate-200 rounded-xl text-sm outline-none" />
-            <button onClick={handleAddShift} className="p-2 bg-indigo-600 text-white rounded-xl hover:bg-indigo-700">
-              <Plus className="h-5 w-5" />
-            </button>
+          <div className="flex flex-col sm:flex-row flex-wrap gap-2.5 items-stretch sm:items-center mt-3 pt-3 border-t border-slate-100 dark:border-white/5">
+            <input type="text" placeholder="Tên ca (ví dụ: Ca chiều)" value={newShift.name} onChange={e => setNewShift({...newShift, name: e.target.value})} className="w-full sm:flex-1 sm:min-w-[140px] px-3.5 py-2.5 bg-slate-50 dark:bg-slate-800/50 border border-slate-200/80 dark:border-white/10 rounded-xl text-xs font-semibold outline-none focus:border-[#0066cc]" />
+            <div className="flex items-center gap-2">
+              <input type="time" value={newShift.start_time} onChange={e => setNewShift({...newShift, start_time: e.target.value})} className="flex-1 sm:w-28 px-3 py-2.5 bg-slate-50 dark:bg-slate-800/50 border border-slate-200/80 dark:border-white/10 rounded-xl text-xs font-semibold outline-none focus:border-[#0066cc]" />
+              <span className="text-slate-400 font-bold">-</span>
+              <input type="time" value={newShift.end_time} onChange={e => setNewShift({...newShift, end_time: e.target.value})} className="flex-1 sm:w-28 px-3 py-2.5 bg-slate-50 dark:bg-slate-800/50 border border-slate-200/80 dark:border-white/10 rounded-xl text-xs font-semibold outline-none focus:border-[#0066cc]" />
+            </div>
+            <Button onClick={handleAddShift} size="sm" className="rounded-xl bg-[#0066cc] hover:bg-[#0052a3] w-full sm:w-auto">
+              <Plus className="h-4 w-4 mr-1" />
+              Thêm ca
+            </Button>
           </div>
         </div>
       </div>
@@ -294,48 +314,53 @@ export default function TeachingSchedulePage() {
       {/* 2. Availability Matrix */}
       <div className="rounded-[2rem] bg-white/80 dark:bg-[#1d1d1f]/80 backdrop-blur-xl border border-black/5 dark:border-white/5 shadow-[0_4px_20px_rgba(0,0,0,0.03)] p-6 sm:p-8 overflow-x-auto">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
-          <h2 className="text-[17px] font-bold text-slate-900 dark:text-white flex items-center gap-2">Chọn lịch rảnh</h2>
-          <button 
+          <div>
+            <h2 className="text-lg font-bold text-slate-900 dark:text-white flex items-center gap-2">
+              <Calendar className="h-5 w-5 text-indigo-600" /> Cấu hình Lịch rảnh mở cho học sinh
+            </h2>
+            <p className="text-xs text-slate-500 mt-1">Tích chọn các ca khả dụng để học sinh được đăng ký.</p>
+          </div>
+          <Button 
             onClick={handleSaveAvailability} 
             disabled={saving}
-            className="w-full sm:w-auto flex items-center justify-center gap-2 px-5 py-2.5 bg-[#0066cc] text-white text-[14px] font-medium rounded-full shadow-lg shadow-blue-500/20 hover:bg-[#005bb5] transition-all disabled:opacity-50 hover:-translate-y-0.5"
+            className="rounded-full bg-[#0066cc] hover:bg-[#005bb5] shadow-lg shadow-blue-500/20 px-5 text-xs font-semibold"
           >
-            {saving ? <RefreshCw className="h-4 w-4 animate-spin" /> : <Save className="h-4 w-4" />}
-            Lưu lịch rảnh
-          </button>
+            {saving ? <RefreshCw className="h-4 w-4 mr-1.5 animate-spin" /> : <Save className="h-4 w-4 mr-1.5" />}
+            Lưu lịch mở
+          </Button>
         </div>
 
         {shifts.length === 0 ? (
-          <p className="text-slate-500 text-center py-8">Chưa có ca học nào. Vui lòng thêm ca học trước.</p>
+          <p className="text-slate-500 text-center py-8 text-sm">Chưa có ca học nào. Vui lòng thêm ca học ở khối trên trước.</p>
         ) : (
           <table className="w-full text-sm text-left">
-            <thead className="bg-slate-50 text-slate-600 font-medium">
+            <thead className="bg-slate-50 dark:bg-slate-800/60 text-slate-700 dark:text-slate-300 font-bold">
               <tr>
-                <th className="px-4 py-3 border-b border-slate-200 rounded-tl-xl w-32">Thứ \ Ca</th>
+                <th className="px-4 py-3 border-b border-slate-200 dark:border-white/5 rounded-tl-xl w-32">Thứ \ Ca</th>
                 {shifts.map(shift => (
-                  <th key={shift.id} className="px-4 py-3 border-b border-slate-200 text-center">
-                    <div className="font-semibold">{shift.name}</div>
-                    <div className="text-xs text-slate-400 font-normal">{shift.start_time.substring(0,5)} - {shift.end_time.substring(0,5)}</div>
+                  <th key={shift.id} className="px-4 py-3 border-b border-slate-200 dark:border-white/5 text-center">
+                    <div className="font-bold">{shift.name}</div>
+                    <div className="text-xs text-indigo-600 font-mono font-semibold">{shift.start_time.substring(0,5)} – {shift.end_time.substring(0,5)}</div>
                   </th>
                 ))}
               </tr>
             </thead>
             <tbody>
               {DAYS.map(day => (
-                <tr key={day.value} className="border-b border-slate-100 hover:bg-slate-50/50 transition">
-                  <td className="px-4 py-3 font-medium text-slate-700">{day.label}</td>
+                <tr key={day.value} className="border-b border-slate-100 dark:border-white/5 hover:bg-slate-50/50 dark:hover:bg-slate-800/30 transition">
+                  <td className="px-4 py-3 font-bold text-slate-800 dark:text-slate-200">{day.label}</td>
                   {shifts.map(shift => {
                     const isAvailable = availableSchedules.some(s => s.day_of_week === day.value && s.shift_id === shift.id);
                     return (
                       <td key={shift.id} className="px-4 py-3 text-center">
-                        <label className="relative flex items-center justify-center cursor-pointer p-2">
+                        <label className="relative inline-flex items-center justify-center cursor-pointer p-2">
                           <input 
                             type="checkbox" 
                             checked={isAvailable}
                             onChange={() => toggleAvailability(day.value, shift.id)}
                             className="sr-only peer"
                           />
-                          <div className="w-6 h-6 border-2 border-slate-300 rounded-md peer-checked:bg-indigo-600 peer-checked:border-indigo-600 flex items-center justify-center transition-all">
+                          <div className="w-6 h-6 border-2 border-slate-300 dark:border-slate-600 rounded-lg peer-checked:bg-[#0066cc] peer-checked:border-[#0066cc] flex items-center justify-center transition-all">
                             <svg className={`w-4 h-4 text-white ${isAvailable ? 'opacity-100 scale-100' : 'opacity-0 scale-50'} transition-all`} fill="none" viewBox="0 0 24 24" stroke="currentColor">
                               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" />
                             </svg>
@@ -354,13 +379,13 @@ export default function TeachingSchedulePage() {
       {/* 3. Proxy Registration */}
       <div className="rounded-[2rem] bg-white/80 dark:bg-[#1d1d1f]/80 backdrop-blur-xl border border-black/5 dark:border-white/5 shadow-[0_4px_20px_rgba(0,0,0,0.03)] p-6 sm:p-8">
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-6">
-          <h2 className="text-[17px] font-bold text-slate-900 dark:text-white flex items-center gap-2">
-            <Edit2 className="h-5 w-5 text-[#0066cc]" /> Đăng ký hộ lịch cho học sinh
+          <h2 className="text-lg font-bold text-slate-900 dark:text-white flex items-center gap-2">
+            <Edit2 className="h-5 w-5 text-[#0066cc]" /> Đăng ký ca hộ cho Học sinh
           </h2>
           <select 
             value={selectedProxyStudent} 
             onChange={e => setSelectedProxyStudent(e.target.value)}
-            className="w-full md:w-auto px-4 py-2 border border-slate-200 rounded-xl bg-slate-50 outline-none focus:ring-2 focus:ring-indigo-500 min-w-[250px]"
+            className="w-full md:w-auto px-4 py-2.5 border border-slate-200 dark:border-white/10 rounded-full bg-slate-50 dark:bg-slate-800 text-xs font-semibold text-slate-900 dark:text-white outline-none focus:ring-2 focus:ring-blue-500 min-w-[250px]"
           >
             <option value="">-- Chọn học sinh --</option>
             {studentLimits.map(s => (
@@ -372,27 +397,27 @@ export default function TeachingSchedulePage() {
         {selectedProxyStudent ? (
           <div className="space-y-6">
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-              <div className="text-sm font-medium text-slate-600 text-center sm:text-left">
-                Đã chọn: <span className="text-indigo-600 font-bold">{proxySelections.length}</span> / {studentLimits.find(s => s.id === selectedProxyStudent)?.max_shifts || 0} ca
+              <div className="text-sm font-semibold text-slate-600 dark:text-slate-300">
+                Đã chọn: <span className="text-[#0066cc] font-extrabold">{proxySelections.length}</span> / {studentLimits.find(s => s.id === selectedProxyStudent)?.max_shifts || 0} ca
               </div>
-              <button 
+              <Button 
                 onClick={handleSaveProxy} 
                 disabled={proxySaving}
-                className="w-full sm:w-auto flex items-center justify-center gap-2 px-4 py-2 bg-green-600 text-white font-medium rounded-xl hover:bg-green-700 transition disabled:opacity-50"
+                className="rounded-full bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-semibold px-5"
               >
-                {proxySaving ? <RefreshCw className="h-4 w-4 animate-spin" /> : <Save className="h-4 w-4" />}
+                {proxySaving ? <RefreshCw className="h-4 w-4 mr-1.5 animate-spin" /> : <Save className="h-4 w-4 mr-1.5" />}
                 Lưu đăng ký hộ
-              </button>
+              </Button>
             </div>
 
             <div className="overflow-x-auto">
               <table className="w-full text-sm text-left">
-                <thead className="bg-slate-50 text-slate-600 font-medium">
+                <thead className="bg-slate-50 dark:bg-slate-800/60 text-slate-700 dark:text-slate-300 font-bold">
                   <tr>
-                    <th className="px-4 py-3 border-b border-slate-200 rounded-tl-xl w-32">Thứ \ Ca</th>
+                    <th className="px-4 py-3 border-b border-slate-200 dark:border-white/5 rounded-tl-xl w-32">Thứ \ Ca</th>
                     {shifts.map(shift => (
-                      <th key={shift.id} className="px-4 py-3 border-b border-slate-200 text-center">
-                        <div className="font-semibold">{shift.name}</div>
+                      <th key={shift.id} className="px-4 py-3 border-b border-slate-200 dark:border-white/5 text-center">
+                        <div className="font-bold">{shift.name}</div>
                         <div className="text-xs text-slate-400 font-normal">{shift.start_time.substring(0,5)} - {shift.end_time.substring(0,5)}</div>
                       </th>
                     ))}
@@ -400,15 +425,14 @@ export default function TeachingSchedulePage() {
                 </thead>
                 <tbody>
                   {DAYS.map(day => (
-                    <tr key={day.value} className="border-b border-slate-100 hover:bg-slate-50/50 transition">
-                      <td className="px-4 py-3 font-medium text-slate-700">{day.label}</td>
+                    <tr key={day.value} className="border-b border-slate-100 dark:border-white/5 hover:bg-slate-50/50 dark:hover:bg-slate-800/30 transition">
+                      <td className="px-4 py-3 font-bold text-slate-800 dark:text-slate-200">{day.label}</td>
                       {shifts.map(shift => {
                         const availableSchedule = availableSchedules.find(s => s.day_of_week === day.value && s.shift_id === shift.id);
                         if (!availableSchedule) {
-                          return <td key={shift.id} className="px-4 py-3 text-center text-slate-300">-</td>;
+                          return <td key={shift.id} className="px-4 py-3 text-center text-slate-300 dark:text-slate-600">-</td>;
                         }
 
-                        // Check if registered by someone else
                         let isLockedByOther = false;
                         for (const [studentId, regs] of Object.entries(registrationsByStudent)) {
                           if (studentId !== selectedProxyStudent && regs.some(r => r.available_schedule_id === availableSchedule.id)) {
@@ -422,20 +446,20 @@ export default function TeachingSchedulePage() {
                         return (
                           <td key={shift.id} className="px-4 py-3 text-center">
                             {isLockedByOther ? (
-                              <div className="mx-auto w-6 h-6 rounded-md bg-slate-200 border border-slate-300 flex items-center justify-center cursor-not-allowed" title="Đã có người đăng ký">
+                              <div className="mx-auto w-6 h-6 rounded-lg bg-slate-200 dark:bg-slate-700 border border-slate-300 dark:border-slate-600 flex items-center justify-center cursor-not-allowed" title="Đã có học sinh khác đăng ký">
                                 <svg className="w-3 h-3 text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
                                 </svg>
                               </div>
                             ) : (
-                              <label className="relative flex items-center justify-center cursor-pointer p-2">
+                              <label className="relative inline-flex items-center justify-center cursor-pointer p-2">
                                 <input 
                                   type="checkbox" 
                                   checked={isSelected}
                                   onChange={() => toggleProxySelection(availableSchedule.id)}
                                   className="sr-only peer"
                                 />
-                                <div className="w-6 h-6 border-2 border-slate-300 rounded-md peer-checked:bg-green-600 peer-checked:border-green-600 flex items-center justify-center transition-all">
+                                <div className="w-6 h-6 border-2 border-slate-300 dark:border-slate-600 rounded-lg peer-checked:bg-emerald-600 peer-checked:border-emerald-600 flex items-center justify-center transition-all">
                                   <svg className={`w-4 h-4 text-white ${isSelected ? 'opacity-100 scale-100' : 'opacity-0 scale-50'} transition-all`} fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" />
                                   </svg>
@@ -452,36 +476,36 @@ export default function TeachingSchedulePage() {
             </div>
           </div>
         ) : (
-          <p className="text-slate-500 text-center py-8">Vui lòng chọn một học sinh ở mục trên để bắt đầu đăng ký hộ.</p>
+          <p className="text-slate-500 text-center py-8 text-sm">Vui lòng chọn một học sinh ở mục trên để bắt đầu đăng ký ca hộ.</p>
         )}
       </div>
 
       {/* 4. Students Limits & Registrations */}
       <div className="rounded-[2rem] bg-white/80 dark:bg-[#1d1d1f]/80 backdrop-blur-xl border border-black/5 dark:border-white/5 shadow-[0_4px_20px_rgba(0,0,0,0.03)] p-6 sm:p-8">
-        <h2 className="text-[17px] font-bold text-slate-900 dark:text-white mb-6 flex items-center gap-2">
-          <Users className="h-5 w-5 text-[#0066cc]" /> Cấu hình giới hạn & Danh sách Học sinh đã đăng ký
+        <h2 className="text-lg font-bold text-slate-900 dark:text-white mb-6 flex items-center gap-2">
+          <Users className="h-5 w-5 text-[#0066cc]" /> Cấu hình Giới hạn Ca & Danh sách Đã đăng ký
         </h2>
 
         {studentLimits.length === 0 ? (
-          <p className="text-slate-500 text-center py-8">Chưa có học sinh nào trên hệ thống.</p>
+          <p className="text-slate-500 text-center py-8 text-sm">Chưa có học sinh nào trên hệ thống.</p>
         ) : (
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-5">
             {studentLimits.map(student => {
               const regs = (registrationsByStudent[student.id] || []).sort((a, b) => {
                 if (a.day_of_week !== b.day_of_week) return a.day_of_week - b.day_of_week;
                 return (a.shift?.start_time || "").localeCompare(b.shift?.start_time || "");
               });
               return (
-                <div key={student.id} className="bg-slate-50 rounded-xl border border-slate-200 p-4">
-                  <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-4">
-                    <div className="font-bold text-slate-800 text-base flex items-center gap-2">
-                      <div className="h-8 w-8 rounded-full bg-indigo-100 text-indigo-600 flex items-center justify-center font-bold text-sm shrink-0">
+                <div key={student.id} className="bg-slate-50/80 dark:bg-slate-800/40 rounded-[1.5rem] border border-slate-200/80 dark:border-white/5 p-5 flex flex-col justify-between space-y-4">
+                  <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-3 border-b border-slate-200/50 dark:border-white/5">
+                    <div className="font-bold text-slate-900 dark:text-white text-base flex items-center gap-3">
+                      <div className="h-10 w-10 rounded-2xl bg-[#0066cc] text-white flex items-center justify-center font-bold text-base shrink-0 shadow-md shadow-blue-500/20">
                         {student.full_name.charAt(0).toUpperCase()}
                       </div>
                       <span className="truncate">{student.full_name}</span>
                     </div>
                     <div className="flex items-center gap-2 self-end sm:self-auto">
-                      <span className="text-sm font-medium text-slate-600 whitespace-nowrap">Số ca tối đa:</span>
+                      <span className="text-xs font-semibold text-slate-500">Số ca tối đa:</span>
                       <input 
                         type="number"
                         min="0"
@@ -491,7 +515,7 @@ export default function TeachingSchedulePage() {
                           setStudentLimits(newLimits);
                         }}
                         onBlur={(e) => handleUpdateStudentLimit(student.id, Number(e.target.value))}
-                        className="w-16 px-2 py-1 text-center font-bold border border-slate-300 rounded-lg outline-none focus:ring-2 focus:ring-indigo-500"
+                        className="w-16 px-2.5 py-1 text-center font-extrabold border border-slate-300 dark:border-slate-600 rounded-xl bg-white dark:bg-slate-800 text-xs text-[#0066cc] dark:text-blue-400 outline-none focus:ring-2 focus:ring-blue-500"
                         title="Thay đổi sẽ tự động lưu"
                       />
                     </div>
@@ -500,30 +524,43 @@ export default function TeachingSchedulePage() {
                   {regs.length > 0 ? (
                     <div className="space-y-2">
                       <div className="flex items-center justify-between mb-2">
-                        <p className="text-xs font-semibold text-slate-500 uppercase tracking-wider">Đã đăng ký ({regs.length}/{student.max_shifts})</p>
+                        <p className="text-xs font-bold text-slate-400 uppercase tracking-wider">Đã đăng ký ({regs.length}/{student.max_shifts} ca)</p>
                         <button 
                           onClick={() => handleResetRegistration(student.id, student.full_name)}
-                          className="text-xs flex items-center gap-1 text-red-500 hover:text-red-700 bg-red-50 hover:bg-red-100 px-2 py-1 rounded-md transition"
+                          className="text-xs flex items-center gap-1 text-rose-600 font-semibold bg-rose-50 hover:bg-rose-100 px-2.5 py-1 rounded-full transition"
                         >
                           <RefreshCw className="h-3 w-3" />
                           Reset lịch
                         </button>
                       </div>
-                      {regs.map(reg => {
-                        const dayLabel = DAYS.find(d => d.value === reg.day_of_week)?.label;
-                        return (
-                          <div key={reg.registration_id} className="flex items-center gap-2 text-sm bg-white border border-slate-100 px-3 py-2 rounded-lg">
-                            <span className="font-medium text-indigo-600 w-16">{dayLabel}</span>
-                            <span className="text-slate-700">{reg.shift?.name}</span>
-                            <span className="text-slate-400 text-xs ml-auto">
-                              {reg.shift?.start_time.substring(0,5)}
-                            </span>
-                          </div>
-                        );
-                      })}
+                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                        {regs.map(reg => {
+                          const dayLabel = DAYS.find(d => d.value === reg.day_of_week)?.label;
+                          const startTime = reg.shift?.start_time ? reg.shift.start_time.substring(0, 5) : "";
+                          const endTime = reg.shift?.end_time ? reg.shift.end_time.substring(0, 5) : "";
+                          return (
+                            <div key={reg.registration_id} className="flex items-center justify-between p-2.5 rounded-xl bg-white dark:bg-[#1d1d1f] border border-slate-200/80 dark:border-white/10 shadow-2xs gap-2">
+                              <div className="flex items-center gap-2 min-w-0">
+                                <span className="font-extrabold px-2.5 py-0.5 rounded-md bg-gradient-to-r from-[#0066cc] to-[#0052a3] text-white text-[11px] shrink-0">
+                                  {dayLabel}
+                                </span>
+                                {reg.shift?.name && (
+                                  <span className="text-xs font-bold text-slate-800 dark:text-slate-200 truncate">
+                                    {reg.shift.name}
+                                  </span>
+                                )}
+                              </div>
+                              <div className="flex items-center gap-1 text-[11px] font-bold text-[#0066cc] dark:text-blue-400 bg-blue-50 dark:bg-blue-950/60 px-2 py-0.5 rounded-lg border border-blue-100/80 dark:border-blue-900/40 font-mono shrink-0">
+                                <Clock className="w-3 h-3 text-blue-500" />
+                                <span>{startTime} – {endTime}</span>
+                              </div>
+                            </div>
+                          );
+                        })}
+                      </div>
                     </div>
                   ) : (
-                    <p className="text-sm text-slate-400 italic">Chưa đăng ký ca nào.</p>
+                    <p className="text-xs text-slate-400 italic">Chưa đăng ký ca nào.</p>
                   )}
                 </div>
               );
