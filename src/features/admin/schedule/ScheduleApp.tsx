@@ -3,6 +3,7 @@
 import { useState, useEffect, useCallback } from "react";
 import { Calendar } from "@/features/admin/schedule/components/Calendar";
 import { Statistics } from "@/features/admin/schedule/components/Statistics";
+import { SessionModal } from "@/features/admin/schedule/components/SessionModal";
 import { StudentTabs } from "@/features/admin/schedule/components/StudentTabs";
 import { Overview } from "@/features/admin/schedule/components/Overview";
 import { AddStudentModal } from "@/features/admin/schedule/components/AddStudentModal";
@@ -77,6 +78,50 @@ export function ScheduleApp() {
 
   const handleDayClick = (date: Date) => {
     setSelectedDate(date);
+  };
+
+  const handleAddSession = async (subject: Subject) => {
+    if (!selectedDate || !selectedStudentId) return;
+    try {
+      await addSession(formatDate(selectedDate), subject, selectedStudentId);
+      await loadSessions();
+      setSelectedDate(null);
+      setOverviewRefreshKey((prev) => prev + 1);
+      addToast({
+        title: "Đã thêm buổi dạy",
+        description: `Đã lưu buổi học ngày ${formatDate(selectedDate)}`,
+        variant: "success",
+      });
+    } catch (error) {
+      console.error("Error adding session:", error);
+      addToast({
+        title: "Lỗi thêm buổi dạy",
+        description: "Không thể lưu thông tin buổi dạy",
+        variant: "error",
+      });
+    }
+  };
+
+  const handleDeleteSession = async () => {
+    if (!selectedDate || !selectedStudentId) return;
+    try {
+      await deleteSessionsByDate(formatDate(selectedDate), selectedStudentId);
+      await loadSessions();
+      setSelectedDate(null);
+      setOverviewRefreshKey((prev) => prev + 1);
+      addToast({
+        title: "Đã xóa buổi dạy",
+        description: `Đã xóa các buổi dạy ngày ${formatDate(selectedDate)}`,
+        variant: "info",
+      });
+    } catch (error) {
+      console.error("Error deleting sessions:", error);
+      addToast({
+        title: "Lỗi xóa buổi dạy",
+        description: "Có lỗi xảy ra khi xóa buổi dạy",
+        variant: "error",
+      });
+    }
   };
 
   const handleExport = async () => {
@@ -175,6 +220,10 @@ export function ScheduleApp() {
   };
 
   const currentStudent = students.find((s) => s.id === selectedStudentId);
+
+  const selectedDateSessions = selectedDate
+    ? sessions.filter((s) => s.teaching_date === formatDate(selectedDate))
+    : [];
 
   return (
     <div className="container-custom py-6 md:py-8 space-y-6 md:space-y-8 animate-fade-in pb-16">
@@ -288,6 +337,18 @@ export function ScheduleApp() {
       )}
 
       {/* Modals */}
+      {selectedDate && currentStudent && (
+        <SessionModal
+          date={selectedDate}
+          existingSessions={selectedDateSessions}
+          onAdd={handleAddSession}
+          onDelete={handleDeleteSession}
+          onClose={() => setSelectedDate(null)}
+          studentName={currentStudent.name}
+          studentColor={currentStudent.color}
+        />
+      )}
+
       {showAddStudentModal && (
         <AddStudentModal
           onAdd={handleAddStudent}

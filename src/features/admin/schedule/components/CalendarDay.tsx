@@ -24,7 +24,7 @@ export function CalendarDay({ date, currentMonth, sessions, onDayClick }: Calend
 
   return (
     <div
-      onClick={() => onDayClick(date)}
+      onClick={handleClick}
       className={`
         calendar-day-container min-h-[38px] sm:min-h-[46px] md:min-h-[52px] 
         p-1 sm:p-1.5 flex flex-col gap-1 relative
