@@ -1,4 +1,4 @@
-export type Subject = "Toan" | "Ly" | "Hoa";
+export type Subject = "Toan" | "Ly";
 
 export interface Student {
   id: string;

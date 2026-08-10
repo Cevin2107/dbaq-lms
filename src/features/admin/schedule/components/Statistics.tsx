@@ -145,7 +145,7 @@ export function Statistics({
             </div>
           </div>
 
-          <div className="grid grid-cols-3 gap-2">
+          <div className="grid grid-cols-2 gap-2">
             {Object.entries(SUBJECT_NAMES).map(([subject, name]) => {
               const count = subjectCounts[subject as Subject] || 0;
 

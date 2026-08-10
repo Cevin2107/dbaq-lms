@@ -210,6 +210,14 @@ export async function GET() {
         },
         students: studentsOverview,
         weeklyShiftsByDay,
+        scheduleStudents: scheduleStudents.map((s: any) => ({ id: s.id, name: s.name, color: s.color })),
+        monthlySessions: sessionsData.map((s: any) => ({
+          id: s.id,
+          teaching_date: s.teaching_date,
+          subject: s.subject,
+          student_id: s.student_id,
+          studentName: s.students?.name,
+        })),
         recentAssignments: assignmentsData.slice(0, 5),
       },
       {

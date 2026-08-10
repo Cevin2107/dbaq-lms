@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import Link from "next/link";
 import { useAdminAssignments } from "@/features/admin/hooks/useAdminAssignments";
 import DatabaseSizeCard from "@/components/DatabaseSizeCard";
@@ -23,8 +23,12 @@ import {
   CalendarDays,
   GraduationCap,
   FileText,
-  ArrowUpRight
+  ArrowUpRight,
+  Check
 } from "lucide-react";
+import { addSession } from "@/features/admin/schedule/lib/teachingService";
+import { addStudent } from "@/features/admin/schedule/lib/studentService";
+import { supabase } from "@/features/admin/schedule/lib/supabase";
 
 interface StudentOverview {
   id: string;
@@ -92,10 +96,60 @@ export default function AdminDashboardPage() {
   const [isLoadingStats, setIsLoadingStats] = useState(true);
   const [isRefreshing, setIsRefreshing] = useState(false);
 
+  const [monthlySessions, setMonthlySessions] = useState<Array<{
+    id: string;
+    teaching_date: string;
+    subject: "Toan" | "Ly";
+    student_id: string;
+    studentName?: string;
+  }>>([]);
+
+  const [scheduleStudents, setScheduleStudents] = useState<Array<{
+    id: string;
+    name: string;
+    color?: string;
+  }>>([]);
+
+  const [togglingKeys, setTogglingKeys] = useState<Record<string, boolean>>({});
+
   // Active day filter for weekly teaching schedule tab
   const todayJsDay = new Date().getDay();
   const todayDayOfWeek = todayJsDay === 0 ? 8 : todayJsDay + 1;
   const [selectedDay, setSelectedDay] = useState<number>(todayDayOfWeek);
+  const dayTabsRef = useRef<Record<number, HTMLButtonElement | null>>({});
+
+  useEffect(() => {
+    if (selectedDay && dayTabsRef.current[selectedDay]) {
+      dayTabsRef.current[selectedDay]?.scrollIntoView({
+        behavior: "smooth",
+        block: "nearest",
+        inline: "center",
+      });
+    }
+  }, [selectedDay]);
+
+  const getTargetDateForDayOfWeek = (targetDayValue: number): Date => {
+    const today = new Date();
+    const currentJsDay = today.getDay();
+    const currentDayValue = currentJsDay === 0 ? 8 : currentJsDay + 1;
+    const diff = targetDayValue - currentDayValue;
+    const target = new Date(today);
+    target.setDate(today.getDate() + diff);
+    return target;
+  };
+
+  const formatDateIso = (d: Date): string => {
+    const year = d.getFullYear();
+    const month = String(d.getMonth() + 1).padStart(2, "0");
+    const day = String(d.getDate()).padStart(2, "0");
+    return `${year}-${month}-${day}`;
+  };
+
+  const formatDateShortVi = (d: Date): string => {
+    const day = String(d.getDate()).padStart(2, "0");
+    const month = String(d.getMonth() + 1).padStart(2, "0");
+    return `${day}/${month}`;
+  };
 
   const fetchDashboardStats = async () => {
     try {
@@ -103,12 +157,96 @@ export default function AdminDashboardPage() {
       if (res.ok) {
         const data = await res.json();
         setStatsData(data);
+        if (data.monthlySessions) setMonthlySessions(data.monthlySessions);
+        if (data.scheduleStudents) setScheduleStudents(data.scheduleStudents);
       }
     } catch (err) {
       console.error("Failed to fetch dashboard stats:", err);
     } finally {
       setIsLoadingStats(false);
       setIsRefreshing(false);
+    }
+  };
+
+  const handleToggleSubjectSession = async (
+    shiftStudentName: string,
+    targetDayValue: number,
+    subject: "Toan" | "Ly"
+  ) => {
+    const targetDateObj = getTargetDateForDayOfWeek(targetDayValue);
+    const targetDateStr = formatDateIso(targetDateObj);
+    const formattedDateVi = formatDateShortVi(targetDateObj);
+    const subjectNameVi = subject === "Toan" ? "Toán" : "Lý";
+    const toggleKey = `${shiftStudentName}-${targetDateStr}-${subject}`;
+
+    if (togglingKeys[toggleKey]) return;
+    setTogglingKeys((prev) => ({ ...prev, [toggleKey]: true }));
+
+    try {
+      let matchedStudent = scheduleStudents.find(
+        (s) => s.name.trim().toLowerCase() === shiftStudentName.trim().toLowerCase()
+      );
+
+      if (!matchedStudent) {
+        const newSt = await addStudent(shiftStudentName, 200000, "#0066cc");
+        matchedStudent = { id: newSt.id, name: newSt.name, color: newSt.color };
+        setScheduleStudents((prev) => [...prev, matchedStudent!]);
+      }
+
+      const studentId = matchedStudent.id;
+
+      const existingSession = monthlySessions.find(
+        (s) =>
+          s.student_id === studentId &&
+          s.teaching_date === targetDateStr &&
+          s.subject === subject
+      );
+
+      if (existingSession) {
+        const { error } = await supabase
+          .from("teaching_sessions")
+          .delete()
+          .eq("id", existingSession.id);
+
+        if (error) throw error;
+
+        setMonthlySessions((prev) => prev.filter((s) => s.id !== existingSession.id));
+        addToast({
+          title: `Đã bỏ môn ${subjectNameVi}`,
+          description: `Đã hủy buổi ${subjectNameVi} ngày ${formattedDateVi} cho ${shiftStudentName}`,
+          variant: "info",
+          duration: 3000,
+        });
+      } else {
+        const newSess = await addSession(targetDateStr, subject, studentId);
+        setMonthlySessions((prev) => [
+          ...prev,
+          {
+            id: newSess.id,
+            teaching_date: targetDateStr,
+            subject,
+            student_id: studentId,
+            studentName: shiftStudentName,
+          },
+        ]);
+        addToast({
+          title: `Đã ghi nhận buổi ${subjectNameVi}!`,
+          description: `Đã lưu 1 buổi học ${subjectNameVi} ngày ${formattedDateVi} cho ${shiftStudentName}`,
+          variant: "success",
+          duration: 3000,
+        });
+      }
+
+      fetchDashboardStats();
+    } catch (err) {
+      console.error("Error toggling subject session:", err);
+      addToast({
+        title: "Lỗi lưu buổi học",
+        description: "Có lỗi xảy ra khi lưu vào cơ sở dữ liệu",
+        variant: "error",
+      });
+    } finally {
+      setTogglingKeys((prev) => ({ ...prev, [toggleKey]: false }));
     }
   };
 
@@ -311,71 +449,175 @@ export default function AdminDashboardPage() {
 
             <div className="rounded-[2rem] bg-white/80 dark:bg-[#1d1d1f]/80 backdrop-blur-xl border border-black/5 dark:border-white/5 shadow-[0_4px_20px_rgba(0,0,0,0.03)] p-5 sm:p-6 space-y-5">
               
-              {/* Day Selector Segmented Control */}
-              <div className="flex items-center gap-1 sm:gap-2 p-1.5 bg-slate-100/80 dark:bg-slate-800/60 rounded-2xl overflow-x-auto scrollbar-none">
+              {/* Day Selector Segmented Control (Mobile Responsive + Auto-Center Scroll) */}
+              <div className="flex items-center gap-1.5 sm:gap-2 p-1.5 sm:p-2 bg-slate-100/90 dark:bg-slate-800/70 rounded-[1.25rem] sm:rounded-[1.5rem] overflow-x-auto no-scrollbar scroll-smooth snap-x snap-mandatory shadow-inner border border-black/5 dark:border-white/5">
                 {DAYS.map((day) => {
                   const isSelected = selectedDay === day.value;
                   const isToday = todayDayOfWeek === day.value;
-                  const dayShiftsCount = (weeklyShiftsByDay[day.value] || []).length;
+                  const targetDateObj = getTargetDateForDayOfWeek(day.value);
+                  const formattedDateVi = formatDateShortVi(targetDateObj);
+                  const targetDateStr = formatDateIso(targetDateObj);
+
+                  const recordedSessionsCount = monthlySessions.filter(
+                    (s) => s.teaching_date === targetDateStr
+                  ).length;
 
                   return (
                     <button
                       key={day.value}
+                      ref={(el) => {
+                        dayTabsRef.current[day.value] = el;
+                      }}
                       onClick={() => setSelectedDay(day.value)}
-                      className={`flex-1 min-w-[70px] sm:min-w-[85px] py-2 px-2.5 rounded-xl text-xs font-bold transition-all duration-200 flex flex-col items-center justify-center gap-0.5 ${
+                      className={`flex-1 min-w-[76px] sm:min-w-[95px] shrink-0 snap-center py-2 sm:py-2.5 px-1.5 sm:px-2 rounded-xl sm:rounded-2xl text-xs font-bold transition-all duration-200 flex flex-col items-center justify-center gap-1 ${
                         isSelected
-                          ? "bg-white dark:bg-[#1d1d1f] text-[#0066cc] dark:text-blue-400 shadow-md shadow-slate-200/50 dark:shadow-none"
-                          : "text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white"
+                          ? "bg-white dark:bg-[#1d1d1f] text-[#0066cc] dark:text-blue-400 shadow-md shadow-blue-500/10 border border-blue-500/20 scale-[1.02]"
+                          : "text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-white/40 dark:hover:bg-slate-800/40"
                       }`}
                     >
-                      <div className="flex items-center gap-1">
-                        <span>{day.label}</span>
+                      <div className="flex items-center gap-1 sm:gap-1.5">
+                        <span className="text-xs sm:text-[13px] whitespace-nowrap">{day.label}</span>
                         {isToday && (
-                          <span className="h-1.5 w-1.5 rounded-full bg-[#0066cc] dark:bg-blue-400" />
+                          <span className="h-1.5 w-1.5 rounded-full bg-[#0066cc] dark:bg-blue-400 shadow-xs shrink-0" />
                         )}
                       </div>
-                      <span className={`text-[10px] font-semibold ${isSelected ? "text-[#0066cc]/80 dark:text-blue-300" : "text-slate-400"}`}>
-                        {dayShiftsCount} ca
-                      </span>
+                      <div className="flex items-center justify-between w-full px-0.5 sm:px-1 text-[10px]">
+                        <span className={isSelected ? "text-[#0066cc]/90 dark:text-blue-300 font-bold" : "text-slate-400"}>
+                          {formattedDateVi}
+                        </span>
+                        {recordedSessionsCount > 0 && (
+                          <span className="px-1 sm:px-1.5 py-0.2 rounded-full bg-emerald-100 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-300 font-extrabold text-[9px] sm:text-[10px]">
+                            <span className="sm:hidden">{recordedSessionsCount}b</span>
+                            <span className="hidden sm:inline">{recordedSessionsCount} buổi</span>
+                          </span>
+                        )}
+                      </div>
                     </button>
                   );
                 })}
               </div>
 
-              {/* Shifts for Selected Day */}
+              {/* Shifts Subheader */}
+              <div className="flex items-center justify-between px-1 pt-1 border-b border-black/5 dark:border-white/5 pb-3">
+                <div className="flex items-center gap-2.5">
+                  <div className="h-8 w-8 rounded-xl bg-blue-50 dark:bg-blue-900/40 text-[#0066cc] dark:text-blue-400 flex items-center justify-center font-bold shrink-0">
+                    <Calendar className="w-4 h-4" />
+                  </div>
+                  <div>
+                    <h3 className="text-sm sm:text-base font-bold text-slate-900 dark:text-white">
+                      Ca dạy {DAYS.find((d) => d.value === selectedDay)?.label} — {formatDateShortVi(getTargetDateForDayOfWeek(selectedDay))}
+                    </h3>
+                    <p className="text-[11px] sm:text-xs text-slate-500 dark:text-slate-400">
+                      Tích vào ô Toán hoặc Lý để ghi nhận 1 buổi dạy vào hệ thống
+                    </p>
+                  </div>
+                </div>
+              </div>
+
+              {/* Shifts List with Interactive Subject Checkboxes */}
               {isLoadingStats ? (
-                <div className="py-8 text-center text-slate-400 text-sm">Đang tải lịch dạy...</div>
+                <div className="py-12 text-center text-slate-400 text-sm animate-pulse">Đang tải lịch ca dạy...</div>
               ) : currentDayShifts.length === 0 ? (
-                <div className="py-10 text-center text-slate-400 text-sm flex flex-col items-center gap-2">
-                  <Clock className="w-8 h-8 text-slate-300 dark:text-slate-600" />
-                  <p className="font-semibold text-slate-600 dark:text-slate-300">Không có ca dạy nào vào {DAYS.find(d => d.value === selectedDay)?.label}</p>
-                  <p className="text-xs text-slate-400">Học sinh chưa đăng ký ca dạy nào vào ngày này.</p>
+                <div className="py-12 text-center text-slate-400 text-sm flex flex-col items-center gap-2.5">
+                  <div className="p-3 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-400">
+                    <Clock className="w-8 h-8" />
+                  </div>
+                  <p className="font-bold text-slate-700 dark:text-slate-300">Không có ca dạy cố định vào {DAYS.find((d) => d.value === selectedDay)?.label}</p>
+                  <p className="text-xs text-slate-400 max-w-sm">Học sinh chưa đăng ký ca dạy cố định vào ngày này.</p>
                 </div>
               ) : (
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                  {currentDayShifts.map((shift) => (
-                    <div
-                      key={shift.registrationId}
-                      className="p-4 rounded-[1.25rem] bg-indigo-50/50 dark:bg-indigo-950/20 border border-indigo-100 dark:border-indigo-900/30 flex items-center justify-between gap-3"
-                    >
-                      <div className="flex items-center gap-3">
-                        <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-indigo-600 text-white font-bold text-sm shadow-md shadow-indigo-500/20">
-                          <Clock className="h-5 w-5" />
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5 sm:gap-4">
+                  {currentDayShifts.map((shift) => {
+                    const targetDateStr = formatDateIso(getTargetDateForDayOfWeek(selectedDay));
+                    const matchedSt = scheduleStudents.find(
+                      (s) => s.name.trim().toLowerCase() === shift.studentName.trim().toLowerCase()
+                    );
+                    const stId = matchedSt?.id;
+
+                    const isToanChecked = stId
+                      ? monthlySessions.some((s) => s.student_id === stId && s.teaching_date === targetDateStr && s.subject === "Toan")
+                      : false;
+
+                    const isLyChecked = stId
+                      ? monthlySessions.some((s) => s.student_id === stId && s.teaching_date === targetDateStr && s.subject === "Ly")
+                      : false;
+
+                    const isTogglingToan = togglingKeys[`${shift.studentName}-${targetDateStr}-Toan`];
+                    const isTogglingLy = togglingKeys[`${shift.studentName}-${targetDateStr}-Ly`];
+
+                    return (
+                      <div
+                        key={shift.registrationId}
+                        className="p-3.5 sm:p-4 rounded-[1.25rem] sm:rounded-[1.5rem] bg-gradient-to-b from-white to-slate-50/60 dark:from-[#252528] dark:to-[#1d1d1f] border border-slate-200/80 dark:border-white/10 shadow-sm hover:shadow-md hover:border-[#0066cc]/40 transition-all duration-200 flex flex-col justify-between gap-3 sm:gap-3.5 group"
+                      >
+                        {/* Student Name & Shift Info */}
+                        <div className="flex items-center justify-between gap-3">
+                          <div className="flex items-center gap-3 min-w-0">
+                            <div
+                              className="h-9 w-9 sm:h-10 sm:w-10 shrink-0 rounded-2xl flex items-center justify-center text-white font-extrabold text-sm shadow-md"
+                              style={{ backgroundColor: matchedSt?.color || "#0066cc" }}
+                            >
+                              {shift.studentName.charAt(0).toUpperCase()}
+                            </div>
+                            <div className="min-w-0">
+                              <h4 className="text-sm sm:text-[15px] font-bold text-slate-900 dark:text-white truncate tracking-[-0.01em]">
+                                {shift.studentName}
+                              </h4>
+                              <p className="text-[11px] sm:text-xs text-indigo-600 dark:text-indigo-400 font-semibold flex items-center gap-1 mt-0.5">
+                                <Clock className="w-3 h-3 shrink-0" />
+                                <span className="truncate">{shift.shiftName} ({formatTimeShort(shift.startTime)} – {formatTimeShort(shift.endTime)})</span>
+                              </p>
+                            </div>
+                          </div>
                         </div>
-                        <div>
-                          <p className="text-[14px] font-bold text-slate-900 dark:text-white">
-                            {shift.studentName}
-                          </p>
-                          <p className="text-xs text-indigo-600 dark:text-indigo-400 font-semibold mt-0.5">
-                            {shift.shiftName} ({formatTimeShort(shift.startTime)} – {formatTimeShort(shift.endTime)})
-                          </p>
+
+                        {/* Interactive Attendance Checkboxes Row */}
+                        <div className="pt-2 sm:pt-2.5 border-t border-black/5 dark:border-white/5 flex items-center gap-1.5 sm:gap-2">
+                          <span className="text-[10px] sm:text-[11px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-wider shrink-0 mr-0.5">
+                            Tính 1 buổi:
+                          </span>
+
+                          {/* Checkbox 1: Toán */}
+                          <button
+                            type="button"
+                            onClick={() => handleToggleSubjectSession(shift.studentName, selectedDay, "Toan")}
+                            disabled={isTogglingToan}
+                            className={`flex-1 flex items-center justify-center gap-1 sm:gap-1.5 px-2.5 sm:px-3 py-1.5 sm:py-2 rounded-xl text-[11px] sm:text-xs font-bold transition-all duration-200 border active:scale-[0.97] ${
+                              isToanChecked
+                                ? "bg-[#0066cc] text-white border-[#0066cc] shadow-md shadow-blue-500/25"
+                                : "bg-blue-50/70 dark:bg-blue-950/30 text-blue-700 dark:text-blue-300 border-blue-200/80 dark:border-blue-800/40 hover:bg-blue-100 dark:hover:bg-blue-900/50"
+                            }`}
+                          >
+                            <div className={`w-3.5 h-3.5 sm:w-4 sm:h-4 rounded-md border flex items-center justify-center transition-colors shrink-0 ${
+                              isToanChecked ? "bg-white border-white text-[#0066cc]" : "border-blue-400 bg-white dark:bg-slate-900"
+                            }`}>
+                              {isToanChecked && <Check className="w-2.5 h-2.5 sm:w-3 sm:h-3 stroke-[3]" />}
+                            </div>
+                            <span>Toán</span>
+                          </button>
+
+                          {/* Checkbox 2: Lý */}
+                          <button
+                            type="button"
+                            onClick={() => handleToggleSubjectSession(shift.studentName, selectedDay, "Ly")}
+                            disabled={isTogglingLy}
+                            className={`flex-1 flex items-center justify-center gap-1 sm:gap-1.5 px-2.5 sm:px-3 py-1.5 sm:py-2 rounded-xl text-[11px] sm:text-xs font-bold transition-all duration-200 border active:scale-[0.97] ${
+                              isLyChecked
+                                ? "bg-orange-500 text-white border-orange-500 shadow-md shadow-orange-500/25"
+                                : "bg-orange-50/70 dark:bg-orange-950/30 text-orange-700 dark:text-orange-300 border-orange-200/80 dark:border-orange-800/40 hover:bg-orange-100 dark:hover:bg-orange-900/50"
+                            }`}
+                          >
+                            <div className={`w-3.5 h-3.5 sm:w-4 sm:h-4 rounded-md border flex items-center justify-center transition-colors shrink-0 ${
+                              isLyChecked ? "bg-white border-white text-orange-600" : "border-orange-400 bg-white dark:bg-slate-900"
+                            }`}>
+                              {isLyChecked && <Check className="w-2.5 h-2.5 sm:w-3 sm:h-3 stroke-[3]" />}
+                            </div>
+                            <span>Lý</span>
+                          </button>
                         </div>
                       </div>
-                      <span className="px-2.5 py-1 rounded-full text-[10px] font-extrabold bg-indigo-100 dark:bg-indigo-900/60 text-indigo-700 dark:text-indigo-300 shrink-0">
-                        Đã đăng ký
-                      </span>
-                    </div>
-                  ))}
+                    );
+                  })}
                 </div>
               )}
             </div>
@@ -543,7 +785,13 @@ export default function AdminDashboardPage() {
                   >
                     <div className="min-w-0 flex-1">
                       <div className="flex items-center gap-1.5 mb-1">
-                        <span className="text-[11px] font-bold px-2 py-0.5 rounded-md bg-blue-50 dark:bg-blue-900/40 text-[#0066cc] dark:text-blue-300">
+                        <span className={`text-[11px] font-extrabold px-2.5 py-0.5 rounded-full ${
+                          a.subject === "Toán" || a.subject === "Toan"
+                            ? "bg-blue-50 dark:bg-blue-950/50 text-[#0066cc] dark:text-blue-300"
+                            : a.subject === "Lý" || a.subject === "Ly"
+                            ? "bg-indigo-50 dark:bg-indigo-950/50 text-indigo-600 dark:text-indigo-300"
+                            : "bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300"
+                        }`}>
                           {a.subject || "Chung"}
                         </span>
                         {a.grade && (

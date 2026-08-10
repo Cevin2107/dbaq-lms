@@ -261,6 +261,10 @@
     animation: slideUp 0.3s ease-out;
   }
 
+  .container-custom {
+    @apply w-full max-w-[1440px] mx-auto px-4 sm:px-6 md:px-8;
+  }
+
   .no-scrollbar {
     scrollbar-width: none;
   }
