@@ -8,7 +8,7 @@ Dự án **Gia sư Đào Bá Anh Quân (DBAQ LMS)** là hệ thống quản lý 
 
 - **Frontend / Framework**: Next.js 15 (App Router), React 18, TypeScript 5.5, Tailwind CSS 3.4.
 - **Backend / Database**: Supabase (PostgreSQL + Auth + Storage + Realtime Channels).
-- **AI Pipeline**: OCR.space API (Xử lý ảnh/PDF), OpenRouter AI (`nvidia/nemotron-3-ultra-550b-a55b:free`, `qwen/qwen-plus`), Groq (`qwen/qwen3-32b`).
+- **AI Pipeline**: OCR.space API (Xử lý ảnh/PDF), Groq API (`qwen/qwen3.6-27b`, `openai/gpt-oss-120b`, `groq/compound`).
 - **Math & Table Renderer**: KaTeX 0.16 (Công thức toán LaTeX), Custom Splitter (Render bảng số liệu Markdown/Tabular).
 - **Authentication**: Supabase Auth + Passkey (WebAuthn `@simplewebauthn`).
 

@@ -13,16 +13,15 @@ NEXT_PUBLIC_SUPABASE_URL=
 NEXT_PUBLIC_SUPABASE_ANON_KEY=
 SUPABASE_SERVICE_ROLE_KEY=
 ADMIN_PASSWORD=
-OPENROUTER_API_KEY=
-MATH_EXTRACT_MODEL=nvidia/nemotron-3-ultra-550b-a55b:free
+GROQ_API_KEY=
+GROQ_MODEL=qwen/qwen3.6-27b
 PASSKEY_RP_ID=
 PASSKEY_RP_ORIGIN=
 PASSKEY_RP_NAME=
 ```
 
 ### API Keys cần thiết cho AI generation:
-- **OPENROUTER_API_KEY**: Dùng để bóc tách câu hỏi trắc nghiệm từ văn bản/OCR
-- **MATH_EXTRACT_MODEL** (tuỳ chọn): mặc định `nvidia/nemotron-3-ultra-550b-a55b:free`
+- **GROQ_API_KEY**: Dùng để bóc tách và giải câu hỏi bằng AI qua Groq API (`qwen/qwen3.6-27b`)
 - OCR sử dụng **Tesseract.js** (hoàn toàn miễn phí, không cần API key)
 
 `ADMIN_PASSWORD` dùng để khởi tạo mật khẩu admin lần đầu (sau đó lưu hash trong database). Bạn có thể đổi trong tab Cài đặt.
@@ -64,8 +63,8 @@ Chạy file `supabase/schema.sql` trong Supabase SQL Editor để tạo tất c�
 
 ## Tạo bài bằng AI (OCR + sinh câu hỏi)
 - Tab "Tạo bằng AI" trong Admin → Tạo bài tập: dán/upload nhiều ảnh, PDF, hoặc kèm văn bản.
-- Pipeline: OCR.space API (auto-optimize ảnh để tăng tốc) → làm sạch text → OpenRouter (`nvidia/nemotron-3-ultra-550b-a55b:free`) bóc tách câu hỏi trắc nghiệm JSON → Admin chỉnh sửa và lưu.
-- **Yêu cầu biến môi trường**: `OPENROUTER_API_KEY`.
+- Pipeline: OCR.space API (auto-optimize ảnh để tăng tốc) → làm sạch text → Groq API (`qwen/qwen3.6-27b`) bóc tách câu hỏi trắc nghiệm JSON → Admin chỉnh sửa và lưu.
+- **Yêu cầu biến môi trường**: `GROQ_API_KEY`.
 - OCR sử dụng free tier OCR.space API (25k requests/tháng), đã tối ưu hóa bằng cách resize và compress ảnh.
 - Xử lý nhiều ảnh song song (parallel) để tăng tốc.
 - Câu hỏi chỉ được lưu khi bấm "Lưu bài tập"; dữ liệu AI không lưu tạm.

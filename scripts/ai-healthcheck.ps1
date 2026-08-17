@@ -99,8 +99,8 @@ $results += Invoke-AiTest -Name "PUTER_QWEN_SOLVE" -Url "https://api.puter.com/p
   )
 }
 
-$results += Invoke-AiTest -Name "OPENROUTER_NEMOTRON_EXTRACT" -Url "https://openrouter.ai/api/v1/chat/completions" -ApiKey $envMap["OPENROUTER_API_KEY"] -TimeoutSec 60 -Payload @{
-  model = "nvidia/nemotron-3-ultra-550b-a55b:free"
+$results += Invoke-AiTest -Name "GROQ_QWEN_EXTRACT" -Url "https://api.groq.com/openai/v1/chat/completions" -ApiKey $envMap["GROQ_API_KEY"] -TimeoutSec 30 -Payload @{
+  model = "qwen/qwen3.6-27b"
   temperature = 0
   max_tokens = 700
   messages = @(

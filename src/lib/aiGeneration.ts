@@ -1,15 +1,8 @@
-const OPENROUTER_EXTRACT_MODEL = process.env.MATH_EXTRACT_MODEL || "openai/gpt-oss-20b:free";
-const OPENROUTER_EXTRACT_MODELS = (process.env.MATH_EXTRACT_MODELS || `${OPENROUTER_EXTRACT_MODEL}`)
+const GROQ_MODEL = process.env.GROQ_MODEL || "qwen/qwen3.6-27b";
+const GROQ_MODELS = (process.env.GROQ_MODELS || `${GROQ_MODEL},groq/compound,openai/gpt-oss-120b,llama-3.3-70b-versatile`)
   .split(",")
   .map((x) => x.trim())
   .filter(Boolean);
-const OPENROUTER_SOLVE_MODEL = process.env.MATH_SOLVER_MODEL || "qwen/qwen-plus";
-const OPENROUTER_SOLVE_MODELS = (process.env.MATH_SOLVER_MODELS || `${OPENROUTER_SOLVE_MODEL}`)
-  .split(",")
-  .map((x) => x.trim())
-  .filter((x) => Boolean(x) && x !== "stepfun/step-3.5-flash:free");
-const OPENROUTER_BASE_URL = "https://openrouter.ai/api/v1/chat/completions";
-const EXTRACT_MODEL_RETRIES = 1;
 const AI_TIMEOUT_MS = 15000;
 
 export type QuestionType = "mcq" | "true_false" | "short_answer" | "essay";
@@ -104,9 +97,11 @@ function aiLog(level: "info" | "warn" | "error", stage: string, message: string,
 }
 
 function extractAssistantText(content: unknown): string {
-  if (typeof content === "string") return content;
-  if (Array.isArray(content)) {
-    return content
+  let raw = "";
+  if (typeof content === "string") {
+    raw = content;
+  } else if (Array.isArray(content)) {
+    raw = content
       .map((part) => {
         if (typeof part === "string") return part;
         if (part && typeof part === "object" && "text" in part) {
@@ -118,24 +113,33 @@ function extractAssistantText(content: unknown): string {
       .join("\n")
       .trim();
   }
-  return "";
+
+  if (!raw) return "";
+
+  // Strip reasoning blocks <think>...</think> or unclosed <think>...
+  return raw
+    .replace(/<think>[\s\S]*?<\/think>/gi, "")
+    .replace(/<think>[\s\S]*/gi, "")
+    .trim();
 }
 
 function extractJsonArray(raw: string) {
-  const normalized = raw
+  const cleanThink = raw
+    .replace(/<think>[\s\S]*?<\/think>/gi, "")
+    .replace(/<think>[\s\S]*/gi, "")
     .replace(/```json/gi, "")
     .replace(/```/g, "")
     .trim();
 
-  const start = normalized.indexOf("[");
-  if (start < 0) return normalized;
+  const start = cleanThink.indexOf("[");
+  if (start < 0) return cleanThink;
 
   let depth = 0;
   let inString = false;
   let escaped = false;
 
-  for (let i = start; i < normalized.length; i++) {
-    const ch = normalized[i];
+  for (let i = start; i < cleanThink.length; i++) {
+    const ch = cleanThink[i];
 
     if (inString) {
       if (escaped) {
@@ -157,12 +161,12 @@ function extractJsonArray(raw: string) {
     if (ch === "]") {
       depth--;
       if (depth === 0) {
-        return normalized.slice(start, i + 1);
+        return cleanThink.slice(start, i + 1);
       }
     }
   }
 
-  return normalized.slice(start);
+  return cleanThink.slice(start);
 }
 
 function repairJsonCandidate(candidate: string): string {
@@ -214,11 +218,25 @@ function closeDanglingJson(candidate: string): string {
 
 function parseJsonLenient(raw: string): unknown {
   const base = extractJsonArray(raw);
+
+  // 1. Find last valid closed object "}" within the array
+  const lastObjIndex = base.lastIndexOf("}");
+  let baseTrimmed = base;
+  if (lastObjIndex > 0) {
+    const arrayStart = base.indexOf("[");
+    if (arrayStart >= 0 && lastObjIndex > arrayStart) {
+      baseTrimmed = base.slice(arrayStart, lastObjIndex + 1).replace(/,\s*$/, "") + "]";
+    }
+  }
+
   const attempts = [
     base,
     repairJsonCandidate(base),
     closeDanglingJson(base),
     closeDanglingJson(repairJsonCandidate(base)),
+    baseTrimmed,
+    repairJsonCandidate(baseTrimmed),
+    closeDanglingJson(baseTrimmed),
   ];
 
   let lastError: Error | null = null;
@@ -229,6 +247,10 @@ function parseJsonLenient(raw: string): unknown {
       lastError = error as Error;
     }
   }
+
+  aiLog("warn", "JSON-PARSE", "Tất cả các phương án sửa JSON dở dang đều thất bại", {
+    rawSnippet: raw.length > 300 ? raw.slice(0, 300) + "..." : raw,
+  });
 
   throw lastError || new Error("Unable to parse AI JSON output");
 }
@@ -481,102 +503,54 @@ function parseHeuristicEssay(text: string): GeneratedQuestion[] {
 // LLM EXTRACTION FOR ALL TYPES
 // ----------------------------------------------------
 
-async function callGroqExtract(prompt: string, systemPrompt: string): Promise<string> {
+async function callGroqExtract(prompt: string, systemPrompt: string, maxTokens = 2000): Promise<string> {
   const apiKey = process.env.GROQ_API_KEY;
   if (!apiKey) throw new Error("Thiếu GROQ_API_KEY");
 
-  aiLog("info", "GROQ-API", "🤖 AI đang thực thi: Provider = Groq | Model = llama-3.3-70b-versatile");
-  const res = await fetchWithTimeout(
-    "https://api.groq.com/openai/v1/chat/completions",
-    {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${apiKey}`,
-      },
-      body: JSON.stringify({
-        model: "llama-3.3-70b-versatile",
-        temperature: 0.1,
-        max_tokens: 2000,
-        messages: [
-          { role: "system", content: systemPrompt },
-          { role: "user", content: prompt },
-        ],
-      }),
-    },
-    12000
-  );
-
-  if (!res.ok) {
-    const errText = await res.text();
-    throw new Error(`Groq API error ${res.status}: ${errText}`);
-  }
-
-  const data = await res.json();
-  return extractAssistantText(data.choices?.[0]?.message?.content || "");
-}
-
-async function callOpenRouterExtract(prompt: string, systemPrompt: string): Promise<string> {
-  const apiKey = process.env.OPENROUTER_API_KEY;
-
-  if (apiKey) {
-    const models = OPENROUTER_EXTRACT_MODELS.length > 0 ? OPENROUTER_EXTRACT_MODELS : [OPENROUTER_EXTRACT_MODEL];
-
-    let lastError: Error | null = null;
-    for (const model of models) {
-      if (!model) continue;
-      for (let attempt = 1; attempt <= EXTRACT_MODEL_RETRIES; attempt++) {
-        try {
-          aiLog("info", "OPENROUTER-API", `🤖 AI đang thực thi: Provider = OpenRouter | Model = ${model} (lần thử ${attempt})`);
-          const res = await fetchWithTimeout(
-            OPENROUTER_BASE_URL,
-            {
-              method: "POST",
-              headers: {
-                "Content-Type": "application/json",
-                Authorization: `Bearer ${apiKey}`,
-                "HTTP-Referer": process.env.NEXT_PUBLIC_APP_URL || "https://dbaq-lms.vercel.app",
-                "X-Title": "DBAQ LMS",
-              },
-              body: JSON.stringify({
-                model,
-                temperature: 0.1,
-                max_tokens: 1200,
-                messages: [
-                  { role: "system", content: systemPrompt },
-                  { role: "user", content: prompt },
-                ],
-              }),
-            },
-            AI_TIMEOUT_MS
-          );
-
-          if (!res.ok) {
-            const body = await res.text();
-            lastError = new Error(`OpenRouter ${model} error ${res.status}: ${body}`);
-            continue;
-          }
-
-          const data = await res.json();
-          const raw = extractAssistantText(data.choices?.[0]?.message?.content || "");
-          if (raw.trim()) return raw;
-        } catch (err) {
-          lastError = err as Error;
-        }
-      }
-    }
-  }
-
-  // Fallback to Groq API if GROQ_API_KEY is configured
-  if (process.env.GROQ_API_KEY) {
+  let lastError: Error | null = null;
+  for (const model of GROQ_MODELS) {
+    if (!model) continue;
     try {
-      return await callGroqExtract(prompt, systemPrompt);
-    } catch (groqErr) {
-      console.warn("Groq fallback also failed:", groqErr);
+      aiLog("info", "GROQ-API", `🤖 AI đang thực thi: Provider = Groq | Model = ${model}`);
+      const res = await fetchWithTimeout(
+        "https://api.groq.com/openai/v1/chat/completions",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${apiKey}`,
+          },
+          body: JSON.stringify({
+            model,
+            temperature: 0.1,
+            max_tokens: maxTokens,
+            reasoning_format: "hidden",
+            messages: [
+              { role: "system", content: systemPrompt },
+              { role: "user", content: prompt },
+            ],
+          }),
+        },
+        AI_TIMEOUT_MS
+      );
+
+      if (!res.ok) {
+        const errText = await res.text();
+        lastError = new Error(`Groq ${model} error ${res.status}: ${errText}`);
+        aiLog("warn", "GROQ-API", `Groq model ${model} HTTP ${res.status}, đang thử mô hình tiếp theo...`);
+        continue;
+      }
+
+      const data = await res.json();
+      const text = extractAssistantText(data.choices?.[0]?.message?.content || "");
+      if (text.trim()) return text;
+    } catch (err) {
+      lastError = err as Error;
+      aiLog("warn", "GROQ-API", `Groq model ${model} error: ${(err as Error).message}`);
     }
   }
 
-  throw new Error("Không thể kết nối dịch vụ AI (OpenRouter / Groq)");
+  throw lastError || new Error("Không thể kết nối dịch vụ AI Groq");
 }
 
 function normalizeGeneratedQuestions(raw: unknown, questionType: QuestionType): GeneratedQuestion[] {
@@ -657,85 +631,31 @@ async function solveQuestionsAnswersBatch(
 ): Promise<GeneratedQuestion[]> {
   if (!questions || questions.length === 0) return questions;
 
-  const apiKey = process.env.OPENROUTER_API_KEY;
-  const solvePrompt = `Giải & chọn đáp án đúng cho từng câu. Trả về DUY NHẤT mảng JSON theo thứ tự id:
+  const apiKey = process.env.GROQ_API_KEY;
+  if (!apiKey) return questions;
+
+  const solvePrompt = `Giải đáp án trắc nghiệm. Trả về DUY NHẤT mảng JSON theo thứ tự id:
 ${JSON.stringify(
     questions.map((q, idx) => ({
-      id: idx + 1,
-      type: q.type,
-      question: q.question,
-      options: q.options,
-      sub_questions: q.sub_questions?.map((s) => s.content),
+      i: idx + 1,
+      t: q.type,
+      q: q.question.length > 150 ? q.question.slice(0, 150) + "..." : q.question,
+      o: q.options,
+      s: q.sub_questions?.map((sub) => sub.content),
     }))
   )}
 
-Schema JSON bắt buộc (KHÔNG kèm lời giải dài dòng):
-[
-  { "id": 1, "correct_answer": "A", "sub_answers": ["true", "false"], "short_answer": "12" }
-]
+Ví dụ JSON trả về duy nhất (KHÔNG lặp lại đề bài):
+[{"id":1,"correct_answer":"A","sub_answers":["true","false"],"short_answer":"12"}]
 `;
 
-  let rawText = "";
-
   try {
-    if (apiKey) {
-      const models = OPENROUTER_SOLVE_MODELS.length > 0 ? OPENROUTER_SOLVE_MODELS : [OPENROUTER_SOLVE_MODEL];
-
-      for (const model of models) {
-        if (!model || rawText.trim()) continue;
-        try {
-          aiLog("info", "SOLVER-API", `🧠 Đang tính toán giải đáp án cho ${questions.length} câu | Provider = OpenRouter | Model = ${model}`);
-          const res = await fetchWithTimeout(
-            OPENROUTER_BASE_URL,
-            {
-              method: "POST",
-              headers: {
-                "Content-Type": "application/json",
-                Authorization: `Bearer ${apiKey}`,
-                "HTTP-Referer": process.env.NEXT_PUBLIC_APP_URL || "https://dbaq-lms.vercel.app",
-                "X-Title": "DBAQ LMS",
-              },
-              body: JSON.stringify({
-                model,
-                temperature: 0.0,
-                max_tokens: 400,
-                messages: [
-                  {
-                    role: "system",
-                    content:
-                      "Bạn là chuyên gia giải toán trắc nghiệm chính xác. Trả về duy nhất mảng JSON chứa kết quả tính toán đúng.",
-                  },
-                  { role: "user", content: solvePrompt },
-                ],
-              }),
-            },
-            25000
-          );
-
-          if (res.ok) {
-            const data = await res.json();
-            rawText = extractAssistantText(data.choices?.[0]?.message?.content || "");
-            if (rawText.trim()) break;
-          } else {
-            aiLog("warn", "SOLVER", `OpenRouter solver HTTP ${res.status} (Hết token/lỗi mô hình ${model})`);
-          }
-        } catch (orErr) {
-          aiLog("warn", "SOLVER", `OpenRouter solver timed out on ${model}`, { error: (orErr as Error).message });
-        }
-      }
-    }
-
-    if (!rawText.trim() && process.env.GROQ_API_KEY) {
-      try {
-        aiLog("info", "SOLVER-API", `🧠 Đang tính toán giải đáp án cho ${questions.length} câu | Provider = Groq | Model = llama-3.3-70b-versatile`);
-        rawText = await callGroqExtract(
-          solvePrompt,
-          "Bạn là chuyên gia giải toán trắc nghiệm chính xác. Trả về duy nhất mảng JSON chứa kết quả tính toán đúng."
-        );
-      } catch (groqErr) {
-        aiLog("warn", "SOLVER", "Groq solver fallback failed", { error: (groqErr as Error).message });
-      }
-    }
+    aiLog("info", "SOLVER-API", `🧠 Đang tính toán giải đáp án cho ${questions.length} câu bằng Groq API`);
+    const rawText = await callGroqExtract(
+      solvePrompt,
+      "Bạn là chuyên gia giải toán trắc nghiệm. BẮT BUỘC trả về DUY NHẤT mảng JSON hợp lệ, KHÔNG sử dụng thẻ <think> hay lời giải văn bản.",
+      4000
+    );
 
     if (!rawText.trim()) return questions;
 
@@ -796,93 +716,9 @@ export async function buildQuestionsFromText(
     throw new Error("Không có nội dung để xử lý");
   }
 
-  let systemPrompt = "";
-  let userPrompt = "";
-
-  if (questionType === "mcq") {
-    systemPrompt = `Bạn là chuyên gia trích xuất & biên soạn câu hỏi trắc nghiệm MCQ tiếng Việt cho hệ thống LMS.
-Nhiệm vụ: Phân tích văn bản nguồn hoặc yêu cầu của người dùng, trích xuất hoặc sáng tạo các câu hỏi trắc nghiệm MCQ 4 lựa chọn (A, B, C, D).
-BẮT BUỘC trả về JSON mảng duy nhất theo đúng schema:
-[
-  {
-    "type": "mcq",
-    "question": "Nội dung câu hỏi...",
-    "options": {
-      "A": "Lựa chọn A",
-      "B": "Lựa chọn B",
-      "C": "Lựa chọn C",
-      "D": "Lựa chọn D"
-    },
-    "correct_answer": "A"
-  }
-]
-Quy tắc:
-1. KHÔNG được lặp lại tiền tố "Câu 1:", "**Câu 1:**" trong trường "question".
-2. Nhận diện và chuyển các bảng dữ liệu (bảng giá trị, bảng biến thiên) thành BẢNG MARKDOWN chuẩn (ví dụ: | Cột 1 | Cột 2 |\n|---|---|\n| Ô 1 | Ô 2 |) trong phần "question".
-3. Giữ nguyên công thức Toán LaTeX (ví dụ: $...$, \\(...\\), \\frac{a}{b}).`;
-
-    userPrompt = `Bóc tách/tạo các câu hỏi trắc nghiệm MCQ từ văn bản sau:\n\n${cleanedText}`;
-  } else if (questionType === "true_false") {
-    systemPrompt = `Bạn là chuyên gia trích xuất & biên soạn câu hỏi Đúng/Sai tiếng Việt cho hệ thống LMS.
-Nhiệm vụ: Phân tích văn bản nguồn hoặc yêu cầu của người dùng, trích xuất hoặc sáng tạo các câu hỏi Đúng/Sai.
-Mỗi câu hỏi Đúng/Sai gồm 1 phần thân câu hỏi chính "question" (dẫn dắt) và mảng "sub_questions" chứa từ 2-4 ý/mệnh đề (a, b, c, d), kèm theo "answerKey" ("true" nếu Đúng, "false" nếu Sai).
-BẮT BUỘC trả về JSON mảng duy nhất theo đúng schema:
-[
-  {
-    "type": "true_false",
-    "question": "Nội dung thân câu hỏi dẫn dắt (ví dụ: Khi đu quay hoạt động... Các mệnh đề sau đúng hay sai?)",
-    "sub_questions": [
-      { "content": "Giá trị lớn nhất của v_x bằng 0,3.", "answerKey": "true" },
-      { "content": "Giá trị nhỏ nhất của v_x - 1 bằng 0,3 - 1.", "answerKey": "false" },
-      { "content": "Tổng giá trị lớn nhất...", "answerKey": "true" },
-      { "content": "Trong vòng quay đầu tiên...", "answerKey": "false" }
-    ]
-  }
-]
-Quy tắc:
-1. KHÔNG lặp tiền tố "Câu 1:" trong "question".
-2. KHÔNG chèn nhãn "a)", "b)", "c)", "d)" vào trong "content" của sub_questions (hệ thống sẽ tự đánh nhãn a, b, c, d).
-3. Nhận diện bảng dữ liệu và chuyển thành Markdown Table. Giữ nguyên Math/LaTeX.`;
-
-    userPrompt = `Bóc tách/tạo các câu hỏi Đúng/Sai từ văn bản sau:\n\n${cleanedText}`;
-  } else if (questionType === "short_answer") {
-    systemPrompt = `Bạn là chuyên gia trích xuất & biên soạn câu hỏi Trả lời ngắn tiếng Việt cho hệ thống LMS.
-Nhiệm vụ: Phân tích văn bản nguồn hoặc yêu cầu, trích xuất hoặc sáng tạo các câu hỏi yêu cầu học sinh tính toán và nhập đáp án ngắn (số hoặc biểu thức ngắn gọn).
-BẮT BUỘC trả về JSON mảng duy nhất theo đúng schema:
-[
-  {
-    "type": "short_answer",
-    "question": "Nội dung câu hỏi...",
-    "answer_key": "Đáp án ngắn (ví dụ: 12 hoặc 25 hoặc 10,79)"
-  }
-]
-Quy tắc:
-1. KHÔNG lặp tiền tố "Câu 1:" trong "question".
-2. "answer_key" chỉ chứa kết quả ngắn gọn (số, phân số tối giản, hoặc từ ngắn).
-3. Nhận diện bảng dữ liệu và chuyển thành Markdown Table. Giữ nguyên Math/LaTeX.`;
-
-    userPrompt = `Bóc tách/tạo các câu hỏi Trả lời ngắn từ văn bản sau:\n\n${cleanedText}`;
-  } else if (questionType === "essay") {
-    systemPrompt = `Bạn là chuyên gia trích xuất & biên soạn câu hỏi Tự luận tiếng Việt cho hệ thống LMS.
-Nhiệm vụ: Phân tích văn bản nguồn hoặc yêu cầu, trích xuất hoặc sáng tạo các câu hỏi Tự luận.
-BẮT BUỘC trả về JSON mảng duy nhất theo đúng schema:
-[
-  {
-    "type": "essay",
-    "question": "Nội dung câu hỏi tự luận...",
-    "answer_key": "Hướng dẫn chấm / đáp án gợi ý chi tiết nếu có"
-  }
-]
-Quy tắc:
-1. KHÔNG lặp tiền tố "Câu 1:" trong "question".
-2. Nhận diện bảng dữ liệu và chuyển thành Markdown Table. Giữ nguyên Math/LaTeX.`;
-
-    userPrompt = `Bóc tách/tạo các câu hỏi Tự luận từ văn bản sau:\n\n${cleanedText}`;
-  }
-
   let questions: GeneratedQuestion[] = [];
 
-  // Step 1: Instant Heuristic Parse (takes ~0.001s if user pasted an existing exam paper)
+  // Step 1: Instant Heuristic Parse (takes ~0.001s, 100% offline local)
   if (questionType === "mcq") {
     questions = parseHeuristicMcq(cleanedText);
   } else if (questionType === "true_false") {
@@ -893,26 +729,8 @@ Quy tắc:
     questions = parseHeuristicEssay(cleanedText);
   }
 
-  // Step 2: Call AI LLM if text is a prompt/unstructured instruction or heuristic returned 0 questions
   if (questions.length === 0) {
-    try {
-      const rawAiOutput = await callOpenRouterExtract(userPrompt, systemPrompt);
-      const parsedJson = parseJsonLenient(rawAiOutput);
-      questions = normalizeGeneratedQuestions(parsedJson, questionType);
-    } catch (err) {
-      aiLog("warn", "EXTRACT", "AI extraction failed", {
-        error: (err as Error).message,
-      });
-    }
-  }
-
-  // Step 3: Fast Batch AI Answer Solving (solves math problems to set exact correct_answer & true/false keys in 1-2s)
-  if (questions.length > 0) {
-    questions = await solveQuestionsAnswersBatch(questions);
-  }
-
-  if (questions.length === 0) {
-    // Ultimate fallback: return single question containing input text
+    // Fallback: return single question containing input text
     questions = [
       {
         type: questionType,

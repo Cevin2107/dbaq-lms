@@ -206,7 +206,7 @@ export function QuestionBuilderTab({ assignmentId, initialQuestions }: { assignm
                  <Plus className="h-4 w-4 mr-1.5" /> Thủ công
               </Button>
               <Button variant="brand" size="sm" onClick={() => setShowAiModal(true)}>
-                 <Settings2 className="h-4 w-4 mr-1.5" /> Tạo bằng AI
+                 <Settings2 className="h-4 w-4 mr-1.5" /> Auto tạo câu hỏi
               </Button>
             </>
           )}
@@ -217,8 +217,8 @@ export function QuestionBuilderTab({ assignmentId, initialQuestions }: { assignm
         {questions.length === 0 ? (
           <Card className="p-12 text-center bg-slate-50 border-dashed">
             <p className="text-base font-semibold text-slate-700">Chưa có câu hỏi nào</p>
-            <p className="mt-1 text-sm text-slate-500 mb-6">Trải nghiệm tính năng AI để tự động tạo câu hỏi trắc nghiệm từ tài liệu.</p>
-            <Button variant="brand" onClick={() => setShowAiModal(true)}>Tạo câu hỏi bằng AI ngay</Button>
+            <p className="mt-1 text-sm text-slate-500 mb-6">Bóc tách tự động và import đáp án cho câu hỏi trắc nghiệm, đúng/sai, trả lời ngắn.</p>
+            <Button variant="brand" onClick={() => setShowAiModal(true)}>Auto tạo câu hỏi</Button>
           </Card>
         ) : (
           questions.map((q) => (
