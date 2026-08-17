@@ -30,17 +30,25 @@ export async function POST(req: NextRequest) {
   }
 
   try {
-    const body = await req.json();
-    const { schedules } = body as { schedules: { day_of_week: number, shift_id: string }[] };
-
-    if (!Array.isArray(schedules)) {
+    const body = await req.json().catch(() => null);
+    if (!body || !Array.isArray(body.schedules)) {
       return NextResponse.json({ error: "Invalid payload format" }, { status: 400 });
     }
 
-    // Since this is a bulk replace, we first delete all existing schedules.
-    // However, if we delete them, it will CASCADE delete the student registrations!
-    // We should be careful. A better approach is to compare and only delete/insert what's changed.
-    
+    const { schedules } = body as { schedules: { day_of_week: number; shift_id: string }[] };
+
+    // Deduplicate and validate payload items
+    const uniqueSchedulesMap = new Map<string, { day_of_week: number; shift_id: string }>();
+    for (const item of schedules) {
+      if (item && item.day_of_week && item.shift_id) {
+        uniqueSchedulesMap.set(`${item.day_of_week}-${item.shift_id}`, {
+          day_of_week: Number(item.day_of_week),
+          shift_id: String(item.shift_id),
+        });
+      }
+    }
+    const cleanSchedules = Array.from(uniqueSchedulesMap.values());
+
     // Get existing schedules
     const supabaseAdmin = createSupabaseAdmin();
     const { data: existingSchedulesData, error: getErr } = await supabaseAdmin
@@ -51,9 +59,9 @@ export async function POST(req: NextRequest) {
     const existingSchedules = (existingSchedulesData || []) as any[];
 
     const existingMap = new Set(existingSchedules.map(s => `${s.day_of_week}-${s.shift_id}`));
-    const newMap = new Set(schedules.map(s => `${s.day_of_week}-${s.shift_id}`));
+    const newMap = new Set(cleanSchedules.map(s => `${s.day_of_week}-${s.shift_id}`));
 
-    const toInsert = schedules.filter(s => !existingMap.has(`${s.day_of_week}-${s.shift_id}`));
+    const toInsert = cleanSchedules.filter(s => !existingMap.has(`${s.day_of_week}-${s.shift_id}`));
     const toDeleteIds = existingSchedules.filter(s => !newMap.has(`${s.day_of_week}-${s.shift_id}`)).map(s => s.id);
 
     // Perform deletions
@@ -85,7 +93,12 @@ export async function POST(req: NextRequest) {
 
     // Perform insertions
     if (toInsert.length > 0) {
-      const { error: insErr } = await (supabaseAdmin.from("available_schedules") as any).insert(toInsert);
+      const recordsToInsert = toInsert.map(s => ({
+        day_of_week: s.day_of_week,
+        shift_id: s.shift_id,
+      }));
+
+      const { error: insErr } = await (supabaseAdmin.from("available_schedules") as any).insert(recordsToInsert);
       if (insErr) throw insErr;
     }
 
