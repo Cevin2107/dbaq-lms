@@ -82,7 +82,7 @@ export function CalendarDay({ date, currentMonth, sessions, onDayClick }: Calend
           </div>
         ))}
         {daySessions.length > 3 && (
-          <div className="text-[10px] text-gray-400 font-medium text-center">
+          <div className="text-[10px] text-gray-400 dark:text-slate-400 font-medium text-center">
             +{daySessions.length - 3}
           </div>
         )}

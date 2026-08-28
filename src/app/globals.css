@@ -273,47 +273,61 @@
     display: none;
   }
 
-  .export-desktop {
-    box-sizing: border-box;
-    margin: 0 auto;
+  .export-desktop,
+  .export-desktop.export-stats-grid,
+  .export-desktop#export-container {
+    display: grid !important;
+    grid-template-columns: minmax(0, 2.1fr) minmax(0, 1fr) !important;
+    gap: 1.5rem !important;
+    width: 1280px !important;
+    min-width: 1280px !important;
+    max-width: 1280px !important;
+    box-sizing: border-box !important;
+    padding: 24px !important;
+    margin: 0 auto !important;
+  }
+
+  .export-desktop .export-col-calendar,
+  .export-desktop > div:first-child {
+    grid-column: span 1 / span 1 !important;
+    width: 100% !important;
+  }
+
+  .export-desktop .export-col-stats,
+  .export-desktop > div:last-child {
+    grid-column: span 1 / span 1 !important;
+    width: 100% !important;
   }
 
   /* GIẢ LẬP GIAO DIỆN DESKTOP KHI XUẤT ẢNH TRÊN ĐIỆN THOẠI */
-  .export-desktop .export-stats-grid {
-    display: grid !important;
-    grid-template-columns: minmax(0, 73.5fr) minmax(0, 26.5fr) !important;
-    align-items: stretch !important;
-  }
-
   .export-desktop .export-title {
     font-size: 2rem !important;
-    /* text-3xl */
     line-height: 2.25rem !important;
   }
 
   .export-desktop .export-subtitle {
     display: block !important;
-    /* block thay vì hidden */
   }
 
   .export-desktop .export-qr-image {
-    width: 250px !important;
-    height: 250px !important;
+    width: 270px !important;
+    height: 270px !important;
   }
 
   .export-desktop .export-month-header {
     width: 100% !important;
     justify-content: center !important;
-    /* Căn giữa "Tháng x" */
+    padding: 12px 20px !important;
   }
 
   .export-desktop .export-month-header h2 {
-    font-size: 1.35rem !important;
+    font-size: 1.25rem !important;
     line-height: 1.75rem !important;
   }
 
   .export-desktop .calendar-day-container {
-    min-height: 40px !important;
+    min-height: 52px !important;
+    padding: 6px !important;
   }
 
   .export-desktop .calendar-day-dots {
@@ -323,22 +337,23 @@
   .export-desktop .calendar-day-tags {
     display: flex !important;
     flex-direction: column !important;
-    gap: 2px !important;
+    gap: 4px !important;
+    width: 100% !important;
   }
 
   .export-desktop .calendar-day-tags div {
     height: 22px !important;
-    font-size: 13px !important;
+    font-size: 12px !important;
     font-weight: 800 !important;
     letter-spacing: -0.01em !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
   }
 
   .export-desktop .export-invoice-card {
-    padding-top: 0.2rem !important;
-    padding-bottom: 0.75rem !important;
-    padding-left: 1rem !important;
-    padding-right: 1rem !important;
-    gap: 0.25rem !important;
+    padding: 18px !important;
+    gap: 12px !important;
   }
 
   .export-desktop .export-hide {
@@ -351,6 +366,8 @@
     backdrop-filter: none !important;
     -webkit-backdrop-filter: none !important;
     filter: none !important;
+    animation: none !important;
+    transition: none !important;
   }
 
   /* Hide scrollbar but allow scrolling */

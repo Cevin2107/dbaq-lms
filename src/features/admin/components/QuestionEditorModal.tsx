@@ -195,12 +195,12 @@ export function QuestionEditorModal({ assignmentId, isOpen, onClose, onSuccess, 
     >
       <div className="fixed inset-0 bg-slate-950/60 backdrop-blur-md" onClick={onClose} />
       <div className="relative z-10 w-full max-w-3xl max-h-[90vh] overflow-y-auto rounded-[2rem] bg-white/95 dark:bg-[#1d1d1f]/95 backdrop-blur-xl shadow-[0_12px_40px_rgba(0,0,0,0.25)] border border-black/5 dark:border-white/10">
-        <div className="sticky top-0 z-10 flex items-center justify-between border-b border-slate-100 bg-white/95 px-6 py-4 backdrop-blur">
+        <div className="sticky top-0 z-10 flex items-center justify-between border-b border-slate-100 dark:border-white/5 bg-white/95 dark:bg-[#1d1d1f]/95 px-6 py-4 backdrop-blur">
           <div>
-            <h3 className="text-lg font-bold text-slate-900">{isEditing ? "Chỉnh sửa câu hỏi" : "Bổ sung câu hỏi mới"}</h3>
-            <p className="text-sm text-slate-500">Thiết lập nội dung và đáp án chuẩn cho màn thi</p>
+            <h3 className="text-lg font-bold text-slate-900 dark:text-white">{isEditing ? "Chỉnh sửa câu hỏi" : "Bổ sung câu hỏi mới"}</h3>
+            <p className="text-sm text-slate-500 dark:text-slate-400">Thiết lập nội dung và đáp án chuẩn cho màn thi</p>
           </div>
-          <button onClick={onClose} className="rounded-full p-2 text-slate-400 hover:bg-slate-100 hover:text-slate-600 transition">
+          <button onClick={onClose} className="rounded-full p-2 text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 hover:text-slate-600 dark:hover:text-slate-300 transition">
             <X className="h-5 w-5" />
           </button>
         </div>
@@ -214,7 +214,7 @@ export function QuestionEditorModal({ assignmentId, isOpen, onClose, onSuccess, 
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div className="md:col-span-2 lg:col-span-1">
-              <label className="text-sm font-semibold text-slate-700 mb-2 block">Loại câu hỏi</label>
+              <label className="text-sm font-semibold text-slate-700 dark:text-slate-300 mb-2 block">Loại câu hỏi</label>
               <div className="flex flex-wrap gap-2">
                 {[
                   { value: "mcq", label: "Trắc nghiệm" },
@@ -244,7 +244,7 @@ export function QuestionEditorModal({ assignmentId, isOpen, onClose, onSuccess, 
                     className={`px-3 py-1.5 rounded-lg border text-sm font-medium transition-colors ${
                       type === t.value 
                         ? "bg-indigo-600 text-white border-indigo-600 shadow-sm" 
-                        : "bg-slate-50 text-slate-600 border-slate-200 hover:bg-slate-100"
+                        : "bg-slate-50 dark:bg-slate-800/50 text-slate-600 dark:text-slate-300 border-slate-200 dark:border-slate-700 hover:bg-slate-100 dark:hover:bg-slate-800"
                     }`}
                   >
                     {t.label}
@@ -253,34 +253,34 @@ export function QuestionEditorModal({ assignmentId, isOpen, onClose, onSuccess, 
               </div>
             </div>
             <div className="md:col-span-2 lg:col-span-1">
-              <label className="text-sm font-semibold text-slate-700 mb-2 block">Điểm (0 = Tự chia đều)</label>
+              <label className="text-sm font-semibold text-slate-700 dark:text-slate-300 mb-2 block">Điểm (0 = Tự chia đều)</label>
               <input type="number" step="0.01" min="0" disabled={type === "section"} value={points}
                 onChange={e => setPoints(parseFloat(e.target.value) || 0)}
-                className="w-full disabled:opacity-50 rounded-xl border border-slate-200 bg-slate-50 px-4 py-2.5 text-sm focus:border-indigo-400 focus:bg-white focus:ring-4 focus:ring-indigo-100"
+                className="w-full disabled:opacity-50 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800/50 px-4 py-2.5 text-sm text-slate-900 dark:text-white focus:border-indigo-400 dark:focus:border-indigo-500 focus:bg-white dark:focus:bg-[#1d1d1f] focus:ring-4 focus:ring-indigo-100 dark:focus:ring-indigo-900/30"
               />
             </div>
           </div>
 
           <div>
-            <label className="text-sm font-semibold text-slate-700 mb-2 block">Nội dung câu hỏi</label>
+            <label className="text-sm font-semibold text-slate-700 dark:text-slate-300 mb-2 block">Nội dung câu hỏi</label>
             <textarea value={content} onChange={e => setContent(e.target.value)} rows={4}
               placeholder="Nhập nội dung đề bài..."
-              className="w-full rounded-xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm focus:border-indigo-400 focus:bg-white focus:ring-4 focus:ring-indigo-100 resize-y"
+              className="w-full rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800/50 px-4 py-3 text-sm text-slate-900 dark:text-white focus:border-indigo-400 dark:focus:border-indigo-500 focus:bg-white dark:focus:bg-[#1d1d1f] focus:ring-4 focus:ring-indigo-100 dark:focus:ring-indigo-900/30 resize-y"
             />
           </div>
 
           {/* Image upload with paste support */}
           <div>
-            <label className="text-sm font-semibold text-slate-700 mb-2 block">
+            <label className="text-sm font-semibold text-slate-700 dark:text-slate-300 mb-2 block">
               Hình ảnh minh họa
-              <span className="ml-2 text-xs font-normal text-slate-400">(Chọn file hoặc Ctrl+V dán ảnh từ clipboard)</span>
+              <span className="ml-2 text-xs font-normal text-slate-400 dark:text-slate-500">(Chọn file hoặc Ctrl+V dán ảnh từ clipboard)</span>
             </label>
             <div className="flex flex-wrap gap-4 items-center">
-              <label className="flex cursor-pointer items-center justify-center gap-2 rounded-xl border-2 border-dashed border-slate-300 bg-slate-50 px-6 py-4 text-sm font-semibold text-slate-600 transition hover:border-indigo-400 hover:bg-slate-100 shrink-0">
+              <label className="flex cursor-pointer items-center justify-center gap-2 rounded-xl border-2 border-dashed border-slate-300 dark:border-slate-600 bg-slate-50 dark:bg-slate-800/50 px-6 py-4 text-sm font-semibold text-slate-600 dark:text-slate-300 transition hover:border-indigo-400 dark:hover:border-indigo-500 hover:bg-slate-100 dark:hover:bg-slate-800 shrink-0">
                 <input type="file" accept="image/*" className="hidden" onChange={handleImageChange} />
-                <Upload className="h-5 w-5 text-slate-400" /> Chọn ảnh...
+                <Upload className="h-5 w-5 text-slate-400 dark:text-slate-500" /> Chọn ảnh...
               </label>
-              <div className="flex items-center gap-2 rounded-xl border-2 border-dashed border-slate-200 bg-slate-50 px-6 py-4 text-sm text-slate-400">
+              <div className="flex items-center gap-2 rounded-xl border-2 border-dashed border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800/50 px-6 py-4 text-sm text-slate-400 dark:text-slate-500">
                 <ClipboardPaste className="h-4 w-4" />
                 <span>Ctrl+V để dán ảnh</span>
               </div>
@@ -297,9 +297,9 @@ export function QuestionEditorModal({ assignmentId, isOpen, onClose, onSuccess, 
           </div>
 
           {type === "mcq" && (
-            <div className="space-y-4 pt-4 border-t border-slate-100">
+            <div className="space-y-4 pt-4 border-t border-slate-100 dark:border-white/5">
               <div className="flex items-center justify-between">
-                <label className="text-sm font-semibold text-slate-700">Các đáp án <span className="text-slate-400 font-normal">(chọn radio để đánh dấu đáp án đúng)</span></label>
+                <label className="text-sm font-semibold text-slate-700 dark:text-slate-300">Các đáp án <span className="text-slate-400 font-normal">(chọn radio để đánh dấu đáp án đúng)</span></label>
               </div>
               {choices.map((c, i) => (
                 <div key={i} className="flex items-center gap-3">
@@ -307,16 +307,16 @@ export function QuestionEditorModal({ assignmentId, isOpen, onClose, onSuccess, 
                     onChange={() => setAnswerKey(String.fromCharCode(65 + i))}
                     className="h-4 w-4 text-indigo-600 focus:ring-indigo-500"
                   />
-                  <span className={`font-bold w-6 text-center text-sm rounded-md px-1 py-0.5 ${answerKey === String.fromCharCode(65 + i) ? "bg-indigo-600 text-white" : "text-slate-400 bg-slate-100"}`}>
+                  <span className={`font-bold w-6 text-center text-sm rounded-md px-1 py-0.5 ${answerKey === String.fromCharCode(65 + i) ? "bg-indigo-600 text-white" : "text-slate-400 dark:text-slate-500 bg-slate-100 dark:bg-slate-800"}`}>
                     {String.fromCharCode(65 + i)}
                   </span>
                   <input type="text" value={c}
                     onChange={e => { const n = [...choices]; n[i] = e.target.value; setChoices(n); }}
                     placeholder={`Nội dung đáp án ${String.fromCharCode(65 + i)}`}
-                    className={`flex-1 rounded-xl border px-4 py-2 text-sm focus:ring-4 focus:ring-indigo-100 focus:outline-none transition ${answerKey === String.fromCharCode(65 + i) ? "border-indigo-300 bg-indigo-50/50" : "border-slate-200 bg-slate-50 focus:border-indigo-400 focus:bg-white"}`}
+                    className={`flex-1 rounded-xl border px-4 py-2 text-sm text-slate-900 dark:text-white focus:ring-4 focus:ring-indigo-100 dark:focus:ring-indigo-900/30 focus:outline-none transition ${answerKey === String.fromCharCode(65 + i) ? "border-indigo-300 dark:border-indigo-500/50 bg-indigo-50/50 dark:bg-indigo-900/20" : "border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800/50 focus:border-indigo-400 dark:focus:border-indigo-500 focus:bg-white dark:focus:bg-[#1d1d1f]"}`}
                   />
                   <button onClick={() => { if (choices.length <= 2) return; const n = [...choices]; n.splice(i, 1); setChoices(n); }}
-                    className="p-2 text-slate-300 hover:text-red-500 rounded-lg transition" disabled={choices.length <= 2}>
+                    className="p-2 text-slate-300 dark:text-slate-500 hover:text-red-500 dark:hover:text-red-400 rounded-lg transition" disabled={choices.length <= 2}>
                     <X className="h-4 w-4" />
                   </button>
                 </div>
@@ -328,30 +328,30 @@ export function QuestionEditorModal({ assignmentId, isOpen, onClose, onSuccess, 
           )}
 
           {type === "short_answer" && (
-            <div className="pt-4 border-t border-slate-100">
-              <label className="text-sm font-semibold text-slate-700 block mb-2">Đáp án chuẩn (Key)</label>
+            <div className="pt-4 border-t border-slate-100 dark:border-white/5">
+              <label className="text-sm font-semibold text-slate-700 dark:text-slate-300 block mb-2">Đáp án chuẩn (Key)</label>
               <input type="text" value={answerKey} onChange={e => setAnswerKey(e.target.value)}
-                className="w-full rounded-xl border border-slate-200 bg-slate-50 px-4 py-2.5 text-sm focus:border-indigo-400 focus:bg-white focus:ring-4 focus:ring-indigo-100"
+                className="w-full rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800/50 px-4 py-2.5 text-sm text-slate-900 dark:text-white focus:border-indigo-400 dark:focus:border-indigo-500 focus:bg-white dark:focus:bg-[#1d1d1f] focus:ring-4 focus:ring-indigo-100 dark:focus:ring-indigo-900/30"
                 placeholder="Nhập đáp án chuẩn xác..."
               />
-              <p className="text-xs text-slate-400 mt-1.5">Hệ thống sẽ đối chiếu trực tiếp, không phân biệt hoa/thường.</p>
+              <p className="text-xs text-slate-400 dark:text-slate-500 mt-1.5">Hệ thống sẽ đối chiếu trực tiếp, không phân biệt hoa/thường.</p>
             </div>
           )}
 
           {type === "true_false" && (
-             <div className="space-y-4 pt-4 border-t border-slate-100">
+             <div className="space-y-4 pt-4 border-t border-slate-100 dark:border-white/5">
                <div className="flex items-center justify-between">
-                 <label className="text-sm font-semibold text-slate-700">Các ý của câu hỏi <span className="text-slate-400 font-normal">(chọn Đúng/Sai làm đáp án)</span></label>
+                 <label className="text-sm font-semibold text-slate-700 dark:text-slate-300">Các ý của câu hỏi <span className="text-slate-400 font-normal">(chọn Đúng/Sai làm đáp án)</span></label>
                </div>
                {subQuestions.map((sq, i) => (
-                 <div key={sq.id} className="flex flex-col sm:flex-row sm:items-center gap-3 bg-slate-50 p-3 rounded-xl border border-slate-100">
-                    <span className="font-bold w-6 text-center text-sm rounded-md px-1 py-0.5 text-slate-400 bg-white shadow-sm">
+                 <div key={sq.id} className="flex flex-col sm:flex-row sm:items-center gap-3 bg-slate-50 dark:bg-slate-800/50 p-3 rounded-xl border border-slate-100 dark:border-white/5">
+                    <span className="font-bold w-6 text-center text-sm rounded-md px-1 py-0.5 text-slate-400 dark:text-slate-500 bg-white dark:bg-slate-800 shadow-sm">
                        {String.fromCharCode(97 + i)}
                     </span>
                     <input type="text" value={sq.content}
                       onChange={e => { const n = [...subQuestions]; n[i].content = e.target.value; setSubQuestions(n); }}
                       placeholder="Nội dung ý..."
-                      className="flex-1 rounded-lg border border-slate-200 px-3 py-2 text-sm focus:ring-4 focus:ring-indigo-100 focus:outline-none transition focus:bg-white"
+                      className="flex-1 rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800/50 px-3 py-2 text-sm text-slate-900 dark:text-white focus:ring-4 focus:ring-indigo-100 dark:focus:ring-indigo-900/30 focus:outline-none transition focus:bg-white dark:focus:bg-[#1d1d1f]"
                     />
                     <div className="flex items-center gap-1.5 shrink-0">
                       <button
@@ -378,7 +378,7 @@ export function QuestionEditorModal({ assignmentId, isOpen, onClose, onSuccess, 
                       </button>
                     </div>
                     <button onClick={() => { if (subQuestions.length <= 1) return; const n = [...subQuestions]; n.splice(i, 1); setSubQuestions(n); }}
-                      className="p-2 text-slate-400 hover:text-red-500 hover:bg-white rounded-lg transition shadow-sm" disabled={subQuestions.length <= 1}>
+                      className="p-2 text-slate-400 dark:text-slate-500 hover:text-red-500 dark:hover:text-red-400 hover:bg-white dark:hover:bg-slate-800 rounded-lg transition shadow-sm" disabled={subQuestions.length <= 1}>
                       <X className="h-4 w-4" />
                     </button>
                  </div>
@@ -390,7 +390,7 @@ export function QuestionEditorModal({ assignmentId, isOpen, onClose, onSuccess, 
           )}
         </div>
 
-        <div className="sticky bottom-0 border-t border-slate-100 bg-slate-50 p-6 flex items-center justify-end gap-3 rounded-b-3xl">
+        <div className="sticky bottom-0 border-t border-slate-100 dark:border-white/5 bg-slate-50 dark:bg-[#1d1d1f]/95 p-6 flex items-center justify-end gap-3 rounded-b-3xl">
           <Button variant="secondary" onClick={onClose} disabled={loading}>Hủy bỏ</Button>
           <Button variant="brand" onClick={handleSave} disabled={loading}>
             {loading ? "Đang xử lý..." : (isEditing ? "Lưu thay đổi" : "Thêm câu hỏi")}

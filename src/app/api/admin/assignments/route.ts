@@ -10,9 +10,7 @@ export async function POST(req: NextRequest) {
 
   try {
     const body = await req.json();
-    console.log("Creating assignment with data:", body);
     const assignment = await createAssignment(body);
-    console.log("Assignment created successfully:", assignment);
     return NextResponse.json(assignment);
   } catch (error) {
     console.error("Error creating assignment:", error);

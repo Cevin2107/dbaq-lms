@@ -96,7 +96,6 @@ export function StudentSessionsTab({ assignmentId }: { assignmentId: string }) {
           filter: `assignment_id=eq.${assignmentId}`,
         },
         (payload) => {
-          console.log("Realtime update received on student_sessions:", payload);
           refetch();
           refetchDetail();
         }

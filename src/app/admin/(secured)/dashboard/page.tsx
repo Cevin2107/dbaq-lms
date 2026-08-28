@@ -319,7 +319,7 @@ export default function AdminDashboardPage() {
               onClick={handleRefresh}
               disabled={isRefreshing || isLoadingStats}
               loading={isRefreshing}
-              className="rounded-full bg-white/80 dark:bg-slate-800/80 backdrop-blur-sm border-slate-200 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-800 px-4 py-2 text-xs font-semibold"
+              className="rounded-full bg-white/80 dark:bg-slate-800/80 backdrop-blur-sm border-slate-200 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-200 px-4 py-2 text-xs font-semibold"
             >
               <RefreshCw className="h-4 w-4 mr-1.5" />
               <span>Làm mới</span>
@@ -329,7 +329,7 @@ export default function AdminDashboardPage() {
               <Button
                 variant="outline"
                 size="sm"
-                className="rounded-full bg-white/80 dark:bg-slate-800/80 backdrop-blur-sm border-slate-200 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-800 px-4 py-2 text-xs font-semibold"
+                className="rounded-full bg-white/80 dark:bg-slate-800/80 backdrop-blur-sm border-slate-200 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-200 px-4 py-2 text-xs font-semibold"
               >
                 <Clock className="h-4 w-4 mr-1.5 text-blue-600 dark:text-blue-400" />
                 <span>Đăng ký ca dạy</span>
@@ -765,7 +765,7 @@ export default function AdminDashboardPage() {
                 Bài tập gần đây
               </h2>
               <Link href="/admin/assignments">
-                <Button variant="ghost" size="sm" className="text-xs font-semibold text-[#0066cc]">
+                <Button variant="ghost" size="sm" className="text-xs font-semibold text-[#0066cc] dark:text-blue-400">
                   Xem tất cả
                   <ChevronRight className="h-3.5 w-3.5 ml-0.5" />
                 </Button>

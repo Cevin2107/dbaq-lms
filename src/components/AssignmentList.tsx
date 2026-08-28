@@ -168,7 +168,7 @@ export function AssignmentList({ assignments }: AssignmentListProps) {
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
           </svg>
           <input
-            className="w-full rounded-full bg-slate-50 dark:bg-[#2a2a2c] py-3.5 pl-12 pr-4 text-[16px] text-[#1d1d1f] dark:text-white placeholder-slate-400 transition-all focus:bg-white dark:focus:bg-[#333] focus:outline-none focus:ring-4 focus:ring-[#0066cc]/10 border border-transparent focus:border-[#0066cc]/20"
+            className="w-full rounded-full bg-slate-50 dark:bg-[#2a2a2c] py-3.5 pl-12 pr-4 text-[16px] text-[#1d1d1f] dark:text-white placeholder-slate-400 transition-all focus:bg-white dark:focus:bg-[#333] focus:outline-none focus:ring-4 focus:ring-[#0066cc]/10 border border-transparent focus:border-[#0066cc]/20 focus:shadow-sm"
             placeholder="Tìm kiếm bài tập..."
             value={search}
             onChange={(e) => setSearch(e.target.value)}
@@ -188,7 +188,7 @@ export function AssignmentList({ assignments }: AssignmentListProps) {
         <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
           
           {/* Segmented Control for Tabs */}
-          <div className="flex flex-wrap items-center bg-slate-100 dark:bg-[#2a2a2c] p-1 rounded-full w-full sm:w-auto">
+          <div className="flex flex-wrap items-center bg-slate-100/80 dark:bg-[#2a2a2c]/80 backdrop-blur-md p-1.5 rounded-full w-full sm:w-auto shadow-sm border border-black/5 dark:border-white/5">
             {[
               { value: "not_started", label: "Chưa làm" },
               { value: "completed", label: "Đã làm" },
@@ -199,10 +199,10 @@ export function AssignmentList({ assignments }: AssignmentListProps) {
                 key={tab.value}
                 onClick={() => setStatusFilter(tab.value)}
                 className={clsx(
-                  "flex-1 sm:flex-none rounded-full px-5 py-2 text-[14px] font-medium transition-all duration-300",
+                  "flex-1 sm:flex-none rounded-full px-5 py-2 text-[14px] font-medium transition-all duration-300 ease-spring",
                   statusFilter === tab.value
-                    ? "bg-white dark:bg-[#444] text-[#1d1d1f] dark:text-white shadow-sm"
-                    : "text-slate-500 dark:text-slate-400 hover:text-[#1d1d1f] dark:hover:text-white"
+                    ? "bg-white dark:bg-[#444] text-[#0066cc] dark:text-white shadow-sm scale-[1.02]"
+                    : "text-slate-500 dark:text-slate-400 hover:text-slate-800 dark:hover:text-white hover:bg-black/5 dark:hover:bg-white/5 active:scale-95"
                 )}
               >
                 {tab.label}
@@ -254,7 +254,7 @@ export function AssignmentList({ assignments }: AssignmentListProps) {
             <div
               key={assignment.id}
               className={clsx(
-                "group flex flex-col rounded-[2rem] bg-white dark:bg-[#1d1d1f] shadow-[0_2px_12px_rgba(0,0,0,0.03)] border border-black/5 dark:border-white/5 p-6 transition-all duration-300 hover:-translate-y-1 hover:shadow-[0_12px_40px_rgba(0,0,0,0.08)]",
+                "group flex flex-col rounded-[2rem] bg-white dark:bg-[#1d1d1f] shadow-[0_2px_12px_rgba(0,0,0,0.03)] border border-black/5 dark:border-white/5 p-6 transition-all duration-300 ease-spring hover:-translate-y-1 hover:shadow-glass hover:scale-[1.01]",
                 urgent && "ring-1 ring-red-400/30",
                 overdue && "opacity-80"
               )}
@@ -315,13 +315,13 @@ export function AssignmentList({ assignments }: AssignmentListProps) {
                     <>
                       <Link
                         href={`/assignments/${assignment.id}/result?sid=${latest.id}`}
-                        className="rounded-full bg-slate-50 dark:bg-[#2a2a2c] px-4 py-2 text-[14px] font-medium text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-[#333] transition-colors active:scale-95"
+                        className="rounded-full bg-slate-50 dark:bg-[#2a2a2c] px-4 py-2 text-[14px] font-medium text-slate-600 dark:text-slate-300 transition-all duration-300 ease-spring hover:bg-slate-100 dark:hover:bg-[#333] hover:shadow-sm hover:-translate-y-0.5 active:scale-95"
                       >
                         Kết quả
                       </Link>
                       <Link
                         href={`/assignments/${assignment.id}/start`}
-                        className="rounded-full bg-[#0066cc] px-5 py-2 text-[14px] font-medium text-white hover:bg-[#0071e3] transition-colors active:scale-95 shadow-sm shadow-blue-500/20"
+                        className="rounded-full bg-[#0066cc] px-5 py-2 text-[14px] font-medium text-white transition-all duration-300 ease-spring hover:bg-[#0071e3] hover:shadow-md hover:-translate-y-0.5 active:scale-95 shadow-sm shadow-blue-500/20"
                       >
                         Làm lại
                       </Link>
@@ -331,10 +331,10 @@ export function AssignmentList({ assignments }: AssignmentListProps) {
                       href={overdue ? "#" : `/assignments/${assignment.id}/start`}
                       aria-disabled={overdue}
                       className={clsx(
-                        "rounded-full px-6 py-2.5 text-[14px] font-medium transition-all active:scale-95 text-center shadow-sm",
+                        "rounded-full px-6 py-2.5 text-[14px] font-medium transition-all duration-300 ease-spring text-center",
                         overdue
                           ? "cursor-not-allowed bg-slate-100 dark:bg-slate-800 text-slate-400 dark:text-slate-500 shadow-none"
-                          : "bg-[#0066cc] text-white hover:bg-[#0071e3] shadow-blue-500/20 hover:shadow-blue-500/30"
+                          : "bg-[#0066cc] text-white hover:bg-[#0071e3] shadow-md shadow-blue-500/20 hover:shadow-lg hover:shadow-blue-500/30 hover:-translate-y-0.5 active:scale-95"
                       )}
                     >
                       {overdue ? "Đã hết hạn" : "Bắt đầu làm bài"}

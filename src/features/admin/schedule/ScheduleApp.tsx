@@ -309,8 +309,8 @@ export function ScheduleApp() {
           onOpenSettings={() => setShowStudentSettingsModal(true)}
         />
       ) : (
-        <div id="export-container" className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-          <div className="lg:col-span-2">
+        <div id="export-container" className="grid grid-cols-1 lg:grid-cols-3 gap-6 export-stats-grid">
+          <div className="lg:col-span-2 export-col-calendar">
             <Calendar
               year={year}
               month={month}
@@ -322,7 +322,7 @@ export function ScheduleApp() {
             />
           </div>
 
-          <div className="lg:col-span-1">
+          <div className="lg:col-span-1 export-col-stats">
             <Statistics
               sessions={sessions}
               onExport={handleExport}

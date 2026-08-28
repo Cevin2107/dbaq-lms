@@ -42,8 +42,8 @@ export function HomeTabs({ assignments, studentName, greeting, greetingKind }: H
 
   return (
     <div className="w-full max-w-[1440px] mx-auto px-4 sm:px-6 md:px-8 pb-16">
-      <div className="mb-6 rounded-full bg-white/80 dark:bg-[#1d1d1f]/80 backdrop-blur-md border border-black/5 dark:border-white/10 p-1 shadow-[0_4px_20px_rgba(0,0,0,0.03)] overflow-x-auto no-scrollbar">
-        <div className="flex items-center gap-1 min-w-max">
+      <div className="flex justify-center mb-6">
+        <div className="inline-flex items-center gap-1 p-1.5 rounded-full bg-white/50 dark:bg-[#2a2a2c]/60 backdrop-blur-xl border border-white/40 dark:border-white/10 shadow-glass max-w-full overflow-x-auto no-scrollbar">
           {tabs.map((tab) => {
             const Icon = tab.icon;
             const isActive = activeTab === tab.id;
@@ -52,13 +52,13 @@ export function HomeTabs({ assignments, studentName, greeting, greetingKind }: H
                 key={tab.id}
                 onClick={() => setActiveTab(tab.id)}
                 className={clsx(
-                  "flex items-center gap-2 px-5 py-2.5 rounded-full text-sm font-semibold transition-all duration-200",
+                  "flex items-center gap-2 px-5 sm:px-6 py-2.5 rounded-full text-sm font-semibold transition-all duration-300 ease-spring whitespace-nowrap",
                   isActive
-                    ? "bg-[#0066cc] text-white shadow-md shadow-blue-500/20"
-                    : "text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-white/5"
+                    ? "bg-white/90 dark:bg-[#444]/90 text-[#0066cc] dark:text-[#2997ff] shadow-sm scale-[1.02]"
+                    : "text-slate-500 dark:text-slate-400 hover:text-slate-800 dark:hover:text-white hover:bg-black/5 dark:hover:bg-white/5 active:scale-95"
                 )}
               >
-                <Icon className="h-4 w-4" />
+                <Icon className={clsx("h-4 w-4 shrink-0", isActive ? "text-[#0066cc] dark:text-[#2997ff]" : "")} />
                 {tab.label}
               </button>
             );
@@ -68,7 +68,7 @@ export function HomeTabs({ assignments, studentName, greeting, greetingKind }: H
 
       {activeTab === "home" && (
         <div className="space-y-8 animate-slide-up">
-          <div className="relative overflow-hidden rounded-[2rem] bg-gradient-to-br from-blue-50/80 via-indigo-50/50 to-sky-50/80 dark:from-blue-950/40 dark:via-slate-900/40 dark:to-indigo-950/40 border border-blue-100/80 dark:border-blue-900/30 p-6 sm:p-10 shadow-[0_4px_20px_rgba(0,0,0,0.03)]">
+          <div className="relative overflow-hidden rounded-[2rem] bg-gradient-to-br from-blue-50/80 via-indigo-50/50 to-sky-50/80 dark:from-blue-950/40 dark:via-slate-900/40 dark:to-indigo-950/40 border border-blue-100/80 dark:border-blue-900/30 p-6 sm:p-10 shadow-[0_8px_30px_rgba(0,102,204,0.08)]">
             <div className="flex flex-col md:flex-row items-center justify-between gap-6">
               <div className="flex flex-col items-center md:items-start text-center md:text-left flex-1 min-w-0">
                 <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-[#0066cc]/10 text-[#0066cc] dark:bg-blue-500/20 dark:text-blue-300 text-xs font-bold mb-4 order-1">
@@ -88,7 +88,7 @@ export function HomeTabs({ assignments, studentName, greeting, greetingKind }: H
 
                 <div className="mb-4 md:mb-8 relative z-10 -mt-6 md:-mt-0 order-3">
                   <h1 
-                    className="font-bold md:font-semibold leading-[1.07] tracking-[-0.02em] text-[#1d1d1f] dark:text-white whitespace-nowrap bg-white/70 dark:bg-black/70 backdrop-blur-md md:bg-transparent md:backdrop-blur-none px-4 py-2 rounded-2xl md:p-0 md:rounded-none border border-white/40 md:border-transparent shadow-sm md:shadow-none"
+                    className="font-bold md:font-semibold leading-[1.07] tracking-[-0.02em] text-[#1d1d1f] dark:text-white break-words sm:whitespace-nowrap bg-white/70 dark:bg-black/70 backdrop-blur-md md:bg-transparent md:backdrop-blur-none px-4 py-2 rounded-2xl md:p-0 md:rounded-none border border-white/40 md:border-transparent shadow-sm md:shadow-none"
                     style={{ fontSize: "clamp(22px, 4.2vw, 72px)" }}
                   >
                     Gia sư Đào Bá Anh Quân

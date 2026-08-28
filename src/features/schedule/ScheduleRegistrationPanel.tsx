@@ -149,15 +149,15 @@ export function ScheduleRegistrationPanel() {
 
       <div className="flex flex-wrap items-center gap-6 text-[15px] px-2">
         <div className="flex items-center gap-3">
-          <span className="w-6 h-6 rounded-lg border-2 border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800" />
+          <span className="w-6 h-6 rounded-full border-2 border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800" />
           <span className="text-slate-600 dark:text-slate-400 font-medium">Ca trống</span>
         </div>
         <div className="flex items-center gap-3">
-          <span className="w-6 h-6 rounded-lg bg-[#0066cc] flex items-center justify-center shadow-md shadow-blue-500/20 text-white text-sm">✓</span>
+          <span className="w-6 h-6 rounded-full bg-[#0066cc] flex items-center justify-center shadow-md shadow-blue-500/20 text-white text-sm">✓</span>
           <span className="text-slate-600 dark:text-slate-400 font-medium">Bạn đã chọn</span>
         </div>
         <div className="flex items-center gap-3">
-          <span className="w-6 h-6 rounded-lg bg-slate-100 dark:bg-slate-800 border-2 border-slate-200 dark:border-slate-700 flex items-center justify-center opacity-60">
+          <span className="w-6 h-6 rounded-full bg-slate-100 dark:bg-slate-800 border-2 border-slate-200 dark:border-slate-700 flex items-center justify-center opacity-60">
             <span className="block w-3.5 h-0.5 bg-slate-400 rounded-full rotate-45 relative">
               <span className="absolute block w-full h-full bg-slate-400 rounded-full -rotate-90" />
             </span>
@@ -204,7 +204,7 @@ export function ScheduleRegistrationPanel() {
                     if (!schedule) {
                       return (
                         <td key={shift.id} className="px-6 py-5 text-center">
-                          <div className="mx-auto w-12 h-12 rounded-2xl bg-slate-50 dark:bg-slate-800/30 border border-slate-100 dark:border-white/5 flex items-center justify-center opacity-40 cursor-not-allowed" title="Ca này không mở">
+                          <div className="mx-auto w-12 h-12 rounded-full bg-slate-50 dark:bg-slate-800/30 border border-slate-100 dark:border-white/5 flex items-center justify-center opacity-40 cursor-not-allowed" title="Ca này không mở">
                             <span className="w-2 h-2 rounded-full bg-slate-300 dark:bg-slate-600" />
                           </div>
                         </td>
@@ -217,7 +217,7 @@ export function ScheduleRegistrationPanel() {
                     return (
                       <td key={shift.id} className="px-6 py-5 text-center">
                         {isLocked ? (
-                          <div className="mx-auto w-12 h-12 rounded-2xl bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 flex items-center justify-center cursor-not-allowed opacity-60" title="Đã có học sinh đăng ký ca này">
+                          <div className="mx-auto w-12 h-12 rounded-full bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 flex items-center justify-center cursor-not-allowed opacity-60" title="Đã có học sinh đăng ký ca này">
                             <span className="block w-4 h-0.5 bg-slate-400 dark:bg-slate-500 rounded-full rotate-45 relative">
                               <span className="absolute block w-full h-full bg-slate-400 dark:bg-slate-500 rounded-full -rotate-90" />
                             </span>
@@ -226,10 +226,10 @@ export function ScheduleRegistrationPanel() {
                           <button
                             onClick={() => toggleSelection(schedule.id)}
                             className={clsx(
-                              "mx-auto w-12 h-12 rounded-2xl flex items-center justify-center transition-all duration-200",
+                              "mx-auto w-12 h-12 rounded-full flex items-center justify-center transition-all duration-300 ease-spring active:scale-90 hover:scale-[1.05]",
                               isSelected
-                                ? "bg-[#0066cc] border-[#0066cc] shadow-lg shadow-blue-500/30 scale-105 text-white"
-                                : "bg-white dark:bg-slate-800 border-2 border-slate-200 dark:border-slate-700 hover:border-[#0066cc]/50 dark:hover:border-blue-500/50 hover:bg-blue-50 dark:hover:bg-blue-900/20"
+                                ? "bg-[#0066cc] border-[#0066cc] shadow-glass-hover text-white"
+                                : "bg-white dark:bg-[#2a2a2c] border border-black/5 dark:border-white/10 hover:border-[#0066cc]/50 hover:shadow-sm"
                             )}
                           >
                             {isSelected ? "✓" : null}
@@ -255,7 +255,7 @@ export function ScheduleRegistrationPanel() {
           <button
             onClick={handleRegister}
             disabled={saving}
-            className="w-full md:w-auto shrink-0 flex items-center justify-center gap-2 px-8 py-3.5 rounded-full bg-[#0066cc] hover:bg-[#005bb5] active:scale-95 text-white font-semibold transition-all disabled:opacity-50 shadow-lg shadow-blue-500/20 text-[16px]"
+            className="w-full md:w-auto shrink-0 flex items-center justify-center gap-2 px-8 py-3.5 rounded-full bg-[#0066cc] hover:bg-[#0071e3] active:scale-95 text-white font-semibold transition-all duration-300 ease-spring disabled:opacity-50 disabled:pointer-events-none shadow-md shadow-blue-500/20 hover:shadow-lg hover:-translate-y-0.5 text-[16px]"
           >
             {saving ? <RefreshCw className="w-5 h-5 animate-spin" /> : <Save className="w-5 h-5" />}
             Xác nhận đăng ký

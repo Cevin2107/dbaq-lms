@@ -27,7 +27,7 @@ export function HeaderBar({ studentName }: { studentName?: string }) {
 
   return (
     <div className="fixed top-0 left-0 right-0 z-50 px-4 pt-4 sm:px-6 pointer-events-none">
-      <header className="mx-auto w-full max-w-[1440px] rounded-full bg-white/80 dark:bg-[#1d1d1f]/80 backdrop-blur-md border border-black/10 dark:border-white/10 shadow-[0_8px_30px_rgba(0,0,0,0.08)] pointer-events-auto transition-colors duration-500">
+      <header className="mx-auto w-full max-w-[1440px] rounded-full bg-white/70 dark:bg-[#2a2a2c]/70 backdrop-blur-xl border border-white/40 dark:border-white/10 shadow-glass pointer-events-auto transition-all duration-500 ease-liquid">
         <div className="flex h-14 items-center justify-between px-4 sm:px-6" suppressHydrationWarning>
           <Link href="/" className="flex items-center gap-2 hover:opacity-80 transition-opacity" suppressHydrationWarning>
             <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-gradient-to-tr from-[#0066cc] to-[#2997ff] shadow-sm">
@@ -40,13 +40,13 @@ export function HeaderBar({ studentName }: { studentName?: string }) {
             </span>
           </Link>
 
-          <div className="flex items-center gap-2 sm:gap-3 text-[14px] font-medium">
+          <div className="flex items-center gap-1.5 sm:gap-3 text-[13px] sm:text-[14px] font-medium">
             {!isAdminPath && <ThemeToggle />}
 
             {pathname === "/register-schedule" && (
               <Link
                 href="/"
-                className="flex items-center gap-1.5 rounded-full px-4 py-2 text-[#1d1d1f] dark:text-white hover:bg-black/5 dark:hover:bg-white/10 transition-colors"
+                className="flex items-center gap-1.5 rounded-full bg-slate-50 dark:bg-slate-800 text-slate-700 dark:text-slate-300 px-3 py-1.5 sm:px-4 sm:py-2 transition-all duration-300 ease-spring hover:bg-slate-100 dark:hover:bg-slate-700 hover:shadow-sm hover:-translate-y-0.5 active:scale-95 border border-slate-200 dark:border-slate-700 font-semibold text-xs sm:text-sm"
               >
                 Về trang chủ
               </Link>
@@ -54,7 +54,7 @@ export function HeaderBar({ studentName }: { studentName?: string }) {
 
             <Link
               href="/admin"
-              className="flex items-center gap-1.5 rounded-full px-4 py-2 text-[#1d1d1f] dark:text-white hover:bg-black/5 dark:hover:bg-white/10 transition-colors"
+              className="flex items-center gap-1.5 rounded-full bg-sky-50 dark:bg-sky-500/10 text-sky-600 dark:text-sky-400 px-3 py-1.5 sm:px-4 sm:py-2 transition-all duration-300 ease-spring hover:bg-sky-100 dark:hover:bg-sky-500/20 hover:shadow-sm hover:-translate-y-0.5 active:scale-95 border border-sky-100 dark:border-sky-500/20 font-semibold text-xs sm:text-sm"
             >
               Quản lý
             </Link>
@@ -62,10 +62,10 @@ export function HeaderBar({ studentName }: { studentName?: string }) {
             <button
               onClick={handleLogout}
               disabled={loggingOut}
-              className="flex items-center gap-1.5 rounded-full bg-red-50 dark:bg-red-500/10 text-red-600 dark:text-red-400 px-4 py-2 hover:bg-red-100 dark:hover:bg-red-500/20 transition-colors border border-red-100 dark:border-red-500/20 disabled:opacity-50"
+              className="flex items-center gap-1.5 rounded-full bg-red-50 dark:bg-red-500/10 text-red-600 dark:text-red-400 px-3 py-1.5 sm:px-4 sm:py-2 transition-all duration-300 ease-spring hover:bg-red-100 dark:hover:bg-red-500/20 hover:shadow-sm hover:-translate-y-0.5 active:scale-95 border border-red-100 dark:border-red-500/20 disabled:opacity-50 disabled:pointer-events-none text-xs sm:text-sm"
               title="Đăng xuất"
             >
-              <LogOut className="h-4 w-4" />
+              <LogOut className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
               <span className="hidden sm:inline">Đăng xuất</span>
             </button>
           </div>

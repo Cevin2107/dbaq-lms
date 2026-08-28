@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { Clock, Plus, Trash2, Save, Users, RefreshCw, Edit2, Calendar, Sparkles, CheckCircle2 } from "lucide-react";
 import { Button } from "@/components/ui/Button";
 
@@ -46,21 +46,7 @@ export default function TeachingSchedulePage() {
 
   const [newShift, setNewShift] = useState({ name: "", start_time: "", end_time: "" });
 
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  useEffect(() => {
-    fetchData();
-  }, []);
-
-  useEffect(() => {
-    if (selectedProxyStudent) {
-      const regs = registrationsByStudent[selectedProxyStudent] || [];
-      setProxySelections(regs.map(r => r.available_schedule_id));
-    } else {
-      setProxySelections([]);
-    }
-  }, [selectedProxyStudent, registrationsByStudent]);
-
-  const fetchData = async () => {
+  const fetchData = useCallback(async () => {
     setLoading(true);
     try {
       const [shiftsRes, availableRes, regsRes, limitsRes] = await Promise.all([
@@ -91,7 +77,20 @@ export default function TeachingSchedulePage() {
     } finally {
       setLoading(false);
     }
-  };
+  }, []);
+
+  useEffect(() => {
+    fetchData();
+  }, [fetchData]);
+
+  useEffect(() => {
+    if (selectedProxyStudent) {
+      const regs = registrationsByStudent[selectedProxyStudent] || [];
+      setProxySelections(regs.map(r => r.available_schedule_id));
+    } else {
+      setProxySelections([]);
+    }
+  }, [selectedProxyStudent, registrationsByStudent]);
 
   const showMessage = (type: "success" | "error", text: string) => {
     setMessage({ type, text });
@@ -260,7 +259,7 @@ export default function TeachingSchedulePage() {
             variant="outline"
             size="sm"
             onClick={fetchData}
-            className="rounded-full bg-white/80 dark:bg-slate-800/80 backdrop-blur-sm border-slate-200 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-800 px-4 py-2 text-xs font-semibold self-start sm:self-auto"
+            className="rounded-full bg-white/80 dark:bg-slate-800/80 backdrop-blur-sm border-slate-200 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-200 px-4 py-2 text-xs font-semibold self-start sm:self-auto"
           >
             <RefreshCw className="h-4 w-4 mr-1.5" />
             <span>Làm mới dữ liệu</span>
@@ -336,9 +335,9 @@ export default function TeachingSchedulePage() {
           <table className="w-full text-sm text-left">
             <thead className="bg-slate-50 dark:bg-slate-800/60 text-slate-700 dark:text-slate-300 font-bold">
               <tr>
-                <th className="px-4 py-3 border-b border-slate-200 dark:border-white/5 rounded-tl-xl w-32">Thứ \ Ca</th>
+                <th className="px-4 py-3 border-b border-slate-200 dark:border-white/5 rounded-tl-xl w-32 sticky left-0 bg-slate-50 dark:bg-slate-800/90 backdrop-blur z-10 font-bold">Thứ \ Ca</th>
                 {shifts.map(shift => (
-                  <th key={shift.id} className="px-4 py-3 border-b border-slate-200 dark:border-white/5 text-center">
+                  <th key={shift.id} className="px-4 py-3 border-b border-slate-200 dark:border-white/5 text-center min-w-[120px]">
                     <div className="font-bold">{shift.name}</div>
                     <div className="text-xs text-indigo-600 font-mono font-semibold">{shift.start_time.substring(0,5)} – {shift.end_time.substring(0,5)}</div>
                   </th>
@@ -348,7 +347,7 @@ export default function TeachingSchedulePage() {
             <tbody>
               {DAYS.map(day => (
                 <tr key={day.value} className="border-b border-slate-100 dark:border-white/5 hover:bg-slate-50/50 dark:hover:bg-slate-800/30 transition">
-                  <td className="px-4 py-3 font-bold text-slate-800 dark:text-slate-200">{day.label}</td>
+                  <td className="px-4 py-3 font-bold text-slate-800 dark:text-slate-200 sticky left-0 bg-white/90 dark:bg-[#1d1d1f]/90 backdrop-blur z-10 border-r border-slate-100 dark:border-white/5">{day.label}</td>
                   {shifts.map(shift => {
                     const isAvailable = availableSchedules.some(s => s.day_of_week === day.value && s.shift_id === shift.id);
                     return (
@@ -398,7 +397,7 @@ export default function TeachingSchedulePage() {
           <div className="space-y-6">
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
               <div className="text-sm font-semibold text-slate-600 dark:text-slate-300">
-                Đã chọn: <span className="text-[#0066cc] font-extrabold">{proxySelections.length}</span> / {studentLimits.find(s => s.id === selectedProxyStudent)?.max_shifts || 0} ca
+                Đã chọn: <span className="text-[#0066cc] dark:text-blue-400 font-extrabold">{proxySelections.length}</span> / {studentLimits.find(s => s.id === selectedProxyStudent)?.max_shifts || 0} ca
               </div>
               <Button 
                 onClick={handleSaveProxy} 
@@ -414,9 +413,9 @@ export default function TeachingSchedulePage() {
               <table className="w-full text-sm text-left">
                 <thead className="bg-slate-50 dark:bg-slate-800/60 text-slate-700 dark:text-slate-300 font-bold">
                   <tr>
-                    <th className="px-4 py-3 border-b border-slate-200 dark:border-white/5 rounded-tl-xl w-32">Thứ \ Ca</th>
+                    <th className="px-4 py-3 border-b border-slate-200 dark:border-white/5 rounded-tl-xl w-32 sticky left-0 bg-slate-50 dark:bg-slate-800/90 backdrop-blur z-10 font-bold">Thứ \ Ca</th>
                     {shifts.map(shift => (
-                      <th key={shift.id} className="px-4 py-3 border-b border-slate-200 dark:border-white/5 text-center">
+                      <th key={shift.id} className="px-4 py-3 border-b border-slate-200 dark:border-white/5 text-center min-w-[120px]">
                         <div className="font-bold">{shift.name}</div>
                         <div className="text-xs text-slate-400 font-normal">{shift.start_time.substring(0,5)} - {shift.end_time.substring(0,5)}</div>
                       </th>
@@ -426,7 +425,7 @@ export default function TeachingSchedulePage() {
                 <tbody>
                   {DAYS.map(day => (
                     <tr key={day.value} className="border-b border-slate-100 dark:border-white/5 hover:bg-slate-50/50 dark:hover:bg-slate-800/30 transition">
-                      <td className="px-4 py-3 font-bold text-slate-800 dark:text-slate-200">{day.label}</td>
+                      <td className="px-4 py-3 font-bold text-slate-800 dark:text-slate-200 sticky left-0 bg-white/90 dark:bg-[#1d1d1f]/90 backdrop-blur z-10 border-r border-slate-100 dark:border-white/5">{day.label}</td>
                       {shifts.map(shift => {
                         const availableSchedule = availableSchedules.find(s => s.day_of_week === day.value && s.shift_id === shift.id);
                         if (!availableSchedule) {
@@ -527,7 +526,7 @@ export default function TeachingSchedulePage() {
                         <p className="text-xs font-bold text-slate-400 uppercase tracking-wider">Đã đăng ký ({regs.length}/{student.max_shifts} ca)</p>
                         <button 
                           onClick={() => handleResetRegistration(student.id, student.full_name)}
-                          className="text-xs flex items-center gap-1 text-rose-600 font-semibold bg-rose-50 hover:bg-rose-100 px-2.5 py-1 rounded-full transition"
+                          className="text-xs flex items-center gap-1 text-rose-600 dark:text-rose-400 font-semibold bg-rose-50 dark:bg-rose-950/40 hover:bg-rose-100 dark:hover:bg-rose-900/50 px-2.5 py-1 rounded-full transition border border-rose-100 dark:border-rose-900/30"
                         >
                           <RefreshCw className="h-3 w-3" />
                           Reset lịch

@@ -23,9 +23,11 @@ export default async function AdminLayout({
       </div>
 
       <AdminSidebar />
-      <main className="flex-1 overflow-auto relative">
-        <div className="min-h-full pb-20 lg:pb-0">
-          {children}
+      <main className="flex-1 overflow-hidden relative flex flex-col p-2 sm:p-3 lg:p-4">
+        <div className="flex-1 overflow-auto bg-white/80 dark:bg-[#1d1d1f]/80 backdrop-blur-2xl rounded-[2rem] shadow-glass border border-white/40 dark:border-white/10 relative">
+          <div className="min-h-full pb-24 lg:pb-0">
+            {children}
+          </div>
         </div>
       </main>
     </div>

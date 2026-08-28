@@ -148,7 +148,7 @@ export default function AdminStatsPage() {
         setLoading(false);
       }
     }
-  }, []);
+  }, [addToast]);
 
   const loadAuthStudents = useCallback(async () => {
     try {
@@ -703,16 +703,15 @@ export default function AdminStatsPage() {
 
                     {/* Expanded Content */}
                     {isExpanded && (
-                      <div className="border-t border-white/60 bg-gradient-to-br from-slate-50/50 to-blue-50/30 backdrop-blur-sm p-5">
+                      <div className="border-t border-white/60 dark:border-white/5 bg-gradient-to-br from-slate-50/50 to-blue-50/30 dark:from-[#1d1d1f]/60 dark:to-blue-950/20 backdrop-blur-sm p-5">
                         <div className="space-y-5">
                           {/* In Progress Sessions */}
                           {student.inProgress.length > 0 && (
                             <div>
                               <div className="flex items-center justify-between mb-3">
-
-                                <h4 className="text-sm font-bold text-amber-700 flex items-center gap-2">
-                                  <div className="flex h-7 w-7 items-center justify-center rounded-xl bg-amber-100/80 backdrop-blur-sm">
-                                    <Clock className="h-4 w-4" />
+                                <h4 className="text-sm font-bold text-amber-700 dark:text-amber-400 flex items-center gap-2">
+                                  <div className="flex h-7 w-7 items-center justify-center rounded-xl bg-amber-100/80 dark:bg-amber-950/40 backdrop-blur-sm">
+                                    <Clock className="h-4 w-4 text-amber-650 dark:text-amber-400" />
                                   </div>
                                   Đang làm dở ({student.inProgress.length})
                                 </h4>
@@ -720,7 +719,7 @@ export default function AdminStatsPage() {
                                   <button
                                     onClick={() => deleteSelectedItems()}
                                     disabled={deleting}
-                                    className="px-3 py-1.5 text-xs font-semibold text-red-600 bg-red-50/80 backdrop-blur-sm border border-red-200/50 rounded-xl hover:bg-red-100 hover:shadow-md transition-all disabled:opacity-50 flex items-center gap-1.5"
+                                    className="px-3 py-1.5 text-xs font-semibold text-red-600 dark:text-red-400 bg-red-50/80 dark:bg-red-950/40 backdrop-blur-sm border border-red-200/50 dark:border-red-900/30 rounded-xl hover:bg-red-100 dark:hover:bg-red-900/50 hover:shadow-md transition-all disabled:opacity-50 flex items-center gap-1.5"
                                   >
                                     <Trash2 className="h-3 w-3" />
                                     Xóa ({selectedSessions.size})
@@ -738,8 +737,8 @@ export default function AdminStatsPage() {
                                       key={session.sessionId}
                                       className={`rounded-2xl border p-4 text-sm transition-all duration-300 group cursor-pointer ${
                                         isSelected 
-                                          ? 'border-amber-400/80 bg-amber-50/80 shadow-lg shadow-amber-200/50' 
-                                          : 'border-amber-200/50 bg-white/60 hover:bg-white/80 hover:shadow-lg hover:shadow-amber-200/30'
+                                          ? 'border-amber-400/80 dark:border-amber-500/80 bg-amber-50/80 dark:bg-amber-950/30 shadow-lg dark:shadow-none' 
+                                          : 'border-amber-200/50 dark:border-amber-800/40 bg-white/60 dark:bg-[#1d1d1f]/60 hover:bg-white/80 dark:hover:bg-[#1d1d1f]/80 hover:shadow-lg dark:hover:shadow-none'
                                       } backdrop-blur-sm`}
                                       onClick={(e) => {
                                         e.stopPropagation();
@@ -760,26 +759,26 @@ export default function AdminStatsPage() {
                                         <div className="flex-1">
                                           <div className="flex items-start justify-between gap-4">
                                             <div className="flex-1">
-                                              <p className="font-bold text-amber-900 mb-1 group-hover:text-amber-700 transition-colors">{session.assignmentTitle}</p>
-                                              <div className="flex flex-wrap items-center gap-2 text-xs text-amber-700/80">
-                                                <span className="px-2.5 py-1 rounded-full bg-amber-100/60 backdrop-blur-sm">{session.subject}</span>
-                                                <span className="px-2.5 py-1 rounded-full bg-amber-100/60 backdrop-blur-sm">{session.grade}</span>
+                                              <p className="font-bold text-amber-900 dark:text-amber-200 mb-1 group-hover:text-amber-700 dark:group-hover:text-amber-400 transition-colors">{session.assignmentTitle}</p>
+                                              <div className="flex flex-wrap items-center gap-2 text-xs text-amber-700/80 dark:text-amber-400/80">
+                                                <span className="px-2.5 py-1 rounded-full bg-amber-100/60 dark:bg-amber-950/40 backdrop-blur-sm">{session.subject}</span>
+                                                <span className="px-2.5 py-1 rounded-full bg-amber-100/60 dark:bg-amber-950/40 backdrop-blur-sm">{session.grade}</span>
                                                 <span
                                                   className={`px-2.5 py-1 rounded-full font-semibold ${
                                                     isActive
-                                                      ? "bg-amber-200/80 text-amber-800"
-                                                      : "bg-rose-100/90 text-rose-700"
+                                                      ? "bg-amber-200/80 dark:bg-amber-950/60 text-amber-800 dark:text-amber-300"
+                                                      : "bg-rose-100/90 dark:bg-rose-950/60 text-rose-700 dark:text-rose-300"
                                                   }`}
                                                 >
                                                   {isActive ? "Đang làm" : "Đã thoát"}
                                                 </span>
-                                                <span className="text-amber-600">• {date}</span>
+                                                <span className="text-amber-600 dark:text-amber-400">• {date}</span>
                                               </div>
                                             </div>
                                             <div className="text-right">
-                                              <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-xl bg-amber-100/80 backdrop-blur-sm border border-amber-200/50">
-                                                <FileText className="h-4 w-4 text-amber-700" />
-                                                <span className="font-bold text-amber-900">{session.questionsAnswered} câu</span>
+                                              <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-xl bg-amber-100/80 dark:bg-amber-950/40 backdrop-blur-sm border border-amber-200/50 dark:border-amber-900/30">
+                                                <FileText className="h-4 w-4 text-amber-700 dark:text-amber-400" />
+                                                <span className="font-bold text-amber-900 dark:text-amber-200">{session.questionsAnswered} câu</span>
                                               </div>
                                             </div>
                                           </div>
@@ -796,9 +795,9 @@ export default function AdminStatsPage() {
                           {student.submissions.length > 0 && (
                             <div>
                               <div className="flex items-center justify-between mb-3">
-                                <h4 className="text-sm font-bold text-emerald-700 flex items-center gap-2">
-                                  <div className="flex h-7 w-7 items-center justify-center rounded-xl bg-emerald-100/80 backdrop-blur-sm">
-                                    <CheckCircle2 className="h-4 w-4" />
+                                <h4 className="text-sm font-bold text-emerald-700 dark:text-emerald-400 flex items-center gap-2">
+                                  <div className="flex h-7 w-7 items-center justify-center rounded-xl bg-emerald-100/80 dark:bg-emerald-950/40 backdrop-blur-sm">
+                                    <CheckCircle2 className="h-4 w-4 text-emerald-600 dark:text-emerald-400" />
                                   </div>
                                   Đã nộp ({student.submissions.length})
                                 </h4>
@@ -806,7 +805,7 @@ export default function AdminStatsPage() {
                                   <button
                                     onClick={() => deleteSelectedItems()}
                                     disabled={deleting}
-                                    className="px-3 py-1.5 text-xs font-semibold text-red-600 bg-red-50/80 backdrop-blur-sm border border-red-200/50 rounded-xl hover:bg-red-100 hover:shadow-md transition-all disabled:opacity-50 flex items-center gap-1.5"
+                                    className="px-3 py-1.5 text-xs font-semibold text-red-600 dark:text-red-400 bg-red-50/80 dark:bg-red-950/40 backdrop-blur-sm border border-red-200/50 dark:border-red-900/30 rounded-xl hover:bg-red-100 dark:hover:bg-red-900/50 hover:shadow-md transition-all disabled:opacity-50 flex items-center gap-1.5"
                                   >
                                     <Trash2 className="h-3 w-3" />
                                     Xóa ({selectedSubmissions.size})
@@ -831,8 +830,8 @@ export default function AdminStatsPage() {
                                       key={sub.id}
                                       className={`rounded-2xl border p-4 text-sm transition-all duration-300 group cursor-pointer ${
                                         isSelected 
-                                          ? 'border-indigo-400/80 bg-indigo-50/80 shadow-lg shadow-indigo-200/50' 
-                                          : 'border-slate-200/50 bg-white/60 hover:bg-white/80 hover:shadow-lg hover:shadow-indigo-200/30'
+                                          ? 'border-indigo-400/80 dark:border-indigo-500/80 bg-indigo-50/80 dark:bg-indigo-950/30 shadow-lg dark:shadow-none' 
+                                          : 'border-slate-200/50 dark:border-slate-800/40 bg-white/60 dark:bg-[#1d1d1f]/60 hover:bg-white/80 dark:hover:bg-[#1d1d1f]/80 hover:shadow-lg dark:hover:shadow-none'
                                       } backdrop-blur-sm`}
                                       onClick={(e) => {
                                         e.stopPropagation();
@@ -853,19 +852,19 @@ export default function AdminStatsPage() {
                                         <div className="flex-1">
                                           <div className="flex items-start justify-between gap-4">
                                             <div className="flex-1">
-                                              <p className="font-bold text-slate-900 mb-1 group-hover:text-indigo-700 transition-colors">{sub.assignmentTitle}</p>
-                                              <div className="flex flex-wrap items-center gap-2 text-xs text-slate-600">
-                                                <span className="px-2 py-0.5 rounded-lg bg-slate-100/60 backdrop-blur-sm">{sub.subject}</span>
-                                                <span className="px-2 py-0.5 rounded-lg bg-slate-100/60 backdrop-blur-sm">{sub.grade}</span>
+                                              <p className="font-bold text-slate-900 dark:text-white mb-1 group-hover:text-indigo-700 dark:group-hover:text-indigo-400 transition-colors">{sub.assignmentTitle}</p>
+                                              <div className="flex flex-wrap items-center gap-2 text-xs text-slate-600 dark:text-slate-400">
+                                                <span className="px-2 py-0.5 rounded-lg bg-slate-100/60 dark:bg-slate-800/60 backdrop-blur-sm">{sub.subject}</span>
+                                                <span className="px-2 py-0.5 rounded-lg bg-slate-100/60 dark:bg-slate-800/60 backdrop-blur-sm">{sub.grade}</span>
                                                 <span className="inline-flex items-center gap-1">
-                                                  <Clock className="h-3 w-3" />
+                                                  <Clock className="h-3 w-3 text-slate-400 dark:text-slate-500" />
                                                   {duration} phút
                                                 </span>
-                                                <span className="text-slate-500">• {date}</span>
+                                                <span className="text-slate-500 dark:text-slate-500">• {date}</span>
                                               </div>
                                             </div>
                                             <div className="text-right">
-                                              <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-xl bg-gradient-to-r shadow-md backdrop-blur-sm border border-white/50">
+                                              <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-xl bg-gradient-to-r dark:from-slate-800 dark:to-slate-900 shadow-md backdrop-blur-sm border border-white/50 dark:border-white/5">
                                                 <div className={`inline-flex h-6 w-6 items-center justify-center rounded-lg bg-gradient-to-br ${scoreColorClass}`}>
                                                   <Trophy className="h-3.5 w-3.5 text-white" />
                                                 </div>
@@ -895,7 +894,7 @@ export default function AdminStatsPage() {
                         <button
                           onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}
                           disabled={currentPage === 1}
-                          className="flex h-10 w-10 items-center justify-center rounded-2xl border border-slate-200/60 bg-white/60 backdrop-blur-sm text-slate-600 hover:text-indigo-600 disabled:opacity-40 disabled:cursor-not-allowed transition-all shadow-md"
+                          className="flex h-10 w-10 items-center justify-center rounded-2xl border border-slate-200/60 dark:border-white/5 bg-white/60 dark:bg-[#1d1d1f]/60 backdrop-blur-sm text-slate-600 dark:text-slate-300 hover:text-indigo-600 dark:hover:text-indigo-400 disabled:opacity-40 disabled:cursor-not-allowed transition-all shadow-md"
                         >
                           &larr;
                         </button>

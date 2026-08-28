@@ -59,6 +59,7 @@ export function AssignmentTaking({ assignment, questions: initialQuestions, init
   const hasAutoSubmitted = useRef(false);
   const [showExitConfirm, setShowExitConfirm] = useState(false);
   const [showSubmitConfirm, setShowSubmitConfirm] = useState(false);
+  const [showMobileQuestionMap, setShowMobileQuestionMap] = useState(false);
   const [isMounted, setIsMounted] = useState(false);
   const [lastSaveTime, setLastSaveTime] = useState<number | null>(null);
   const [isSaving, setIsSaving] = useState(false);
@@ -151,7 +152,7 @@ export function AssignmentTaking({ assignment, questions: initialQuestions, init
     };
     const id = setInterval(fetchDeadline, 15000);
     return () => clearInterval(id);
-  }, [sessionId, submitting, hasSubmitted]);
+  }, [sessionId, submitting, hasSubmitted, assignment.id, router]);
 
   useEffect(() => {
     if (!sessionId || submitting || hasSubmitted) return;
@@ -735,7 +736,81 @@ export function AssignmentTaking({ assignment, questions: initialQuestions, init
         </div>
       </div>
       
-      {/* Mobile Question Map (Bottom Sheet/Floating) could be implemented here as well */}
+      {/* Mobile Floating Question Map Button */}
+      {!hasSubmitted && !locked && (
+        <div className="fixed bottom-5 right-5 lg:hidden z-30">
+          <button
+            onClick={() => setShowMobileQuestionMap(true)}
+            className="flex items-center gap-2 px-4 py-3 rounded-full bg-[#0066cc] text-white font-bold text-xs shadow-lg shadow-blue-500/30 active:scale-95 transition-all border border-blue-400/20"
+          >
+            <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
+              <path strokeLinecap="round" strokeLinejoin="round" d="M4 6h16M4 10h16M4 14h16M4 18h16" />
+            </svg>
+            <span>Câu hỏi ({answeredCount}/{nonSectionQuestions.length})</span>
+          </button>
+        </div>
+      )}
+
+      {/* Mobile Question Map Drawer */}
+      {showMobileQuestionMap && (
+        <div className="fixed inset-0 z-[90] lg:hidden animate-fade-in">
+          <div
+            className="fixed inset-0 bg-slate-950/60 backdrop-blur-md transition-opacity"
+            onClick={() => setShowMobileQuestionMap(false)}
+          />
+          <div className={clsx(
+            "fixed inset-x-0 bottom-0 max-h-[80vh] rounded-t-[2rem] p-6 shadow-2xl overflow-y-auto flex flex-col border-t transition-transform animate-slide-up",
+            isDark ? "bg-[#1d1d1f] border-white/10 text-white" : "bg-white border-black/5 text-slate-900"
+          )}>
+            <div className="flex items-center justify-between mb-4">
+              <div>
+                <h3 className="font-bold text-base">Danh sách câu hỏi</h3>
+                <p className="text-xs text-slate-500 dark:text-slate-400">Đã làm: {answeredCount}/{nonSectionQuestions.length} câu</p>
+              </div>
+              <button
+                onClick={() => setShowMobileQuestionMap(false)}
+                className="p-2 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-400"
+              >
+                <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
+                </svg>
+              </button>
+            </div>
+
+            <div className="grid grid-cols-5 sm:grid-cols-6 gap-2.5 my-2">
+              {nonSectionQuestions.map((q, idx) => {
+                const done = Boolean(answers[q.id]);
+                return (
+                  <button
+                    key={q.id}
+                    type="button"
+                    onClick={() => {
+                      scrollToQuestion(q.id);
+                      setShowMobileQuestionMap(false);
+                    }}
+                    className={clsx(
+                      "flex h-11 w-full items-center justify-center rounded-xl text-sm font-bold transition-all relative overflow-hidden active:scale-95",
+                      done
+                        ? "bg-[#0066cc] text-white shadow-sm"
+                        : isDark
+                          ? "bg-white/5 text-slate-300 border border-white/10"
+                          : "bg-slate-100 text-slate-600 border border-slate-200"
+                    )}
+                  >
+                    {done && <div className="absolute top-1 right-1 w-1.5 h-1.5 rounded-full bg-white" />}
+                    {idx + 1}
+                  </button>
+                );
+              })}
+            </div>
+
+            <div className="mt-4 pt-3 border-t border-slate-100 dark:border-white/5 flex items-center justify-around text-xs font-semibold">
+              <span className="flex items-center gap-1.5"><span className="h-3 w-3 rounded-md bg-[#0066cc]" />Đã làm</span>
+              <span className="flex items-center gap-1.5"><span className={clsx("h-3 w-3 rounded-md border", isDark ? "bg-white/5 border-white/10" : "bg-slate-100 border-slate-200")} />Chưa làm</span>
+            </div>
+          </div>
+        </div>
+      )}
     </main>
   );
 }

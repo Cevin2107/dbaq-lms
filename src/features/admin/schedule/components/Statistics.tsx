@@ -217,7 +217,7 @@ export function Statistics({
                     </p>
                   </div>
                 ) : (
-                  <div className="bg-white p-3 sm:p-3.5 rounded-[20px] shadow-md border border-slate-200/80 inline-block overflow-hidden">
+                  <div className="bg-white p-3 sm:p-3.5 rounded-[20px] shadow-md border border-slate-200/80 dark:border-slate-700/80 inline-block overflow-hidden">
                     <img
                       src={qrUrl}
                       alt="QR Code"
