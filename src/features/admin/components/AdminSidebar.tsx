@@ -34,31 +34,17 @@ export function AdminSidebar() {
   const pathname = usePathname();
   const { theme, toggleTheme } = useTheme();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-  const [isDesktop, setIsDesktop] = useState(false);
-
-  useEffect(() => {
-    const checkDesktop = () => setIsDesktop(window.innerWidth >= 1024);
-    if (typeof window !== "undefined") {
-      checkDesktop();
-      window.addEventListener("resize", checkDesktop);
-    }
-    return () => {
-      if (typeof window !== "undefined") {
-        window.removeEventListener("resize", checkDesktop);
-      }
-    };
-  }, []);
 
   // Close mobile menu on route change
   useEffect(() => {
     setIsMobileMenuOpen(false);
   }, [pathname]);
 
-  // ─── MOBILE: Bottom Tab Bar + Slide-over Drawer ────
-  if (!isDesktop) {
-    return (
-      <>
-        {/* Bottom Tab Bar – luôn hiển thị trên mobile */}
+  return (
+    <>
+      {/* ─── MOBILE: Bottom Tab Bar + Slide-over Drawer (Visible on < lg) ──── */}
+      <div className="lg:hidden">
+        {/* Bottom Tab Bar */}
         <nav
           className="fixed bottom-0 left-0 right-0 z-50 border-t border-slate-200/80 dark:border-white/5 bg-white/90 dark:bg-[#1d1d1f]/90 backdrop-blur-xl shadow-[0_-4px_20px_rgba(0,0,0,0.06)] dark:shadow-none"
           style={{ paddingBottom: "env(safe-area-inset-bottom, 0px)" }}
@@ -144,7 +130,7 @@ export function AdminSidebar() {
                         "flex items-center gap-3 rounded-[1.25rem] px-4 py-3.5 text-sm font-semibold transition-all duration-300",
                         isActive
                           ? "bg-[#0066cc] text-white shadow-lg shadow-blue-500/20 translate-x-1"
-                          : "text-slate-600 hover:bg-slate-50 active:bg-slate-100"
+                          : "text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800/50 active:bg-slate-100"
                       )}
                     >
                       <Icon className={cn("h-5 w-5 flex-shrink-0", isActive ? "text-white" : "text-slate-400")} />
@@ -180,13 +166,10 @@ export function AdminSidebar() {
             </div>
           </>
         )}
-      </>
-    );
-  }
+      </div>
 
-  // ─── DESKTOP: Classic Sticky Sidebar ────
-  return (
-    <aside className="sticky top-0 left-0 z-40 h-screen w-64 flex flex-col border-r border-white/40 dark:border-white/5 bg-white/70 dark:bg-[#2a2a2c]/70 backdrop-blur-xl shadow-glass">
+      {/* ─── DESKTOP: Sticky Sidebar (Visible on >= lg) ──── */}
+      <aside className="hidden lg:flex sticky top-0 left-0 z-40 h-screen w-64 flex-col border-r border-white/40 dark:border-white/5 bg-white/70 dark:bg-[#2a2a2c]/70 backdrop-blur-xl shadow-glass">
         <div className="flex h-16 shrink-0 items-center justify-between border-b border-slate-200 dark:border-white/5 px-4">
         <Link href="/admin/dashboard" className="flex items-center gap-3">
           <div className="relative group">
@@ -249,5 +232,6 @@ export function AdminSidebar() {
         </form>
       </div>
     </aside>
+  </>
   );
 }
