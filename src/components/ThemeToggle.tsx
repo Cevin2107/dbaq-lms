@@ -2,9 +2,26 @@
 
 import { Moon, Sun } from "lucide-react";
 import { useTheme } from "@/providers/ThemeProvider";
+import { useEffect, useState } from "react";
 
 export function ThemeToggle({ className }: { className?: string }) {
   const { theme, toggleTheme } = useTheme();
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  if (!mounted) {
+    return (
+      <button
+        className={`p-2 rounded-xl transition-colors bg-slate-100 dark:bg-slate-800 text-slate-400 opacity-70 ${className || ""}`}
+        aria-label="Toggle theme"
+      >
+        <span className="w-5 h-5 block" />
+      </button>
+    );
+  }
 
   return (
     <button
@@ -20,3 +37,4 @@ export function ThemeToggle({ className }: { className?: string }) {
     </button>
   );
 }
+

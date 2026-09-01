@@ -183,7 +183,7 @@ export default function StartAssignmentPage({ params }: { params: Promise<{ id: 
   };
 
   return (
-    <main className="min-h-screen bg-[#f5f5f7] dark:bg-[#000000] flex flex-col items-center justify-center px-4 py-12 relative overflow-hidden">
+    <main className="min-h-screen bg-[#f5f5f7] dark:bg-[#0a0a0a] flex flex-col items-center justify-center px-4 py-12 relative overflow-hidden">
       {/* Background decoration */}
       <div className="pointer-events-none fixed inset-0 overflow-hidden">
         <div className="absolute -top-40 -right-40 h-80 w-80 rounded-full bg-blue-100 dark:bg-blue-900/20 opacity-60 blur-3xl" />

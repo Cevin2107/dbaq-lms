@@ -122,7 +122,7 @@ export function ScheduleRegistrationPanel() {
           </p>
         </div>
 
-        <div className="bg-white/80 dark:bg-black/40 backdrop-blur-md rounded-[1.5rem] border border-white/40 dark:border-white/10 p-5 flex flex-col md:items-end shadow-sm shrink-0 min-w-[140px]">
+        <div className="bg-white/80 dark:bg-[#0a0a0a]/40 backdrop-blur-md rounded-[1.5rem] border border-white/40 dark:border-white/10 p-5 flex flex-col md:items-end shadow-sm shrink-0 min-w-[140px]">
           <span className="text-[14px] font-medium text-slate-500 dark:text-slate-400 mb-1">Đã chọn</span>
           <div className="text-3xl font-bold text-slate-800 dark:text-white flex items-baseline">
             <span className={clsx(selectedIds.size === maxShifts && "text-[#0066cc] dark:text-blue-400")}>

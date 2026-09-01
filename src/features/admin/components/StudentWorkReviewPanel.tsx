@@ -88,8 +88,8 @@ export function StudentWorkReviewPanel({
     typeof durationSeconds === "number"
       ? Math.max(0, Math.floor(durationSeconds))
       : isSubmitted && submissionDurationSeconds != null
-      ? Math.max(0, Math.floor(submissionDurationSeconds))
-      : fallbackElapsedSeconds;
+        ? Math.max(0, Math.floor(submissionDurationSeconds))
+        : fallbackElapsedSeconds;
   const workTimeLabel = formatDuration(workSeconds);
 
   const startRegrading = () => {
@@ -242,7 +242,7 @@ export function StudentWorkReviewPanel({
                   Học sinh đã thoát trang
                 </p>
                 <p className="text-[13px] text-rose-600/80 dark:text-rose-400/70 mt-0.5">
-                  Tạm dừng cập nhật — Học sinh đã rời khỏi phòng thi hoặc đóng trình duyệt
+                  Tạm dừng cập nhật - Học sinh đã rời khỏi phòng thi hoặc đóng trình duyệt
                 </p>
               </div>
               <div className="hidden sm:flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-rose-200/50 dark:bg-rose-800/30 text-rose-700 dark:text-rose-300 text-xs font-semibold">

@@ -65,7 +65,7 @@ export default async function HomePage() {
   const assignments = await fetchAssignmentsWithHistory(user.id, fullName);
 
   return (
-    <main className="min-h-screen bg-[#f5f5f7] dark:bg-[#000000] relative pt-24 sm:pt-28">
+    <main className="min-h-screen bg-[#f5f5f7] dark:bg-[#0a0a0a] relative pt-24 sm:pt-28">
       <HeaderBar studentName={fullName} />
       <HomeTabs
         assignments={assignments}

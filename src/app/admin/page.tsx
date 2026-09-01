@@ -79,7 +79,7 @@ export default function AdminLoginPage() {
   }
 
   return (
-    <main className="min-h-screen bg-[#f5f5f7] dark:bg-[#000000] flex items-center justify-center px-4 py-12 relative">
+    <main className="min-h-screen bg-[#f5f5f7] dark:bg-[#0a0a0a] flex items-center justify-center px-4 py-12 relative">
       <div className="absolute top-4 right-4 z-20">
         <ThemeToggle />
       </div>

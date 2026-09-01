@@ -28,8 +28,8 @@ The visual language should be **Apple-inspired Liquid Glass**, not generic "glas
 
 Think of the UI as having two major layers:
 
-1. **Content layer** — the actual application content.
-2. **Functional glass layer** — navigation and controls floating above the content.
+1. **Content layer** - the actual application content.
+2. **Functional glass layer** - navigation and controls floating above the content.
 
 Do **not** cover the entire application in glass. Glass should create hierarchy and separation.
 
@@ -77,29 +77,29 @@ A glass component should feel like a **material**, not a flat transparent rectan
 
 Use several subtle layers:
 
-### Layer 1 — Base material
+### Layer 1 - Base material
 
 A translucent surface.
 
-### Layer 2 — Blur
+### Layer 2 - Blur
 
 Blur the content behind the surface.
 
-### Layer 3 — Depth
+### Layer 3 - Depth
 
 Use extremely soft shadows to lift the object from the background.
 
-### Layer 4 — Specular highlight
+### Layer 4 - Specular highlight
 
 Add a very subtle highlight along the upper edge or light-facing area.
 
-### Layer 5 — Lensing / refraction illusion
+### Layer 5 - Lensing / refraction illusion
 
 Where technically practical, create a subtle optical distortion or highlight near curved edges.
 
 On the web, do not overdo actual distortion. A convincing combination of blur, gradients, highlights and shadows is preferable to a visually noisy effect.
 
-### Layer 6 — Ambient tint
+### Layer 6 - Ambient tint
 
 Allow nearby colors to subtly influence the glass.
 
@@ -1221,15 +1221,15 @@ not:
 
 If the full document is unavailable, use this condensed instruction:
 
-> Design the interface using Apple's modern Liquid Glass design language. Use translucent adaptive materials, backdrop blur, subtle lensing/refraction-inspired edge highlights, specular highlights, soft depth, rounded floating controls, adaptive tint, and fluid spring-like interactions. Treat glass as a functional navigation/control layer above the content rather than covering everything with glass. Prioritize hierarchy, harmony, consistency, readability, accessibility and performance. Components should morph between states instead of simply fading. Buttons should subtly flex, brighten and compress on interaction. Navigation should float above edge-to-edge content with contextual scroll-edge separation. Support light/dark mode, reduced motion and responsive layouts. The result should feel calm, premium, spatial, minimal and unmistakably inspired by Apple's Liquid Glass — not generic glassmorphism.
+> Design the interface using Apple's modern Liquid Glass design language. Use translucent adaptive materials, backdrop blur, subtle lensing/refraction-inspired edge highlights, specular highlights, soft depth, rounded floating controls, adaptive tint, and fluid spring-like interactions. Treat glass as a functional navigation/control layer above the content rather than covering everything with glass. Prioritize hierarchy, harmony, consistency, readability, accessibility and performance. Components should morph between states instead of simply fading. Buttons should subtly flex, brighten and compress on interaction. Navigation should float above edge-to-edge content with contextual scroll-edge separation. Support light/dark mode, reduced motion and responsive layouts. The result should feel calm, premium, spatial, minimal and unmistakably inspired by Apple's Liquid Glass - not generic glassmorphism.
 
 ---
 
 ## Official Apple References
 
-- Apple — **Meet Liquid Glass**
+- Apple - **Meet Liquid Glass**
 - Apple Human Interface Guidelines
-- Apple — **Liquid Glass documentation**
-- Apple — **WWDC Design Guide**
+- Apple - **Liquid Glass documentation**
+- Apple - **WWDC Design Guide**
 
 Use these references to understand the underlying principles rather than copying Apple's proprietary UI directly.

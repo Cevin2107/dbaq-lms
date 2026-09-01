@@ -87,7 +87,7 @@ export function AddStudentModal({ onAdd, onClose }: AddStudentModalProps) {
               value={name}
               onChange={(e) => setName(e.target.value)}
               placeholder="VD: Nguyễn Văn A"
-              className="w-full px-4 py-3 border border-slate-200 dark:border-slate-700 bg-white/50 dark:bg-black/20 text-slate-900 dark:text-white rounded-2xl focus:ring-2 focus:ring-[#0066cc] focus:border-transparent transition-all duration-200 outline-none text-[15px]"
+              className="w-full px-4 py-3 border border-slate-200 dark:border-slate-700 bg-white/50 dark:bg-[#0a0a0a]/20 text-slate-900 dark:text-white rounded-2xl focus:ring-2 focus:ring-[#0066cc] focus:border-transparent transition-all duration-200 outline-none text-[15px]"
               autoFocus
             />
           </div>
@@ -102,7 +102,7 @@ export function AddStudentModal({ onAdd, onClose }: AddStudentModalProps) {
                 value={salary}
                 onChange={(e) => setSalary(Number(e.target.value))}
                 step="5000"
-                className="w-full px-4 py-3 border border-slate-200 dark:border-slate-700 bg-white/50 dark:bg-black/20 text-slate-900 dark:text-white rounded-2xl focus:ring-2 focus:ring-[#0066cc] focus:border-transparent transition-all duration-200 outline-none text-[15px]"
+                className="w-full px-4 py-3 border border-slate-200 dark:border-slate-700 bg-white/50 dark:bg-[#0a0a0a]/20 text-slate-900 dark:text-white rounded-2xl focus:ring-2 focus:ring-[#0066cc] focus:border-transparent transition-all duration-200 outline-none text-[15px]"
               />
               <span className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 text-sm font-medium">
                 VND

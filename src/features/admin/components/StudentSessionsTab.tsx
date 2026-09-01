@@ -398,7 +398,7 @@ export function StudentSessionsTab({ assignmentId }: { assignmentId: string }) {
         const isSubmitted = !!session.submissions?.id;
         return (
           <div className="fixed inset-0 z-[9999] flex items-center justify-center p-2 sm:p-4 animate-fade-in">
-            <div className="fixed inset-0 bg-black/60 dark:bg-black/80 backdrop-blur-md" onClick={() => setSelectedSessionId(null)} />
+            <div className="fixed inset-0 bg-black/60 dark:bg-[#0a0a0a]/80 backdrop-blur-md" onClick={() => setSelectedSessionId(null)} />
             <div className="relative z-10 bg-white dark:bg-[#1d1d1f] rounded-2xl sm:rounded-3xl shadow-2xl border border-black/5 dark:border-white/10 max-w-5xl w-full max-h-[95vh] sm:max-h-[90vh] overflow-hidden flex flex-col animate-scale-in">
               {detailLoading ? (
                 <div className="p-8 sm:p-12 text-center flex-1 flex items-center justify-center">
@@ -453,7 +453,7 @@ export function StudentSessionsTab({ assignmentId }: { assignmentId: string }) {
                     </button>
                   </div>
 
-                  <div className="flex-1 overflow-y-auto p-3 sm:p-6 space-y-4 bg-slate-50/50 dark:bg-black/20">
+                  <div className="flex-1 overflow-y-auto p-3 sm:p-6 space-y-4 bg-slate-50/50 dark:bg-[#0a0a0a]/20">
                     <StudentWorkReviewPanel
                       questions={detailData.questions || []}
                       startedAt={session.started_at}

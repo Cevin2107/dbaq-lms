@@ -15,7 +15,7 @@ export default async function AdminLayout({
   }
 
   return (
-    <div className="flex h-screen overflow-hidden bg-[#f5f5f7] dark:bg-black relative">
+    <div className="flex h-screen overflow-hidden bg-[#f5f5f7] dark:bg-[#0a0a0a] relative">
       {/* Soft background elements */}
       <div className="pointer-events-none fixed inset-0 overflow-hidden">
         <div className="absolute -top-40 right-1/4 h-[500px] w-[500px] rounded-full bg-blue-200/20 dark:bg-blue-900/20 blur-[120px]" />

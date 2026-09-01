@@ -58,7 +58,7 @@ export function CalendarDay({ date, currentMonth, sessions, onDayClick }: Calend
         </span>
       </div>
 
-      {/* Sessions — dots on mobile, tags on sm+ */}
+      {/* Sessions - dots on mobile, tags on sm+ */}
       <div className="calendar-day-dots flex flex-wrap gap-0.5 sm:hidden justify-center">
         {daySessions.slice(0, 3).map((session) => (
           <span

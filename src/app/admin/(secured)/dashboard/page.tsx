@@ -324,7 +324,7 @@ export default function AdminDashboardPage() {
               <RefreshCw className="h-4 w-4 mr-1.5" />
               <span>Làm mới</span>
             </Button>
-            
+
             <Link href="/admin/teaching-schedule">
               <Button
                 variant="outline"
@@ -423,10 +423,10 @@ export default function AdminDashboardPage() {
 
       {/* Main Content Grid: 2 Columns */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 lg:gap-8">
-        
+
         {/* Left Column: Weekly Schedule & Registered Students Roster */}
         <div className="lg:col-span-2 space-y-6">
-          
+
           {/* Section 1: Visual Weekly Schedule Tabs (from /admin/teaching-schedule) */}
           <div className="space-y-4">
             <div className="flex items-center justify-between px-1">
@@ -448,7 +448,7 @@ export default function AdminDashboardPage() {
             </div>
 
             <div className="rounded-[2rem] bg-white/80 dark:bg-[#1d1d1f]/80 backdrop-blur-xl border border-black/5 dark:border-white/5 shadow-[0_4px_20px_rgba(0,0,0,0.03)] p-5 sm:p-6 space-y-5">
-              
+
               {/* Day Selector Segmented Control (Mobile Responsive + Auto-Center Scroll) */}
               <div className="flex items-center gap-1.5 sm:gap-2 p-1.5 sm:p-2 bg-slate-100/90 dark:bg-slate-800/70 rounded-[1.25rem] sm:rounded-[1.5rem] overflow-x-auto no-scrollbar scroll-smooth snap-x snap-mandatory shadow-inner border border-black/5 dark:border-white/5">
                 {DAYS.map((day) => {
@@ -469,11 +469,10 @@ export default function AdminDashboardPage() {
                         dayTabsRef.current[day.value] = el;
                       }}
                       onClick={() => setSelectedDay(day.value)}
-                      className={`flex-1 min-w-[76px] sm:min-w-[95px] shrink-0 snap-center py-2 sm:py-2.5 px-1.5 sm:px-2 rounded-xl sm:rounded-2xl text-xs font-bold transition-all duration-200 flex flex-col items-center justify-center gap-1 ${
-                        isSelected
+                      className={`flex-1 min-w-[76px] sm:min-w-[95px] shrink-0 snap-center py-2 sm:py-2.5 px-1.5 sm:px-2 rounded-xl sm:rounded-2xl text-xs font-bold transition-all duration-200 flex flex-col items-center justify-center gap-1 ${isSelected
                           ? "bg-white dark:bg-[#1d1d1f] text-[#0066cc] dark:text-blue-400 shadow-md shadow-blue-500/10 border border-blue-500/20 scale-[1.02]"
                           : "text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-white/40 dark:hover:bg-slate-800/40"
-                      }`}
+                        }`}
                     >
                       <div className="flex items-center gap-1 sm:gap-1.5">
                         <span className="text-xs sm:text-[13px] whitespace-nowrap">{day.label}</span>
@@ -505,7 +504,7 @@ export default function AdminDashboardPage() {
                   </div>
                   <div>
                     <h3 className="text-sm sm:text-base font-bold text-slate-900 dark:text-white">
-                      Ca dạy {DAYS.find((d) => d.value === selectedDay)?.label} — {formatDateShortVi(getTargetDateForDayOfWeek(selectedDay))}
+                      Ca dạy {DAYS.find((d) => d.value === selectedDay)?.label} - {formatDateShortVi(getTargetDateForDayOfWeek(selectedDay))}
                     </h3>
                     <p className="text-[11px] sm:text-xs text-slate-500 dark:text-slate-400">
                       Tích vào ô Toán hoặc Lý để ghi nhận 1 buổi dạy vào hệ thống
@@ -582,15 +581,13 @@ export default function AdminDashboardPage() {
                             type="button"
                             onClick={() => handleToggleSubjectSession(shift.studentName, selectedDay, "Toan")}
                             disabled={isTogglingToan}
-                            className={`flex-1 flex items-center justify-center gap-1 sm:gap-1.5 px-2.5 sm:px-3 py-1.5 sm:py-2 rounded-xl text-[11px] sm:text-xs font-bold transition-all duration-200 border active:scale-[0.97] ${
-                              isToanChecked
+                            className={`flex-1 flex items-center justify-center gap-1 sm:gap-1.5 px-2.5 sm:px-3 py-1.5 sm:py-2 rounded-xl text-[11px] sm:text-xs font-bold transition-all duration-200 border active:scale-[0.97] ${isToanChecked
                                 ? "bg-[#0066cc] text-white border-[#0066cc] shadow-md shadow-blue-500/25"
                                 : "bg-blue-50/70 dark:bg-blue-950/30 text-blue-700 dark:text-blue-300 border-blue-200/80 dark:border-blue-800/40 hover:bg-blue-100 dark:hover:bg-blue-900/50"
-                            }`}
+                              }`}
                           >
-                            <div className={`w-3.5 h-3.5 sm:w-4 sm:h-4 rounded-md border flex items-center justify-center transition-colors shrink-0 ${
-                              isToanChecked ? "bg-white border-white text-[#0066cc]" : "border-blue-400 bg-white dark:bg-slate-900"
-                            }`}>
+                            <div className={`w-3.5 h-3.5 sm:w-4 sm:h-4 rounded-md border flex items-center justify-center transition-colors shrink-0 ${isToanChecked ? "bg-white border-white text-[#0066cc]" : "border-blue-400 bg-white dark:bg-slate-900"
+                              }`}>
                               {isToanChecked && <Check className="w-2.5 h-2.5 sm:w-3 sm:h-3 stroke-[3]" />}
                             </div>
                             <span>Toán</span>
@@ -601,15 +598,13 @@ export default function AdminDashboardPage() {
                             type="button"
                             onClick={() => handleToggleSubjectSession(shift.studentName, selectedDay, "Ly")}
                             disabled={isTogglingLy}
-                            className={`flex-1 flex items-center justify-center gap-1 sm:gap-1.5 px-2.5 sm:px-3 py-1.5 sm:py-2 rounded-xl text-[11px] sm:text-xs font-bold transition-all duration-200 border active:scale-[0.97] ${
-                              isLyChecked
+                            className={`flex-1 flex items-center justify-center gap-1 sm:gap-1.5 px-2.5 sm:px-3 py-1.5 sm:py-2 rounded-xl text-[11px] sm:text-xs font-bold transition-all duration-200 border active:scale-[0.97] ${isLyChecked
                                 ? "bg-orange-500 text-white border-orange-500 shadow-md shadow-orange-500/25"
                                 : "bg-orange-50/70 dark:bg-orange-950/30 text-orange-700 dark:text-orange-300 border-orange-200/80 dark:border-orange-800/40 hover:bg-orange-100 dark:hover:bg-orange-900/50"
-                            }`}
+                              }`}
                           >
-                            <div className={`w-3.5 h-3.5 sm:w-4 sm:h-4 rounded-md border flex items-center justify-center transition-colors shrink-0 ${
-                              isLyChecked ? "bg-white border-white text-orange-600" : "border-orange-400 bg-white dark:bg-slate-900"
-                            }`}>
+                            <div className={`w-3.5 h-3.5 sm:w-4 sm:h-4 rounded-md border flex items-center justify-center transition-colors shrink-0 ${isLyChecked ? "bg-white border-white text-orange-600" : "border-orange-400 bg-white dark:bg-slate-900"
+                              }`}>
                               {isLyChecked && <Check className="w-2.5 h-2.5 sm:w-3 sm:h-3 stroke-[3]" />}
                             </div>
                             <span>Lý</span>
@@ -756,7 +751,7 @@ export default function AdminDashboardPage() {
 
         {/* Right Column: Quick Assignment List & Database Size */}
         <div className="lg:col-span-1 space-y-6">
-          
+
           {/* Quick Assignment List Card */}
           <div className="space-y-4">
             <div className="flex items-center justify-between px-1">
@@ -785,13 +780,12 @@ export default function AdminDashboardPage() {
                   >
                     <div className="min-w-0 flex-1">
                       <div className="flex items-center gap-1.5 mb-1">
-                        <span className={`text-[11px] font-extrabold px-2.5 py-0.5 rounded-full ${
-                          a.subject === "Toán" || a.subject === "Toan"
+                        <span className={`text-[11px] font-extrabold px-2.5 py-0.5 rounded-full ${a.subject === "Toán" || a.subject === "Toan"
                             ? "bg-blue-50 dark:bg-blue-950/50 text-[#0066cc] dark:text-blue-300"
                             : a.subject === "Lý" || a.subject === "Ly"
-                            ? "bg-indigo-50 dark:bg-indigo-950/50 text-indigo-600 dark:text-indigo-300"
-                            : "bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300"
-                        }`}>
+                              ? "bg-indigo-50 dark:bg-indigo-950/50 text-indigo-600 dark:text-indigo-300"
+                              : "bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300"
+                          }`}>
                           {a.subject || "Chung"}
                         </span>
                         {a.grade && (

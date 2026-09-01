@@ -168,7 +168,7 @@ function DocumentThumbnail({ document }: { document: LmsDocument }) {
     return (
       <div className="flex h-full w-full flex-col items-center justify-center bg-gradient-to-br from-red-50 via-white to-sky-50 dark:from-red-500/10 dark:via-[#1d1d1f] dark:to-sky-500/10">
         <FileText className="h-12 w-12 text-red-500" />
-        <span className="mt-3 rounded-full bg-white/80 dark:bg-black/30 px-3 py-1 text-[12px] font-semibold text-red-600 dark:text-red-300">
+        <span className="mt-3 rounded-full bg-white/80 dark:bg-[#0a0a0a]/30 px-3 py-1 text-[12px] font-semibold text-red-600 dark:text-red-300">
           PDF
         </span>
       </div>
@@ -178,7 +178,7 @@ function DocumentThumbnail({ document }: { document: LmsDocument }) {
   return (
     <div className="flex h-full w-full flex-col items-center justify-center bg-gradient-to-br from-slate-50 via-white to-blue-50 dark:from-slate-800 dark:via-[#1d1d1f] dark:to-blue-500/10">
       <FileArchive className="h-12 w-12 text-[#0066cc]" />
-      <span className="mt-3 rounded-full bg-white/80 dark:bg-black/30 px-3 py-1 text-[12px] font-semibold text-slate-600 dark:text-slate-300">
+      <span className="mt-3 rounded-full bg-white/80 dark:bg-[#0a0a0a]/30 px-3 py-1 text-[12px] font-semibold text-slate-600 dark:text-slate-300">
         {document.fileExtension.toUpperCase()}
       </span>
     </div>
@@ -1216,7 +1216,7 @@ export function DocumentsPanel() {
               </div>
             </div>
 
-            <div ref={viewerScrollRef} onScroll={() => saveLocalReadingProgress()} className="flex-1 overflow-auto bg-slate-100 dark:bg-black">
+            <div ref={viewerScrollRef} onScroll={() => saveLocalReadingProgress()} className="flex-1 overflow-auto bg-slate-100 dark:bg-[#0a0a0a]">
               {viewerDocument.fileType === "office" ? (
                 <div className="flex min-h-[70vh] flex-col items-center justify-center p-8 text-center">
                   <div className="mb-5 flex h-20 w-20 items-center justify-center rounded-full bg-slate-100 text-[#0066cc] dark:bg-white/10 dark:text-sky-400">

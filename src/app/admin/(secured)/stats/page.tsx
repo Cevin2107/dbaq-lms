@@ -1013,7 +1013,7 @@ export default function AdminStatsPage() {
 
       {/* Detail Modal - Glassmorphic */}
       {selectedItem && (
-        <div className="fixed inset-0 bg-black/50 dark:bg-black/70 backdrop-blur-sm flex items-center justify-center z-50 p-4 overflow-y-auto animate-fade-in">
+        <div className="fixed inset-0 bg-black/50 dark:bg-[#0a0a0a]/70 backdrop-blur-sm flex items-center justify-center z-50 p-4 overflow-y-auto animate-fade-in">
           <div className="bg-white dark:bg-[#1d1d1f] rounded-3xl shadow-2xl border border-black/5 dark:border-white/10 max-w-5xl w-full max-h-[90vh] overflow-hidden flex flex-col animate-scale-in">
             {loadingDetail ? (
               <div className="p-12 text-center flex-1 flex items-center justify-center">
@@ -1069,7 +1069,7 @@ export default function AdminStatsPage() {
                   </button>
                 </div>
 
-                <div className="flex-1 overflow-y-auto p-6 space-y-4 bg-slate-50/50 dark:bg-black/20">
+                <div className="flex-1 overflow-y-auto p-6 space-y-4 bg-slate-50/50 dark:bg-[#0a0a0a]/20">
                   <StudentWorkReviewPanel
                     questions={detailData.questions}
                     isSubmitted={selectedItem.type === 'submission'}

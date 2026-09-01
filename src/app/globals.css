@@ -53,6 +53,11 @@
     -moz-osx-font-smoothing: grayscale;
   }
 
+  html.dark body {
+    background: #0a0a0a;
+    color: #e5e5e5;
+  }
+
   * {
     scroll-margin-top: 5rem;
   }

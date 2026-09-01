@@ -32,7 +32,7 @@ export default async function ResultPage({
   const { sid } = await searchParams;
 
   if (!sid) {
-      <main className="min-h-screen bg-[#f5f5f7] dark:bg-[#000000] transition-colors duration-500 flex items-center justify-center">
+      <main className="min-h-screen bg-[#f5f5f7] dark:bg-[#0a0a0a] transition-colors duration-500 flex items-center justify-center">
         <div className="mx-auto max-w-xl px-4 py-8">
           <div className="rounded-[2rem] bg-white/80 dark:bg-[#1d1d1f]/80 backdrop-blur-xl border border-black/5 dark:border-white/5 shadow-[0_4px_20px_rgba(0,0,0,0.03)] p-8 text-center">
             <p className="text-[15px] text-slate-600 dark:text-slate-400 font-medium">Không tìm thấy kết quả bài làm.</p>
@@ -129,7 +129,7 @@ export default async function ResultPage({
   const history = historyRaw as SubmissionSummary[] | null;
 
   return (
-    <main className="min-h-screen bg-[#f5f5f7] dark:bg-[#000000] transition-colors duration-500" suppressHydrationWarning>
+    <main className="min-h-screen bg-[#f5f5f7] dark:bg-[#0a0a0a] transition-colors duration-500" suppressHydrationWarning>
       {/* Background decoration */}
       <div className="pointer-events-none fixed inset-0 overflow-hidden">
         <div className="absolute top-0 right-0 w-[500px] h-[500px] rounded-full bg-blue-100 dark:bg-blue-900/20 opacity-40 blur-[100px] -translate-y-1/2 translate-x-1/3" />

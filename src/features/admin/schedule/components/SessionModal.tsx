@@ -100,7 +100,7 @@ export function SessionModal({
             <select
               value={selectedSubject}
               onChange={(e) => setSelectedSubject(e.target.value as Subject)}
-              className="w-full px-4 py-3 border border-slate-200 dark:border-slate-700 bg-white/50 dark:bg-black/20 text-slate-900 dark:text-white rounded-2xl focus:ring-2 focus:ring-[#0066cc] focus:border-transparent transition-all duration-200 outline-none text-[15px]"
+              className="w-full px-4 py-3 border border-slate-200 dark:border-slate-700 bg-white/50 dark:bg-[#0a0a0a]/20 text-slate-900 dark:text-white rounded-2xl focus:ring-2 focus:ring-[#0066cc] focus:border-transparent transition-all duration-200 outline-none text-[15px]"
             >
               {SUBJECTS.map((subject) => (
                 <option key={subject} value={subject} className="text-slate-900">

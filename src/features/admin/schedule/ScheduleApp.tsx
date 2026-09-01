@@ -233,7 +233,7 @@ export function ScheduleApp() {
           <div className="space-y-2.5">
             <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-blue-50 dark:bg-blue-900/40 text-blue-600 dark:text-blue-400 text-xs font-bold border border-blue-100 dark:border-blue-800/40">
               <CalendarDays className="w-3.5 h-3.5" />
-              <span>{selectedTab === "overview" ? "Tổng quan Hệ thống" : `Bảng điểm danh — ${currentStudent?.name || "Học sinh"}`}</span>
+              <span>{selectedTab === "overview" ? "Tổng quan Hệ thống" : `Bảng điểm danh - ${currentStudent?.name || "Học sinh"}`}</span>
             </div>
 
             <h1 className="text-2xl sm:text-3xl md:text-4xl font-extrabold text-slate-900 dark:text-white tracking-[-0.02em]">
@@ -245,7 +245,7 @@ export function ScheduleApp() {
             <p className="text-[14px] sm:text-[15px] text-slate-500 dark:text-slate-400 max-w-xl leading-relaxed">
               {selectedTab === "overview"
                 ? "Theo dõi tổng số buổi dạy, thu nhập và biểu đồ phân bổ lịch học trong năm."
-                : `Điểm danh các buổi dạy thực tế trong tháng ${month}/${year} của học sinh ${currentStudent?.name || ""}.`}
+                : `Điểm danh trong tháng ${month}/${year} của học sinh ${currentStudent?.name || ""}.`}
             </p>
           </div>
 
@@ -271,7 +271,7 @@ export function ScheduleApp() {
               <Settings className="h-4 w-4 mr-1.5 text-slate-500" />
               <span>Cấu hình học sinh</span>
             </Button>
-            
+
             <Button
               variant="brand"
               size="sm"
@@ -299,7 +299,8 @@ export function ScheduleApp() {
       />
 
       {/* Content Section */}
-      {isLoading ? (
+      <div key={selectedTab} className="animate-slide-up w-full">
+        {isLoading ? (
         <div className="flex items-center justify-center h-96">
           <div className="animate-spin rounded-full h-12 w-12 border-4 border-[#0066cc] border-t-transparent" />
         </div>
@@ -335,6 +336,7 @@ export function ScheduleApp() {
           </div>
         </div>
       )}
+      </div>
 
       {/* Modals */}
       {selectedDate && currentStudent && (

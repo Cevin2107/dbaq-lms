@@ -125,7 +125,7 @@ export function StudentSettingsModal({ students, onClose, onUpdate, onDelete }: 
             <select
               value={selectedId}
               onChange={(event) => setSelectedId(event.target.value)}
-              className="w-full px-4 py-3 border border-slate-200 dark:border-slate-700 bg-white/50 dark:bg-black/20 text-slate-900 dark:text-white rounded-2xl focus:ring-2 focus:ring-[#0066cc] focus:border-transparent transition-all duration-200 outline-none text-[15px]"
+              className="w-full px-4 py-3 border border-slate-200 dark:border-slate-700 bg-white/50 dark:bg-[#0a0a0a]/20 text-slate-900 dark:text-white rounded-2xl focus:ring-2 focus:ring-[#0066cc] focus:border-transparent transition-all duration-200 outline-none text-[15px]"
             >
               {students.map((student) => (
                 <option key={student.id} value={student.id} className="text-slate-900">
@@ -143,7 +143,7 @@ export function StudentSettingsModal({ students, onClose, onUpdate, onDelete }: 
               type="text"
               value={name}
               onChange={(event) => setName(event.target.value)}
-              className="w-full px-4 py-3 border border-slate-200 dark:border-slate-700 bg-white/50 dark:bg-black/20 text-slate-900 dark:text-white rounded-2xl focus:ring-2 focus:ring-[#0066cc] focus:border-transparent transition-all duration-200 outline-none text-[15px]"
+              className="w-full px-4 py-3 border border-slate-200 dark:border-slate-700 bg-white/50 dark:bg-[#0a0a0a]/20 text-slate-900 dark:text-white rounded-2xl focus:ring-2 focus:ring-[#0066cc] focus:border-transparent transition-all duration-200 outline-none text-[15px]"
             />
           </div>
 
@@ -157,7 +157,7 @@ export function StudentSettingsModal({ students, onClose, onUpdate, onDelete }: 
                 value={salary}
                 onChange={(event) => setSalary(Number(event.target.value))}
                 step="5000"
-                className="w-full px-4 py-3 border border-slate-200 dark:border-slate-700 bg-white/50 dark:bg-black/20 text-slate-900 dark:text-white rounded-2xl focus:ring-2 focus:ring-[#0066cc] focus:border-transparent transition-all duration-200 outline-none text-[15px]"
+                className="w-full px-4 py-3 border border-slate-200 dark:border-slate-700 bg-white/50 dark:bg-[#0a0a0a]/20 text-slate-900 dark:text-white rounded-2xl focus:ring-2 focus:ring-[#0066cc] focus:border-transparent transition-all duration-200 outline-none text-[15px]"
               />
               <span className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 text-sm font-medium">
                 VND

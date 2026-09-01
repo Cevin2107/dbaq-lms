@@ -23,7 +23,7 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
           {
             "bg-slate-900 dark:bg-white text-slate-50 dark:text-slate-900 hover:bg-slate-800 dark:hover:bg-slate-100 active:scale-95 shadow-sm focus-visible:ring-slate-900": variant === "default",
             "bg-red-500 text-slate-50 hover:bg-red-600 active:scale-95 shadow-sm focus-visible:ring-red-500": variant === "destructive",
-            "text-slate-700 dark:text-slate-200 border border-slate-200 dark:border-white/10 bg-white/50 dark:bg-white/5 hover:bg-slate-50 dark:hover:bg-white/10 hover:border-slate-300 dark:hover:border-white/20 active:scale-95 focus-visible:ring-slate-900": variant === "outline",
+            "text-slate-700 dark:text-slate-200 border border-slate-200 dark:border-white/20 bg-white/50 dark:bg-transparent hover:bg-slate-50 dark:hover:bg-white/10 hover:border-slate-300 dark:hover:border-white/30 active:scale-95 focus-visible:ring-slate-900": variant === "outline",
             "bg-slate-100 dark:bg-slate-800 text-slate-900 dark:text-white hover:bg-slate-200 dark:hover:bg-slate-700 active:scale-95": variant === "secondary",
             "hover:bg-slate-100 dark:hover:bg-slate-800 hover:text-slate-900 dark:hover:text-white active:bg-slate-200 dark:active:bg-slate-700": variant === "ghost",
             "text-slate-900 dark:text-white underline-offset-4 hover:underline": variant === "link",

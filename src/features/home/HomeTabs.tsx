@@ -12,6 +12,7 @@ const DocumentsPanel = dynamic(
   () => import("@/features/documents/DocumentsPanel").then((mod) => mod.DocumentsPanel),
   { ssr: false }
 );
+import { MotivationalQuoteCard } from "@/components/MotivationalQuoteCard";
 import type { Assignment } from "@/lib/types";
 import bgImg from "@/app/bg.jpg";
 
@@ -86,9 +87,9 @@ export function HomeTabs({ assignments, studentName, greeting, greetingKind }: H
                   />
                 </div>
 
-                <div className="mb-4 md:mb-8 relative z-10 -mt-6 md:-mt-0 order-3">
+                <div className="mb-4 md:mb-8 relative z-10 -mt-8 md:-mt-0 order-3 flex justify-center md:justify-start">
                   <h1 
-                    className="font-bold md:font-semibold leading-[1.07] tracking-[-0.02em] text-[#1d1d1f] dark:text-white break-words sm:whitespace-nowrap bg-white/70 dark:bg-black/70 backdrop-blur-md md:bg-transparent md:backdrop-blur-none px-4 py-2 rounded-2xl md:p-0 md:rounded-none border border-white/40 md:border-transparent shadow-sm md:shadow-none"
+                    className="font-bold md:font-semibold leading-[1.07] tracking-[-0.02em] text-[#1d1d1f] dark:text-white break-words sm:whitespace-nowrap bg-white/70 dark:bg-black/40 backdrop-blur-md md:bg-transparent md:dark:bg-transparent md:backdrop-blur-none px-5 py-2.5 rounded-2xl md:p-0 md:rounded-none border border-white/50 dark:border-white/10 md:border-transparent md:dark:border-transparent shadow-sm md:shadow-none"
                     style={{ fontSize: "clamp(22px, 4.2vw, 72px)" }}
                   >
                     Gia sư Đào Bá Anh Quân
@@ -102,14 +103,7 @@ export function HomeTabs({ assignments, studentName, greeting, greetingKind }: H
                       {greeting}, <span className="font-semibold text-[#1d1d1f] dark:text-white">{studentName || "Học sinh"}</span>.
                     </h2>
                   </div>
-                  <div className="mt-3 text-[15px] sm:text-[17px] text-[#1d1d1f]/60 dark:text-white/50 tracking-tight text-center md:text-left max-w-[90%] md:max-w-lg">
-                    <div className="flex flex-col items-center">
-                      😎 Cố gắng lên nhé học trò của tôi ơi 😎
-                    </div>
-                    <div className="flex flex-col items-center">
-                      Chúc em học tốt <span className="text-[40px]">💯</span>
-                    </div>
-                  </div>
+                  <MotivationalQuoteCard />
                 </div>
               </div>
 

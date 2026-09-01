@@ -259,7 +259,7 @@ export default function TeachingSchedulePage() {
             variant="outline"
             size="sm"
             onClick={fetchData}
-            className="rounded-full bg-white/80 dark:bg-slate-800/80 backdrop-blur-sm border-slate-200 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-200 px-4 py-2 text-xs font-semibold self-start sm:self-auto"
+            className="self-start sm:self-auto"
           >
             <RefreshCw className="h-4 w-4 mr-1.5" />
             <span>Làm mới dữ liệu</span>
