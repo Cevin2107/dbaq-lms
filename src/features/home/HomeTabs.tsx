@@ -13,11 +13,12 @@ const DocumentsPanel = dynamic(
   { ssr: false }
 );
 import { MotivationalQuoteCard } from "@/components/MotivationalQuoteCard";
-import type { Assignment } from "@/lib/types";
+import type { Assignment, StudentScheduleItem } from "@/lib/types";
 import bgImg from "@/app/bg.jpg";
 
 type HomeTabsProps = {
   assignments: Assignment[];
+  schedules?: StudentScheduleItem[];
   studentName?: string;
   greeting: string;
   greetingKind: "morning" | "afternoon" | "evening";
@@ -31,7 +32,7 @@ const tabs = [
 
 type TabId = (typeof tabs)[number]["id"];
 
-export function HomeTabs({ assignments, studentName, greeting, greetingKind }: HomeTabsProps) {
+export function HomeTabs({ assignments, schedules = [], studentName, greeting, greetingKind }: HomeTabsProps) {
   const [activeTab, setActiveTab] = useState<TabId>("home");
   const GreetingIcon = greetingKind === "morning" ? Sun : greetingKind === "afternoon" ? CloudSun : Moon;
   const iconColor =
@@ -121,7 +122,11 @@ export function HomeTabs({ assignments, studentName, greeting, greetingKind }: H
             </div>
           </div>
 
-          <AssignmentList assignments={assignments} />
+          <AssignmentList 
+            assignments={assignments} 
+            schedules={schedules}
+            onNavigateToSchedule={() => setActiveTab("schedule")}
+          />
         </div>
       )}
 

@@ -4,6 +4,7 @@ import clsx from "clsx";
 import { createSupabaseAdmin } from "@/lib/supabaseAdmin";
 import { ResultQuestionsAccordion } from "@/features/assignments/components/ResultQuestionsAccordion";
 import { MathText } from "@/components/MathText";
+import { Footer } from "@/components/Footer";
 
 // Disable caching để luôn hiển thị dữ liệu mới nhất
 export const dynamic = 'force-dynamic';
@@ -314,6 +315,7 @@ export default async function ResultPage({
           Làm lại bài tập
         </Link>
       </div>
+      <Footer className="mt-16" />
     </main>
   );
 }

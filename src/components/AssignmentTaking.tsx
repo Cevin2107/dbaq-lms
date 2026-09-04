@@ -12,6 +12,7 @@ import { createClient } from "@supabase/supabase-js";
 import { AssignmentQuestion } from "@/components/AssignmentQuestion";
 import { useTheme } from "@/providers/ThemeProvider";
 import { useToast } from "@/components/ui/Toast";
+import { Footer } from "@/components/Footer";
 
 interface Props {
   assignment: Assignment;
@@ -735,6 +736,8 @@ export function AssignmentTaking({ assignment, questions: initialQuestions, init
           </div>
         </div>
       </div>
+
+      <Footer className="mt-12" />
       
       {/* Mobile Floating Question Map Button */}
       {!hasSubmitted && !locked && (

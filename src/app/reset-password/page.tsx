@@ -6,6 +6,7 @@ import Link from 'next/link';
 import { createSupabaseBrowserClient } from '@/lib/supabaseClient';
 import { Button } from '@/components/ui/Button';
 import { useToast } from '@/components/ui/Toast';
+import { Footer } from '@/components/Footer';
 
 export default function ResetPasswordPage() {
   const [password, setPassword] = useState('');
@@ -70,24 +71,28 @@ export default function ResetPasswordPage() {
 
   if (success) {
     return (
-      <main className="min-h-screen bg-[#f5f5f7] dark:bg-[#0a0a0a] flex items-center justify-center px-4 py-12 sm:px-6 lg:px-8">
-        <div className="w-full max-w-md animate-fade-in">
-          <div className="rounded-[2rem] bg-white/80 dark:bg-[#1d1d1f]/80 backdrop-blur-xl border border-black/5 dark:border-white/5 shadow-[0_4px_20px_rgba(0,0,0,0.03)] p-8 sm:p-10 text-center">
-            <div className="mx-auto mb-5 flex h-14 w-14 items-center justify-center rounded-2xl bg-emerald-50 dark:bg-emerald-900/40 text-emerald-600 dark:text-emerald-400">
-              <svg className="h-7 w-7" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M5 13l4 4L19 7" />
-              </svg>
+      <div className="min-h-screen bg-[#f5f5f7] dark:bg-[#0a0a0a] flex flex-col justify-between">
+        <main className="flex-1 flex items-center justify-center px-4 py-12 sm:px-6 lg:px-8">
+          <div className="w-full max-w-md animate-fade-in">
+            <div className="rounded-[2rem] bg-white/80 dark:bg-[#1d1d1f]/80 backdrop-blur-xl border border-black/5 dark:border-white/5 shadow-[0_4px_20px_rgba(0,0,0,0.03)] p-8 sm:p-10 text-center">
+              <div className="mx-auto mb-5 flex h-14 w-14 items-center justify-center rounded-2xl bg-emerald-50 dark:bg-emerald-900/40 text-emerald-600 dark:text-emerald-400">
+                <svg className="h-7 w-7" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M5 13l4 4L19 7" />
+                </svg>
+              </div>
+              <h1 className="text-2xl font-bold text-slate-900 dark:text-white tracking-[-0.02em]">Đặt lại mật khẩu thành công!</h1>
+              <p className="text-[15px] text-slate-500 dark:text-slate-400 mt-3 leading-relaxed">Đang chuyển hướng đến trang đăng nhập...</p>
             </div>
-            <h1 className="text-2xl font-bold text-slate-900 dark:text-white tracking-[-0.02em]">Đặt lại mật khẩu thành công!</h1>
-            <p className="text-[15px] text-slate-500 dark:text-slate-400 mt-3 leading-relaxed">Đang chuyển hướng đến trang đăng nhập...</p>
           </div>
-        </div>
-      </main>
+        </main>
+        <Footer />
+      </div>
     );
   }
 
   return (
-    <main className="min-h-screen bg-[#f5f5f7] dark:bg-[#0a0a0a] flex items-center justify-center px-4 py-12 sm:px-6 lg:px-8">
+    <div className="min-h-screen bg-[#f5f5f7] dark:bg-[#0a0a0a] flex flex-col justify-between">
+      <main className="flex-1 flex items-center justify-center px-4 py-12 sm:px-6 lg:px-8">
       <div className="w-full max-w-md animate-fade-in">
         <div className="rounded-[2rem] bg-white/80 dark:bg-[#1d1d1f]/80 backdrop-blur-xl border border-black/5 dark:border-white/5 shadow-[0_4px_20px_rgba(0,0,0,0.03)] p-8 sm:p-10">
           <div className="text-center mb-8">
@@ -158,6 +163,8 @@ export default function ResetPasswordPage() {
           </div>
         </div>
       </div>
-    </main>
+      </main>
+      <Footer />
+    </div>
   );
 }

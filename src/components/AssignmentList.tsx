@@ -1,7 +1,8 @@
 "use client";
 
 import { useCallback, useEffect, useMemo, useState } from "react";
-import { Assignment } from "@/lib/types";
+import { Assignment, StudentScheduleItem } from "@/lib/types";
+import { UpcomingScheduleCard } from "@/features/home/components/UpcomingScheduleCard";
 import { isBefore } from "date-fns";
 import clsx from "clsx";
 import Link from "next/link";
@@ -9,9 +10,11 @@ import { MathText } from "@/components/MathText";
 
 interface AssignmentListProps {
   assignments: Assignment[];
+  schedules?: StudentScheduleItem[];
+  onNavigateToSchedule?: () => void;
 }
 
-export function AssignmentList({ assignments }: AssignmentListProps) {
+export function AssignmentList({ assignments, schedules = [], onNavigateToSchedule }: AssignmentListProps) {
   const [search, setSearch] = useState("");
   const [subjectFilter, setSubjectFilter] = useState("Tất cả");
   const [statusFilter, setStatusFilter] = useState("not_started");
@@ -161,82 +164,92 @@ export function AssignmentList({ assignments }: AssignmentListProps) {
   return (
     <div className="space-y-8 animate-slide-up" suppressHydrationWarning>
       
-      {/* Search & Filter Card */}
-      <div className="rounded-[2rem] bg-white dark:bg-[#1d1d1f] shadow-[0_4px_20px_rgba(0,0,0,0.03)] border border-black/5 dark:border-white/5 p-6" suppressHydrationWarning>
-        <div className="relative mb-6">
-          <svg className="absolute left-4 top-1/2 h-5 w-5 -translate-y-1/2 text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-          </svg>
-          <input
-            className="w-full rounded-full bg-slate-50 dark:bg-[#2a2a2c] py-3.5 pl-12 pr-4 text-[16px] text-[#1d1d1f] dark:text-white placeholder-slate-400 transition-all focus:bg-white dark:focus:bg-[#333] focus:outline-none focus:ring-4 focus:ring-[#0066cc]/10 border border-transparent focus:border-[#0066cc]/20 focus:shadow-sm"
-            placeholder="Tìm kiếm bài tập..."
-            value={search}
-            onChange={(e) => setSearch(e.target.value)}
-          />
-          {search && (
-            <button
-              onClick={() => setSearch("")}
-              className="absolute right-4 top-1/2 -translate-y-1/2 rounded-full p-1.5 text-slate-400 hover:bg-slate-200 dark:hover:bg-slate-700 hover:text-slate-600 transition-colors"
-            >
-              <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
-              </svg>
-            </button>
-          )}
-        </div>
-
-        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
-          
-          {/* Segmented Control for Tabs */}
-          <div className="flex flex-wrap items-center bg-slate-100/80 dark:bg-[#2a2a2c]/80 backdrop-blur-md p-1.5 rounded-full w-full sm:w-auto shadow-sm border border-black/5 dark:border-white/5">
-            {[
-              { value: "not_started", label: "Chưa làm" },
-              { value: "completed", label: "Đã làm" },
-              { value: "overdue", label: "Quá hạn" },
-              { value: "Tất cả", label: "Tất cả" },
-            ].map((tab) => (
+      {/* 2 Companion Side-by-Side Boxes: Left = Search & Filter, Right = Upcoming Schedule */}
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-5 sm:gap-6 items-stretch" suppressHydrationWarning>
+        {/* Left Box: Tìm kiếm bài tập & Bộ lọc trạng thái */}
+        <div className="lg:col-span-7 rounded-[2rem] bg-white dark:bg-[#1d1d1f] shadow-[0_4px_20px_rgba(0,0,0,0.03)] border border-black/5 dark:border-white/5 p-5 sm:p-6 flex flex-col justify-between space-y-4">
+          <div className="relative">
+            <svg className="absolute left-4 top-1/2 h-5 w-5 -translate-y-1/2 text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+            </svg>
+            <input
+              className="w-full rounded-full bg-slate-50 dark:bg-[#2a2a2c] py-3.5 pl-12 pr-4 text-[15px] text-[#1d1d1f] dark:text-white placeholder-slate-400 transition-all focus:bg-white dark:focus:bg-[#333] focus:outline-none focus:ring-4 focus:ring-[#0066cc]/10 border border-transparent focus:border-[#0066cc]/20 focus:shadow-sm"
+              placeholder="Tìm kiếm bài tập..."
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+            />
+            {search && (
               <button
-                key={tab.value}
-                onClick={() => setStatusFilter(tab.value)}
-                className={clsx(
-                  "flex-1 sm:flex-none rounded-full px-5 py-2 text-[14px] font-medium transition-all duration-300 ease-spring",
-                  statusFilter === tab.value
-                    ? "bg-white dark:bg-[#444] text-[#0066cc] dark:text-white shadow-sm scale-[1.02]"
-                    : "text-slate-500 dark:text-slate-400 hover:text-slate-800 dark:hover:text-white hover:bg-black/5 dark:hover:bg-white/5 active:scale-95"
-                )}
+                onClick={() => setSearch("")}
+                className="absolute right-4 top-1/2 -translate-y-1/2 rounded-full p-1.5 text-slate-400 hover:bg-slate-200 dark:hover:bg-slate-700 hover:text-slate-600 transition-colors"
               >
-                {tab.label}
+                <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
+                </svg>
               </button>
-            ))}
+            )}
           </div>
 
-          {subjects.length > 1 && (
-            <select
-              className="w-full sm:w-auto rounded-full bg-slate-50 dark:bg-[#2a2a2c] px-5 py-2.5 text-[14px] font-medium text-slate-700 dark:text-slate-200 transition focus:outline-none focus:ring-4 focus:ring-[#0066cc]/10 border border-slate-200 dark:border-[#444]"
-              value={subjectFilter}
-              onChange={(e) => setSubjectFilter(e.target.value)}
-            >
-              <option value="Tất cả">Tất cả môn</option>
-              {subjects.map((s) => (
-                <option key={s}>{s}</option>
+          <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 flex-wrap">
+            {/* Segmented Control for Tabs */}
+            <div className="flex flex-wrap items-center bg-slate-100/80 dark:bg-[#2a2a2c]/80 backdrop-blur-md p-1.5 rounded-full w-full sm:w-auto shadow-sm border border-black/5 dark:border-white/5">
+              {[
+                { value: "not_started", label: "Chưa làm" },
+                { value: "completed", label: "Đã làm" },
+                { value: "overdue", label: "Quá hạn" },
+                { value: "Tất cả", label: "Tất cả" },
+              ].map((tab) => (
+                <button
+                  key={tab.value}
+                  onClick={() => setStatusFilter(tab.value)}
+                  className={clsx(
+                    "flex-1 sm:flex-none rounded-full px-4 sm:px-5 py-2 text-[13px] sm:text-[14px] font-medium transition-all duration-300 ease-spring",
+                    statusFilter === tab.value
+                      ? "bg-white dark:bg-[#444] text-[#0066cc] dark:text-white shadow-sm scale-[1.02]"
+                      : "text-slate-500 dark:text-slate-400 hover:text-slate-800 dark:hover:text-white hover:bg-black/5 dark:hover:bg-white/5 active:scale-95"
+                  )}
+                >
+                  {tab.label}
+                </button>
               ))}
-            </select>
+            </div>
+
+            {subjects.length > 1 && (
+              <select
+                className="w-full sm:w-auto rounded-full bg-slate-50 dark:bg-[#2a2a2c] px-4 py-2 text-[13px] font-medium text-slate-700 dark:text-slate-200 transition focus:outline-none focus:ring-4 focus:ring-[#0066cc]/10 border border-slate-200 dark:border-[#444]"
+                value={subjectFilter}
+                onChange={(e) => setSubjectFilter(e.target.value)}
+              >
+                <option value="Tất cả">Tất cả môn</option>
+                {subjects.map((s) => (
+                  <option key={s}>{s}</option>
+                ))}
+              </select>
+            )}
+          </div>
+
+          {(search || subjectFilter !== "Tất cả" || statusFilter !== "Tất cả") && (
+            <div className="flex items-center gap-2 px-1 pt-1">
+              <p className="text-[13px] text-[#1d1d1f]/60 dark:text-white/60 font-normal">
+                {filtered.length} kết quả
+              </p>
+              <button
+                onClick={() => { setSearch(""); setSubjectFilter("Tất cả"); setStatusFilter("Tất cả"); }}
+                className="ml-auto text-[13px] text-[#0066cc] dark:text-[#2997ff] hover:underline"
+              >
+                Xóa bộ lọc
+              </button>
+            </div>
           )}
         </div>
 
-        {(search || subjectFilter !== "Tất cả" || statusFilter !== "Tất cả") && (
-          <div className="flex items-center gap-2 px-1">
-            <p className="text-[14px] text-[#1d1d1f]/60 dark:text-white/60 font-normal">
-              {filtered.length} kết quả
-            </p>
-            <button
-              onClick={() => { setSearch(""); setSubjectFilter("Tất cả"); setStatusFilter("Tất cả"); }}
-              className="ml-auto text-[14px] text-[#0066cc] dark:text-[#2997ff] hover:underline"
-            >
-              Xóa bộ lọc
-            </button>
-          </div>
-        )}
+        {/* Right Box: Thông tin ca học sắp tới & Lịch học trong tuần */}
+        <div className="lg:col-span-5">
+          <UpcomingScheduleCard 
+            schedules={schedules} 
+            onNavigateToSchedule={onNavigateToSchedule} 
+          />
+        </div>
       </div>
 
       {/* Assignment Grid */}

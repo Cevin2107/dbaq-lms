@@ -64,6 +64,11 @@ export function ScheduleRegistrationPanel() {
     if (next.has(scheduleId)) {
       next.delete(scheduleId);
     } else {
+      if (maxShifts <= 0) {
+        setError("Tài khoản của bạn hiện có giới hạn 0 ca. Không thể chọn ca học.");
+        setTimeout(() => setError(""), 3000);
+        return;
+      }
       if (next.size >= maxShifts) {
         setError(`Bạn chỉ được chọn tối đa ${maxShifts} ca.`);
         setTimeout(() => setError(""), 3000);
@@ -117,8 +122,16 @@ export function ScheduleRegistrationPanel() {
             Đăng ký Lịch học
           </h2>
           <p className="text-[17px] text-slate-600 dark:text-slate-400 mt-2 max-w-xl leading-relaxed">
-            Vui lòng chọn các ca học phù hợp. Bạn có thể chọn tối đa{" "}
-            <span className="font-semibold text-[#0066cc] dark:text-blue-400">{maxShifts} ca</span> trong tuần.
+            {maxShifts <= 0 ? (
+              <span className="text-amber-600 dark:text-amber-400 font-semibold">
+                Tài khoản của bạn hiện tại có giới hạn 0 ca đăng ký. Vui lòng liên hệ giáo viên để được cấp số ca.
+              </span>
+            ) : (
+              <>
+                Vui lòng chọn các ca học phù hợp. Bạn có thể chọn tối đa{" "}
+                <span className="font-semibold text-[#0066cc] dark:text-blue-400">{maxShifts} ca</span> trong tuần.
+              </>
+            )}
           </p>
         </div>
 

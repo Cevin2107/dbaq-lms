@@ -7,6 +7,7 @@ import { Badge } from "@/components/ui/Badge";
 import { Button } from "@/components/ui/Button";
 import { useToast } from "@/components/ui/Toast";
 import { Copy, CheckCircle2, Clock, Award, Calendar, Share2, User, LogIn } from "lucide-react";
+import { Footer } from "@/components/Footer";
 
 export default function StartAssignmentPage({ params }: { params: Promise<{ id: string }> }) {
   const [studentName, setStudentName] = useState("");
@@ -183,14 +184,14 @@ export default function StartAssignmentPage({ params }: { params: Promise<{ id: 
   };
 
   return (
-    <main className="min-h-screen bg-[#f5f5f7] dark:bg-[#0a0a0a] flex flex-col items-center justify-center px-4 py-12 relative overflow-hidden">
+    <main className="min-h-screen bg-[#f5f5f7] dark:bg-[#0a0a0a] flex flex-col justify-between items-center relative overflow-hidden">
       {/* Background decoration */}
       <div className="pointer-events-none fixed inset-0 overflow-hidden">
         <div className="absolute -top-40 -right-40 h-80 w-80 rounded-full bg-blue-100 dark:bg-blue-900/20 opacity-60 blur-3xl" />
         <div className="absolute -bottom-40 -left-40 h-80 w-80 rounded-full bg-sky-100 dark:bg-sky-900/20 opacity-60 blur-3xl" />
       </div>
 
-      <div className="relative w-full max-w-xl animate-fade-in">
+      <div className="relative w-full max-w-xl animate-fade-in px-4 py-12 my-auto">
         {/* Compact Hero Section */}
         <div className="mb-8 flex flex-col items-center text-center animate-slide-up">
           {/* Compact Logo */}
@@ -412,6 +413,8 @@ export default function StartAssignmentPage({ params }: { params: Promise<{ id: 
           </div>
         </div>
       </div>
+
+      <Footer className="mt-8 relative z-10" />
     </main>
   );
 }

@@ -76,3 +76,14 @@ export interface DocumentReadingProgress {
   lastScrollPosition: number;
   updatedAt: string;
 }
+
+export interface StudentScheduleItem {
+  registrationId: string;
+  availableScheduleId: string;
+  dayOfWeek: number; // 2: Thứ 2, ..., 8: Chủ nhật
+  shiftId: string;
+  shiftName: string;
+  startTime: string;
+  endTime: string;
+}
+

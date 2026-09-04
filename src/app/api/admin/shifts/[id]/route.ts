@@ -14,6 +14,10 @@ export async function PUT(req: NextRequest, { params }: { params: Promise<{ id: 
     const body = await req.json();
     const { name, start_time, end_time } = body;
 
+    if (start_time && end_time && start_time >= end_time) {
+      return NextResponse.json({ error: "Giờ bắt đầu phải trước giờ kết thúc." }, { status: 400 });
+    }
+
     const supabaseAdmin = createSupabaseAdmin();
     const { data, error } = await (supabaseAdmin.from("shifts") as any)
       .update({ name, start_time, end_time })

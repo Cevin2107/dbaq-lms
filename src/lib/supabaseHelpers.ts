@@ -1,5 +1,5 @@
 import { createClient } from "@supabase/supabase-js";
-import { Assignment, Question, SubmissionSummary } from "./types";
+import { Assignment, Question, SubmissionSummary, StudentScheduleItem } from "./types";
 
 const getSupabaseClient = () => {
   const url = process.env.NEXT_PUBLIC_SUPABASE_URL!;
@@ -1010,3 +1010,63 @@ export async function fetchStudentDetailStats(studentName: string) {
     assignments: Array.from(assignmentMap.values()),
   };
 }
+
+export async function fetchStudentWeeklySchedule(studentId: string): Promise<StudentScheduleItem[]> {
+  if (!studentId) return [];
+
+  try {
+    const supabase = getSupabaseAdmin();
+    const { data, error } = await supabase
+      .from("schedule_registrations")
+      .select(`
+        id,
+        created_at,
+        student_id,
+        available_schedules (
+          id,
+          day_of_week,
+          shifts (
+            id,
+            name,
+            start_time,
+            end_time
+          )
+        )
+      `)
+      .eq("student_id", studentId);
+
+    if (error) {
+      console.error("Error fetching student weekly schedule:", error);
+      return [];
+    }
+
+    const items: StudentScheduleItem[] = [];
+    for (const reg of (data || []) as any[]) {
+      const avail = reg.available_schedules;
+      const shift = avail?.shifts;
+      if (avail && shift) {
+        items.push({
+          registrationId: reg.id,
+          availableScheduleId: avail.id,
+          dayOfWeek: Number(avail.day_of_week),
+          shiftId: shift.id,
+          shiftName: shift.name,
+          startTime: shift.start_time,
+          endTime: shift.end_time,
+        });
+      }
+    }
+
+    // Sort by dayOfWeek (2: Thứ 2 ... 8: Chủ nhật) then by startTime
+    items.sort((a, b) => {
+      if (a.dayOfWeek !== b.dayOfWeek) return a.dayOfWeek - b.dayOfWeek;
+      return a.startTime.localeCompare(b.startTime);
+    });
+
+    return items;
+  } catch (err) {
+    console.error("Failed to fetch student weekly schedule:", err);
+    return [];
+  }
+}
+

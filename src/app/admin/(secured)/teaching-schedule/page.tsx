@@ -125,12 +125,13 @@ export default function TeachingSchedulePage() {
   const handleDeleteShift = async (id: string) => {
     if (!confirm("Xoá ca học này sẽ xoá luôn tất cả lịch rảnh và đăng ký liên quan. Bạn có chắc không?")) return;
     try {
-      const res = await fetch(`/api/admin/shifts?id=${id}`, { method: "DELETE" });
+      const res = await fetch(`/api/admin/shifts/${id}`, { method: "DELETE" });
       if (res.ok) {
         showMessage("success", "Đã xoá ca học.");
         fetchData();
       } else {
-        showMessage("error", "Không thể xoá ca.");
+        const data = await res.json().catch(() => ({}));
+        showMessage("error", data.error || "Không thể xoá ca.");
       }
     } catch {
       showMessage("error", "Lỗi kết nối.");
@@ -158,7 +159,8 @@ export default function TeachingSchedulePage() {
         showMessage("success", "Đã lưu danh sách ca mở đăng ký.");
         fetchData();
       } else {
-        showMessage("error", "Không thể lưu lịch mở.");
+        const data = await res.json().catch(() => ({}));
+        showMessage("error", data.error || "Không thể lưu lịch mở.");
       }
     } catch {
       showMessage("error", "Lỗi kết nối.");
@@ -170,13 +172,16 @@ export default function TeachingSchedulePage() {
   const handleUpdateStudentLimit = async (studentId: string, maxShifts: number) => {
     try {
       const res = await fetch("/api/admin/student-limits", {
-        method: "POST",
+        method: "PUT",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ student_id: studentId, max_shifts: maxShifts })
+        body: JSON.stringify({ id: studentId, student_id: studentId, max_shifts: maxShifts })
       });
       if (res.ok) {
         showMessage("success", "Đã cập nhật số ca tối đa.");
         fetchData();
+      } else {
+        const data = await res.json().catch(() => ({}));
+        showMessage("error", data.error || "Không thể cập nhật số ca tối đa.");
       }
     } catch {
       showMessage("error", "Lỗi kết nối.");
@@ -191,7 +196,8 @@ export default function TeachingSchedulePage() {
         showMessage("success", `Đã xoá đăng ký của ${studentName}.`);
         fetchData();
       } else {
-        showMessage("error", "Không thể xoá lịch đăng ký.");
+        const data = await res.json().catch(() => ({}));
+        showMessage("error", data.error || "Không thể xoá lịch đăng ký.");
       }
     } catch {
       showMessage("error", "Lỗi kết nối.");
@@ -202,6 +208,12 @@ export default function TeachingSchedulePage() {
     if (proxySelections.includes(availableScheduleId)) {
       setProxySelections(proxySelections.filter(id => id !== availableScheduleId));
     } else {
+      const studentObj = studentLimits.find(s => s.id === selectedProxyStudent);
+      const studentMax = typeof studentObj?.max_shifts === "number" ? studentObj.max_shifts : 3;
+      if (proxySelections.length >= studentMax) {
+        showMessage("error", `Học sinh này chỉ được chọn tối đa ${studentMax} ca.`);
+        return;
+      }
       setProxySelections([...proxySelections, availableScheduleId]);
     }
   };
@@ -219,7 +231,7 @@ export default function TeachingSchedulePage() {
         showMessage("success", "Đã lưu đăng ký hộ thành công.");
         fetchData();
       } else {
-        const data = await res.json();
+        const data = await res.json().catch(() => ({}));
         showMessage("error", data.error || "Không thể lưu đăng ký hộ.");
       }
     } catch {
@@ -397,7 +409,7 @@ export default function TeachingSchedulePage() {
           <div className="space-y-6">
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
               <div className="text-sm font-semibold text-slate-600 dark:text-slate-300">
-                Đã chọn: <span className="text-[#0066cc] dark:text-blue-400 font-extrabold">{proxySelections.length}</span> / {studentLimits.find(s => s.id === selectedProxyStudent)?.max_shifts || 0} ca
+                Đã chọn: <span className="text-[#0066cc] dark:text-blue-400 font-extrabold">{proxySelections.length}</span> / {studentLimits.find(s => s.id === selectedProxyStudent)?.max_shifts ?? 0} ca
               </div>
               <Button 
                 onClick={handleSaveProxy} 
@@ -514,8 +526,13 @@ export default function TeachingSchedulePage() {
                           setStudentLimits(newLimits);
                         }}
                         onBlur={(e) => handleUpdateStudentLimit(student.id, Number(e.target.value))}
+                        onKeyDown={(e) => {
+                          if (e.key === "Enter") {
+                            (e.target as HTMLInputElement).blur();
+                          }
+                        }}
                         className="w-16 px-2.5 py-1 text-center font-extrabold border border-slate-300 dark:border-slate-600 rounded-xl bg-white dark:bg-slate-800 text-xs text-[#0066cc] dark:text-blue-400 outline-none focus:ring-2 focus:ring-blue-500"
-                        title="Thay đổi sẽ tự động lưu"
+                        title="Thay đổi sẽ tự động lưu khi ấn Enter hoặc bấm ra ngoài"
                       />
                     </div>
                   </div>

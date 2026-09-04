@@ -24,7 +24,7 @@ export async function GET(req: NextRequest) {
   }
 }
 
-export async function PUT(req: NextRequest) {
+async function handleUpdateStudentLimit(req: NextRequest) {
   const isAuth = await checkAdminAuth();
   if (!isAuth) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
@@ -32,10 +32,11 @@ export async function PUT(req: NextRequest) {
 
   try {
     const body = await req.json();
-    const { id, max_shifts } = body;
+    const id = body.id || body.student_id;
+    const max_shifts = typeof body.max_shifts === "number" ? body.max_shifts : parseInt(body.max_shifts, 10);
 
-    if (!id || typeof max_shifts !== 'number') {
-      return NextResponse.json({ error: "Invalid payload" }, { status: 400 });
+    if (!id || isNaN(max_shifts) || max_shifts < 0) {
+      return NextResponse.json({ error: "Dữ liệu không hợp lệ (cần id học sinh và số ca >= 0)" }, { status: 400 });
     }
 
     const supabaseAdmin = createSupabaseAdmin();
@@ -45,9 +46,18 @@ export async function PUT(req: NextRequest) {
 
     if (error) throw error;
 
-    return NextResponse.json({ success: true });
+    return NextResponse.json({ success: true, id, max_shifts });
   } catch (error) {
     console.error("Error updating student limit:", error);
     return NextResponse.json({ error: "Failed to update student limit" }, { status: 500 });
   }
 }
+
+export async function PUT(req: NextRequest) {
+  return handleUpdateStudentLimit(req);
+}
+
+export async function POST(req: NextRequest) {
+  return handleUpdateStudentLimit(req);
+}
+

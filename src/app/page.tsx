@@ -2,8 +2,9 @@ import type { Metadata } from "next";
 import { cookies } from "next/headers";
 import { createServerClient } from "@supabase/ssr";
 import { HeaderBar } from "@/components/HeaderBar";
+import { Footer } from "@/components/Footer";
 import { HomeTabs } from "@/features/home/HomeTabs";
-import { fetchAssignmentsWithHistory } from "@/lib/supabaseHelpers";
+import { fetchAssignmentsWithHistory, fetchStudentWeeklySchedule } from "@/lib/supabaseHelpers";
 
 export const dynamic = "force-dynamic";
 export const revalidate = 0;
@@ -62,17 +63,25 @@ export default async function HomePage() {
         : "Chào buổi sáng";
 
   const fullName = user.user_metadata?.full_name as string | undefined;
-  const assignments = await fetchAssignmentsWithHistory(user.id, fullName);
+  
+  const [assignments, schedules] = await Promise.all([
+    fetchAssignmentsWithHistory(user.id, fullName),
+    fetchStudentWeeklySchedule(user.id),
+  ]);
 
   return (
-    <main className="min-h-screen bg-[#f5f5f7] dark:bg-[#0a0a0a] relative pt-24 sm:pt-28">
-      <HeaderBar studentName={fullName} />
-      <HomeTabs
-        assignments={assignments}
-        studentName={fullName}
-        greeting={greeting}
-        greetingKind={greetingKind}
-      />
-    </main>
+    <div className="min-h-screen bg-[#f5f5f7] dark:bg-[#0a0a0a] flex flex-col justify-between">
+      <main className="relative pt-24 sm:pt-28 flex-1">
+        <HeaderBar studentName={fullName} />
+        <HomeTabs
+          assignments={assignments}
+          schedules={schedules}
+          studentName={fullName}
+          greeting={greeting}
+          greetingKind={greetingKind}
+        />
+      </main>
+      <Footer />
+    </div>
   );
 }

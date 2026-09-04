@@ -42,7 +42,7 @@ export async function middleware(request: NextRequest) {
   } = await supabase.auth.getUser()
 
   // Public routes (no auth required)
-  const publicRoutes = ['/login', '/signup', '/forgot-password', '/reset-password', '/auth/callback']
+  const publicRoutes = ['/login', '/signup', '/forgot-password', '/reset-password', '/auth/callback', '/sw.js']
   const isAssignmentRoute = pathname.startsWith('/assignments/')
   const isPublicRoute = publicRoutes.some(route => pathname === route) || isAssignmentRoute
 
@@ -87,8 +87,8 @@ export const config = {
      * - favicon.ico (favicon file)
      * - public (public files)
      */
-    // Exclude common static asset patterns (images, json, manifest) so middleware
+    // Exclude common static asset patterns (images, json, manifest, sw.js) so middleware
     // won't intercept requests for them and accidentally redirect to /login.
-    '/((?!_next/static|_next/image|api/|favicon.ico|manifest.json|.*\\.(?:svg|png|jpg|jpeg|gif|webp|json|webmanifest)$).*)',
+    '/((?!_next/static|_next/image|api/|favicon.ico|manifest.json|sw.js|.*\\.(?:svg|png|jpg|jpeg|gif|webp|json|webmanifest|js)$).*)',
   ],
 }

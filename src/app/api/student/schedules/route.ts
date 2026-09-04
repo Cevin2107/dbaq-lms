@@ -31,7 +31,7 @@ export async function GET(req: NextRequest) {
       .single();
     
     const anyProfile = profile as any;
-    const maxShifts = anyProfile?.max_shifts || 3;
+    const maxShifts = typeof anyProfile?.max_shifts === "number" ? anyProfile.max_shifts : 3;
 
     // 2. Fetch all shifts
     const { data: shifts } = await supabaseAdmin
