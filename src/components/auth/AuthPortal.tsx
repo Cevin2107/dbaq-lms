@@ -663,7 +663,7 @@ export function AuthPortal({ initialMode = 'login' }: AuthPortalProps) {
                                 Tạo tài khoản học viên
                               </h2>
                               <p className="text-xs text-slate-500 dark:text-slate-400">
-                                Bắt đầu học tập cùng Thầy Đào Bá Anh Quân
+                                Bắt đầu học tập cùng Gia sư Đào Bá Anh Quân
                               </p>
                             </div>
                           </div>
