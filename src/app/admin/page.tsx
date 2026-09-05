@@ -101,16 +101,16 @@ export default function AdminLoginPage() {
       {/* Top Header Bar - Synchronized with Main Portal */}
       <header className="relative z-20 w-full border-b border-black/[0.05] dark:border-white/[0.06] bg-white/60 dark:bg-[#0a0a0a]/60 backdrop-blur-xl">
         <div className="max-w-[1440px] mx-auto px-4 sm:px-6 md:px-8 h-16 sm:h-20 flex items-center justify-between">
-          <Link href="/admin" className="flex items-center gap-3 group">
-            <div className="relative flex h-10 w-10 sm:h-11 sm:w-11 items-center justify-center rounded-2xl bg-gradient-to-br from-[#0066cc] to-blue-700 text-white shadow-md shadow-blue-500/25 transition-transform group-hover:scale-105 duration-300">
+          <Link href="/admin" className="flex items-center gap-2.5 sm:gap-3 group min-w-0">
+            <div className="relative flex h-9 w-9 sm:h-11 sm:w-11 shrink-0 items-center justify-center rounded-xl sm:rounded-2xl bg-gradient-to-br from-[#0066cc] to-blue-700 text-white shadow-md shadow-blue-500/25 transition-transform group-hover:scale-105 duration-300">
               <GraduationCap className="h-5 w-5 sm:h-6 sm:w-6" />
             </div>
-            <div>
-              <div className="flex items-center gap-2">
-                <span className="font-bold text-base sm:text-lg tracking-tight text-slate-900 dark:text-white">
+            <div className="min-w-0">
+              <div className="flex items-center gap-1.5 sm:gap-2">
+                <span className="font-bold text-sm sm:text-base md:text-lg tracking-tight text-slate-900 dark:text-white truncate">
                   Gia sư Đào Bá Anh Quân
                 </span>
-                <span className="inline-flex items-center rounded-full bg-blue-50 dark:bg-blue-950/60 px-2.5 py-0.5 text-[11px] font-semibold text-[#0066cc] dark:text-blue-400 border border-blue-200/60 dark:border-blue-800/60">
+                <span className="inline-flex items-center rounded-full bg-blue-50 dark:bg-blue-950/60 px-2 py-0.5 text-[10px] sm:text-[11px] font-semibold text-[#0066cc] dark:text-blue-400 border border-blue-200/60 dark:border-blue-800/60">
                   Quản trị viên
                 </span>
               </div>
@@ -134,11 +134,11 @@ export default function AdminLoginPage() {
       </header>
 
       {/* Main Content Area */}
-      <main className="relative z-10 flex-1 flex items-center justify-center px-4 py-12 sm:py-16">
+      <main className="relative z-10 flex-1 flex items-center justify-center px-4 py-8 sm:py-16">
         <div className="w-full max-w-md animate-fade-in">
           
           {/* Card Container */}
-          <div className="rounded-[2.5rem] bg-white/85 dark:bg-[#1a1a1f]/85 backdrop-blur-2xl border border-white/80 dark:border-white/10 shadow-[0_20px_50px_rgba(0,102,204,0.08)] dark:shadow-[0_20px_50px_rgba(0,0,0,0.6)] p-7 sm:p-9 transition-all relative overflow-hidden">
+          <div className="rounded-[2rem] sm:rounded-[2.5rem] bg-white/85 dark:bg-[#1a1a1f]/85 backdrop-blur-2xl border border-white/80 dark:border-white/10 shadow-[0_20px_50px_rgba(0,102,204,0.08)] dark:shadow-[0_20px_50px_rgba(0,0,0,0.6)] p-5 sm:p-8 md:p-9 transition-all relative overflow-hidden">
             
             {/* Card Header */}
             <div className="mb-6">
@@ -189,7 +189,7 @@ export default function AdminLoginPage() {
                     type={showPassword ? "text" : "password"}
                     name="password"
                     placeholder="••••••••"
-                    className="w-full rounded-2xl border border-slate-200 dark:border-slate-700/80 bg-slate-50/70 dark:bg-slate-800/40 pl-10 pr-11 py-3 text-sm text-slate-900 dark:text-white placeholder-slate-400 transition-all focus:border-[#0066cc] dark:focus:border-blue-500 focus:bg-white dark:focus:bg-slate-800 focus:outline-none focus:ring-2 focus:ring-[#0066cc]/20 dark:focus:ring-blue-500/20"
+                    className="w-full h-12 rounded-2xl border border-slate-200 dark:border-slate-700/80 bg-slate-50/70 dark:bg-slate-800/40 pl-10 pr-11 py-2.5 sm:py-3 text-base sm:text-sm text-slate-900 dark:text-white placeholder-slate-400 placeholder:text-sm transition-all focus:border-[#0066cc] dark:focus:border-blue-500 focus:bg-white dark:focus:bg-slate-800 focus:outline-none focus:ring-2 focus:ring-[#0066cc]/20 dark:focus:ring-blue-500/20"
                     required
                     autoFocus
                     disabled={loading || passkeyLoading}
@@ -197,7 +197,7 @@ export default function AdminLoginPage() {
                   <button
                     type="button"
                     onClick={() => setShowPassword((curr) => !curr)}
-                    className="absolute inset-y-0 right-0 flex items-center justify-center px-3.5 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 transition"
+                    className="absolute inset-y-0 right-0 flex h-12 w-11 items-center justify-center text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 transition"
                     disabled={loading || passkeyLoading}
                     aria-label={showPassword ? "Ẩn mật khẩu" : "Hiện mật khẩu"}
                   >

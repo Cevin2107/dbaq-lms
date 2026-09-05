@@ -116,6 +116,7 @@ export function AuthPortal({ initialMode = 'login' }: AuthPortalProps) {
     if (typeof window !== 'undefined') {
       const targetUrl = newMode === 'signup' ? '/signup' : newMode === 'forgot-password' ? '/forgot-password' : '/login';
       window.history.replaceState(null, '', targetUrl);
+      window.scrollTo({ top: 0, behavior: 'smooth' });
     }
   };
 
@@ -312,13 +313,13 @@ export function AuthPortal({ initialMode = 'login' }: AuthPortalProps) {
       {/* Top Header Bar */}
       <header className="relative z-20 w-full border-b border-black/[0.05] dark:border-white/[0.06] bg-white/60 dark:bg-[#0a0a0a]/60 backdrop-blur-xl">
         <div className="max-w-[1440px] mx-auto px-4 sm:px-6 md:px-8 h-16 sm:h-20 flex items-center justify-between">
-          <Link href="/login" className="flex items-center gap-3 group">
-            <div className="relative flex h-10 w-10 sm:h-11 sm:w-11 items-center justify-center rounded-2xl bg-gradient-to-br from-[#0066cc] to-blue-700 text-white shadow-md shadow-blue-500/25 transition-transform group-hover:scale-105 duration-300">
+          <Link href="/login" className="flex items-center gap-2.5 sm:gap-3 group min-w-0">
+            <div className="relative flex h-9 w-9 sm:h-11 sm:w-11 shrink-0 items-center justify-center rounded-xl sm:rounded-2xl bg-gradient-to-br from-[#0066cc] to-blue-700 text-white shadow-md shadow-blue-500/25 transition-transform group-hover:scale-105 duration-300">
               <GraduationCap className="h-5 w-5 sm:h-6 sm:w-6" />
             </div>
-            <div>
-              <div className="flex items-center gap-2">
-                <span className="font-bold text-base sm:text-lg tracking-tight text-slate-900 dark:text-white">
+            <div className="min-w-0">
+              <div className="flex items-center gap-1.5 sm:gap-2">
+                <span className="font-bold text-sm sm:text-base md:text-lg tracking-tight text-slate-900 dark:text-white truncate">
                   Gia sư Đào Bá Anh Quân
                 </span>
                 <span className="hidden sm:inline-flex items-center rounded-full bg-blue-50 dark:bg-blue-950/60 px-2.5 py-0.5 text-[11px] font-semibold text-[#0066cc] dark:text-blue-400 border border-blue-200/60 dark:border-blue-800/60">
@@ -344,35 +345,35 @@ export function AuthPortal({ initialMode = 'login' }: AuthPortalProps) {
         </div>
       </header>
 
-      {/* Main Content: 2-Column Split */}
-      <main className="relative z-10 flex-1 flex items-center py-8 sm:py-12 lg:py-14">
+      {/* Main Content: 2-Column Split with Mobile-First Hierarchy */}
+      <main className="relative z-10 flex-1 flex items-center py-6 sm:py-10 lg:py-14">
         <div className="max-w-[1440px] w-full mx-auto px-4 sm:px-6 md:px-8">
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-12 items-center">
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-center">
             
-            {/* Left Column: Platform Introduction & Interactive Synchronized Feature Showcase */}
-            <div className="lg:col-span-7 xl:col-span-7 space-y-6 sm:space-y-7 animate-fade-in">
+            {/* Left Column (Desktop) / Bottom Column (Mobile): Platform Showcase */}
+            <div className="order-2 lg:order-1 lg:col-span-7 xl:col-span-7 space-y-5 sm:space-y-7 animate-fade-in mt-4 lg:mt-0">
               {/* Badge */}
-              <div className="inline-flex items-center gap-2 rounded-full border border-blue-200/70 dark:border-blue-500/20 bg-blue-50/80 dark:bg-blue-950/40 px-4 py-1.5 text-xs font-semibold text-[#0066cc] dark:text-blue-400 backdrop-blur-md shadow-sm">
+              <div className="inline-flex items-center gap-2 rounded-full border border-blue-200/70 dark:border-blue-500/20 bg-blue-50/80 dark:bg-blue-950/40 px-3.5 sm:px-4 py-1.5 text-[11px] sm:text-xs font-semibold text-[#0066cc] dark:text-blue-400 backdrop-blur-md shadow-sm">
                 <Sparkles className="h-3.5 w-3.5" />
                 <span>Không gian học tập & luyện thi chất lượng cao</span>
               </div>
 
               {/* Hero Headlines */}
-              <div className="space-y-2.5">
-                <h1 className="text-3xl sm:text-4xl lg:text-5xl font-extrabold tracking-[-0.03em] text-slate-900 dark:text-white leading-[1.15]">
+              <div className="space-y-2 sm:space-y-2.5">
+                <h1 className="text-2xl sm:text-4xl lg:text-5xl font-extrabold tracking-[-0.03em] text-slate-900 dark:text-white leading-[1.2]">
                   Rèn luyện kiến thức vững vàng,{' '}
                   <span className="bg-gradient-to-r from-[#0066cc] via-indigo-600 to-sky-500 bg-clip-text text-transparent">
                     tự tin bứt phá mọi kỳ thi
                   </span>
                 </h1>
-                <p className="text-sm sm:text-base text-slate-600 dark:text-slate-300 max-w-2xl leading-relaxed">
+                <p className="text-xs sm:text-base text-slate-600 dark:text-slate-300 max-w-2xl leading-relaxed">
                   Đồng hành cùng học sinh của <strong className="font-semibold text-slate-900 dark:text-white">Gia sư Đào Bá Anh Quân</strong>. Khám phá các tính năng chuyên sâu dưới đây:
                 </p>
               </div>
 
               {/* Feature Tabs: 3 Bento Interactive Cards with Synchronized State */}
-              <div className="space-y-4">
-                <div className="grid grid-cols-1 sm:grid-cols-3 gap-3.5">
+              <div className="space-y-3.5 sm:space-y-4">
+                <div className="grid grid-cols-3 gap-2 sm:gap-3.5">
                   {FEATURE_DATA.map((item) => {
                     const Icon = item.icon;
                     const isActive = activeFeature === item.id;
@@ -381,7 +382,7 @@ export function AuthPortal({ initialMode = 'login' }: AuthPortalProps) {
                         key={item.id}
                         type="button"
                         onClick={() => setActiveFeature(item.id)}
-                        className={`text-left rounded-[1.75rem] p-4.5 sm:p-5 transition-all duration-300 ease-[cubic-bezier(0.16,1,0.3,1)] ${
+                        className={`text-left rounded-2xl sm:rounded-[1.75rem] p-3 sm:p-5 transition-all duration-300 ease-[cubic-bezier(0.16,1,0.3,1)] ${
                           isActive
                             ? 'bg-white dark:bg-[#1f1f25] border-2 ' +
                               item.accentBorder +
@@ -389,18 +390,18 @@ export function AuthPortal({ initialMode = 'login' }: AuthPortalProps) {
                             : 'bg-white/60 dark:bg-[#1a1a1f]/60 backdrop-blur-xl border border-black/5 dark:border-white/5 opacity-80 hover:opacity-100 hover:bg-white/80 dark:hover:bg-[#1f1f24]/80'
                         }`}
                       >
-                        <div className="flex items-center justify-between mb-3">
-                          <div className={`flex h-10 w-10 items-center justify-center rounded-2xl ${item.badgeColor} transition-transform duration-300 ${isActive ? 'scale-110' : ''}`}>
-                            <Icon className="h-5 w-5" />
+                        <div className="flex items-center justify-between mb-2 sm:mb-3">
+                          <div className={`flex h-8 w-8 sm:h-10 sm:w-10 items-center justify-center rounded-xl sm:rounded-2xl ${item.badgeColor} transition-transform duration-300 ${isActive ? 'scale-110' : ''}`}>
+                            <Icon className="h-4 w-4 sm:h-5 sm:w-5" />
                           </div>
                           {isActive && (
                             <span className="flex h-2 w-2 rounded-full bg-[#0066cc] dark:bg-blue-400 animate-pulse" />
                           )}
                         </div>
-                        <h3 className={`text-sm font-bold tracking-tight mb-1 ${isActive ? 'text-[#0066cc] dark:text-blue-400' : 'text-slate-900 dark:text-white'}`}>
+                        <h3 className={`text-xs sm:text-sm font-bold tracking-tight mb-0.5 sm:mb-1 truncate ${isActive ? 'text-[#0066cc] dark:text-blue-400' : 'text-slate-900 dark:text-white'}`}>
                           {item.title}
                         </h3>
-                        <p className="text-xs text-slate-500 dark:text-slate-400 leading-relaxed line-clamp-2">
+                        <p className="text-xs text-slate-500 dark:text-slate-400 leading-relaxed line-clamp-2 hidden sm:block">
                           {item.shortDesc}
                         </p>
                       </button>
@@ -409,22 +410,22 @@ export function AuthPortal({ initialMode = 'login' }: AuthPortalProps) {
                 </div>
 
                 {/* Synchronized Spotlight Detail Card */}
-                <div className="rounded-[2rem] bg-gradient-to-r from-blue-50/80 via-indigo-50/50 to-slate-50/70 dark:from-blue-950/25 dark:via-indigo-950/15 dark:to-[#17171d]/50 border border-blue-100/90 dark:border-white/5 p-5 backdrop-blur-xl shadow-sm transition-all duration-300">
-                  <div className="flex items-center justify-between gap-2 mb-2.5">
-                    <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-[#0066cc]/10 text-[#0066cc] dark:bg-blue-400/20 dark:text-blue-300">
-                      <Zap className="h-3.5 w-3.5" />
+                <div className="rounded-2xl sm:rounded-[2rem] bg-gradient-to-r from-blue-50/80 via-indigo-50/50 to-slate-50/70 dark:from-blue-950/25 dark:via-indigo-950/15 dark:to-[#17171d]/50 border border-blue-100/90 dark:border-white/5 p-4 sm:p-5 backdrop-blur-xl shadow-sm transition-all duration-300">
+                  <div className="flex items-center justify-between gap-2 mb-2 sm:mb-2.5">
+                    <div className="inline-flex items-center gap-1.5 px-2.5 sm:px-3 py-0.5 sm:py-1 rounded-full text-[11px] sm:text-xs font-bold bg-[#0066cc]/10 text-[#0066cc] dark:bg-blue-400/20 dark:text-blue-300">
+                      <Zap className="h-3 w-3 sm:h-3.5 sm:w-3.5" />
                       <span>{currentFeature.previewBadge}</span>
                     </div>
-                    <span className="text-[11px] font-medium text-slate-400 dark:text-slate-500">
-                      Nhấn vào từng thẻ trên để xem chi tiết
+                    <span className="text-[10px] sm:text-[11px] font-medium text-slate-400 dark:text-slate-500">
+                      Chạm để xem tính năng
                     </span>
                   </div>
 
-                  <div className="space-y-2">
-                    <h4 className="text-sm font-bold text-slate-900 dark:text-white flex items-center gap-2">
+                  <div className="space-y-1.5 sm:space-y-2">
+                    <h4 className="text-xs sm:text-sm font-bold text-slate-900 dark:text-white flex items-center gap-2">
                       <span>{currentFeature.headline}</span>
                     </h4>
-                    <p className="text-xs font-mono bg-white/70 dark:bg-black/30 border border-black/5 dark:border-white/5 rounded-xl px-3 py-2 text-slate-800 dark:text-slate-200">
+                    <p className="text-[11px] sm:text-xs font-mono bg-white/70 dark:bg-black/30 border border-black/5 dark:border-white/5 rounded-xl px-2.5 sm:px-3 py-1.5 sm:py-2 text-slate-800 dark:text-slate-200">
                       {currentFeature.highlightSnippet}
                     </p>
                     <p className="text-xs text-slate-600 dark:text-slate-400 leading-relaxed">
@@ -433,11 +434,11 @@ export function AuthPortal({ initialMode = 'login' }: AuthPortalProps) {
                   </div>
 
                   {/* Feature Tags */}
-                  <div className="flex flex-wrap gap-1.5 pt-3 mt-3 border-t border-black/5 dark:border-white/5">
+                  <div className="flex flex-wrap gap-1 sm:gap-1.5 pt-2.5 sm:pt-3 mt-2.5 sm:mt-3 border-t border-black/5 dark:border-white/5">
                     {currentFeature.tags.map((tag, idx) => (
                       <span
                         key={idx}
-                        className="rounded-full bg-white/80 dark:bg-white/10 px-2.5 py-0.5 text-[11px] font-medium text-slate-700 dark:text-slate-300 border border-black/5 dark:border-white/5"
+                        className="rounded-full bg-white/80 dark:bg-white/10 px-2 sm:px-2.5 py-0.5 text-[10px] sm:text-[11px] font-medium text-slate-700 dark:text-slate-300 border border-black/5 dark:border-white/5"
                       >
                         ✓ {tag}
                       </span>
@@ -447,42 +448,42 @@ export function AuthPortal({ initialMode = 'login' }: AuthPortalProps) {
               </div>
 
               {/* Inspirational Quote Strip */}
-              <div className="rounded-[1.75rem] bg-white/50 dark:bg-[#1a1a1f]/50 border border-black/5 dark:border-white/5 p-4 sm:p-5 backdrop-blur-md flex items-start gap-3.5">
-                <div className="shrink-0 flex h-9 w-9 items-center justify-center rounded-2xl bg-[#0066cc]/10 text-[#0066cc] dark:text-blue-400">
-                  <Quote className="h-4 w-4" />
+              <div className="rounded-2xl sm:rounded-[1.75rem] bg-white/50 dark:bg-[#1a1a1f]/50 border border-black/5 dark:border-white/5 p-3.5 sm:p-5 backdrop-blur-md flex items-start gap-3 sm:gap-3.5">
+                <div className="shrink-0 flex h-8 w-8 sm:h-9 sm:w-9 items-center justify-center rounded-xl sm:rounded-2xl bg-[#0066cc]/10 text-[#0066cc] dark:text-blue-400">
+                  <Quote className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
                 </div>
                 <div className="space-y-0.5">
                   <p className="text-xs sm:text-sm font-medium italic text-slate-700 dark:text-slate-300 leading-relaxed">
                     &ldquo;Học tập là hạt giống của trí tuệ, sự kiên trì là giọt nước tưới mát cây thành công.&rdquo;
                   </p>
-                  <p className="text-[11px] text-slate-500 dark:text-slate-400">
+                  <p className="text-[10px] sm:text-[11px] text-slate-500 dark:text-slate-400">
                     — Lời nhắn gửi từ Gia sư Đào Bá Anh Quân
                   </p>
                 </div>
               </div>
             </div>
 
-            {/* Right Column: Sliding Synchronized Form Container */}
-            <div className="lg:col-span-5 xl:col-span-5 flex justify-center lg:justify-end animate-slide-up">
-              <div className="w-full max-w-md rounded-[2.5rem] bg-white/85 dark:bg-[#1a1a1f]/85 backdrop-blur-2xl border border-white/80 dark:border-white/10 shadow-[0_20px_50px_rgba(0,102,204,0.08)] dark:shadow-[0_20px_50px_rgba(0,0,0,0.6)] p-7 sm:p-9 transition-all relative overflow-hidden">
+            {/* Right Column (Desktop) / Top Column (Mobile): Form Container */}
+            <div className="order-1 lg:order-2 lg:col-span-5 xl:col-span-5 flex justify-center lg:justify-end animate-slide-up">
+              <div className="w-full max-w-md rounded-[2rem] sm:rounded-[2.5rem] bg-white/85 dark:bg-[#1a1a1f]/85 backdrop-blur-2xl border border-white/80 dark:border-white/10 shadow-[0_20px_50px_rgba(0,102,204,0.08)] dark:shadow-[0_20px_50px_rgba(0,0,0,0.6)] p-5 sm:p-8 md:p-9 transition-all relative overflow-hidden">
                 
                 {/* Apple Segmented Control: Sliding Pill Indicator */}
                 {mode !== 'forgot-password' ? (
-                  <div className="relative flex p-1.5 bg-slate-100/90 dark:bg-slate-800/80 rounded-2xl mb-7 border border-black/[0.04] dark:border-white/[0.05]">
+                  <div className="relative flex p-1 sm:p-1.5 bg-slate-100/90 dark:bg-slate-800/80 rounded-2xl mb-5 sm:mb-7 border border-black/[0.04] dark:border-white/[0.05]">
                     {/* Synchronized Morphing Pill */}
                     <div
-                      className="absolute top-1.5 bottom-1.5 rounded-xl bg-white dark:bg-[#2a2a30] shadow-sm transition-transform duration-300 ease-[cubic-bezier(0.16,1,0.3,1)]"
+                      className="absolute top-1 bottom-1 sm:top-1.5 sm:bottom-1.5 rounded-xl bg-white dark:bg-[#2a2a30] shadow-sm transition-transform duration-300 ease-[cubic-bezier(0.16,1,0.3,1)]"
                       style={{
-                        width: 'calc(50% - 6px)',
-                        transform: mode === 'signup' ? 'translateX(calc(100% + 6px))' : 'translateX(0px)',
-                        left: '3px',
+                        width: 'calc(50% - 4px)',
+                        transform: mode === 'signup' ? 'translateX(calc(100% + 4px))' : 'translateX(0px)',
+                        left: '2px',
                       }}
                     />
                     
                     <button
                       type="button"
                       onClick={() => switchMode('login')}
-                      className={`relative z-10 flex-1 py-2.5 text-xs sm:text-sm font-bold rounded-xl transition-colors duration-200 ${
+                      className={`relative z-10 flex-1 py-2 sm:py-2.5 px-1 sm:px-2 text-xs sm:text-sm font-bold rounded-xl transition-colors duration-200 text-center truncate ${
                         mode === 'login'
                           ? 'text-slate-900 dark:text-white'
                           : 'text-slate-500 dark:text-slate-400 hover:text-slate-800 dark:hover:text-slate-200'
@@ -493,7 +494,7 @@ export function AuthPortal({ initialMode = 'login' }: AuthPortalProps) {
                     <button
                       type="button"
                       onClick={() => switchMode('signup')}
-                      className={`relative z-10 flex-1 py-2.5 text-xs sm:text-sm font-bold rounded-xl transition-colors duration-200 ${
+                      className={`relative z-10 flex-1 py-2 sm:py-2.5 px-1 sm:px-2 text-xs sm:text-sm font-bold rounded-xl transition-colors duration-200 text-center truncate ${
                         mode === 'signup'
                           ? 'text-slate-900 dark:text-white'
                           : 'text-slate-500 dark:text-slate-400 hover:text-slate-800 dark:hover:text-slate-200'
@@ -503,7 +504,7 @@ export function AuthPortal({ initialMode = 'login' }: AuthPortalProps) {
                     </button>
                   </div>
                 ) : (
-                  <div className="mb-6 flex items-center justify-between">
+                  <div className="mb-5 sm:mb-6 flex items-center justify-between">
                     <button
                       type="button"
                       onClick={() => switchMode('login')}
@@ -525,14 +526,14 @@ export function AuthPortal({ initialMode = 'login' }: AuthPortalProps) {
                       }}
                     >
                       {/* PANEL 1: LOGIN FORM */}
-                      <div className={`w-1/2 pr-3.5 transition-opacity duration-300 ${mode === 'login' ? 'opacity-100' : 'opacity-0 pointer-events-none'}`}>
-                        <div className="mb-6">
-                          <div className="flex items-center gap-3 mb-2">
-                            <div className="flex h-10 w-10 items-center justify-center rounded-2xl bg-blue-50 dark:bg-blue-900/40 text-[#0066cc] dark:text-blue-400">
-                              <Lock className="h-5 w-5" />
+                      <div className={`w-1/2 pr-2.5 sm:pr-3.5 transition-opacity duration-300 ${mode === 'login' ? 'opacity-100' : 'opacity-0 pointer-events-none'}`}>
+                        <div className="mb-4 sm:mb-6">
+                          <div className="flex items-center gap-2.5 sm:gap-3 mb-1.5 sm:mb-2">
+                            <div className="flex h-9 w-9 sm:h-10 sm:w-10 shrink-0 items-center justify-center rounded-xl sm:rounded-2xl bg-blue-50 dark:bg-blue-900/40 text-[#0066cc] dark:text-blue-400">
+                              <Lock className="h-4 w-4 sm:h-5 sm:w-5" />
                             </div>
                             <div>
-                              <h2 className="text-xl font-bold text-slate-900 dark:text-white tracking-[-0.02em]">
+                              <h2 className="text-lg sm:text-xl font-bold text-slate-900 dark:text-white tracking-[-0.02em]">
                                 Chào mừng trở lại!
                               </h2>
                               <p className="text-xs text-slate-500 dark:text-slate-400">
@@ -542,9 +543,9 @@ export function AuthPortal({ initialMode = 'login' }: AuthPortalProps) {
                           </div>
                         </div>
 
-                        <form onSubmit={handleLogin} className="space-y-4">
+                        <form onSubmit={handleLogin} className="space-y-3.5 sm:space-y-4">
                           <div>
-                            <label htmlFor="login-email" className="mb-1.5 block text-xs font-semibold uppercase tracking-wider text-slate-600 dark:text-slate-300">
+                            <label htmlFor="login-email" className="mb-1 sm:mb-1.5 block text-xs font-semibold uppercase tracking-wider text-slate-600 dark:text-slate-300">
                               Địa chỉ Email
                             </label>
                             <div className="relative">
@@ -554,7 +555,7 @@ export function AuthPortal({ initialMode = 'login' }: AuthPortalProps) {
                               <input
                                 id="login-email"
                                 type="email"
-                                className="w-full rounded-2xl border border-slate-200 dark:border-slate-700/80 bg-slate-50/70 dark:bg-slate-800/40 pl-10 pr-4 py-3 text-sm text-slate-900 dark:text-white placeholder-slate-400 transition-all focus:border-[#0066cc] dark:focus:border-blue-500 focus:bg-white dark:focus:bg-slate-800 focus:outline-none focus:ring-2 focus:ring-[#0066cc]/20 dark:focus:ring-blue-500/20"
+                                className="w-full h-12 rounded-2xl border border-slate-200 dark:border-slate-700/80 bg-slate-50/70 dark:bg-slate-800/40 pl-10 pr-4 py-2.5 sm:py-3 text-base sm:text-sm text-slate-900 dark:text-white placeholder-slate-400 placeholder:text-sm transition-all focus:border-[#0066cc] dark:focus:border-blue-500 focus:bg-white dark:focus:bg-slate-800 focus:outline-none focus:ring-2 focus:ring-[#0066cc]/20 dark:focus:ring-blue-500/20"
                                 placeholder="student@example.com"
                                 value={email}
                                 onChange={(e) => setEmail(e.target.value)}
@@ -566,7 +567,7 @@ export function AuthPortal({ initialMode = 'login' }: AuthPortalProps) {
                           </div>
 
                           <div>
-                            <div className="flex items-center justify-between mb-1.5">
+                            <div className="flex items-center justify-between mb-1 sm:mb-1.5">
                               <label htmlFor="login-password" className="block text-xs font-semibold uppercase tracking-wider text-slate-600 dark:text-slate-300">
                                 Mật khẩu
                               </label>
@@ -585,7 +586,7 @@ export function AuthPortal({ initialMode = 'login' }: AuthPortalProps) {
                               <input
                                 id="login-password"
                                 type={showPassword ? 'text' : 'password'}
-                                className="w-full rounded-2xl border border-slate-200 dark:border-slate-700/80 bg-slate-50/70 dark:bg-slate-800/40 pl-10 pr-11 py-3 text-sm text-slate-900 dark:text-white placeholder-slate-400 transition-all focus:border-[#0066cc] dark:focus:border-blue-500 focus:bg-white dark:focus:bg-slate-800 focus:outline-none focus:ring-2 focus:ring-[#0066cc]/20 dark:focus:ring-blue-500/20"
+                                className="w-full h-12 rounded-2xl border border-slate-200 dark:border-slate-700/80 bg-slate-50/70 dark:bg-slate-800/40 pl-10 pr-11 py-2.5 sm:py-3 text-base sm:text-sm text-slate-900 dark:text-white placeholder-slate-400 placeholder:text-sm transition-all focus:border-[#0066cc] dark:focus:border-blue-500 focus:bg-white dark:focus:bg-slate-800 focus:outline-none focus:ring-2 focus:ring-[#0066cc]/20 dark:focus:ring-blue-500/20"
                                 placeholder="••••••••"
                                 value={password}
                                 onChange={(e) => setPassword(e.target.value)}
@@ -596,7 +597,7 @@ export function AuthPortal({ initialMode = 'login' }: AuthPortalProps) {
                               <button
                                 type="button"
                                 onClick={() => setShowPassword((current) => !current)}
-                                className="absolute inset-y-0 right-0 flex items-center justify-center px-3.5 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 transition disabled:cursor-not-allowed"
+                                className="absolute inset-y-0 right-0 flex h-12 w-11 items-center justify-center text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 transition disabled:cursor-not-allowed"
                                 disabled={loading}
                                 aria-label={showPassword ? 'Ẩn mật khẩu' : 'Hiện mật khẩu'}
                                 aria-pressed={showPassword}
@@ -638,7 +639,7 @@ export function AuthPortal({ initialMode = 'login' }: AuthPortalProps) {
                           </Button>
                         </form>
 
-                        <div className="mt-5 text-center text-xs sm:text-sm">
+                        <div className="mt-4 sm:mt-5 text-center text-xs sm:text-sm">
                           <span className="text-slate-500 dark:text-slate-400">Chưa có tài khoản học viên?</span>{' '}
                           <button
                             type="button"
@@ -651,14 +652,14 @@ export function AuthPortal({ initialMode = 'login' }: AuthPortalProps) {
                       </div>
 
                       {/* PANEL 2: SIGNUP FORM */}
-                      <div className={`w-1/2 pl-3.5 transition-opacity duration-300 ${mode === 'signup' ? 'opacity-100' : 'opacity-0 pointer-events-none'}`}>
-                        <div className="mb-6">
-                          <div className="flex items-center gap-3 mb-2">
-                            <div className="flex h-10 w-10 items-center justify-center rounded-2xl bg-indigo-50 dark:bg-indigo-900/40 text-indigo-600 dark:text-indigo-400">
-                              <User className="h-5 w-5" />
+                      <div className={`w-1/2 pl-2.5 sm:pl-3.5 transition-opacity duration-300 ${mode === 'signup' ? 'opacity-100' : 'opacity-0 pointer-events-none'}`}>
+                        <div className="mb-4 sm:mb-6">
+                          <div className="flex items-center gap-2.5 sm:gap-3 mb-1.5 sm:mb-2">
+                            <div className="flex h-9 w-9 sm:h-10 sm:w-10 shrink-0 items-center justify-center rounded-xl sm:rounded-2xl bg-indigo-50 dark:bg-indigo-900/40 text-indigo-600 dark:text-indigo-400">
+                              <User className="h-4 w-4 sm:h-5 sm:w-5" />
                             </div>
                             <div>
-                              <h2 className="text-xl font-bold text-slate-900 dark:text-white tracking-[-0.02em]">
+                              <h2 className="text-lg sm:text-xl font-bold text-slate-900 dark:text-white tracking-[-0.02em]">
                                 Tạo tài khoản học viên
                               </h2>
                               <p className="text-xs text-slate-500 dark:text-slate-400">
@@ -668,9 +669,9 @@ export function AuthPortal({ initialMode = 'login' }: AuthPortalProps) {
                           </div>
                         </div>
 
-                        <form onSubmit={handleSignup} className="space-y-3.5">
+                        <form onSubmit={handleSignup} className="space-y-3 sm:space-y-3.5">
                           <div>
-                            <label htmlFor="signup-name" className="mb-1.5 block text-xs font-semibold uppercase tracking-wider text-slate-600 dark:text-slate-300">
+                            <label htmlFor="signup-name" className="mb-1 sm:mb-1.5 block text-xs font-semibold uppercase tracking-wider text-slate-600 dark:text-slate-300">
                               Họ và tên học sinh <span className="text-red-500">*</span>
                             </label>
                             <div className="relative">
@@ -680,7 +681,7 @@ export function AuthPortal({ initialMode = 'login' }: AuthPortalProps) {
                               <input
                                 id="signup-name"
                                 type="text"
-                                className="w-full rounded-2xl border border-slate-200 dark:border-slate-700/80 bg-slate-50/70 dark:bg-slate-800/40 pl-10 pr-4 py-3 text-sm text-slate-900 dark:text-white placeholder-slate-400 transition-all focus:border-[#0066cc] dark:focus:border-blue-500 focus:bg-white dark:focus:bg-slate-800 focus:outline-none focus:ring-2 focus:ring-[#0066cc]/20 dark:focus:ring-blue-500/20"
+                                className="w-full h-12 rounded-2xl border border-slate-200 dark:border-slate-700/80 bg-slate-50/70 dark:bg-slate-800/40 pl-10 pr-4 py-2.5 sm:py-3 text-base sm:text-sm text-slate-900 dark:text-white placeholder-slate-400 placeholder:text-sm transition-all focus:border-[#0066cc] dark:focus:border-blue-500 focus:bg-white dark:focus:bg-slate-800 focus:outline-none focus:ring-2 focus:ring-[#0066cc]/20 dark:focus:ring-blue-500/20"
                                 placeholder="Nguyễn Văn A"
                                 value={fullName}
                                 onChange={(e) => setFullName(e.target.value)}
@@ -692,7 +693,7 @@ export function AuthPortal({ initialMode = 'login' }: AuthPortalProps) {
                           </div>
 
                           <div>
-                            <label htmlFor="signup-email" className="mb-1.5 block text-xs font-semibold uppercase tracking-wider text-slate-600 dark:text-slate-300">
+                            <label htmlFor="signup-email" className="mb-1 sm:mb-1.5 block text-xs font-semibold uppercase tracking-wider text-slate-600 dark:text-slate-300">
                               Địa chỉ Email <span className="text-red-500">*</span>
                             </label>
                             <div className="relative">
@@ -702,7 +703,7 @@ export function AuthPortal({ initialMode = 'login' }: AuthPortalProps) {
                               <input
                                 id="signup-email"
                                 type="email"
-                                className="w-full rounded-2xl border border-slate-200 dark:border-slate-700/80 bg-slate-50/70 dark:bg-slate-800/40 pl-10 pr-4 py-3 text-sm text-slate-900 dark:text-white placeholder-slate-400 transition-all focus:border-[#0066cc] dark:focus:border-blue-500 focus:bg-white dark:focus:bg-slate-800 focus:outline-none focus:ring-2 focus:ring-[#0066cc]/20 dark:focus:ring-blue-500/20"
+                                className="w-full h-12 rounded-2xl border border-slate-200 dark:border-slate-700/80 bg-slate-50/70 dark:bg-slate-800/40 pl-10 pr-4 py-2.5 sm:py-3 text-base sm:text-sm text-slate-900 dark:text-white placeholder-slate-400 placeholder:text-sm transition-all focus:border-[#0066cc] dark:focus:border-blue-500 focus:bg-white dark:focus:bg-slate-800 focus:outline-none focus:ring-2 focus:ring-[#0066cc]/20 dark:focus:ring-blue-500/20"
                                 placeholder="student@example.com"
                                 value={email}
                                 onChange={(e) => setEmail(e.target.value)}
@@ -714,7 +715,7 @@ export function AuthPortal({ initialMode = 'login' }: AuthPortalProps) {
                           </div>
 
                           <div>
-                            <label htmlFor="signup-password" className="mb-1.5 block text-xs font-semibold uppercase tracking-wider text-slate-600 dark:text-slate-300">
+                            <label htmlFor="signup-password" className="mb-1 sm:mb-1.5 block text-xs font-semibold uppercase tracking-wider text-slate-600 dark:text-slate-300">
                               Mật khẩu <span className="text-red-500">*</span>
                             </label>
                             <div className="relative">
@@ -724,7 +725,7 @@ export function AuthPortal({ initialMode = 'login' }: AuthPortalProps) {
                               <input
                                 id="signup-password"
                                 type={showPassword ? 'text' : 'password'}
-                                className="w-full rounded-2xl border border-slate-200 dark:border-slate-700/80 bg-slate-50/70 dark:bg-slate-800/40 pl-10 pr-11 py-3 text-sm text-slate-900 dark:text-white placeholder-slate-400 transition-all focus:border-[#0066cc] dark:focus:border-blue-500 focus:bg-white dark:focus:bg-slate-800 focus:outline-none focus:ring-2 focus:ring-[#0066cc]/20 dark:focus:ring-blue-500/20"
+                                className="w-full h-12 rounded-2xl border border-slate-200 dark:border-slate-700/80 bg-slate-50/70 dark:bg-slate-800/40 pl-10 pr-11 py-2.5 sm:py-3 text-base sm:text-sm text-slate-900 dark:text-white placeholder-slate-400 placeholder:text-sm transition-all focus:border-[#0066cc] dark:focus:border-blue-500 focus:bg-white dark:focus:bg-slate-800 focus:outline-none focus:ring-2 focus:ring-[#0066cc]/20 dark:focus:ring-blue-500/20"
                                 placeholder="Tối thiểu 6 ký tự"
                                 value={password}
                                 onChange={(e) => setPassword(e.target.value)}
@@ -735,7 +736,7 @@ export function AuthPortal({ initialMode = 'login' }: AuthPortalProps) {
                               <button
                                 type="button"
                                 onClick={() => setShowPassword((current) => !current)}
-                                className="absolute inset-y-0 right-0 flex items-center justify-center px-3.5 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 transition disabled:cursor-not-allowed"
+                                className="absolute inset-y-0 right-0 flex h-12 w-11 items-center justify-center text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 transition disabled:cursor-not-allowed"
                                 disabled={loading}
                                 aria-label={showPassword ? 'Ẩn mật khẩu' : 'Hiện mật khẩu'}
                                 aria-pressed={showPassword}
@@ -766,7 +767,7 @@ export function AuthPortal({ initialMode = 'login' }: AuthPortalProps) {
                           </Button>
                         </form>
 
-                        <div className="mt-5 text-center text-xs sm:text-sm">
+                        <div className="mt-4 sm:mt-5 text-center text-xs sm:text-sm">
                           <span className="text-slate-500 dark:text-slate-400">Đã có tài khoản học viên?</span>{' '}
                           <button
                             type="button"
@@ -782,13 +783,13 @@ export function AuthPortal({ initialMode = 'login' }: AuthPortalProps) {
                 ) : (
                   /* MODE 3: FORGOT PASSWORD */
                   <div className="animate-fade-in">
-                    <div className="mb-6">
-                      <div className="flex items-center gap-3 mb-2">
-                        <div className="flex h-10 w-10 items-center justify-center rounded-2xl bg-amber-50 dark:bg-amber-900/40 text-amber-600 dark:text-amber-400">
-                          <Lock className="h-5 w-5" />
+                    <div className="mb-4 sm:mb-6">
+                      <div className="flex items-center gap-2.5 sm:gap-3 mb-1.5 sm:mb-2">
+                        <div className="flex h-9 w-9 sm:h-10 sm:w-10 shrink-0 items-center justify-center rounded-xl sm:rounded-2xl bg-amber-50 dark:bg-amber-900/40 text-amber-600 dark:text-amber-400">
+                          <Lock className="h-4 w-4 sm:h-5 sm:w-5" />
                         </div>
                         <div>
-                          <h2 className="text-xl font-bold text-slate-900 dark:text-white tracking-[-0.02em]">
+                          <h2 className="text-lg sm:text-xl font-bold text-slate-900 dark:text-white tracking-[-0.02em]">
                             Khôi phục mật khẩu
                           </h2>
                           <p className="text-xs text-slate-500 dark:text-slate-400">
@@ -822,9 +823,9 @@ export function AuthPortal({ initialMode = 'login' }: AuthPortalProps) {
                         </Button>
                       </div>
                     ) : (
-                      <form onSubmit={handleForgotPassword} className="space-y-4">
+                      <form onSubmit={handleForgotPassword} className="space-y-3.5 sm:space-y-4">
                         <div>
-                          <label htmlFor="forgot-email" className="mb-1.5 block text-xs font-semibold uppercase tracking-wider text-slate-600 dark:text-slate-300">
+                          <label htmlFor="forgot-email" className="mb-1 sm:mb-1.5 block text-xs font-semibold uppercase tracking-wider text-slate-600 dark:text-slate-300">
                             Địa chỉ Email đăng ký
                           </label>
                           <div className="relative">
@@ -834,7 +835,7 @@ export function AuthPortal({ initialMode = 'login' }: AuthPortalProps) {
                             <input
                               id="forgot-email"
                               type="email"
-                              className="w-full rounded-2xl border border-slate-200 dark:border-slate-700/80 bg-slate-50/70 dark:bg-slate-800/40 pl-10 pr-4 py-3 text-sm text-slate-900 dark:text-white placeholder-slate-400 transition-all focus:border-[#0066cc] dark:focus:border-blue-500 focus:bg-white dark:focus:bg-slate-800 focus:outline-none focus:ring-2 focus:ring-[#0066cc]/20 dark:focus:ring-blue-500/20"
+                              className="w-full h-12 rounded-2xl border border-slate-200 dark:border-slate-700/80 bg-slate-50/70 dark:bg-slate-800/40 pl-10 pr-4 py-2.5 sm:py-3 text-base sm:text-sm text-slate-900 dark:text-white placeholder-slate-400 placeholder:text-sm transition-all focus:border-[#0066cc] dark:focus:border-blue-500 focus:bg-white dark:focus:bg-slate-800 focus:outline-none focus:ring-2 focus:ring-[#0066cc]/20 dark:focus:ring-blue-500/20"
                               placeholder="student@example.com"
                               value={email}
                               onChange={(e) => setEmail(e.target.value)}
@@ -877,10 +878,10 @@ export function AuthPortal({ initialMode = 'login' }: AuthPortalProps) {
                 )}
 
                 {/* Admin and Passkey Section */}
-                <div className="mt-6 pt-6 border-t border-slate-100 dark:border-white/5 flex items-center gap-3">
+                <div className="mt-5 sm:mt-6 pt-5 sm:pt-6 border-t border-slate-100 dark:border-white/5 flex items-center gap-2.5 sm:gap-3">
                   <Link
                     href="/admin"
-                    className="flex w-full items-center justify-center rounded-2xl border border-slate-200 dark:border-slate-700/70 bg-slate-50/60 dark:bg-slate-800/40 px-4 py-2.5 text-xs font-semibold text-slate-700 dark:text-slate-300 transition hover:border-blue-200 dark:hover:border-blue-800 hover:bg-blue-50 dark:hover:bg-blue-900/30 hover:text-[#0066cc] dark:hover:text-blue-400"
+                    className="flex-1 flex items-center justify-center rounded-2xl border border-slate-200 dark:border-slate-700/70 bg-slate-50/60 dark:bg-slate-800/40 px-3 sm:px-4 py-2.5 h-11 sm:h-auto text-xs font-semibold text-slate-700 dark:text-slate-300 transition hover:border-blue-200 dark:hover:border-blue-800 hover:bg-blue-50 dark:hover:bg-blue-900/30 hover:text-[#0066cc] dark:hover:text-blue-400 text-center truncate"
                   >
                     Đăng nhập Quản trị viên
                   </Link>
@@ -888,7 +889,7 @@ export function AuthPortal({ initialMode = 'login' }: AuthPortalProps) {
                     type="button"
                     onClick={handleAdminPasskeyLogin}
                     disabled={adminPasskeyLoading || loading}
-                    className={`inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl border border-slate-200 dark:border-slate-700/70 bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-300 shadow-[0_2px_10px_rgba(0,0,0,0.02)] transition hover:bg-slate-50 dark:hover:bg-slate-700 disabled:opacity-60 ${adminPasskeyLoading ? 'ring-2 ring-[#0066cc]/40 bg-blue-50/50 dark:bg-blue-900/30' : ''}`}
+                    className={`h-11 w-11 shrink-0 flex items-center justify-center rounded-2xl border border-slate-200 dark:border-slate-700/70 bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-300 shadow-sm transition hover:bg-slate-50 dark:hover:bg-slate-700 disabled:opacity-60 ${adminPasskeyLoading ? 'ring-2 ring-[#0066cc]/40 bg-blue-50/50 dark:bg-blue-900/30' : ''}`}
                     title="Đăng nhập Admin bằng Passkey"
                     aria-label="Đăng nhập admin bằng passkey"
                   >
