@@ -16,7 +16,7 @@ export async function POST(req: NextRequest) {
     const supabase = createSupabaseAdmin();
     const { data: passkeys, error } = await (supabase
       .from("admin_passkeys") as any)
-      .select("credential_id");
+      .select("credential_id, transports");
     console.timeEnd("[Passkey Auth Options] DB Query");
 
     if (error) {
@@ -51,16 +51,20 @@ export async function POST(req: NextRequest) {
     const allowCredentials = validPasskeys
       .map((item: any) => {
         try {
+          const transports = Array.isArray(item.transports) && item.transports.length > 0
+            ? item.transports
+            : ["internal", "hybrid"];
           return {
             id: item.credential_id,
             type: "public-key" as const,
+            transports,
           };
         } catch (err) {
           console.error("Invalid credential_id", err);
           return null;
         }
       })
-      .filter(Boolean) as Array<{ id: string; type: "public-key" }>;
+      .filter(Boolean) as Array<{ id: string; type: "public-key"; transports?: any }>;
 
     if (allowCredentials.length === 0) {
       return NextResponse.json({ error: "Passkey không hợp lệ" }, { status: 400 });
@@ -69,8 +73,8 @@ export async function POST(req: NextRequest) {
     console.time("[Passkey Auth Options] GenerateOptions");
     const options = await generateAuthenticationOptions({
       rpID,
-      timeout: 60000,
-      userVerification: "required",
+      timeout: 25000,
+      userVerification: "preferred",
       allowCredentials,
     });
     console.timeEnd("[Passkey Auth Options] GenerateOptions");

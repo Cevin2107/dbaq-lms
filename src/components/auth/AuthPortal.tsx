@@ -27,7 +27,7 @@ import { Button } from '@/components/ui/Button';
 import { useToast } from '@/components/ui/Toast';
 import { ThemeToggle } from '@/components/ThemeToggle';
 import { Footer } from '@/components/Footer';
-import { startAuthentication } from '@simplewebauthn/browser';
+import { startAuthentication, browserSupportsWebAuthn } from '@simplewebauthn/browser';
 
 type AuthMode = 'login' | 'signup' | 'forgot-password';
 type FeatureId = 'assignments' | 'schedule' | 'progress';
@@ -271,18 +271,43 @@ export function AuthPortal({ initialMode = 'login' }: AuthPortalProps) {
   const handleAdminPasskeyLogin = async () => {
     setAdminPasskeyLoading(true);
     try {
-      const optionsRes = await fetch('/api/admin/passkeys/auth-options', { method: 'POST' });
+      if (!browserSupportsWebAuthn()) {
+        throw new Error('Trình duyệt này không hỗ trợ Passkey. Vui lòng mở bằng Safari hoặc Chrome.');
+      }
+
+      const optionsAbort = new AbortController();
+      const optionsTimeout = setTimeout(() => optionsAbort.abort(), 12000);
+      let optionsRes: Response;
+      try {
+        optionsRes = await fetch('/api/admin/passkeys/auth-options', {
+          method: 'POST',
+          signal: optionsAbort.signal,
+        });
+      } finally {
+        clearTimeout(optionsTimeout);
+      }
+
       const options = await readJsonResponse(optionsRes);
       if (!optionsRes.ok) {
         throw new Error(options.error || 'Không thể tạo yêu cầu xác thực');
       }
 
-      const assertionResponse = await startAuthentication(options);
-      const verifyRes = await fetch('/api/admin/passkeys/auth-verify', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ assertionResponse }),
-      });
+      const assertionResponse = await startAuthentication({ optionsJSON: options });
+
+      const verifyAbort = new AbortController();
+      const verifyTimeout = setTimeout(() => verifyAbort.abort(), 12000);
+      let verifyRes: Response;
+      try {
+        verifyRes = await fetch('/api/admin/passkeys/auth-verify', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ assertionResponse }),
+          signal: verifyAbort.signal,
+        });
+      } finally {
+        clearTimeout(verifyTimeout);
+      }
+
       const verifyData = await readJsonResponse(verifyRes);
       if (!verifyRes.ok) {
         throw new Error(verifyData.error || 'Không thể xác thực');
@@ -290,11 +315,23 @@ export function AuthPortal({ initialMode = 'login' }: AuthPortalProps) {
 
       window.location.assign('/admin/dashboard');
     } catch (err: any) {
+      let title = 'Đăng nhập passkey thất bại';
+      let description = err?.message || 'Không thể xác thực';
+
+      if (err?.name === 'AbortError') {
+        description = 'Kết nối máy chủ quá hạn (hơn 12s). Vui lòng thử lại hoặc đăng nhập bằng mật khẩu.';
+      } else if (err?.name === 'NotAllowedError') {
+        title = 'Đã hủy xác thực';
+        description = 'Bạn đã hủy xác thực hoặc thiết bị chưa lưu khóa cho trang web này.';
+      } else if (err?.name === 'SecurityError') {
+        description = 'Tên miền hiện tại không khớp với khóa Passkey.';
+      }
+
       addToast({
-        title: 'Đăng nhập passkey thất bại',
-        description: err?.message || 'Không thể xác thực',
+        title,
+        description,
         variant: 'error',
-        duration: 3500,
+        duration: 4000,
       });
     } finally {
       setAdminPasskeyLoading(false);

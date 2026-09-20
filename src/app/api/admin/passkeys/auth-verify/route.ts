@@ -54,7 +54,7 @@ export async function POST(req: NextRequest) {
         publicKey: publicKeyBytes,
         counter: passkey.counter,
       },
-      requireUserVerification: true,
+      requireUserVerification: false,
     });
     console.timeEnd("[Passkey Auth Verify] VerifyAuthenticationResponse");
 

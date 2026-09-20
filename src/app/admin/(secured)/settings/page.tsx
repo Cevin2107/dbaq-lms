@@ -89,7 +89,7 @@ export default function SettingsPage() {
         throw new Error(options.error || "Không thể tạo yêu cầu đăng ký");
       }
 
-      const attestationResponse = await startRegistration(options);
+      const attestationResponse = await startRegistration({ optionsJSON: options });
       const verifyRes = await fetch("/api/admin/passkeys/register-verify", {
         method: "POST",
         headers: { "Content-Type": "application/json" },

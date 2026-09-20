@@ -13,7 +13,7 @@ import {
   Lock,
 } from "lucide-react";
 import { loginAdmin } from "@/lib/adminAuth";
-import { startAuthentication } from "@simplewebauthn/browser";
+import { startAuthentication, browserSupportsWebAuthn } from "@simplewebauthn/browser";
 import { ThemeToggle } from "@/components/ThemeToggle";
 import { Button } from "@/components/ui/Button";
 import { Footer } from "@/components/Footer";
@@ -36,18 +36,20 @@ export default function AdminLoginPage() {
       .catch((err) => console.warn("[Passkey Pre-warm] API route pre-warm failed:", err));
   }, []);
 
-  async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setLoading(true);
     setError("");
     setPasskeyError("");
+
     const formData = new FormData(e.currentTarget);
     const result = await loginAdmin(formData);
+
     if (result?.error) {
       setError(result.error);
+      setLoading(false);
     }
-    setLoading(false);
-  }
+  };
 
   async function readJsonResponse(res: Response) {
     const contentType = res.headers.get("content-type") || "";
@@ -64,18 +66,43 @@ export default function AdminLoginPage() {
     setError("");
 
     try {
-      const optionsRes = await fetch("/api/admin/passkeys/auth-options", { method: "POST" });
+      if (!browserSupportsWebAuthn()) {
+        throw new Error("Trình duyệt này không hỗ trợ Passkey. Vui lòng mở bằng Safari hoặc Chrome, hoặc đăng nhập bằng mật khẩu.");
+      }
+
+      const optionsAbort = new AbortController();
+      const optionsTimeout = setTimeout(() => optionsAbort.abort(), 12000);
+      let optionsRes: Response;
+      try {
+        optionsRes = await fetch("/api/admin/passkeys/auth-options", {
+          method: "POST",
+          signal: optionsAbort.signal,
+        });
+      } finally {
+        clearTimeout(optionsTimeout);
+      }
+
       const options = await readJsonResponse(optionsRes);
       if (!optionsRes.ok) {
         throw new Error(options.error || "Không thể tạo yêu cầu xác thực");
       }
 
-      const assertionResponse = await startAuthentication(options);
-      const verifyRes = await fetch("/api/admin/passkeys/auth-verify", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ assertionResponse }),
-      });
+      const assertionResponse = await startAuthentication({ optionsJSON: options });
+
+      const verifyAbort = new AbortController();
+      const verifyTimeout = setTimeout(() => verifyAbort.abort(), 12000);
+      let verifyRes: Response;
+      try {
+        verifyRes = await fetch("/api/admin/passkeys/auth-verify", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ assertionResponse }),
+          signal: verifyAbort.signal,
+        });
+      } finally {
+        clearTimeout(verifyTimeout);
+      }
+
       const verifyData = await readJsonResponse(verifyRes);
       if (!verifyRes.ok) {
         console.error("Passkey Verify Error Detail:", verifyData);
@@ -85,7 +112,15 @@ export default function AdminLoginPage() {
       window.location.assign("/admin/dashboard");
     } catch (err: any) {
       console.error("Passkey exception:", err);
-      setPasskeyError(err?.message || "Đăng nhập bằng passkey thất bại");
+      let userMsg = err?.message || "Đăng nhập bằng passkey thất bại";
+      if (err?.name === "AbortError") {
+        userMsg = "Kết nối máy chủ bị quá hạn (hơn 12s). Vui lòng thử lại hoặc đăng nhập bằng mật khẩu.";
+      } else if (err?.name === "NotAllowedError") {
+        userMsg = "Đã hủy xác thực sinh trắc học hoặc thiết bị chưa lưu khóa cho trang web này.";
+      } else if (err?.name === "SecurityError") {
+        userMsg = "Tên miền hiện tại không khớp với khóa Passkey đã lưu.";
+      }
+      setPasskeyError(userMsg);
     } finally {
       setPasskeyLoading(false);
     }

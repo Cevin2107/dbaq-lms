@@ -51,13 +51,16 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: "Passkey không hợp lệ (credential rỗng)" }, { status: 400 });
     }
 
+    const rawTransports = attestationResponse?.response?.transports || attestationResponse?.transports;
+    const transports = Array.isArray(rawTransports) && rawTransports.length > 0 ? rawTransports : ["internal", "hybrid"];
+
     const supabase = createSupabaseAdmin();
     const { error } = await (supabase.from("admin_passkeys") as any).insert({
       name: name || null,
       credential_id: credentialIdBase64,
       public_key: publicKeyBase64,
       counter: credential.counter,
-      transports: attestationResponse?.transports || null,
+      transports,
     });
 
     if (error) {
