@@ -20,6 +20,27 @@ export async function GET() {
     const lastDay = new Date(year, month, 0).getDate();
     const endDate = `${year}-${String(month).padStart(2, "0")}-${lastDay}`;
 
+    // Calculate current week Monday and Sunday to ensure weekly schedule days across month boundaries are loaded
+    const currentDay = now.getDay();
+    const currentMondayDiff = currentDay === 0 ? -6 : 1 - currentDay;
+    const mondayDate = new Date(now);
+    mondayDate.setDate(now.getDate() + currentMondayDiff);
+    const sundayDate = new Date(mondayDate);
+    sundayDate.setDate(mondayDate.getDate() + 6);
+
+    const formatIso = (d: Date) => {
+      const y = d.getFullYear();
+      const m = String(d.getMonth() + 1).padStart(2, "0");
+      const day = String(d.getDate()).padStart(2, "0");
+      return `${y}-${m}-${day}`;
+    };
+
+    const mondayStr = formatIso(mondayDate);
+    const sundayStr = formatIso(sundayDate);
+
+    const queryStartDate = mondayStr < startDate ? mondayStr : startDate;
+    const queryEndDate = sundayStr > endDate ? sundayStr : endDate;
+
     // Execute ALL database & Auth queries in a SINGLE parallel Promise.all for maximum speed
     const [
       usersRes,
@@ -34,8 +55,8 @@ export async function GET() {
       supabase
         .from("teaching_sessions")
         .select("*, students(id, name, color)")
-        .gte("teaching_date", startDate)
-        .lte("teaching_date", endDate),
+        .gte("teaching_date", queryStartDate)
+        .lte("teaching_date", queryEndDate),
       supabase.from("students").select("id, name, color, salary_per_session"),
       supabase
         .from("schedule_registrations")
@@ -109,10 +130,14 @@ export async function GET() {
       a.full_name.localeCompare(b.full_name, "vi")
     );
 
-    // Count sessions per student name (case-insensitive matching to system students)
+    // Count monthly sessions (strictly within current month) per student
+    const monthlySessionsInMonth = sessionsData.filter((sess: any) =>
+      sess.teaching_date >= startDate && sess.teaching_date <= endDate
+    );
+
     const sessionsPerStudent: Record<string, { count: number; subjects: Record<string, number> }> = {};
 
-    sessionsData.forEach((sess: any) => {
+    monthlySessionsInMonth.forEach((sess: any) => {
       const studentName = sess.students?.name?.trim() || "";
       if (!studentName) return;
       const key = studentName.toLowerCase();
@@ -201,7 +226,7 @@ export async function GET() {
       {
         summary: {
           totalSystemStudents: registeredStudents.length,
-          totalMonthlySessions: sessionsData.length,
+          totalMonthlySessions: monthlySessionsInMonth.length,
           totalWeeklyShifts: registrationsData.length,
           totalAssignments,
           visibleAssignments,
@@ -222,7 +247,8 @@ export async function GET() {
       },
       {
         headers: {
-          "Cache-Control": "public, s-maxage=3, stale-while-revalidate=15",
+          "Cache-Control": "no-store, no-cache, must-revalidate, max-age=0",
+          "Pragma": "no-cache",
         },
       }
     );

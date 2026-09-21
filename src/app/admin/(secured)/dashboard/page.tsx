@@ -99,7 +99,7 @@ export default function AdminDashboardPage() {
   const [monthlySessions, setMonthlySessions] = useState<Array<{
     id: string;
     teaching_date: string;
-    subject: "Toan" | "Ly";
+    subject: string;
     student_id: string;
     studentName?: string;
   }>>([]);
@@ -151,14 +151,27 @@ export default function AdminDashboardPage() {
     return `${day}/${month}`;
   };
 
-  const fetchDashboardStats = async () => {
+  const fetchDashboardStats = async (optimisticNewSession?: any, deletedSessionId?: string) => {
     try {
-      const res = await fetch("/api/admin/dashboard-stats", { cache: "no-store" });
+      const res = await fetch(`/api/admin/dashboard-stats?_t=${Date.now()}`, { cache: "no-store" });
       if (res.ok) {
         const data = await res.json();
         setStatsData(data);
-        if (data.monthlySessions) setMonthlySessions(data.monthlySessions);
-        if (data.scheduleStudents) setScheduleStudents(data.scheduleStudents);
+        if (data.monthlySessions) {
+          setMonthlySessions((prev) => {
+            let nextSessions = data.monthlySessions as typeof prev;
+            if (optimisticNewSession && !nextSessions.some((s) => s.id === optimisticNewSession.id)) {
+              nextSessions = [...nextSessions, optimisticNewSession];
+            }
+            if (deletedSessionId) {
+              nextSessions = nextSessions.filter((s) => s.id !== deletedSessionId);
+            }
+            return nextSessions;
+          });
+        }
+        if (data.scheduleStudents) {
+          setScheduleStudents(data.scheduleStudents);
+        }
       }
     } catch (err) {
       console.error("Failed to fetch dashboard stats:", err);
@@ -197,12 +210,42 @@ export default function AdminDashboardPage() {
 
       const existingSession = monthlySessions.find(
         (s) =>
-          s.student_id === studentId &&
+          ((studentId && s.student_id === studentId) ||
+            (s.studentName && s.studentName.trim().toLowerCase() === shiftStudentName.trim().toLowerCase())) &&
           s.teaching_date === targetDateStr &&
-          s.subject === subject
+          (s.subject === subject ||
+            (subject === "Toan" && s.subject === "Toán") ||
+            (subject === "Ly" && s.subject === "Lý"))
       );
 
       if (existingSession) {
+        // Optimistic UI state removal
+        setMonthlySessions((prev) => prev.filter((s) => s.id !== existingSession.id));
+        setStatsData((prev) => {
+          if (!prev) return prev;
+          return {
+            ...prev,
+            summary: {
+              ...prev.summary,
+              totalMonthlySessions: Math.max(0, prev.summary.totalMonthlySessions - 1),
+            },
+            students: prev.students.map((st) => {
+              if (st.fullName.trim().toLowerCase() === shiftStudentName.trim().toLowerCase()) {
+                const curCount = st.sessionSubjects[subject] || 0;
+                return {
+                  ...st,
+                  monthlySessionCount: Math.max(0, st.monthlySessionCount - 1),
+                  sessionSubjects: {
+                    ...st.sessionSubjects,
+                    [subject]: Math.max(0, curCount - 1),
+                  },
+                };
+              }
+              return st;
+            }),
+          };
+        });
+
         const { error } = await supabase
           .from("teaching_sessions")
           .delete()
@@ -210,34 +253,60 @@ export default function AdminDashboardPage() {
 
         if (error) throw error;
 
-        setMonthlySessions((prev) => prev.filter((s) => s.id !== existingSession.id));
         addToast({
           title: `Đã bỏ môn ${subjectNameVi}`,
           description: `Đã hủy buổi ${subjectNameVi} ngày ${formattedDateVi} cho ${shiftStudentName}`,
           variant: "info",
           duration: 3000,
         });
+
+        await fetchDashboardStats(undefined, existingSession.id);
       } else {
         const newSess = await addSession(targetDateStr, subject, studentId);
-        setMonthlySessions((prev) => [
-          ...prev,
-          {
-            id: newSess.id,
-            teaching_date: targetDateStr,
-            subject,
-            student_id: studentId,
-            studentName: shiftStudentName,
-          },
-        ]);
+        const newSessionItem = {
+          id: newSess.id,
+          teaching_date: targetDateStr,
+          subject,
+          student_id: studentId,
+          studentName: shiftStudentName,
+        };
+
+        // Optimistic UI state addition
+        setMonthlySessions((prev) => [...prev, newSessionItem]);
+        setStatsData((prev) => {
+          if (!prev) return prev;
+          return {
+            ...prev,
+            summary: {
+              ...prev.summary,
+              totalMonthlySessions: prev.summary.totalMonthlySessions + 1,
+            },
+            students: prev.students.map((st) => {
+              if (st.fullName.trim().toLowerCase() === shiftStudentName.trim().toLowerCase()) {
+                const curCount = st.sessionSubjects[subject] || 0;
+                return {
+                  ...st,
+                  monthlySessionCount: st.monthlySessionCount + 1,
+                  sessionSubjects: {
+                    ...st.sessionSubjects,
+                    [subject]: curCount + 1,
+                  },
+                };
+              }
+              return st;
+            }),
+          };
+        });
+
         addToast({
           title: `Đã ghi nhận buổi ${subjectNameVi}!`,
           description: `Đã lưu 1 buổi học ${subjectNameVi} ngày ${formattedDateVi} cho ${shiftStudentName}`,
           variant: "success",
           duration: 3000,
         });
-      }
 
-      fetchDashboardStats();
+        await fetchDashboardStats(newSessionItem);
+      }
     } catch (err) {
       console.error("Error toggling subject session:", err);
       addToast({
@@ -245,6 +314,7 @@ export default function AdminDashboardPage() {
         description: "Có lỗi xảy ra khi lưu vào cơ sở dữ liệu",
         variant: "error",
       });
+      fetchDashboardStats();
     } finally {
       setTogglingKeys((prev) => ({ ...prev, [toggleKey]: false }));
     }
@@ -533,13 +603,21 @@ export default function AdminDashboardPage() {
                     );
                     const stId = matchedSt?.id;
 
-                    const isToanChecked = stId
-                      ? monthlySessions.some((s) => s.student_id === stId && s.teaching_date === targetDateStr && s.subject === "Toan")
-                      : false;
+                    const isToanChecked = monthlySessions.some(
+                      (s) =>
+                        ((stId && s.student_id === stId) ||
+                          (s.studentName && s.studentName.trim().toLowerCase() === shift.studentName.trim().toLowerCase())) &&
+                        s.teaching_date === targetDateStr &&
+                        (s.subject === "Toan" || s.subject === "Toán")
+                    );
 
-                    const isLyChecked = stId
-                      ? monthlySessions.some((s) => s.student_id === stId && s.teaching_date === targetDateStr && s.subject === "Ly")
-                      : false;
+                    const isLyChecked = monthlySessions.some(
+                      (s) =>
+                        ((stId && s.student_id === stId) ||
+                          (s.studentName && s.studentName.trim().toLowerCase() === shift.studentName.trim().toLowerCase())) &&
+                        s.teaching_date === targetDateStr &&
+                        (s.subject === "Ly" || s.subject === "Lý")
+                    );
 
                     const isTogglingToan = togglingKeys[`${shift.studentName}-${targetDateStr}-Toan`];
                     const isTogglingLy = togglingKeys[`${shift.studentName}-${targetDateStr}-Ly`];
