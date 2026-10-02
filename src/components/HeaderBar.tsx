@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { useRouter, usePathname } from "next/navigation";
+import { BrandLogo } from "@/components/ui/BrandLogo";
 import { ThemeToggle } from "@/components/ThemeToggle";
 import { LogOut } from "lucide-react";
 import { useState } from "react";
@@ -26,18 +27,19 @@ export function HeaderBar({ studentName }: { studentName?: string }) {
   };
 
   return (
-    <div className="fixed top-0 left-0 right-0 z-50 px-4 pt-4 sm:px-6 pointer-events-none">
-      <header className="mx-auto w-full max-w-[1440px] rounded-full bg-white/70 dark:bg-[#2a2a2c]/70 backdrop-blur-xl border border-white/40 dark:border-white/10 shadow-glass pointer-events-auto transition-all duration-500 ease-liquid">
-        <div className="flex h-14 items-center justify-between px-4 sm:px-6" suppressHydrationWarning>
-          <Link href="/" className="flex items-center gap-2 hover:opacity-80 transition-opacity" suppressHydrationWarning>
-            <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-gradient-to-tr from-[#0066cc] to-[#2997ff] shadow-sm">
-              <svg className="h-4 w-4 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
-                <path strokeLinecap="round" strokeLinejoin="round" d="M12 6.042A8.967 8.967 0 006 3.75c-1.052 0-2.062.18-3 .512v14.25A8.987 8.987 0 016 18c2.305 0 4.408.867 6 2.292m0-14.25a8.966 8.966 0 016-2.292c1.052 0 2.062.18 3 .512v14.25A8.987 8.987 0 0018 18a8.967 8.967 0 00-6 2.292m0-14.25v14.25" />
-              </svg>
+    <div className="fixed top-0 left-0 right-0 z-50 px-3 pt-3 sm:px-6 sm:pt-4 pointer-events-none">
+      <header className="mx-auto w-full max-w-[1440px] rounded-full bg-white/75 dark:bg-[#1c1c1e]/75 backdrop-blur-2xl border border-white/60 dark:border-white/10 shadow-glass pointer-events-auto transition-all duration-500 ease-liquid">
+        <div className="flex h-13 sm:h-14 items-center justify-between px-3 sm:px-6" suppressHydrationWarning>
+          <Link href="/" className="flex items-center gap-2.5 hover:opacity-85 transition-opacity group" suppressHydrationWarning>
+            <BrandLogo size="sm" animate className="shadow-sm ring-1 ring-white/30 dark:ring-white/10" />
+            <div className="flex flex-col">
+              <span className="text-[13.5px] sm:text-[15px] font-bold tracking-tight text-[#1d1d1f] dark:text-white leading-tight">
+                Gia sư Đào Bá Anh Quân
+              </span>
+              <span className="text-[10px] font-semibold text-[#0066cc] dark:text-[#2997ff] uppercase tracking-wider hidden md:inline">
+                LMS Pro
+              </span>
             </div>
-            <span className="hidden sm:inline text-[15px] font-semibold tracking-tight text-[#1d1d1f] dark:text-white">
-              Gia sư Đào Bá Anh Quân
-            </span>
           </Link>
 
           <div className="flex items-center gap-1.5 sm:gap-3 text-[13px] sm:text-[14px] font-medium">

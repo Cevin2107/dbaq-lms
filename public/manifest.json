@@ -3,14 +3,21 @@
   "short_name": "Gia sư Đào Bá Anh Quân",
   "start_url": "/",
   "display": "standalone",
-  "background_color": "#ffffff",
-  "theme_color": "#2563eb",
-  "description": "Hệ thống bài tập trực tuyến",
+  "background_color": "#0a0a0a",
+  "theme_color": "#0066cc",
+  "description": "Hệ thống bài tập trực tuyến - Gia sư Đào Bá Anh Quân",
   "icons": [
     {
-      "src": "/app-icon.png?v=2",
+      "src": "/icon.png?v=3",
       "sizes": "512x512",
-      "type": "image/png"
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/app-icon.png?v=3",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
     }
   ]
 }

@@ -3,7 +3,7 @@
 import { useState } from "react";
 import Image from "next/image";
 import clsx from "clsx";
-import { BookOpen, CalendarPlus, CloudSun, FileText, Home, Moon, Sun } from "lucide-react";
+import { BookOpen, CalendarPlus, CloudSun, FileText, Home, Moon, Sparkles, Sun } from "lucide-react";
 import dynamic from "next/dynamic";
 import { AssignmentList } from "@/components/AssignmentList";
 import { ScheduleRegistrationPanel } from "@/features/schedule/ScheduleRegistrationPanel";
@@ -42,10 +42,23 @@ export function HomeTabs({ assignments, schedules = [], studentName, greeting, g
         ? "text-orange-500 dark:text-orange-400"
         : "text-indigo-500 dark:text-indigo-400";
 
+  const activeIndex = tabs.findIndex((t) => t.id === activeTab);
+
   return (
-    <div className="w-full max-w-[1440px] mx-auto px-4 sm:px-6 md:px-8 pb-16">
-      <div className="flex justify-center mb-6">
-        <div className="inline-flex items-center gap-1 p-1.5 rounded-full bg-white/50 dark:bg-[#2a2a2c]/60 backdrop-blur-xl border border-white/40 dark:border-white/10 shadow-glass max-w-full overflow-x-auto no-scrollbar">
+    <div className="w-full max-w-[1440px] mx-auto px-3.5 sm:px-6 md:px-8 pb-28 sm:pb-16">
+      {/* Desktop & Tablet Segmented Control with Liquid Sliding Pill */}
+      <div className="flex justify-center mb-6 sm:mb-8">
+        <div className="relative inline-flex items-center p-1.5 rounded-full bg-white/60 dark:bg-[#1f1f23]/70 backdrop-blur-2xl border border-white/50 dark:border-white/10 shadow-glass max-w-full overflow-hidden">
+          {/* Liquid Sliding Indicator Pill */}
+          <div
+            className="absolute top-1.5 bottom-1.5 rounded-full bg-white dark:bg-[#323236] shadow-md border border-black/[0.04] dark:border-white/10 transition-all duration-400 ease-liquid pointer-events-none"
+            style={{
+              width: `calc((100% - 12px) / ${tabs.length})`,
+              left: "6px",
+              transform: `translateX(${activeIndex * 100}%)`,
+            }}
+          />
+
           {tabs.map((tab) => {
             const Icon = tab.icon;
             const isActive = activeTab === tab.id;
@@ -54,84 +67,135 @@ export function HomeTabs({ assignments, schedules = [], studentName, greeting, g
                 key={tab.id}
                 onClick={() => setActiveTab(tab.id)}
                 className={clsx(
-                  "flex items-center gap-2 px-5 sm:px-6 py-2.5 rounded-full text-sm font-semibold transition-all duration-300 ease-spring whitespace-nowrap",
+                  "relative z-10 flex items-center justify-center gap-2 px-4 sm:px-6 py-2 sm:py-2.5 rounded-full text-xs sm:text-sm font-semibold transition-colors duration-300 whitespace-nowrap",
                   isActive
-                    ? "bg-white/90 dark:bg-[#444]/90 text-[#0066cc] dark:text-[#2997ff] shadow-sm scale-[1.02]"
-                    : "text-slate-500 dark:text-slate-400 hover:text-slate-800 dark:hover:text-white hover:bg-black/5 dark:hover:bg-white/5 active:scale-95"
+                    ? "text-[#0066cc] dark:text-[#2997ff]"
+                    : "text-slate-500 dark:text-slate-400 hover:text-slate-800 dark:hover:text-white"
                 )}
               >
-                <Icon className={clsx("h-4 w-4 shrink-0", isActive ? "text-[#0066cc] dark:text-[#2997ff]" : "")} />
-                {tab.label}
+                <Icon className={clsx("h-4 w-4 shrink-0 transition-transform duration-300", isActive ? "scale-110" : "scale-100")} />
+                <span>{tab.label}</span>
               </button>
             );
           })}
         </div>
       </div>
 
-      {activeTab === "home" && (
-        <div className="space-y-8 animate-slide-up">
-          <div className="relative overflow-hidden rounded-[2rem] bg-gradient-to-br from-blue-50/80 via-indigo-50/50 to-sky-50/80 dark:from-blue-950/40 dark:via-slate-900/40 dark:to-indigo-950/40 border border-blue-100/80 dark:border-blue-900/30 p-6 sm:p-10 shadow-[0_8px_30px_rgba(0,102,204,0.08)]">
-            <div className="flex flex-col md:flex-row items-center justify-between gap-6">
-              <div className="flex flex-col items-center md:items-start text-center md:text-left flex-1 min-w-0">
-                <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-[#0066cc]/10 text-[#0066cc] dark:bg-blue-500/20 dark:text-blue-300 text-xs font-bold mb-4 order-1">
-                  <BookOpen className="h-3.5 w-3.5" />
-                  <span>Hệ thống bài tập trực tuyến</span>
-                </div>
+      {/* Tab Content with Spring Enter Animation */}
+      <div key={activeTab} className="animate-tab-enter">
+        {activeTab === "home" && (
+          <div className="space-y-8">
+            {/* Hero Card */}
+            <div className="relative overflow-hidden rounded-[2rem] bg-gradient-to-br from-blue-50/90 via-indigo-50/60 to-sky-50/90 dark:from-blue-950/40 dark:via-slate-900/40 dark:to-indigo-950/40 border border-blue-100/80 dark:border-blue-900/30 p-5 sm:p-10 shadow-[0_10px_35px_rgba(0,102,204,0.08)]">
+              {/* Subtle ambient lighting orb */}
+              <div className="pointer-events-none absolute -right-20 -top-20 w-72 h-72 rounded-full bg-gradient-to-br from-blue-400/20 to-sky-300/10 blur-3xl dark:from-blue-600/15" />
 
-                <div className="md:hidden w-[240px] h-[240px] sm:w-[280px] sm:h-[280px] rounded-[24px] overflow-hidden mb-0 relative shadow-[rgba(0,0,0,0.22)_3px_5px_30px_0px] order-2">
-                  <Image
-                    src={bgImg}
-                    alt="Đào Bá Anh Quân"
-                    fill
-                    className="object-cover object-[center_35%]"
-                    priority
-                  />
-                </div>
-
-                <div className="mb-4 md:mb-8 relative z-10 -mt-8 md:-mt-0 order-3 flex justify-center md:justify-start">
-                  <h1 
-                    className="font-bold md:font-semibold leading-[1.07] tracking-[-0.02em] text-[#1d1d1f] dark:text-white break-words sm:whitespace-nowrap bg-white/70 dark:bg-black/40 backdrop-blur-md md:bg-transparent md:dark:bg-transparent md:backdrop-blur-none px-5 py-2.5 rounded-2xl md:p-0 md:rounded-none border border-white/50 dark:border-white/10 md:border-transparent md:dark:border-transparent shadow-sm md:shadow-none"
-                    style={{ fontSize: "clamp(22px, 4.2vw, 72px)" }}
-                  >
-                    Gia sư Đào Bá Anh Quân
-                  </h1>
-                </div>
-
-                <div className="flex flex-col items-center md:items-start order-4">
-                  <div className="flex items-center justify-center md:justify-start gap-2.5 text-[19px] sm:text-[24px] md:text-[28px] font-normal text-[#1d1d1f]/80 dark:text-white/80 tracking-tight leading-[1.3]">
-                    <GreetingIcon className={`h-6 w-6 sm:h-7 sm:w-7 ${iconColor}`} />
-                    <h2>
-                      {greeting}, <span className="font-semibold text-[#1d1d1f] dark:text-white">{studentName || "Học sinh"}</span>.
-                    </h2>
+              <div className="flex flex-col md:flex-row items-center justify-between gap-6 relative z-10">
+                <div className="flex flex-col items-center md:items-start text-center md:text-left flex-1 min-w-0">
+                  <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-[#0066cc]/10 text-[#0066cc] dark:bg-blue-500/20 dark:text-blue-300 text-xs font-bold mb-4 shadow-sm">
+                    <BookOpen className="h-3.5 w-3.5" />
+                    <span>Hệ thống bài tập & học tập trực tuyến</span>
+                    <Sparkles className="h-3 w-3 text-amber-500 animate-pulse" />
                   </div>
-                  <MotivationalQuoteCard />
-                </div>
-              </div>
 
-              <div className="hidden md:block shrink-0 relative w-72 h-72 lg:w-[380px] lg:h-[380px]">
-                <div className="relative w-full h-full rounded-[18px] overflow-hidden shadow-[rgba(0,0,0,0.22)_3px_5px_30px_0px]">
-                  <Image
-                    src={bgImg}
-                    alt="Đào Bá Anh Quân"
-                    fill
-                    className="object-cover object-[center_35%]"
-                    priority
-                  />
+                  {/* Mobile portrait view */}
+                  <div className="md:hidden w-[200px] h-[200px] sm:w-[260px] sm:h-[260px] rounded-[24px] overflow-hidden mb-3 relative shadow-[rgba(0,0,0,0.2)_0px_8px_30px] border-2 border-white/60 dark:border-white/10">
+                    <Image
+                      src={bgImg}
+                      alt="Đào Bá Anh Quân"
+                      fill
+                      className="object-cover object-[center_35%]"
+                      priority
+                    />
+                  </div>
+
+                  <div className="mb-3 md:mb-6 relative z-10 flex justify-center md:justify-start">
+                    <h1
+                      className="font-bold tracking-tight text-[#1d1d1f] dark:text-white break-words sm:whitespace-nowrap leading-tight"
+                      style={{ fontSize: "clamp(22px, 3.8vw, 64px)" }}
+                    >
+                      Gia sư Đào Bá Anh Quân
+                    </h1>
+                  </div>
+
+                  <div className="flex flex-col items-center md:items-start">
+                    <div className="flex items-center justify-center md:justify-start gap-2.5 text-[18px] sm:text-[22px] md:text-[26px] font-normal text-[#1d1d1f]/80 dark:text-white/80 tracking-tight leading-[1.3]">
+                      <GreetingIcon className={`h-6 w-6 sm:h-7 sm:w-7 ${iconColor}`} />
+                      <h2>
+                        {greeting}, <span className="font-semibold text-[#1d1d1f] dark:text-white">{studentName || "Học sinh"}</span>.
+                      </h2>
+                    </div>
+                    <MotivationalQuoteCard />
+                  </div>
+                </div>
+
+                {/* Desktop portrait view */}
+                <div className="hidden md:block shrink-0 relative w-72 h-72 lg:w-[360px] lg:h-[360px]">
+                  <div className="relative w-full h-full rounded-[24px] overflow-hidden shadow-[rgba(0,0,0,0.22)_0px_12px_36px] border border-white/60 dark:border-white/10 group">
+                    <Image
+                      src={bgImg}
+                      alt="Đào Bá Anh Quân"
+                      fill
+                      className="object-cover object-[center_35%] transition-transform duration-700 ease-spring group-hover:scale-105"
+                      priority
+                    />
+                  </div>
                 </div>
               </div>
             </div>
+
+            <AssignmentList
+              assignments={assignments}
+              schedules={schedules}
+              onNavigateToSchedule={() => setActiveTab("schedule")}
+            />
           </div>
+        )}
 
-          <AssignmentList 
-            assignments={assignments} 
-            schedules={schedules}
-            onNavigateToSchedule={() => setActiveTab("schedule")}
-          />
+        {activeTab === "schedule" && <ScheduleRegistrationPanel />}
+        {activeTab === "documents" && <DocumentsPanel />}
+      </div>
+
+      {/* Mobile Floating Liquid Bottom Dock for PWA & Touch UX */}
+      <nav
+        aria-label="Thanh điều hướng di động"
+        className="fixed bottom-4 left-1/2 -translate-x-1/2 z-40 md:hidden w-[calc(100%-2rem)] max-w-sm"
+      >
+        <div className="relative flex items-center justify-around p-1.5 rounded-full bg-white/80 dark:bg-[#1a1a1f]/85 backdrop-blur-2xl border border-white/70 dark:border-white/10 shadow-[0_12px_36px_rgba(0,102,204,0.18)] dark:shadow-[0_12px_36px_rgba(0,0,0,0.6)]">
+          {tabs.map((tab) => {
+            const Icon = tab.icon;
+            const isActive = activeTab === tab.id;
+            return (
+              <button
+                key={tab.id}
+                onClick={() => {
+                  setActiveTab(tab.id);
+                  if (typeof window !== "undefined") {
+                    window.scrollTo({ top: 0, behavior: "smooth" });
+                  }
+                }}
+                className={clsx(
+                  "flex-1 flex flex-col items-center justify-center py-2 px-1 rounded-full transition-all duration-300 active:scale-90",
+                  isActive
+                    ? "bg-[#0066cc]/10 dark:bg-blue-500/20 text-[#0066cc] dark:text-[#2997ff] font-bold"
+                    : "text-slate-500 dark:text-slate-400 hover:text-slate-800 dark:hover:text-white font-medium"
+                )}
+              >
+                <div className="relative">
+                  <Icon className={clsx("h-5 w-5 mb-0.5 transition-transform duration-300", isActive && "scale-115")} />
+                  {isActive && (
+                    <span className="absolute -bottom-1 left-1/2 -translate-x-1/2 h-1 w-1 rounded-full bg-[#0066cc] dark:bg-[#2997ff]" />
+                  )}
+                </div>
+                <span className="text-[10px] tracking-tight leading-none mt-0.5 truncate max-w-[80px]">
+                  {tab.label}
+                </span>
+              </button>
+            );
+          })}
         </div>
-      )}
-
-      {activeTab === "schedule" && <ScheduleRegistrationPanel />}
-      {activeTab === "documents" && <DocumentsPanel />}
+      </nav>
     </div>
   );
 }
+

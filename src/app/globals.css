@@ -266,6 +266,21 @@
     animation: slideUp 0.3s ease-out;
   }
 
+  @keyframes tab-enter {
+    0% {
+      opacity: 0;
+      transform: translateY(10px) scale(0.99);
+    }
+    100% {
+      opacity: 1;
+      transform: translateY(0) scale(1);
+    }
+  }
+
+  .animate-tab-enter {
+    animation: tab-enter 0.35s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  }
+
   .container-custom {
     @apply w-full max-w-[1440px] mx-auto px-4 sm:px-6 md:px-8;
   }

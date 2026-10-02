@@ -28,6 +28,7 @@ import { useToast } from '@/components/ui/Toast';
 import { ThemeToggle } from '@/components/ThemeToggle';
 import { Footer } from '@/components/Footer';
 import { startAuthentication, browserSupportsWebAuthn } from '@simplewebauthn/browser';
+import { BrandLogo } from '@/components/ui/BrandLogo';
 
 type AuthMode = 'login' | 'signup' | 'forgot-password';
 type FeatureId = 'assignments' | 'schedule' | 'progress';
@@ -351,9 +352,7 @@ export function AuthPortal({ initialMode = 'login' }: AuthPortalProps) {
       <header className="relative z-20 w-full border-b border-black/[0.05] dark:border-white/[0.06] bg-white/60 dark:bg-[#0a0a0a]/60 backdrop-blur-xl">
         <div className="max-w-[1440px] mx-auto px-4 sm:px-6 md:px-8 h-16 sm:h-20 flex items-center justify-between">
           <Link href="/login" className="flex items-center gap-2.5 sm:gap-3 group min-w-0">
-            <div className="relative flex h-9 w-9 sm:h-11 sm:w-11 shrink-0 items-center justify-center rounded-xl sm:rounded-2xl bg-gradient-to-br from-[#0066cc] to-blue-700 text-white shadow-md shadow-blue-500/25 transition-transform group-hover:scale-105 duration-300">
-              <GraduationCap className="h-5 w-5 sm:h-6 sm:w-6" />
-            </div>
+            <BrandLogo size="md" animate glow className="ring-1 ring-white/30 dark:ring-white/10" />
             <div className="min-w-0">
               <div className="flex items-center gap-1.5 sm:gap-2">
                 <span className="font-bold text-sm sm:text-base md:text-lg tracking-tight text-slate-900 dark:text-white truncate">

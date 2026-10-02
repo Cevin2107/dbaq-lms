@@ -5,6 +5,7 @@ import { usePathname } from "next/navigation";
 import { useState, useEffect } from "react";
 import { useTheme } from "@/providers/ThemeProvider";
 import { cn } from "@/lib/utils";
+import { BrandLogo } from "@/components/ui/BrandLogo";
 import {
   ChevronLeft,
   ChevronRight,
@@ -100,9 +101,7 @@ export function AdminSidebar() {
               {/* Drawer Header */}
               <div className="flex items-center justify-between p-4 border-b border-slate-100 dark:border-white/5">
                 <div className="flex items-center gap-3">
-                  <div className="flex h-9 w-9 items-center justify-center rounded-[14px] bg-[#0066cc] text-white shadow-lg shadow-blue-500/30">
-                    <GraduationCap className="h-4 w-4" />
-                  </div>
+                  <BrandLogo size="sm" animate className="shadow-md" />
                   <div>
                     <h2 className="text-sm font-bold text-slate-900 dark:text-white">Admin Đào Bá Anh Quân</h2>
                     <p className="text-[10px] text-slate-500 uppercase tracking-wider font-semibold">Workspace</p>
@@ -172,12 +171,7 @@ export function AdminSidebar() {
       <aside className="hidden lg:flex sticky top-0 left-0 z-40 h-screen w-64 flex-col border-r border-white/40 dark:border-white/5 bg-white/70 dark:bg-[#2a2a2c]/70 backdrop-blur-xl shadow-glass">
         <div className="flex h-16 shrink-0 items-center justify-between border-b border-slate-200 dark:border-white/5 px-4">
         <Link href="/admin/dashboard" className="flex items-center gap-3">
-          <div className="relative group">
-            <div className="absolute inset-0 bg-[#0066cc] rounded-2xl blur opacity-30 group-hover:opacity-50 transition-opacity" />
-            <div className="relative flex h-10 w-10 items-center justify-center rounded-[14px] bg-[#0066cc] text-white shadow-lg shadow-blue-500/30 flex-shrink-0">
-              <GraduationCap className="h-5 w-5" />
-            </div>
-          </div>
+          <BrandLogo size="md" animate glow className="shadow-lg ring-1 ring-white/30 dark:ring-white/10" />
           <div className="min-w-0">
             <h1 className="text-sm font-bold text-slate-900 dark:text-white leading-tight truncate">Admin Đào Bá Anh Quân</h1>
             <p className="text-[10px] text-slate-500 uppercase tracking-wider font-semibold">Workspace</p>

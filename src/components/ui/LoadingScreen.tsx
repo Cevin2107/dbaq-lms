@@ -1,6 +1,6 @@
 'use client';
 
-import { GraduationCap } from 'lucide-react';
+import { BrandLogo } from '@/components/ui/BrandLogo';
 
 interface LoadingScreenProps {
   message?: string;
@@ -20,10 +20,9 @@ export function LoadingScreen({
       {/* Center Liquid Glass Loading Card */}
       <div className="relative z-10 w-full max-w-sm rounded-[2.5rem] bg-white/80 dark:bg-[#1a1a1f]/80 backdrop-blur-2xl border border-white/80 dark:border-white/10 shadow-[0_20px_50px_rgba(0,102,204,0.08)] dark:shadow-[0_20px_50px_rgba(0,0,0,0.6)] p-8 text-center animate-fade-in">
         
-        {/* Animated Icon with specular ring */}
-        <div className="relative mx-auto mb-6 flex h-16 w-16 items-center justify-center rounded-2xl bg-gradient-to-br from-[#0066cc] to-blue-700 text-white shadow-lg shadow-blue-500/30">
-          <div className="absolute inset-0 rounded-2xl bg-blue-400 animate-ping opacity-25" />
-          <GraduationCap className="h-8 w-8 relative z-10 animate-pulse" />
+        {/* Animated Brand Logo */}
+        <div className="relative mx-auto mb-6 flex items-center justify-center">
+          <BrandLogo size="lg" glow animate className="shadow-xl" />
         </div>
 
         {/* Message & Submessage */}
@@ -34,11 +33,12 @@ export function LoadingScreen({
           {submessage}
         </p>
 
-        {/* Smooth Pulse Progress Bar */}
+        {/* Smooth Shimmer Progress Bar */}
         <div className="relative h-1.5 w-full overflow-hidden rounded-full bg-slate-100 dark:bg-slate-800">
-          <div className="h-full w-full rounded-full bg-gradient-to-r from-[#0066cc] via-indigo-500 to-sky-400 opacity-80 animate-pulse" />
+          <div className="h-full w-full rounded-full bg-gradient-to-r from-[#0066cc] via-[#2997ff] to-indigo-500 opacity-90 animate-pulse" />
         </div>
       </div>
     </div>
   );
 }
+
