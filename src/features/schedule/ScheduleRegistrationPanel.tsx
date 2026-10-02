@@ -160,37 +160,37 @@ export function ScheduleRegistrationPanel() {
         </div>
       )}
 
-      <div className="flex flex-wrap items-center gap-4 sm:gap-6 text-sm px-2">
+      <div className="flex flex-wrap items-center justify-center sm:justify-start gap-3 sm:gap-6 text-xs sm:text-sm px-2">
         {/* 1. Ca trống */}
-        <div className="flex items-center gap-2.5">
-          <span className="w-7 h-7 rounded-xl border-2 border-dashed border-[#0066cc]/60 bg-blue-50/60 dark:bg-blue-950/30 flex items-center justify-center text-[#0066cc] dark:text-blue-400">
-            <Plus className="h-4 w-4 stroke-[2.5]" />
+        <div className="flex items-center gap-2">
+          <span className="w-6 h-6 rounded-full border-2 border-blue-400/80 bg-blue-50/70 dark:bg-blue-950/40 flex items-center justify-center text-[#0066cc] dark:text-blue-300">
+            <Plus className="h-3.5 w-3.5 stroke-[2.5]" />
           </span>
-          <span className="text-slate-700 dark:text-slate-300 font-semibold text-xs sm:text-sm">Ca trống (Bấm để chọn)</span>
+          <span className="text-slate-700 dark:text-slate-300 font-medium">Ca trống</span>
         </div>
 
         {/* 2. Bạn đã chọn */}
-        <div className="flex items-center gap-2.5">
-          <span className="w-7 h-7 rounded-xl bg-gradient-to-tr from-[#0066cc] to-[#2563eb] text-white flex items-center justify-center shadow-md shadow-blue-500/20">
-            <Check className="h-4 w-4 stroke-[2.5]" />
+        <div className="flex items-center gap-2">
+          <span className="w-6 h-6 rounded-full bg-gradient-to-tr from-[#0066cc] to-[#2563eb] text-white flex items-center justify-center shadow-sm">
+            <Check className="h-3.5 w-3.5 stroke-[3]" />
           </span>
-          <span className="text-[#0066cc] dark:text-blue-400 font-semibold text-xs sm:text-sm">Bạn đã chọn</span>
+          <span className="text-[#0066cc] dark:text-blue-400 font-semibold">Bạn đã chọn</span>
         </div>
 
         {/* 3. Đã có người đăng ký */}
-        <div className="flex items-center gap-2.5">
-          <span className="w-7 h-7 rounded-xl border-2 border-rose-300 dark:border-rose-800 bg-rose-50 dark:bg-rose-950/40 text-rose-600 dark:text-rose-400 flex items-center justify-center">
-            <Lock className="h-3.5 w-3.5" />
+        <div className="flex items-center gap-2">
+          <span className="w-6 h-6 rounded-full bg-rose-50 dark:bg-rose-950/40 border border-rose-200 dark:border-rose-900/50 text-rose-500 flex items-center justify-center">
+            <Lock className="h-3 w-3 stroke-[2.2]" />
           </span>
-          <span className="text-rose-600 dark:text-rose-400 font-semibold text-xs sm:text-sm">Đã có người đăng ký (Hết chỗ)</span>
+          <span className="text-rose-600 dark:text-rose-400 font-medium">Đã có người đăng ký</span>
         </div>
 
         {/* 4. Ca không mở */}
-        <div className="flex items-center gap-2.5">
-          <span className="w-7 h-7 rounded-xl border border-slate-200 dark:border-white/10 bg-slate-100 dark:bg-[#161619] text-slate-400 dark:text-slate-500 flex items-center justify-center">
-            <Minus className="h-3.5 w-3.5 stroke-[2.5]" />
+        <div className="flex items-center gap-2">
+          <span className="w-6 h-6 rounded-full bg-slate-100/50 dark:bg-white/[0.03] border border-slate-200/60 dark:border-white/5 text-slate-400 flex items-center justify-center opacity-60">
+            <Minus className="h-3 w-3 stroke-[2]" />
           </span>
-          <span className="text-slate-500 dark:text-slate-400 font-medium text-xs sm:text-sm">Không mở ca</span>
+          <span className="text-slate-400 dark:text-slate-500 font-normal">Không mở ca</span>
         </div>
       </div>
 
@@ -231,13 +231,12 @@ export function ScheduleRegistrationPanel() {
 
                     if (!schedule) {
                       return (
-                        <td key={shift.id} className="px-4 sm:px-6 py-4 text-center">
+                        <td key={shift.id} className="px-3 sm:px-6 py-3.5 sm:py-4 text-center">
                           <div
-                            className="mx-auto w-12 h-12 sm:w-14 sm:h-12 rounded-2xl bg-slate-100/70 dark:bg-[#161619] border border-slate-200/80 dark:border-white/5 flex flex-col items-center justify-center opacity-70 cursor-not-allowed select-none transition-opacity"
-                            title="Ca này giáo viên không mở lịch"
+                            className="mx-auto w-10 h-10 sm:w-11 sm:h-11 rounded-full bg-slate-100/50 dark:bg-white/[0.03] border border-slate-200/60 dark:border-white/5 flex items-center justify-center opacity-40 cursor-not-allowed select-none"
+                            title="Ca này không mở lịch"
                           >
-                            <Minus className="h-4 w-4 text-slate-400 dark:text-slate-500 stroke-[2.5]" />
-                            <span className="text-[9px] font-semibold uppercase tracking-tight text-slate-400 dark:text-slate-500">Đóng</span>
+                            <Minus className="h-4 w-4 text-slate-400 dark:text-slate-600 stroke-[2]" />
                           </div>
                         </td>
                       );
@@ -247,36 +246,29 @@ export function ScheduleRegistrationPanel() {
                     const isLocked = lockedSchedules.has(schedule.id);
 
                     return (
-                      <td key={shift.id} className="px-4 sm:px-6 py-4 text-center">
+                      <td key={shift.id} className="px-3 sm:px-6 py-3.5 sm:py-4 text-center">
                         {isLocked ? (
                           <div
-                            className="mx-auto w-12 h-12 sm:w-14 sm:h-12 rounded-2xl bg-rose-50/90 dark:bg-rose-950/30 border-2 border-rose-300 dark:border-rose-900/60 flex flex-col items-center justify-center cursor-not-allowed select-none shadow-sm transition-transform"
-                            title="Đã có học sinh đăng ký ca này (Hết chỗ)"
+                            className="mx-auto w-10 h-10 sm:w-11 sm:h-11 rounded-full bg-rose-50 dark:bg-rose-950/30 border border-rose-200/80 dark:border-rose-900/50 text-rose-500 dark:text-rose-400 flex items-center justify-center cursor-not-allowed select-none shadow-sm"
+                            title="Đã có học sinh đăng ký ca này"
                           >
-                            <Lock className="h-4 w-4 text-rose-500 dark:text-rose-400 mb-0.5" />
-                            <span className="text-[9px] font-bold uppercase tracking-tight text-rose-600 dark:text-rose-400">Kín</span>
+                            <Lock className="h-4 w-4 stroke-[2.2]" />
                           </div>
                         ) : (
                           <button
                             onClick={() => toggleSelection(schedule.id)}
                             title={isSelected ? "Bạn đã chọn ca này • Nhấn để bỏ chọn" : "Ca trống • Nhấn để chọn"}
                             className={clsx(
-                              "mx-auto w-12 h-12 sm:w-14 sm:h-12 rounded-2xl flex flex-col items-center justify-center transition-all duration-200 ease-spring active:scale-90 hover:scale-105 select-none",
+                              "mx-auto w-10 h-10 sm:w-11 sm:h-11 rounded-full flex items-center justify-center transition-all duration-300 ease-spring active:scale-90 select-none group",
                               isSelected
-                                ? "bg-gradient-to-tr from-[#0066cc] to-[#2563eb] border-2 border-blue-500 text-white shadow-[0_4px_16px_rgba(0,102,204,0.35)]"
-                                : "bg-blue-50/50 hover:bg-blue-100/80 dark:bg-blue-950/25 dark:hover:bg-blue-900/40 border-2 border-dashed border-[#0066cc]/60 hover:border-[#0066cc] text-[#0066cc] dark:text-blue-400 shadow-sm"
+                                ? "bg-gradient-to-tr from-[#0066cc] to-[#2563eb] text-white shadow-[0_4px_16px_rgba(0,102,204,0.45)] ring-4 ring-blue-500/20 scale-105"
+                                : "bg-blue-50/70 hover:bg-blue-100/90 dark:bg-blue-950/30 dark:hover:bg-blue-900/50 border-2 border-blue-400/80 hover:border-[#0066cc] dark:border-blue-500/50 dark:hover:border-blue-400 text-[#0066cc] dark:text-blue-300 shadow-sm hover:scale-110"
                             )}
                           >
                             {isSelected ? (
-                              <>
-                                <Check className="h-5 w-5 stroke-[2.5]" />
-                                <span className="text-[9px] font-bold uppercase tracking-tight text-white/90">Đã chọn</span>
-                              </>
+                              <Check className="h-5 w-5 stroke-[3] animate-scale-in" />
                             ) : (
-                              <>
-                                <Plus className="h-5 w-5 stroke-[2.5] transition-transform duration-200 hover:scale-110" />
-                                <span className="text-[9px] font-bold uppercase tracking-tight text-[#0066cc]/90 dark:text-blue-400/90">Trống</span>
-                              </>
+                              <Plus className="h-5 w-5 stroke-[2.5] transition-transform duration-300 group-hover:rotate-90" />
                             )}
                           </button>
                         )}
