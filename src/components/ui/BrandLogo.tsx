@@ -11,11 +11,11 @@ interface BrandLogoProps {
 }
 
 const sizeMap = {
-  xs: "h-6 w-6 rounded-[8px]",
-  sm: "h-8 w-8 rounded-[10px]",
-  md: "h-10 w-10 rounded-[12px]",
-  lg: "h-14 w-14 rounded-[18px]",
-  xl: "h-20 w-20 rounded-[26px]",
+  xs: "h-7 w-7 rounded-[9px]",
+  sm: "h-9 w-9 rounded-[11px]",
+  md: "h-10 w-10 sm:h-11 sm:w-11 rounded-[14px]",
+  lg: "h-14 w-14 sm:h-16 sm:w-16 rounded-[20px]",
+  xl: "h-20 w-20 sm:h-24 sm:w-24 rounded-[28px]",
 };
 
 export function BrandLogo({
@@ -35,12 +35,12 @@ export function BrandLogo({
         className
       )}
     >
-      {/* Glow Ambient behind */}
+      {/* Ambient Glow behind */}
       {glow && (
         <div className="absolute -inset-2 bg-gradient-to-tr from-[#0084ff] to-[#38bdf8] opacity-80 blur-lg pointer-events-none -z-10 animate-pulse-slow" />
       )}
 
-      {/* Vector SVG: Academic Cap + Stylized Pen Nib + ĐBAQ - LMS Box */}
+      {/* Vector SVG: Bold, Crisp Academic Cap + Stylized Pen Nib + ĐBAQ - LMS Box */}
       <svg
         viewBox="0 0 512 512"
         className="w-full h-full"
@@ -56,14 +56,14 @@ export function BrandLogo({
           </linearGradient>
 
           <radialGradient id="brandTopGlow" cx="45%" cy="25%" r="75%">
-            <stop offset="0%" stopColor="#ffffff" stopOpacity="0.65" />
-            <stop offset="40%" stopColor="#38bdf8" stopOpacity="0.35" />
+            <stop offset="0%" stopColor="#ffffff" stopOpacity="0.7" />
+            <stop offset="40%" stopColor="#38bdf8" stopOpacity="0.4" />
             <stop offset="100%" stopColor="#000000" stopOpacity="0" />
           </radialGradient>
 
           <linearGradient id="brandGlassSheen" x1="0%" y1="0%" x2="0%" y2="100%">
             <stop offset="0%" stopColor="#ffffff" stopOpacity="0.65" />
-            <stop offset="35%" stopColor="#ffffff" stopOpacity="0.22" />
+            <stop offset="35%" stopColor="#ffffff" stopOpacity="0.25" />
             <stop offset="100%" stopColor="#ffffff" stopOpacity="0" />
           </linearGradient>
 
@@ -81,7 +81,7 @@ export function BrandLogo({
           </linearGradient>
 
           <filter id="brandShadow" x="-20%" y="-20%" width="140%" height="140%">
-            <feDropShadow dx="0" dy="8" stdDeviation="10" floodColor="#051532" floodOpacity="0.4" />
+            <feDropShadow dx="0" dy="8" stdDeviation="12" floodColor="#051532" floodOpacity="0.45" />
           </filter>
         </defs>
 
@@ -103,60 +103,60 @@ export function BrandLogo({
           height="507"
           rx="112.5"
           fill="none"
-          stroke="rgba(255,255,255,0.5)"
+          stroke="rgba(255,255,255,0.55)"
           strokeWidth="6"
         />
 
         {/* Academic Mortarboard + Pen Nib + Wings */}
         <g filter="url(#brandShadow)">
           {/* Cap Top Rhombus */}
-          <polygon points="256,92 396,152 256,212 116,152" fill="url(#brandEmblemGrad)" />
-          <polygon points="116,152 256,212 256,224 116,164" fill="#93c5fd" opacity="0.8" />
-          <polygon points="396,152 256,212 256,224 396,164" fill="#60a5fa" opacity="0.9" />
+          <polygon points="256,82 406,146 256,210 106,146" fill="url(#brandEmblemGrad)" />
+          <polygon points="106,146 256,210 256,224 106,160" fill="#93c5fd" opacity="0.85" />
+          <polygon points="406,146 256,210 256,224 406,160" fill="#60a5fa" opacity="0.95" />
 
           {/* Skullcap */}
           <path
-            d="M 172 184 Q 256 244 340 184 L 340 214 C 340 260 172 260 172 214 Z"
+            d="M 166 180 Q 256 244 346 180 L 346 212 C 346 260 166 260 166 212 Z"
             fill="url(#brandEmblemGrad)"
             opacity="0.95"
           />
 
           {/* Golden Tassel & Star */}
-          <path d="M 256 152 Q 380 165 392 234 L 386 234 Q 374 170 256 156 Z" fill="url(#brandGoldGrad)" />
-          <circle cx="392" cy="244" r="8.5" fill="url(#brandGoldGrad)" />
+          <path d="M 256 146 Q 388 160 400 230 L 394 230 Q 380 164 256 150 Z" fill="url(#brandGoldGrad)" />
+          <circle cx="400" cy="240" r="9" fill="url(#goldGrad)" />
 
           {/* Stylized Open Book Wings */}
           <path
-            d="M 142 352 C 142 306 208 274 242 272 L 242 302 C 218 304 176 322 176 352 C 176 370 210 380 242 382 L 242 410 C 180 406 142 382 142 352 Z"
+            d="M 136 346 C 136 298 206 266 242 264 L 242 296 C 216 298 172 316 172 346 C 172 366 208 376 242 378 L 242 408 C 176 404 136 378 136 346 Z"
             fill="url(#brandEmblemGrad)"
           />
           <path
-            d="M 370 352 C 370 306 304 274 270 272 L 270 302 C 294 304 336 322 336 352 C 336 370 302 380 270 382 L 270 410 C 332 406 370 382 370 352 Z"
+            d="M 376 346 C 376 298 306 266 270 264 L 270 296 C 296 298 340 316 340 346 C 340 366 304 376 270 378 L 270 408 C 336 404 376 378 376 346 Z"
             fill="url(#brandEmblemGrad)"
           />
 
           {/* Central Pen Nib Spire */}
-          <polygon points="256,256 272,346 256,386 240,346" fill="#ffffff" />
-          <circle cx="256" cy="324" r="5" fill="#0066cc" />
+          <polygon points="256,248 274,340 256,382 238,340" fill="#ffffff" />
+          <circle cx="256" cy="318" r="5.5" fill="#0066cc" />
 
-          {/* Liquid Glass Box for ĐBAQ - LMS */}
+          {/* Liquid Glass Box for ĐBAQ - LMS (Crisp, High-Contrast) */}
           <rect
-            x="106"
-            y="420"
-            width="300"
-            height="52"
-            rx="26"
-            fill="rgba(2, 6, 23, 0.4)"
-            stroke="rgba(255, 255, 255, 0.35)"
+            x="100"
+            y="416"
+            width="312"
+            height="56"
+            rx="28"
+            fill="rgba(2, 6, 23, 0.45)"
+            stroke="rgba(255, 255, 255, 0.4)"
             strokeWidth="2"
           />
           <text
             x="256"
-            y="456"
+            y="454"
             textAnchor="middle"
             fontFamily="'Segoe UI', Arial, sans-serif"
-            fontSize="25"
-            fontWeight="800"
+            fontSize="27"
+            fontWeight="900"
             letterSpacing="4"
             fill="#ffffff"
           >

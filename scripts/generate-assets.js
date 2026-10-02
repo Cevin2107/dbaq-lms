@@ -254,6 +254,25 @@ async function main() {
 
   fs.writeFileSync(path.join(publicDir, 'og-image.png'), previewBuffer);
   console.log('Generated public/og-image.png (1200x630 horizontal)');
+
+  // 3. Render 48x48 Favicon ICO directly to src/app/favicon.ico (avoiding public/ conflict)
+  const png48 = await sharp(logoBuffer).resize(48, 48).png().toBuffer();
+  const icoHeader = Buffer.alloc(22);
+  icoHeader.writeUInt16LE(0, 0); // Reserved
+  icoHeader.writeUInt16LE(1, 2); // Type 1 = ICO
+  icoHeader.writeUInt16LE(1, 4); // 1 Image
+  icoHeader.writeUInt8(48, 6);   // Width
+  icoHeader.writeUInt8(48, 7);   // Height
+  icoHeader.writeUInt8(0, 8);    // Palette
+  icoHeader.writeUInt8(0, 9);    // Reserved
+  icoHeader.writeUInt16LE(1, 10); // Color planes
+  icoHeader.writeUInt16LE(32, 12); // Bits per pixel
+  icoHeader.writeUInt32LE(png48.length, 14); // Image size
+  icoHeader.writeUInt32LE(22, 18); // Image offset
+
+  const icoBuffer = Buffer.concat([icoHeader, png48]);
+  fs.writeFileSync(path.join(__dirname, '..', 'src', 'app', 'favicon.ico'), icoBuffer);
+  console.log('Generated src/app/favicon.ico (valid 48x48 ICO)');
 }
 
 main().catch(console.error);

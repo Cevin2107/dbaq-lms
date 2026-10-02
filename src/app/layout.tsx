@@ -26,7 +26,9 @@ export const metadata: Metadata = {
   icons: {
     icon: [
       { url: "/icon.png?v=5", sizes: "512x512", type: "image/png" },
+      { url: "/favicon.ico?v=5", sizes: "any" },
     ],
+    shortcut: "/favicon.ico?v=5",
     apple: [
       { url: "/icon.png?v=5", sizes: "512x512", type: "image/png" },
     ],
@@ -67,8 +69,11 @@ export default function RootLayout({
   return (
     <html lang="vi" suppressHydrationWarning>
       <head>
-        <link rel="manifest" href="/manifest.json" />
-        <link rel="apple-touch-icon" href="/icon.png?v=5" />
+        <link rel="icon" type="image/png" sizes="32x32" href="/icon.png?v=5" />
+        <link rel="icon" type="image/png" sizes="16x16" href="/icon.png?v=5" />
+        <link rel="shortcut icon" href="/favicon.ico?v=5" />
+        <link rel="apple-touch-icon" sizes="180x180" href="/icon.png?v=5" />
+        <link rel="manifest" href="/manifest.json?v=5" />
         <script
           dangerouslySetInnerHTML={{
             __html: `

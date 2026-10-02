@@ -31,7 +31,7 @@ export function HeaderBar({ studentName }: { studentName?: string }) {
       <header className="mx-auto w-full max-w-[1440px] rounded-full bg-white/75 dark:bg-[#1c1c1e]/75 backdrop-blur-2xl border border-white/60 dark:border-white/10 shadow-glass pointer-events-auto transition-all duration-500 ease-liquid">
         <div className="flex h-13 sm:h-14 items-center justify-between px-3 sm:px-6" suppressHydrationWarning>
           <Link href="/" className="flex items-center gap-2.5 hover:opacity-85 transition-opacity group" suppressHydrationWarning>
-            <BrandLogo size="sm" animate className="shadow-sm ring-1 ring-white/30 dark:ring-white/10" />
+            <BrandLogo size="md" animate glow className="shadow-sm ring-1 ring-white/30 dark:ring-white/10" />
             <div className="flex flex-col">
               <span className="text-[13.5px] sm:text-[15px] font-bold tracking-tight text-[#1d1d1f] dark:text-white leading-tight">
                 Gia sư Đào Bá Anh Quân
