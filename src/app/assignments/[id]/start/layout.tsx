@@ -13,7 +13,7 @@ export async function generateMetadata({ params }: { params: Promise<{ id: strin
 
     if (assignment) {
       const title = `📝 ${assignment.title} 🔹 Gia sư Đào Bá Anh Quân`;
-      const description = `Bài tập ${assignment.subject} ${assignment.grade}. Hệ thống LMS của Gia sư Đào Bá Anh Quân`;
+      const description = `Bài tập ${assignment.subject} ${assignment.grade}. Hệ thống LMS của Gia sư Đào Bá Anh Quân.`;
 
       return {
         metadataBase,
