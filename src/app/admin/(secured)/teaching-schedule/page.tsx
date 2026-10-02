@@ -366,51 +366,11 @@ export default function TeachingSchedulePage() {
             </p>
           </div>
 
-          <div className="flex items-center gap-2.5 self-start sm:self-auto">
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={fetchData}
-              className="rounded-full shadow-2xs border-slate-200 dark:border-white/10 hover:bg-slate-100 dark:hover:bg-slate-800"
-            >
-              <RefreshCw className="h-4 w-4 mr-1.5" />
-              <span>Làm mới</span>
-            </Button>
-          </div>
-        </div>
-      </div>
-
-      {/* ─── 2. Quick Share Registration Link Banner (Pro Feature) ─── */}
-      <div className="rounded-[2rem] bg-gradient-to-r from-blue-500/10 via-indigo-500/10 to-sky-500/10 dark:from-blue-950/40 dark:via-indigo-950/30 dark:to-slate-900/40 border border-blue-500/25 dark:border-blue-400/20 p-5 sm:p-7 shadow-[0_10px_30px_rgba(0,102,204,0.08)] backdrop-blur-xl relative overflow-hidden">
-        <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-5 relative z-10">
-          <div className="flex items-center gap-4">
-            <div className="h-13 w-13 rounded-2xl bg-gradient-to-tr from-[#0066cc] to-[#2563eb] text-white flex items-center justify-center shrink-0 shadow-lg shadow-blue-500/25">
-              <Link2 className="h-6 w-6 stroke-[2.2]" />
-            </div>
-            <div className="min-w-0">
-              <div className="flex items-center gap-2 flex-wrap">
-                <h3 className="font-bold text-slate-900 dark:text-white text-base sm:text-lg">
-                  Link Đăng ký Lịch học trực tuyến
-                </h3>
-                <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[11px] font-bold bg-emerald-500/15 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20">
-                  <span className="h-1.5 w-1.5 rounded-full bg-emerald-500 animate-pulse" />
-                  Sẵn sàng gửi học sinh
-                </span>
-              </div>
-              <p className="text-xs sm:text-[13px] text-slate-500 dark:text-slate-400 mt-1">
-                Gửi liên kết này cho học sinh để các em tự chọn và chốt ca học theo số ca bạn đã phân quyền:
-              </p>
-              <div className="mt-2 inline-flex items-center gap-2 px-3 py-1.5 rounded-xl bg-white/80 dark:bg-black/30 border border-slate-200/80 dark:border-white/10 text-xs font-mono font-semibold text-[#0066cc] dark:text-blue-300 max-w-full overflow-hidden select-all">
-                <span className="truncate">{registrationUrl}</span>
-              </div>
-            </div>
-          </div>
-
-          <div className="flex items-center gap-3 shrink-0 self-stretch sm:self-auto justify-end">
+          <div className="flex items-center gap-2.5 self-start sm:self-auto flex-wrap">
             <Button
               onClick={handleCopyLink}
               className={clsx(
-                "rounded-full px-5 sm:px-6 py-2.5 text-xs sm:text-sm font-bold transition-all duration-300 shadow-md active:scale-95 flex-1 sm:flex-initial",
+                "rounded-full px-5 py-2.5 text-xs sm:text-sm font-bold transition-all duration-300 shadow-md active:scale-95",
                 copied
                   ? "bg-emerald-600 hover:bg-emerald-700 text-white shadow-emerald-500/25"
                   : "bg-[#0066cc] hover:bg-[#005bb5] text-white shadow-blue-500/25"
@@ -433,11 +393,21 @@ export default function TeachingSchedulePage() {
               href="/register-schedule"
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-flex items-center justify-center h-10 w-10 sm:h-11 sm:w-11 rounded-full border border-slate-200/80 dark:border-white/10 bg-white/90 dark:bg-white/5 hover:bg-slate-100 dark:hover:bg-white/10 text-slate-700 dark:text-slate-200 transition-all duration-200 shadow-sm active:scale-90"
-              title="Mở xem thử giao diện học sinh trong tab mới"
+              className="inline-flex items-center justify-center h-10 w-10 rounded-full border border-slate-200/80 dark:border-white/10 bg-white/90 dark:bg-white/5 hover:bg-slate-100 dark:hover:bg-white/10 text-slate-700 dark:text-slate-200 transition-all duration-200 shadow-2xs active:scale-90"
+              title="Mở xem giao diện học sinh trong tab mới"
             >
-              <ExternalLink className="h-4 w-4 sm:h-4.5 sm:w-4.5" />
+              <ExternalLink className="h-4 w-4" />
             </a>
+
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={fetchData}
+              className="rounded-full shadow-2xs border-slate-200 dark:border-white/10 hover:bg-slate-100 dark:hover:bg-slate-800"
+            >
+              <RefreshCw className="h-4 w-4 mr-1.5" />
+              <span>Làm mới</span>
+            </Button>
           </div>
         </div>
       </div>
