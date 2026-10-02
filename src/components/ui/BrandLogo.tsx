@@ -123,7 +123,7 @@ export function BrandLogo({
 
           {/* Golden Tassel & Star */}
           <path d="M 256 146 Q 388 160 400 230 L 394 230 Q 380 164 256 150 Z" fill="url(#brandGoldGrad)" />
-          <circle cx="400" cy="240" r="9" fill="url(#goldGrad)" />
+          <circle cx="400" cy="240" r="9" fill="url(#brandGoldGrad)" />
 
           {/* Stylized Open Book Wings */}
           <path
