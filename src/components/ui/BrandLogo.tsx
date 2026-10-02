@@ -40,7 +40,7 @@ export function BrandLogo({
         <div className="absolute -inset-2 bg-gradient-to-tr from-[#0284c7] to-[#38bdf8] opacity-70 blur-lg pointer-events-none -z-10 animate-pulse-slow" />
       )}
 
-      {/* High-fidelity Vector SVG Logo: Minimalist Luxury ĐBAQ - LMS */}
+      {/* Vector SVG: Academic Cap + Stylized Pen Nib + ĐBAQ - LMS Box */}
       <svg
         viewBox="0 0 512 512"
         className="w-full h-full"
@@ -67,20 +67,17 @@ export function BrandLogo({
             <stop offset="100%" stopColor="#ffffff" stopOpacity="0" />
           </linearGradient>
 
-          <linearGradient id="brandPlatGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+          <linearGradient id="brandEmblemGrad" x1="0%" y1="0%" x2="100%" y2="100%">
             <stop offset="0%" stopColor="#ffffff" />
-            <stop offset="50%" stopColor="#f0f9ff" />
-            <stop offset="100%" stopColor="#bae6fd" />
+            <stop offset="35%" stopColor="#f0f9ff" />
+            <stop offset="75%" stopColor="#bae6fd" />
+            <stop offset="100%" stopColor="#38bdf8" />
           </linearGradient>
 
-          <linearGradient id="brandFacetDark" x1="0%" y1="0%" x2="100%" y2="100%">
-            <stop offset="0%" stopColor="#60a5fa" />
-            <stop offset="100%" stopColor="#1d4ed8" />
-          </linearGradient>
-
-          <linearGradient id="brandGold" x1="0%" y1="0%" x2="100%" y2="100%">
+          <linearGradient id="brandGoldGrad" x1="0%" y1="0%" x2="100%" y2="100%">
             <stop offset="0%" stopColor="#fef08a" />
-            <stop offset="100%" stopColor="#f59e0b" />
+            <stop offset="50%" stopColor="#f59e0b" />
+            <stop offset="100%" stopColor="#d97706" />
           </linearGradient>
 
           <filter id="brandShadow" x="-20%" y="-20%" width="140%" height="140%">
@@ -92,13 +89,13 @@ export function BrandLogo({
         <rect width="512" height="512" fill="url(#brandIconBg)" />
         <rect width="512" height="512" fill="url(#brandTopGlow)" />
 
-        {/* Glass Arc */}
+        {/* Top Glass Arc */}
         <path
           d="M 0 115 C 0 51.5 51.5 0 115 0 L 397 0 C 460.5 0 512 51.5 512 115 C 512 175 390 205 256 205 C 122 205 0 175 0 115 Z"
           fill="url(#brandGlassSheen)"
         />
 
-        {/* Apple Thin Border */}
+        {/* Apple Specular Thin Border */}
         <rect
           x="2.5"
           y="2.5"
@@ -110,27 +107,42 @@ export function BrandLogo({
           strokeWidth="6"
         />
 
-        {/* Geometric Emblem: The Apex Crown & Ribbon of Knowledge */}
+        {/* Academic Mortarboard + Pen Nib + Wings */}
         <g filter="url(#brandShadow)">
-          {/* Top Diamond Apex */}
-          <polygon points="256,92 376,174 256,238 136,174" fill="url(#brandPlatGrad)" />
-          <polygon points="136,174 256,238 256,320 136,256" fill="url(#brandFacetDark)" opacity="0.9" />
-          <polygon points="376,174 256,238 256,320 376,256" fill="#38bdf8" opacity="0.95" />
-          <line x1="256" y1="92" x2="256" y2="320" stroke="#ffffff" strokeWidth="4" strokeLinecap="round" />
+          {/* Cap Top Rhombus */}
+          <polygon points="256,92 396,152 256,212 116,152" fill="url(#brandEmblemGrad)" />
+          <polygon points="116,152 256,212 256,224 116,164" fill="#93c5fd" opacity="0.75" />
+          <polygon points="396,152 256,212 256,224 396,164" fill="#60a5fa" opacity="0.85" />
 
-          {/* Ribbon Wings of Infinite Learning */}
+          {/* Skullcap */}
           <path
-            d="M 120 310 C 170 330 220 335 256 335 C 292 335 342 330 392 310 C 372 355 320 375 256 375 C 192 375 140 355 120 310 Z"
-            fill="url(#brandPlatGrad)"
+            d="M 172 184 Q 256 244 340 184 L 340 214 C 340 260 172 260 172 214 Z"
+            fill="url(#brandEmblemGrad)"
+            opacity="0.95"
           />
 
-          {/* Golden Star at Apex */}
-          <circle cx="256" cy="92" r="8" fill="url(#brandGold)" />
+          {/* Golden Tassel & Star */}
+          <path d="M 256 152 Q 380 165 392 234 L 386 234 Q 374 170 256 156 Z" fill="url(#brandGoldGrad)" />
+          <circle cx="392" cy="244" r="8.5" fill="url(#brandGoldGrad)" />
 
-          {/* Text Badge: ĐBAQ - LMS */}
+          {/* Stylized Open Book Wings */}
+          <path
+            d="M 142 352 C 142 306 208 274 242 272 L 242 302 C 218 304 176 322 176 352 C 176 370 210 380 242 382 L 242 410 C 180 406 142 382 142 352 Z"
+            fill="url(#brandEmblemGrad)"
+          />
+          <path
+            d="M 370 352 C 370 306 304 274 270 272 L 270 302 C 294 304 336 322 336 352 C 336 370 302 380 270 382 L 270 410 C 332 406 370 382 370 352 Z"
+            fill="url(#brandEmblemGrad)"
+          />
+
+          {/* Central Pen Nib Spire */}
+          <polygon points="256,256 272,346 256,386 240,346" fill="#ffffff" />
+          <circle cx="256" cy="324" r="5" fill="#0066cc" />
+
+          {/* Liquid Glass Box for ĐBAQ - LMS */}
           <rect
             x="106"
-            y="415"
+            y="420"
             width="300"
             height="52"
             rx="26"
@@ -140,7 +152,7 @@ export function BrandLogo({
           />
           <text
             x="256"
-            y="451"
+            y="456"
             textAnchor="middle"
             fontFamily="'Segoe UI', Arial, sans-serif"
             fontSize="25"
