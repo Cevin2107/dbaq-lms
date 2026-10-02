@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { AlertCircle, CalendarDays, Info, RefreshCw, Save } from "lucide-react";
+import { AlertCircle, CalendarDays, Check, Info, Lock, Minus, Plus, RefreshCw, Save } from "lucide-react";
 import { useRouter } from "next/navigation";
 import clsx from "clsx";
 
@@ -160,22 +160,37 @@ export function ScheduleRegistrationPanel() {
         </div>
       )}
 
-      <div className="flex flex-wrap items-center gap-6 text-[15px] px-2">
-        <div className="flex items-center gap-3">
-          <span className="w-6 h-6 rounded-full border-2 border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800" />
-          <span className="text-slate-600 dark:text-slate-400 font-medium">Ca trống</span>
-        </div>
-        <div className="flex items-center gap-3">
-          <span className="w-6 h-6 rounded-full bg-[#0066cc] flex items-center justify-center shadow-md shadow-blue-500/20 text-white text-sm">✓</span>
-          <span className="text-slate-600 dark:text-slate-400 font-medium">Bạn đã chọn</span>
-        </div>
-        <div className="flex items-center gap-3">
-          <span className="w-6 h-6 rounded-full bg-slate-100 dark:bg-slate-800 border-2 border-slate-200 dark:border-slate-700 flex items-center justify-center opacity-60">
-            <span className="block w-3.5 h-0.5 bg-slate-400 rounded-full rotate-45 relative">
-              <span className="absolute block w-full h-full bg-slate-400 rounded-full -rotate-90" />
-            </span>
+      <div className="flex flex-wrap items-center gap-4 sm:gap-6 text-sm px-2">
+        {/* 1. Ca trống */}
+        <div className="flex items-center gap-2.5">
+          <span className="w-7 h-7 rounded-xl border-2 border-dashed border-[#0066cc]/60 bg-blue-50/60 dark:bg-blue-950/30 flex items-center justify-center text-[#0066cc] dark:text-blue-400">
+            <Plus className="h-4 w-4 stroke-[2.5]" />
           </span>
-          <span className="text-slate-600 dark:text-slate-400 font-medium">Đã có người đăng ký</span>
+          <span className="text-slate-700 dark:text-slate-300 font-semibold text-xs sm:text-sm">Ca trống (Bấm để chọn)</span>
+        </div>
+
+        {/* 2. Bạn đã chọn */}
+        <div className="flex items-center gap-2.5">
+          <span className="w-7 h-7 rounded-xl bg-gradient-to-tr from-[#0066cc] to-[#2563eb] text-white flex items-center justify-center shadow-md shadow-blue-500/20">
+            <Check className="h-4 w-4 stroke-[2.5]" />
+          </span>
+          <span className="text-[#0066cc] dark:text-blue-400 font-semibold text-xs sm:text-sm">Bạn đã chọn</span>
+        </div>
+
+        {/* 3. Đã có người đăng ký */}
+        <div className="flex items-center gap-2.5">
+          <span className="w-7 h-7 rounded-xl border-2 border-rose-300 dark:border-rose-800 bg-rose-50 dark:bg-rose-950/40 text-rose-600 dark:text-rose-400 flex items-center justify-center">
+            <Lock className="h-3.5 w-3.5" />
+          </span>
+          <span className="text-rose-600 dark:text-rose-400 font-semibold text-xs sm:text-sm">Đã có người đăng ký (Hết chỗ)</span>
+        </div>
+
+        {/* 4. Ca không mở */}
+        <div className="flex items-center gap-2.5">
+          <span className="w-7 h-7 rounded-xl border border-slate-200 dark:border-white/10 bg-slate-100 dark:bg-[#161619] text-slate-400 dark:text-slate-500 flex items-center justify-center">
+            <Minus className="h-3.5 w-3.5 stroke-[2.5]" />
+          </span>
+          <span className="text-slate-500 dark:text-slate-400 font-medium text-xs sm:text-sm">Không mở ca</span>
         </div>
       </div>
 
@@ -216,9 +231,13 @@ export function ScheduleRegistrationPanel() {
 
                     if (!schedule) {
                       return (
-                        <td key={shift.id} className="px-6 py-5 text-center">
-                          <div className="mx-auto w-12 h-12 rounded-full bg-slate-50 dark:bg-slate-800/30 border border-slate-100 dark:border-white/5 flex items-center justify-center opacity-40 cursor-not-allowed" title="Ca này không mở">
-                            <span className="w-2 h-2 rounded-full bg-slate-300 dark:bg-slate-600" />
+                        <td key={shift.id} className="px-4 sm:px-6 py-4 text-center">
+                          <div
+                            className="mx-auto w-12 h-12 sm:w-14 sm:h-12 rounded-2xl bg-slate-100/70 dark:bg-[#161619] border border-slate-200/80 dark:border-white/5 flex flex-col items-center justify-center opacity-70 cursor-not-allowed select-none transition-opacity"
+                            title="Ca này giáo viên không mở lịch"
+                          >
+                            <Minus className="h-4 w-4 text-slate-400 dark:text-slate-500 stroke-[2.5]" />
+                            <span className="text-[9px] font-semibold uppercase tracking-tight text-slate-400 dark:text-slate-500">Đóng</span>
                           </div>
                         </td>
                       );
@@ -228,24 +247,37 @@ export function ScheduleRegistrationPanel() {
                     const isLocked = lockedSchedules.has(schedule.id);
 
                     return (
-                      <td key={shift.id} className="px-6 py-5 text-center">
+                      <td key={shift.id} className="px-4 sm:px-6 py-4 text-center">
                         {isLocked ? (
-                          <div className="mx-auto w-12 h-12 rounded-full bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 flex items-center justify-center cursor-not-allowed opacity-60" title="Đã có học sinh đăng ký ca này">
-                            <span className="block w-4 h-0.5 bg-slate-400 dark:bg-slate-500 rounded-full rotate-45 relative">
-                              <span className="absolute block w-full h-full bg-slate-400 dark:bg-slate-500 rounded-full -rotate-90" />
-                            </span>
+                          <div
+                            className="mx-auto w-12 h-12 sm:w-14 sm:h-12 rounded-2xl bg-rose-50/90 dark:bg-rose-950/30 border-2 border-rose-300 dark:border-rose-900/60 flex flex-col items-center justify-center cursor-not-allowed select-none shadow-sm transition-transform"
+                            title="Đã có học sinh đăng ký ca này (Hết chỗ)"
+                          >
+                            <Lock className="h-4 w-4 text-rose-500 dark:text-rose-400 mb-0.5" />
+                            <span className="text-[9px] font-bold uppercase tracking-tight text-rose-600 dark:text-rose-400">Kín</span>
                           </div>
                         ) : (
                           <button
                             onClick={() => toggleSelection(schedule.id)}
+                            title={isSelected ? "Bạn đã chọn ca này • Nhấn để bỏ chọn" : "Ca trống • Nhấn để chọn"}
                             className={clsx(
-                              "mx-auto w-12 h-12 rounded-full flex items-center justify-center transition-all duration-300 ease-spring active:scale-90 hover:scale-[1.05]",
+                              "mx-auto w-12 h-12 sm:w-14 sm:h-12 rounded-2xl flex flex-col items-center justify-center transition-all duration-200 ease-spring active:scale-90 hover:scale-105 select-none",
                               isSelected
-                                ? "bg-[#0066cc] border-[#0066cc] shadow-glass-hover text-white"
-                                : "bg-white dark:bg-[#2a2a2c] border border-black/5 dark:border-white/10 hover:border-[#0066cc]/50 hover:shadow-sm"
+                                ? "bg-gradient-to-tr from-[#0066cc] to-[#2563eb] border-2 border-blue-500 text-white shadow-[0_4px_16px_rgba(0,102,204,0.35)]"
+                                : "bg-blue-50/50 hover:bg-blue-100/80 dark:bg-blue-950/25 dark:hover:bg-blue-900/40 border-2 border-dashed border-[#0066cc]/60 hover:border-[#0066cc] text-[#0066cc] dark:text-blue-400 shadow-sm"
                             )}
                           >
-                            {isSelected ? "✓" : null}
+                            {isSelected ? (
+                              <>
+                                <Check className="h-5 w-5 stroke-[2.5]" />
+                                <span className="text-[9px] font-bold uppercase tracking-tight text-white/90">Đã chọn</span>
+                              </>
+                            ) : (
+                              <>
+                                <Plus className="h-5 w-5 stroke-[2.5] transition-transform duration-200 hover:scale-110" />
+                                <span className="text-[9px] font-bold uppercase tracking-tight text-[#0066cc]/90 dark:text-blue-400/90">Trống</span>
+                              </>
+                            )}
                           </button>
                         )}
                       </td>
