@@ -37,9 +37,21 @@ export async function middleware(request: NextRequest) {
   )
 
   // Refresh session if expired - required for Server Components
-  const {
-    data: { user },
-  } = await supabase.auth.getUser()
+  let user = null
+  try {
+    const { data, error } = await supabase.auth.getUser()
+    if (!error && data?.user) {
+      user = data.user
+    } else if (error) {
+      // Clear invalid/expired Supabase auth cookies so browser won't repeatedly throw refresh_token_not_found
+      const authCookies = request.cookies.getAll().filter(c => c.name.startsWith('sb-'))
+      authCookies.forEach(c => {
+        supabaseResponse.cookies.delete(c.name)
+      })
+    }
+  } catch (_err) {
+    user = null
+  }
 
   // Public routes (no auth required)
   const publicRoutes = ['/login', '/signup', '/forgot-password', '/reset-password', '/auth/callback', '/sw.js']

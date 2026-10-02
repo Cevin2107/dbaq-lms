@@ -109,13 +109,12 @@ async function main() {
     .png({ quality: 100, compressionLevel: 9 })
     .toBuffer();
 
-  // Targets to write as per .agents/UPDATE_ICON_GUIDE.md:
-  // 1. src/app/icon.png
-  // 2. public/icon.png
-  // 3. public/og-image.png
-  // 4. public/app-icon.png (for backwards compatibility)
+  // Targets to write:
+  // 1. public/icon.png (PWA icon and favicon fallback)
+  // 2. public/og-image.png (OpenGraph social preview)
+  // 3. public/app-icon.png (Backwards compatibility)
+  // Note: Do NOT write to src/app/icon.png as it conflicts with public/icon.png in Next.js
   const targets = [
-    path.join(appDir, 'icon.png'),
     path.join(publicDir, 'icon.png'),
     path.join(publicDir, 'og-image.png'),
     path.join(publicDir, 'app-icon.png'),
