@@ -1,186 +1,138 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 630" width="1200" height="630">
   <defs>
-    <!-- Background Gradient: Deep Oceanic to Vibrant Apple Action Blue -->
-    <linearGradient id="ogBg" x1="0%" y1="0%" x2="100%" y2="100%">
-      <stop offset="0%" stop-color="#0a1226"/>
-      <stop offset="40%" stop-color="#081b3a"/>
-      <stop offset="80%" stop-color="#0b295c"/>
+    <!-- Deep Midnight Luxury Background -->
+    <linearGradient id="ogBgGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#0a1329"/>
+      <stop offset="45%" stop-color="#071838"/>
+      <stop offset="85%" stop-color="#030b1c"/>
       <stop offset="100%" stop-color="#020617"/>
     </linearGradient>
 
-    <!-- Vibrant Ambient Glow Orbs -->
-    <radialGradient id="glowTopLeft" cx="15%" cy="20%" r="55%">
-      <stop offset="0%" stop-color="#0084ff" stop-opacity="0.45"/>
-      <stop offset="60%" stop-color="#0066cc" stop-opacity="0.15"/>
+    <!-- Central Majestic Blue Aura Glow -->
+    <radialGradient id="centerAura" cx="50%" cy="45%" r="60%">
+      <stop offset="0%" stop-color="#0284c7" stop-opacity="0.45"/>
+      <stop offset="35%" stop-color="#0066cc" stop-opacity="0.25"/>
+      <stop offset="70%" stop-color="#1e1b4b" stop-opacity="0.1"/>
       <stop offset="100%" stop-color="#000000" stop-opacity="0"/>
     </radialGradient>
 
-    <radialGradient id="glowBottomRight" cx="85%" cy="80%" r="55%">
-      <stop offset="0%" stop-color="#38bdf8" stop-opacity="0.35"/>
-      <stop offset="60%" stop-color="#4f46e5" stop-opacity="0.15"/>
+    <!-- Top Left Accent Glow -->
+    <radialGradient id="cornerAura" cx="15%" cy="15%" r="40%">
+      <stop offset="0%" stop-color="#38bdf8" stop-opacity="0.2"/>
       <stop offset="100%" stop-color="#000000" stop-opacity="0"/>
     </radialGradient>
 
-    <!-- Metal Text Gradient for ĐBAQ -->
-    <linearGradient id="textGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+    <!-- App Icon Gradient -->
+    <linearGradient id="miniIconBg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#38bdf8"/>
+      <stop offset="35%" stop-color="#0284c7"/>
+      <stop offset="75%" stop-color="#0066cc"/>
+      <stop offset="100%" stop-color="#0f172a"/>
+    </linearGradient>
+
+    <!-- Metallic Text Gradient for ĐBAQ -->
+    <linearGradient id="titleMetal" x1="0%" y1="0%" x2="100%" y2="0%">
       <stop offset="0%" stop-color="#ffffff"/>
-      <stop offset="40%" stop-color="#e0f2fe"/>
-      <stop offset="100%" stop-color="#38bdf8"/>
+      <stop offset="50%" stop-color="#f0f9ff"/>
+      <stop offset="100%" stop-color="#bae6fd"/>
     </linearGradient>
 
-    <!-- Golden Star Gradient -->
-    <linearGradient id="ogGold" x1="0%" y1="0%" x2="100%" y2="100%">
-      <stop offset="0%" stop-color="#fef08a"/>
-      <stop offset="100%" stop-color="#f59e0b"/>
+    <!-- Facet Gradients for mini emblem -->
+    <linearGradient id="miniPlat" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#ffffff"/>
+      <stop offset="100%" stop-color="#bae6fd"/>
+    </linearGradient>
+    <linearGradient id="miniFacet" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#60a5fa"/>
+      <stop offset="100%" stop-color="#1d4ed8"/>
     </linearGradient>
 
-    <filter id="ogShadow" x="-20%" y="-20%" width="140%" height="140%">
-      <feDropShadow dx="0" dy="16" stdDeviation="20" flood-color="#000000" flood-opacity="0.65"/>
+    <!-- Soft Depth Shadow -->
+    <filter id="cardShadow" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="0" dy="18" stdDeviation="24" flood-color="#000000" flood-opacity="0.65"/>
     </filter>
-
-    <filter id="badgeGlow" x="-30%" y="-30%" width="160%" height="160%">
-      <feDropShadow dx="0" dy="0" stdDeviation="16" flood-color="#0084ff" flood-opacity="0.6"/>
+    <filter id="iconGlow" x="-30%" y="-30%" width="160%" height="160%">
+      <feDropShadow dx="0" dy="0" stdDeviation="20" flood-color="#0284c7" flood-opacity="0.55"/>
     </filter>
   </defs>
 
-  <!-- Main Canvas Background -->
-  <rect width="1200" height="630" fill="url(#ogBg)"/>
-  <rect width="1200" height="630" fill="url(#glowTopLeft)"/>
-  <rect width="1200" height="630" fill="url(#glowBottomRight)"/>
+  <!-- 1. Background -->
+  <rect width="1200" height="630" fill="url(#ogBgGrad)"/>
+  <rect width="1200" height="630" fill="url(#centerAura)"/>
+  <rect width="1200" height="630" fill="url(#cornerAura)"/>
 
-  <!-- Subtle Decorative Grid Lines -->
-  <g stroke="rgba(255,255,255,0.03)" stroke-width="1">
-    <line x1="0" y1="105" x2="1200" y2="105" />
-    <line x1="0" y1="210" x2="1200" y2="210" />
-    <line x1="0" y1="315" x2="1200" y2="315" />
-    <line x1="0" y1="420" x2="1200" y2="420" />
-    <line x1="0" y1="525" x2="1200" y2="525" />
-    <line x1="200" y1="0" x2="200" y2="630" />
-    <line x1="400" y1="0" x2="400" y2="630" />
-    <line x1="600" y1="0" x2="600" y2="630" />
-    <line x1="800" y1="0" x2="800" y2="630" />
-    <line x1="1000" y1="0" x2="1000" y2="630" />
-  </g>
+  <!-- 2. Subtle Outer Apple Glass Border -->
+  <rect x="20" y="20" width="1160" height="590" rx="36" fill="none" stroke="rgba(255,255,255,0.12)" stroke-width="2"/>
+  <rect x="24" y="24" width="1152" height="582" rx="32" fill="none" stroke="rgba(56,189,248,0.1)" stroke-width="1"/>
 
-  <!-- Outer Glass Specular Border -->
-  <rect x="12" y="12" width="1176" height="606" rx="32" fill="none" stroke="rgba(255,255,255,0.12)" stroke-width="2"/>
-  <rect x="16" y="16" width="1168" height="598" rx="28" fill="none" stroke="rgba(0,132,255,0.15)" stroke-width="1"/>
+  <!-- 3. CENTERED LUXURY BRAND COMPOSITION -->
+  <g transform="translate(600, 75)" text-anchor="middle">
+    
+    <!-- A. Centered Brand App Icon (124x124) -->
+    <g transform="translate(-62, 0)" filter="url(#iconGlow)">
+      <!-- Squircle Base -->
+      <rect width="124" height="124" rx="32" fill="url(#miniIconBg)"/>
+      <rect width="124" height="124" rx="32" fill="none" stroke="rgba(255,255,255,0.45)" stroke-width="2"/>
 
-  <!-- LEFT SECTION: BRANDING & PROMINENT 'ĐBAQ' MONOGRAM -->
-  <g transform="translate(80, 85)">
-    <!-- Small Top Eyebrow Pill -->
-    <g>
-      <rect width="320" height="38" rx="19" fill="rgba(0, 102, 204, 0.25)" stroke="rgba(56, 189, 248, 0.4)" stroke-width="1.5"/>
-      <circle cx="22" cy="19" r="6" fill="#38bdf8" />
-      <text x="38" y="24" font-family="-apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Inter', sans-serif" font-size="14" font-weight="700" letter-spacing="1.5" fill="#38bdf8">NỀN TẢNG HỌC TẬP TRỰC TUYẾN</text>
+      <!-- Top Sheen -->
+      <path d="M 0 32 C 0 14 14 0 32 0 L 92 0 C 110 0 124 14 124 32 C 124 48 95 55 62 55 C 29 55 0 48 0 32 Z" fill="#ffffff" opacity="0.35"/>
+
+      <!-- Mini Prism Emblem -->
+      <g transform="translate(62, 24)" filter="url(#cardShadow)">
+        <polygon points="0,0 28,19 0,34 -28,19" fill="url(#miniPlat)" />
+        <polygon points="-28,19 0,34 0,54 -28,39" fill="url(#miniFacet)" opacity="0.9" />
+        <polygon points="28,19 0,34 0,54 28,39" fill="#38bdf8" opacity="0.95" />
+        <line x1="0" y1="0" x2="0" y2="54" stroke="#ffffff" stroke-width="1.5" />
+        <!-- Ribbon Base -->
+        <path d="M -30 52 C -18 57 0 58 0 58 C 0 58 18 57 30 52 C 25 63 12 68 0 68 C -12 68 -25 63 -30 52 Z" fill="url(#miniPlat)"/>
+        <!-- Star spark -->
+        <circle cx="0" cy="0" r="2.5" fill="#f59e0b"/>
+      </g>
+
+      <!-- Mini Monogram inside icon -->
+      <text x="62" y="109" text-anchor="middle" font-family="'Segoe UI', Arial, sans-serif" font-size="11" font-weight="900" letter-spacing="2" fill="#ffffff">ĐBAQ</text>
     </g>
 
-    <!-- HUGE, ULTRA-SHARP 'ĐBAQ' MONOGRAM BADGE -->
-    <g transform="translate(0, 58)" filter="url(#ogShadow)">
-      <!-- Backdrop Glow Pill for ĐBAQ -->
-      <text x="0" y="120" font-family="-apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Inter', sans-serif" font-size="130" font-weight="900" letter-spacing="6" fill="url(#textGrad)">ĐBAQ</text>
-      <!-- Sub-label inside/next to ĐBAQ -->
-      <rect x="470" y="35" width="110" height="34" rx="17" fill="url(#ogGold)"/>
-      <text x="525" y="57" text-anchor="middle" font-family="-apple-system, BlinkMacSystemFont, 'SF Pro Display', sans-serif" font-size="14" font-weight="800" fill="#0f172a">PRO LMS</text>
-    </g>
+    <!-- B. Main Monogram Title: ĐBAQ - LMS -->
+    <text x="0" y="215" font-family="'Segoe UI', Arial, sans-serif" font-size="64" font-weight="900" letter-spacing="4" fill="url(#titleMetal)" filter="url(#cardShadow)">
+      ĐBAQ - LMS
+    </text>
 
-    <!-- Main Full Teacher Name: GIA SƯ ĐÀO BÁ ANH QUÂN -->
-    <text x="2" y="248" font-family="-apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Inter', sans-serif" font-size="38" font-weight="800" letter-spacing="-0.5" fill="#ffffff">
+    <!-- C. Full Educator Name -->
+    <text x="0" y="275" font-family="'Segoe UI', Arial, sans-serif" font-size="34" font-weight="700" letter-spacing="0.5" fill="#ffffff">
       Gia sư Đào Bá Anh Quân
     </text>
 
-    <!-- Subtitle / Mission -->
-    <text x="2" y="288" font-family="-apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Inter', sans-serif" font-size="18" font-weight="500" fill="#94a3b8">
-      Hệ thống bài tập Toán - Tự Nhiên &amp; Đăng ký lịch học thông minh
+    <!-- D. Subtitle Tagline -->
+    <text x="0" y="322" font-family="'Segoe UI', Arial, sans-serif" font-size="20" font-weight="400" fill="#94a3b8">
+      Hệ thống Học tập &amp; Luyện thi Trực tuyến
     </text>
 
-    <!-- Feature Tags Row -->
-    <g transform="translate(0, 332)">
-      <!-- Tag 1 -->
-      <g>
-        <rect width="185" height="42" rx="21" fill="rgba(255,255,255,0.06)" stroke="rgba(255,255,255,0.15)" stroke-width="1"/>
-        <text x="92" y="26" text-anchor="middle" font-family="-apple-system, BlinkMacSystemFont, 'SF Pro Display', sans-serif" font-size="14" font-weight="600" fill="#e2e8f0">✓ Chuẩn KaTeX LaTeX</text>
+    <!-- E. Minimalist Feature Pills (Centered row) -->
+    <g transform="translate(0, 360)">
+      <!-- Pill 1 -->
+      <g transform="translate(-250, 0)">
+        <rect x="0" y="0" width="150" height="38" rx="19" fill="rgba(255,255,255,0.06)" stroke="rgba(255,255,255,0.15)" stroke-width="1"/>
+        <text x="75" y="24" text-anchor="middle" font-family="'Segoe UI', Arial, sans-serif" font-size="13" font-weight="600" fill="#cbd5e1">Toán &amp; Tự Nhiên</text>
       </g>
-      <!-- Tag 2 -->
-      <g transform="translate(197, 0)">
-        <rect width="175" height="42" rx="21" fill="rgba(255,255,255,0.06)" stroke="rgba(255,255,255,0.15)" stroke-width="1"/>
-        <text x="87" y="26" text-anchor="middle" font-family="-apple-system, BlinkMacSystemFont, 'SF Pro Display', sans-serif" font-size="14" font-weight="600" fill="#e2e8f0">✓ Chấm điểm tự động</text>
+      <!-- Pill 2 -->
+      <g transform="translate(-85, 0)">
+        <rect x="0" y="0" width="170" height="38" rx="19" fill="rgba(255,255,255,0.06)" stroke="rgba(255,255,255,0.15)" stroke-width="1"/>
+        <text x="85" y="24" text-anchor="middle" font-family="'Segoe UI', Arial, sans-serif" font-size="13" font-weight="600" fill="#cbd5e1">Chấm điểm tự động</text>
       </g>
-      <!-- Tag 3 -->
-      <g transform="translate(384, 0)">
-        <rect width="190" height="42" rx="21" fill="rgba(255,255,255,0.06)" stroke="rgba(255,255,255,0.15)" stroke-width="1"/>
-        <text x="95" y="26" text-anchor="middle" font-family="-apple-system, BlinkMacSystemFont, 'SF Pro Display', sans-serif" font-size="14" font-weight="600" fill="#e2e8f0">✓ Phân ca học linh hoạt</text>
+      <!-- Pill 3 -->
+      <g transform="translate(100, 0)">
+        <rect x="0" y="0" width="150" height="38" rx="19" fill="rgba(255,255,255,0.06)" stroke="rgba(255,255,255,0.15)" stroke-width="1"/>
+        <text x="75" y="24" text-anchor="middle" font-family="'Segoe UI', Arial, sans-serif" font-size="13" font-weight="600" fill="#cbd5e1">Đăng ký ca học</text>
       </g>
     </g>
 
-    <!-- Website Domain Badge -->
-    <g transform="translate(2, 412)">
-      <text x="0" y="22" font-family="-apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Inter', monospace" font-size="17" font-weight="700" letter-spacing="1" fill="#38bdf8">
+    <!-- F. Minimalist URL Badge at bottom -->
+    <g transform="translate(0, 440)">
+      <rect x="-140" y="0" width="280" height="36" rx="18" fill="rgba(2, 132, 199, 0.15)" stroke="rgba(56, 189, 248, 0.35)" stroke-width="1.2"/>
+      <text x="0" y="23" text-anchor="middle" font-family="'Segoe UI', Arial, sans-serif" font-size="14" font-weight="700" letter-spacing="1" fill="#38bdf8">
         dbaq-lms.vercel.app
       </text>
-    </g>
-  </g>
-
-  <!-- RIGHT SECTION: 3D FLOATING LIQUID GLASS PREVIEW CARD -->
-  <g transform="translate(730, 95)" filter="url(#ogShadow)">
-    <!-- Liquid Glass Card Base -->
-    <rect width="390" height="440" rx="36" fill="rgba(255,255,255,0.08)" stroke="rgba(255,255,255,0.25)" stroke-width="1.5"/>
-    <rect x="2" y="2" width="386" height="150" rx="34" fill="url(#logoGlassArc)" opacity="0.3"/>
-
-    <!-- Inner Floating App Icon (Squircle) -->
-    <g transform="translate(40, 42)">
-      <rect width="84" height="84" rx="22" fill="url(#logoBgGrad)" filter="url(#badgeGlow)"/>
-      <rect width="84" height="84" rx="22" fill="none" stroke="rgba(255,255,255,0.5)" stroke-width="2"/>
-      
-      <!-- Mini Mortarboard inside icon -->
-      <polygon points="42,20 68,32 42,44 16,32" fill="#ffffff" />
-      <polygon points="16,32 42,44 42,48 16,36" fill="#93c5fd" />
-      <polygon points="68,32 42,44 42,48 68,36" fill="#60a5fa" />
-      <!-- Star -->
-      <circle cx="66" cy="48" r="3.5" fill="#f59e0b" />
-      <!-- Mini ĐBAQ text -->
-      <text x="42" y="72" text-anchor="middle" font-family="-apple-system, BlinkMacSystemFont, sans-serif" font-size="14" font-weight="900" fill="#ffffff" letter-spacing="1.5">ĐBAQ</text>
-    </g>
-
-    <!-- Card Top Text -->
-    <g transform="translate(142, 54)">
-      <text x="0" y="22" font-family="-apple-system, BlinkMacSystemFont, sans-serif" font-size="20" font-weight="800" fill="#ffffff">ĐBAQ LMS Portal</text>
-      <text x="0" y="44" font-family="-apple-system, BlinkMacSystemFont, sans-serif" font-size="13" font-weight="600" fill="#38bdf8">Trực tuyến 24/7 • Realtime</text>
-      <text x="0" y="62" font-family="-apple-system, BlinkMacSystemFont, sans-serif" font-size="12" font-weight="500" fill="#94a3b8">Bản Pro Liquid Glass</text>
-    </g>
-
-    <!-- Simulated Interactive Assignment Card inside Preview -->
-    <g transform="translate(30, 160)">
-      <rect width="330" height="135" rx="20" fill="rgba(15, 23, 42, 0.6)" stroke="rgba(255,255,255,0.12)" stroke-width="1"/>
-      
-      <!-- Subject badge -->
-      <rect x="18" y="16" width="75" height="24" rx="12" fill="#0066cc"/>
-      <text x="55" y="32" text-anchor="middle" font-family="-apple-system, BlinkMacSystemFont, sans-serif" font-size="11" font-weight="700" fill="#ffffff">TOÁN 12</text>
-      
-      <!-- Math formula preview -->
-      <text x="18" y="66" font-family="-apple-system, BlinkMacSystemFont, serif" font-size="15" font-weight="600" fill="#e2e8f0">
-        f(x) = x³ - 3x² + 2  ➔  f'(x) = 0
-      </text>
-      <text x="18" y="90" font-family="-apple-system, BlinkMacSystemFont, serif" font-size="13" fill="#94a3b8">
-        Tìm cực đại, cực tiểu &amp; tích phân I
-      </text>
-
-      <!-- Grade Score Pill -->
-      <rect x="235" y="16" width="78" height="26" rx="13" fill="rgba(16, 185, 129, 0.2)" stroke="rgba(16, 185, 129, 0.5)" stroke-width="1"/>
-      <text x="274" y="33" text-anchor="middle" font-family="-apple-system, BlinkMacSystemFont, sans-serif" font-size="12" font-weight="800" fill="#10b981">10 / 10</text>
-    </g>
-
-    <!-- Progress bar & Student session preview -->
-    <g transform="translate(30, 315)">
-      <rect width="330" height="95" rx="20" fill="rgba(15, 23, 42, 0.6)" stroke="rgba(255,255,255,0.12)" stroke-width="1"/>
-      <text x="18" y="32" font-family="-apple-system, BlinkMacSystemFont, sans-serif" font-size="14" font-weight="700" fill="#ffffff">Tiến độ hoàn thành bài tập</text>
-      <text x="280" y="32" font-family="-apple-system, BlinkMacSystemFont, sans-serif" font-size="14" font-weight="800" fill="#38bdf8">100%</text>
-
-      <!-- Gradient bar -->
-      <rect x="18" y="46" width="294" height="8" rx="4" fill="rgba(255,255,255,0.1)"/>
-      <rect x="18" y="46" width="294" height="8" rx="4" fill="url(#logoBgGrad)"/>
-
-      <text x="18" y="78" font-family="-apple-system, BlinkMacSystemFont, sans-serif" font-size="12" font-weight="500" fill="#94a3b8">Học sinh: Đã nộp đúng hạn • Nhận xét 1:1</text>
     </g>
   </g>
 </svg>

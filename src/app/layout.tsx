@@ -25,10 +25,10 @@ export const metadata: Metadata = {
   description: "Hệ thống bài tập trực tuyến - Giao và làm bài tập, tự động chấm điểm, theo dõi tiến độ học tập",
   icons: {
     icon: [
-      { url: "/icon.png?v=3", sizes: "512x512", type: "image/png" },
+      { url: "/icon.png?v=4", sizes: "512x512", type: "image/png" },
     ],
     apple: [
-      { url: "/icon.png?v=3", sizes: "512x512", type: "image/png" },
+      { url: "/icon.png?v=4", sizes: "512x512", type: "image/png" },
     ],
   },
   appleWebApp: {
@@ -44,7 +44,7 @@ export const metadata: Metadata = {
     locale: "vi_VN",
     images: [
       {
-        url: "/og-image.png?v=3",
+        url: "/og-image.png?v=4",
         width: 1200,
         height: 630,
         alt: "Gia sư Đào Bá Anh Quân - ĐBAQ LMS",
@@ -55,7 +55,7 @@ export const metadata: Metadata = {
     card: "summary_large_image",
     title: "Gia sư Đào Bá Anh Quân - ĐBAQ LMS",
     description: "Hệ thống bài tập trực tuyến",
-    images: ["/og-image.png?v=3"],
+    images: ["/og-image.png?v=4"],
   },
 };
 
@@ -68,7 +68,7 @@ export default function RootLayout({
     <html lang="vi" suppressHydrationWarning>
       <head>
         <link rel="manifest" href="/manifest.json" />
-        <link rel="apple-touch-icon" href="/icon.png?v=3" />
+        <link rel="apple-touch-icon" href="/icon.png?v=4" />
         <script
           dangerouslySetInnerHTML={{
             __html: `

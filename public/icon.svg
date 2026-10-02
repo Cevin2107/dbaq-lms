@@ -1,81 +1,84 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512">
   <defs>
-    <!-- Brighter, vibrant Apple Liquid Glass Gradient -->
-    <linearGradient id="logoBgGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+    <!-- Vibrant, Glowing Liquid Cyan-Blue Gradient -->
+    <linearGradient id="iconBg" x1="0%" y1="0%" x2="100%" y2="100%">
       <stop offset="0%" stop-color="#38bdf8"/>
-      <stop offset="25%" stop-color="#0084ff"/>
-      <stop offset="60%" stop-color="#0066cc"/>
-      <stop offset="100%" stop-color="#1d4ed8"/>
+      <stop offset="30%" stop-color="#0284c7"/>
+      <stop offset="70%" stop-color="#0066cc"/>
+      <stop offset="100%" stop-color="#0f172a"/>
     </linearGradient>
 
-    <!-- Vibrant Inner Ambient Glow -->
-    <radialGradient id="logoInnerGlow" cx="40%" cy="30%" r="70%">
-      <stop offset="0%" stop-color="#ffffff" stop-opacity="0.5"/>
-      <stop offset="40%" stop-color="#60a5fa" stop-opacity="0.3"/>
+    <!-- Top Radiant Light Aura -->
+    <radialGradient id="topGlow" cx="45%" cy="25%" r="75%">
+      <stop offset="0%" stop-color="#ffffff" stop-opacity="0.45"/>
+      <stop offset="45%" stop-color="#38bdf8" stop-opacity="0.25"/>
       <stop offset="100%" stop-color="#000000" stop-opacity="0"/>
     </radialGradient>
 
-    <!-- Glass Specular Highlight Arc -->
-    <linearGradient id="logoGlassArc" x1="0%" y1="0%" x2="0%" y2="100%">
-      <stop offset="0%" stop-color="#ffffff" stop-opacity="0.55"/>
-      <stop offset="35%" stop-color="#ffffff" stop-opacity="0.2"/>
+    <!-- Specular Highlight Arc -->
+    <linearGradient id="glassSheen" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#ffffff" stop-opacity="0.5"/>
+      <stop offset="35%" stop-color="#ffffff" stop-opacity="0.15"/>
       <stop offset="100%" stop-color="#ffffff" stop-opacity="0"/>
     </linearGradient>
 
-    <!-- Monogram Metallic Gradient (Pure White to Ice Blue) -->
-    <linearGradient id="metalGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+    <!-- Metallic Platinum / Ice Gradient for Emblem -->
+    <linearGradient id="platGrad" x1="0%" y1="0%" x2="100%" y2="100%">
       <stop offset="0%" stop-color="#ffffff"/>
       <stop offset="50%" stop-color="#f0f9ff"/>
       <stop offset="100%" stop-color="#bae6fd"/>
     </linearGradient>
 
-    <!-- Gold Accent Star -->
-    <linearGradient id="goldStar" x1="0%" y1="0%" x2="100%" y2="100%">
+    <!-- Facet Shadow Gradient -->
+    <linearGradient id="facetDark" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#60a5fa"/>
+      <stop offset="100%" stop-color="#1d4ed8"/>
+    </linearGradient>
+
+    <!-- Golden Spark Accent -->
+    <linearGradient id="goldAccent" x1="0%" y1="0%" x2="100%" y2="100%">
       <stop offset="0%" stop-color="#fef08a"/>
       <stop offset="100%" stop-color="#f59e0b"/>
     </linearGradient>
 
-    <filter id="softShadow" x="-20%" y="-20%" width="140%" height="140%">
-      <feDropShadow dx="0" dy="10" stdDeviation="12" flood-color="#0f172a" flood-opacity="0.45"/>
+    <!-- Soft Depth Shadow -->
+    <filter id="iconDepth" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="0" dy="12" stdDeviation="14" flood-color="#020617" flood-opacity="0.5"/>
     </filter>
   </defs>
 
-  <!-- Apple Squircle Base -->
-  <rect width="512" height="512" rx="115" fill="url(#logoBgGrad)"/>
-  <rect width="512" height="512" rx="115" fill="url(#logoInnerGlow)"/>
+  <!-- iOS Apple Squircle Base -->
+  <rect width="512" height="512" rx="115" fill="url(#iconBg)"/>
+  <rect width="512" height="512" rx="115" fill="url(#topGlow)"/>
 
-  <!-- Top Liquid Glass Arc -->
-  <path d="M 0 115 C 0 51.5 51.5 0 115 0 L 397 0 C 460.5 0 512 51.5 512 115 C 512 175 390 210 256 210 C 122 210 0 175 0 115 Z" fill="url(#logoGlassArc)"/>
+  <!-- Top Glass Reflection Arc -->
+  <path d="M 0 115 C 0 51.5 51.5 0 115 0 L 397 0 C 460.5 0 512 51.5 512 115 C 512 175 390 205 256 205 C 122 205 0 175 0 115 Z" fill="url(#glassSheen)"/>
 
-  <!-- Specular Apple Rim -->
-  <rect x="2.5" y="2.5" width="507" height="507" rx="112.5" fill="none" stroke="rgba(255,255,255,0.45)" stroke-width="3"/>
-  <rect x="6.5" y="6.5" width="499" height="499" rx="108.5" fill="none" stroke="rgba(255,255,255,0.12)" stroke-width="1.5"/>
+  <!-- Outer Specular Glass Rim -->
+  <rect x="2.5" y="2.5" width="507" height="507" rx="112.5" fill="none" stroke="rgba(255,255,255,0.4)" stroke-width="3"/>
+  <rect x="6.5" y="6.5" width="499" height="499" rx="108.5" fill="none" stroke="rgba(255,255,255,0.1)" stroke-width="1.5"/>
 
-  <!-- Clean, Elegant, Geometric Monogram: Diamond Mortarboard + Modern 'ĐBAQ' Crest -->
-  <g filter="url(#softShadow)">
-    <!-- Academic Diamond Cap -->
-    <polygon points="256,95 405,162 256,228 107,162" fill="url(#metalGrad)" />
-    
-    <!-- Cap 3D Under-facets -->
-    <polygon points="107,162 256,228 256,242 107,176" fill="#93c5fd" opacity="0.85" />
-    <polygon points="405,162 256,228 256,242 405,176" fill="#60a5fa" opacity="0.95" />
+  <!-- Minimalist High-End Geometric Emblem (The Crown of Knowledge / Prism AQ) -->
+  <g filter="url(#iconDepth)">
+    <!-- Central Modern Apex (Stylized Diamond Mortarboard & Rising Peak) -->
+    <!-- Center Peak -->
+    <polygon points="256,92 376,174 256,238 136,174" fill="url(#platGrad)" />
+    <!-- Left Facet -->
+    <polygon points="136,174 256,238 256,320 136,256" fill="url(#facetDark)" opacity="0.9" />
+    <!-- Right Facet -->
+    <polygon points="376,174 256,238 256,320 376,256" fill="#38bdf8" opacity="0.95" />
+    <!-- Central Vertical Accent Blade -->
+    <line x1="256" y1="92" x2="256" y2="320" stroke="#ffffff" stroke-width="3" stroke-linecap="round" />
 
-    <!-- Cap Base Arc -->
-    <path d="M 166 198 Q 256 264 346 198 L 346 232 C 346 284 166 284 166 232 Z" fill="url(#metalGrad)" opacity="0.95"/>
+    <!-- Modern Ribbon Wings uniting the base (Representing Open Book & Infinite Progress) -->
+    <path d="M 120 310 C 170 330 220 335 256 335 C 292 335 342 330 392 310 C 372 355 320 375 256 375 C 192 375 140 355 120 310 Z" fill="url(#platGrad)"/>
 
-    <!-- Gold Tassel Ribbon & Star -->
-    <path d="M 256 162 Q 384 176 398 250 L 392 250 Q 378 180 256 166 Z" fill="url(#goldStar)"/>
-    <circle cx="398" cy="260" r="10" fill="url(#goldStar)" />
+    <!-- Subtle Golden Star Sparkle at Top Peak -->
+    <circle cx="256" cy="92" r="7" fill="url(#goldAccent)"/>
 
-    <!-- Monogram Center: Minimalist Stylized 'A' & 'Q' Wings forming open book of knowledge -->
-    <path d="M 136 366 C 136 312 210 278 246 276 L 246 310 C 220 312 174 332 174 366 C 174 386 212 396 246 398 L 246 430 C 178 426 136 400 136 366 Z" fill="url(#metalGrad)"/>
-    <path d="M 376 366 C 376 312 302 278 266 276 L 266 310 C 292 312 338 332 338 366 C 338 386 300 396 266 398 L 266 430 C 334 426 376 400 376 366 Z" fill="url(#metalGrad)"/>
-
-    <!-- Central Diamond Knowledge Spark -->
-    <polygon points="256,260 274,360 256,400 238,360" fill="#ffffff" />
-    <circle cx="256" cy="336" r="5" fill="#0066cc"/>
-
-    <!-- Prominent, Sharp Monogram Label: ĐBAQ -->
-    <text x="256" y="472" text-anchor="middle" font-family="-apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Inter', sans-serif" font-size="44" font-weight="900" letter-spacing="8" fill="#ffffff">ĐBAQ</text>
+    <!-- CLEAN, MODERN BRAND TEXT: ĐBAQ - LMS -->
+    <!-- Pill Background for Text -->
+    <rect x="106" y="415" width="300" height="52" rx="26" fill="rgba(2, 6, 23, 0.45)" stroke="rgba(255, 255, 255, 0.25)" stroke-width="1.5"/>
+    <text x="256" y="451" text-anchor="middle" font-family="'Segoe UI', Arial, sans-serif" font-size="25" font-weight="800" letter-spacing="4" fill="#ffffff">ĐBAQ - LMS</text>
   </g>
 </svg>

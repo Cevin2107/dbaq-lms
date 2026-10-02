@@ -31,7 +31,7 @@ export async function generateMetadata({ params }: { params: Promise<{ id: strin
           type: "website",
           images: [
             {
-              url: "/og-image.png?v=3",
+              url: "/og-image.png?v=4",
               width: 1200,
               height: 630,
               alt: "Gia sư Đào Bá Anh Quân - ĐBAQ LMS",
@@ -42,7 +42,7 @@ export async function generateMetadata({ params }: { params: Promise<{ id: strin
           card: "summary_large_image",
           title,
           description,
-          images: ["/og-image.png?v=3"],
+          images: ["/og-image.png?v=4"],
         },
       };
     }
@@ -66,7 +66,7 @@ export async function generateMetadata({ params }: { params: Promise<{ id: strin
       type: "website",
       images: [
         {
-          url: "/og-image.png?v=3",
+          url: "/og-image.png?v=4",
           width: 1200,
           height: 630,
           alt: "Gia sư Đào Bá Anh Quân - ĐBAQ LMS",
@@ -77,7 +77,7 @@ export async function generateMetadata({ params }: { params: Promise<{ id: strin
       card: "summary_large_image",
       title: "📝 Bài tập 🔸 Gia sư Đào Bá Anh Quân",
       description: "Hệ thống bài tập trực tuyến",
-      images: ["/og-image.png?v=3"],
+      images: ["/og-image.png?v=4"],
     },
   };
 }

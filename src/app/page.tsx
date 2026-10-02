@@ -18,7 +18,7 @@ export const metadata: Metadata = {
     siteName: "Gia sư Đào Bá Anh Quân",
     images: [
       {
-        url: "/og-image.png?v=3",
+        url: "/og-image.png?v=4",
         width: 1200,
         height: 630,
         alt: "Gia sư Đào Bá Anh Quân - ĐBAQ LMS",
