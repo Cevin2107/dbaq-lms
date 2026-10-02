@@ -5,7 +5,6 @@ import "katex/dist/katex.min.css";
 import { QueryProvider } from "@/providers/QueryProvider";
 import { ToastProvider } from "@/components/ui/Toast";
 import { ThemeProvider } from "@/providers/ThemeProvider";
-import { AppLaunchEntrance } from "@/components/ui/AppLaunchEntrance";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -92,9 +91,7 @@ export default function RootLayout({
         <QueryProvider>
           <ThemeProvider>
             <ToastProvider>
-              <AppLaunchEntrance>
-                {children}
-              </AppLaunchEntrance>
+              {children}
             </ToastProvider>
           </ThemeProvider>
         </QueryProvider>

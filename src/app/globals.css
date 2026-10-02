@@ -598,4 +598,49 @@
       max-width: 1280px;
     }
   }
+
+  /* Apple Soft Modern - Smooth Loading Animations */
+  @keyframes shimmerProgress {
+    0% {
+      transform: translateX(-100%);
+    }
+    50% {
+      transform: translateX(25%);
+    }
+    100% {
+      transform: translateX(120%);
+    }
+  }
+
+  @keyframes gentleFloat {
+    0%, 100% {
+      transform: translateY(0px);
+    }
+    50% {
+      transform: translateY(-5px);
+    }
+  }
+
+  @keyframes softPulseGlow {
+    0%, 100% {
+      opacity: 0.45;
+      transform: scale(0.96);
+    }
+    50% {
+      opacity: 0.8;
+      transform: scale(1.05);
+    }
+  }
+
+  .animate-shimmer-progress {
+    animation: shimmerProgress 1.8s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+  }
+
+  .animate-gentle-float {
+    animation: gentleFloat 3.5s ease-in-out infinite;
+  }
+
+  .animate-soft-pulse-glow {
+    animation: softPulseGlow 3s ease-in-out infinite;
+  }
 }

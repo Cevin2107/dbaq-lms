@@ -571,7 +571,7 @@ export function DocumentsPanel() {
 
         xhr.upload.onload = () => {
           setUploadProgress(92);
-          setUploadStatus("Đang đồng bộ dữ liệu...");
+          setUploadStatus("Đang tải dữ liệu...");
         };
 
         xhr.onload = async () => {
@@ -606,7 +606,7 @@ export function DocumentsPanel() {
             } catch (saveErr) {
               setMessage({
                 type: "error",
-                text: saveErr instanceof Error ? saveErr.message : "Đồng bộ dữ liệu thất bại.",
+                text: saveErr instanceof Error ? saveErr.message : "Tải dữ liệu thất bại.",
               });
             } finally {
               setUploading(false);
@@ -650,7 +650,7 @@ export function DocumentsPanel() {
 
         xhr.upload.onload = () => {
           setUploadProgress(92);
-          setUploadStatus("Đang lưu trữ và đồng bộ dữ liệu...");
+          setUploadStatus("Đang lưu trữ và cập nhật tài liệu...");
         };
 
         xhr.onload = async () => {
@@ -670,7 +670,7 @@ export function DocumentsPanel() {
             } catch (saveErr) {
               setMessage({
                 type: "error",
-                text: saveErr instanceof Error ? saveErr.message : "Đồng bộ dữ liệu thất bại.",
+                text: saveErr instanceof Error ? saveErr.message : "Tải dữ liệu thất bại.",
               });
             } finally {
               setUploading(false);

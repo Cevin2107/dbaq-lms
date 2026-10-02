@@ -21,13 +21,13 @@ export function AutoSaveIndicator({ lastSaveTime, isSaving, isOnline = true }: A
     }
 
     if (isSaving) {
-      setDisplayText("Đang đồng bộ...");
+      setDisplayText("Đang lưu bài làm...");
       setShowIndicator(true);
       return;
     }
 
     if (lastSaveTime) {
-      setDisplayText("Đã đồng bộ lên máy chủ");
+      setDisplayText("Đã lưu bài làm an toàn");
       setShowIndicator(true);
       
       // Hide after 3 seconds

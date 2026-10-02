@@ -1,5 +1,5 @@
 import { LoadingScreen } from '@/components/ui/LoadingScreen';
 
 export default function RootLoading() {
-  return <LoadingScreen message="Đang đồng bộ dữ liệu..." submessage="Gia sư Đào Bá Anh Quân LMS" />;
+  return <LoadingScreen message="Đang tải dữ liệu học tập..." submessage="Gia sư Đào Bá Anh Quân LMS" />;
 }
