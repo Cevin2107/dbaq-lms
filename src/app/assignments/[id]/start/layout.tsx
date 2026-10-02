@@ -12,9 +12,9 @@ export async function generateMetadata({ params }: { params: Promise<{ id: strin
     const assignment = await fetchAssignmentByIdAdmin(id);
 
     if (assignment) {
-      const title = `📝 ${assignment.title} 🔸 Gia sư Đào Bá Anh Quân`;
-      const description = `Bài tập ${assignment.subject} ${assignment.grade}. Hoàn thành đúng hạn, được làm lại nhiều lần.`;
-      
+      const title = `📝 ${assignment.title} 🔹 Gia sư Đào Bá Anh Quân`;
+      const description = `Bài tập ${assignment.subject} ${assignment.grade}. Hệ thống LMS của Gia sư Đào Bá Anh Quân`;
+
       return {
         metadataBase,
         title,
@@ -52,13 +52,13 @@ export async function generateMetadata({ params }: { params: Promise<{ id: strin
 
   return {
     metadataBase,
-    title: "📝 Bài tập 🔸 Gia sư Đào Bá Anh Quân",
+    title: "📝 Bài tập 🔹 Gia sư Đào Bá Anh Quân",
     description: "Hệ thống bài tập trực tuyến",
     alternates: {
       canonical: startPath,
     },
     openGraph: {
-      title: "📝 Bài tập 🔸 Gia sư Đào Bá Anh Quân",
+      title: "📝 Bài tập 🔹 Gia sư Đào Bá Anh Quân",
       description: "Hệ thống bài tập trực tuyến",
       url: startPath,
       siteName: "Gia sư Đào Bá Anh Quân",
@@ -75,7 +75,7 @@ export async function generateMetadata({ params }: { params: Promise<{ id: strin
     },
     twitter: {
       card: "summary_large_image",
-      title: "📝 Bài tập 🔸 Gia sư Đào Bá Anh Quân",
+      title: "📝 Bài tập 🔹 Gia sư Đào Bá Anh Quân",
       description: "Hệ thống bài tập trực tuyến",
       images: ["/og-image.png?v=5"],
     },
