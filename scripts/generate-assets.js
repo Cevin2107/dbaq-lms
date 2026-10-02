@@ -3,29 +3,29 @@ const path = require('path');
 const sharp = require('sharp');
 
 // =========================================================================
-// 1. MASTER ICON (512x512) - ACADEMIC CAP + PEN NIB + ĐBAQ - LMS BOX
+// 1. MASTER ICON (512x512) - BRIGHTER, LUMINOUS ACADEMIC CAP + PEN NIB + ĐBAQ - LMS
 // =========================================================================
 const logoSvg = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512">
   <defs>
-    <!-- Vibrant, Glowing Liquid Cyan-Blue Gradient -->
+    <!-- Ultra-Bright, Luminous Liquid Blue Gradient -->
     <linearGradient id="iconBg" x1="0%" y1="0%" x2="100%" y2="100%">
-      <stop offset="0%" stop-color="#38bdf8"/>
-      <stop offset="30%" stop-color="#0284c7"/>
-      <stop offset="70%" stop-color="#0066cc"/>
-      <stop offset="100%" stop-color="#0f172a"/>
+      <stop offset="0%" stop-color="#00d2ff"/>
+      <stop offset="25%" stop-color="#0084ff"/>
+      <stop offset="65%" stop-color="#0066cc"/>
+      <stop offset="100%" stop-color="#1e3a8a"/>
     </linearGradient>
 
-    <!-- Top Radiant Ambient Glow -->
+    <!-- Radiant Top Ambient Glow -->
     <radialGradient id="topGlow" cx="45%" cy="25%" r="75%">
-      <stop offset="0%" stop-color="#ffffff" stop-opacity="0.45"/>
-      <stop offset="45%" stop-color="#38bdf8" stop-opacity="0.25"/>
+      <stop offset="0%" stop-color="#ffffff" stop-opacity="0.65"/>
+      <stop offset="40%" stop-color="#38bdf8" stop-opacity="0.35"/>
       <stop offset="100%" stop-color="#000000" stop-opacity="0"/>
     </radialGradient>
 
     <!-- Glass Specular Highlight Arc -->
     <linearGradient id="glassSheen" x1="0%" y1="0%" x2="0%" y2="100%">
-      <stop offset="0%" stop-color="#ffffff" stop-opacity="0.5"/>
-      <stop offset="35%" stop-color="#ffffff" stop-opacity="0.15"/>
+      <stop offset="0%" stop-color="#ffffff" stop-opacity="0.65"/>
+      <stop offset="35%" stop-color="#ffffff" stop-opacity="0.22"/>
       <stop offset="100%" stop-color="#ffffff" stop-opacity="0"/>
     </linearGradient>
 
@@ -46,7 +46,7 @@ const logoSvg = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" w
 
     <!-- Soft Depth Shadow -->
     <filter id="iconDepth" x="-20%" y="-20%" width="140%" height="140%">
-      <feDropShadow dx="0" dy="10" stdDeviation="12" flood-color="#020617" flood-opacity="0.5"/>
+      <feDropShadow dx="0" dy="8" stdDeviation="12" flood-color="#051532" flood-opacity="0.4"/>
     </filter>
   </defs>
 
@@ -58,8 +58,8 @@ const logoSvg = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" w
   <path d="M 0 115 C 0 51.5 51.5 0 115 0 L 397 0 C 460.5 0 512 51.5 512 115 C 512 175 390 205 256 205 C 122 205 0 175 0 115 Z" fill="url(#glassSheen)"/>
 
   <!-- Outer Specular Glass Rim -->
-  <rect x="2.5" y="2.5" width="507" height="507" rx="112.5" fill="none" stroke="rgba(255,255,255,0.4)" stroke-width="3"/>
-  <rect x="6.5" y="6.5" width="499" height="499" rx="108.5" fill="none" stroke="rgba(255,255,255,0.1)" stroke-width="1.5"/>
+  <rect x="2.5" y="2.5" width="507" height="507" rx="112.5" fill="none" stroke="rgba(255,255,255,0.5)" stroke-width="3"/>
+  <rect x="6.5" y="6.5" width="499" height="499" rx="108.5" fill="none" stroke="rgba(255,255,255,0.15)" stroke-width="1.5"/>
 
   <!-- MAIN EMBLEM: Academic Mortarboard + Stylized Pen Nib & Knowledge Wings -->
   <g filter="url(#iconDepth)">
@@ -67,8 +67,8 @@ const logoSvg = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" w
     <polygon points="256,92 396,152 256,212 116,152" fill="url(#emblemGrad)" />
     
     <!-- Cap Rim/Underside depth -->
-    <polygon points="116,152 256,212 256,224 116,164" fill="#93c5fd" opacity="0.75" />
-    <polygon points="396,152 256,212 256,224 396,164" fill="#60a5fa" opacity="0.85" />
+    <polygon points="116,152 256,212 256,224 116,164" fill="#93c5fd" opacity="0.8" />
+    <polygon points="396,152 256,212 256,224 396,164" fill="#60a5fa" opacity="0.9" />
 
     <!-- Cap Skullcap -->
     <path d="M 172 184 Q 256 244 340 184 L 340 214 C 340 260 172 260 172 214 Z" fill="url(#emblemGrad)" opacity="0.95"/>
@@ -88,41 +88,52 @@ const logoSvg = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" w
     <circle cx="256" cy="324" r="4.5" fill="#0066cc"/>
 
     <!-- BEAUTIFUL LIQUID GLASS BOX: ĐBAQ - LMS -->
-    <rect x="106" y="420" width="300" height="52" rx="26" fill="rgba(2, 6, 23, 0.45)" stroke="rgba(255, 255, 255, 0.25)" stroke-width="1.5"/>
+    <rect x="106" y="420" width="300" height="52" rx="26" fill="rgba(2, 6, 23, 0.4)" stroke="rgba(255, 255, 255, 0.35)" stroke-width="1.8"/>
     <text x="256" y="456" text-anchor="middle" font-family="'Segoe UI', Arial, sans-serif" font-size="25" font-weight="800" letter-spacing="4" fill="#ffffff">ĐBAQ - LMS</text>
   </g>
 </svg>`;
 
 // =========================================================================
-// 2. HORIZONTAL ZALO / SOCIAL PREVIEW CARD (1200x630)
+// 2. HORIZONTAL ZALO / SOCIAL PREVIEW CARD (1200x630) - BRIGHTER, CLEAN & PURE
+// Layout (top to bottom):
+// 1. Logo
+// 2. Box ĐBAQ - LMS
+// 3. Gia sư Đào Bá Anh Quân
+// 4. Hệ thống Học tập & Luyện thi trực tuyến
+// 5. Box đường dẫn link tới web (dbaq-lms.vercel.app)
 // =========================================================================
 const previewSvg = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 630" width="1200" height="630">
   <defs>
-    <!-- Deep Midnight Luxury Background -->
+    <!-- Brighter, Elegant Oceanic to Royal Blue Gradient -->
     <linearGradient id="ogBgGrad" x1="0%" y1="0%" x2="100%" y2="100%">
-      <stop offset="0%" stop-color="#0a1329"/>
-      <stop offset="45%" stop-color="#071838"/>
-      <stop offset="85%" stop-color="#030b1c"/>
-      <stop offset="100%" stop-color="#020617"/>
+      <stop offset="0%" stop-color="#0f2b5c"/>
+      <stop offset="40%" stop-color="#09357a"/>
+      <stop offset="75%" stop-color="#03449e"/>
+      <stop offset="100%" stop-color="#071e4a"/>
     </linearGradient>
 
-    <!-- Central Majestic Blue Aura Glow -->
-    <radialGradient id="centerAura" cx="50%" cy="45%" r="60%">
-      <stop offset="0%" stop-color="#0284c7" stop-opacity="0.45"/>
-      <stop offset="35%" stop-color="#0066cc" stop-opacity="0.25"/>
-      <stop offset="70%" stop-color="#1e1b4b" stop-opacity="0.1"/>
+    <!-- Ultra Radiant Center Aura Glow (Brightening the whole scene) -->
+    <radialGradient id="centerAura" cx="50%" cy="42%" r="65%">
+      <stop offset="0%" stop-color="#38bdf8" stop-opacity="0.6"/>
+      <stop offset="35%" stop-color="#0084ff" stop-opacity="0.4"/>
+      <stop offset="70%" stop-color="#0052cc" stop-opacity="0.2"/>
       <stop offset="100%" stop-color="#000000" stop-opacity="0"/>
     </radialGradient>
 
-    <!-- Mini Icon Background -->
+    <radialGradient id="topGlowSoft" cx="50%" cy="10%" r="50%">
+      <stop offset="0%" stop-color="#ffffff" stop-opacity="0.25"/>
+      <stop offset="100%" stop-color="#ffffff" stop-opacity="0"/>
+    </radialGradient>
+
+    <!-- Mini Icon Background (Bright & Vibrant) -->
     <linearGradient id="miniIconBg" x1="0%" y1="0%" x2="100%" y2="100%">
-      <stop offset="0%" stop-color="#38bdf8"/>
-      <stop offset="30%" stop-color="#0284c7"/>
+      <stop offset="0%" stop-color="#00d2ff"/>
+      <stop offset="30%" stop-color="#0084ff"/>
       <stop offset="70%" stop-color="#0066cc"/>
-      <stop offset="100%" stop-color="#0f172a"/>
+      <stop offset="100%" stop-color="#1e3a8a"/>
     </linearGradient>
 
-    <!-- Metallic Text Gradient for ĐBAQ -->
+    <!-- Pure Metallic Platinum for Title -->
     <linearGradient id="titleMetal" x1="0%" y1="0%" x2="100%" y2="0%">
       <stop offset="0%" stop-color="#ffffff"/>
       <stop offset="50%" stop-color="#f0f9ff"/>
@@ -141,92 +152,76 @@ const previewSvg = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 63
 
     <!-- Soft Depth Shadow -->
     <filter id="cardShadow" x="-20%" y="-20%" width="140%" height="140%">
-      <feDropShadow dx="0" dy="16" stdDeviation="22" flood-color="#000000" flood-opacity="0.65"/>
+      <feDropShadow dx="0" dy="14" stdDeviation="20" flood-color="#020617" flood-opacity="0.45"/>
     </filter>
     <filter id="iconGlow" x="-30%" y="-30%" width="160%" height="160%">
-      <feDropShadow dx="0" dy="0" stdDeviation="18" flood-color="#0284c7" flood-opacity="0.55"/>
+      <feDropShadow dx="0" dy="0" stdDeviation="24" flood-color="#38bdf8" flood-opacity="0.65"/>
     </filter>
   </defs>
 
   <!-- 1. Background -->
   <rect width="1200" height="630" fill="url(#ogBgGrad)"/>
   <rect width="1200" height="630" fill="url(#centerAura)"/>
+  <rect width="1200" height="630" fill="url(#topGlowSoft)"/>
 
-  <!-- 2. Subtle Outer Apple Glass Border -->
-  <rect x="20" y="20" width="1160" height="590" rx="36" fill="none" stroke="rgba(255,255,255,0.12)" stroke-width="2"/>
-  <rect x="24" y="24" width="1152" height="582" rx="32" fill="none" stroke="rgba(56,189,248,0.1)" stroke-width="1"/>
+  <!-- 2. Outer Liquid Glass Rim -->
+  <rect x="20" y="20" width="1160" height="590" rx="36" fill="none" stroke="rgba(255,255,255,0.22)" stroke-width="2"/>
+  <rect x="24" y="24" width="1152" height="582" rx="32" fill="none" stroke="rgba(56,189,248,0.2)" stroke-width="1"/>
 
-  <!-- 3. CENTERED LUXURY BRAND COMPOSITION -->
-  <g transform="translate(600, 75)" text-anchor="middle">
+  <!-- 3. CENTERED PURE STACK (TOP TO BOTTOM) -->
+  <g transform="translate(600, 52)" text-anchor="middle">
     
-    <!-- A. Centered Brand App Icon with Mortarboard + Pen (124x124) -->
-    <g transform="translate(-62, 0)" filter="url(#iconGlow)">
+    <!-- LEVEL 1: LOGO (130x130) - Mortarboard + Pen Nib with Bright Ambient Glow -->
+    <g transform="translate(-65, 0)" filter="url(#iconGlow)">
       <!-- Squircle Base -->
-      <rect width="124" height="124" rx="32" fill="url(#miniIconBg)"/>
-      <rect width="124" height="124" rx="32" fill="none" stroke="rgba(255,255,255,0.45)" stroke-width="2"/>
+      <rect width="130" height="130" rx="34" fill="url(#miniIconBg)"/>
+      <rect width="130" height="130" rx="34" fill="none" stroke="rgba(255,255,255,0.55)" stroke-width="2.5"/>
 
       <!-- Top Sheen -->
-      <path d="M 0 32 C 0 14 14 0 32 0 L 92 0 C 110 0 124 14 124 32 C 124 48 95 55 62 55 C 29 55 0 48 0 32 Z" fill="#ffffff" opacity="0.35"/>
+      <path d="M 0 34 C 0 15 15 0 34 0 L 96 0 C 115 0 130 15 130 34 C 130 52 100 58 65 58 C 30 58 0 52 0 34 Z" fill="#ffffff" opacity="0.45"/>
 
       <!-- Mini Mortarboard + Pen inside icon -->
-      <g transform="translate(62, 22)">
+      <g transform="translate(65, 23)">
         <!-- Cap Top -->
-        <polygon points="0,0 34,15 0,30 -34,15" fill="url(#emblemMini)" />
-        <polygon points="-34,15 0,30 0,33 -34,18" fill="#93c5fd" />
-        <polygon points="34,15 0,30 0,33 34,18" fill="#60a5fa" />
+        <polygon points="0,0 36,16 0,32 -36,16" fill="url(#emblemMini)" />
+        <polygon points="-36,16 0,32 0,35 -36,19" fill="#93c5fd" />
+        <polygon points="36,16 0,32 0,35 36,19" fill="#60a5fa" />
         <!-- Tassel Star -->
-        <circle cx="33" cy="22" r="2.5" fill="#f59e0b" />
+        <circle cx="35" cy="24" r="2.8" fill="#f59e0b" />
         <!-- Wings & Pen Spire -->
-        <path d="M -26 50 C -12 42 0 42 0 42 C 0 42 12 42 26 50 C 20 58 10 62 0 62 C -10 62 -20 58 -26 50 Z" fill="url(#emblemMini)" opacity="0.9"/>
-        <polygon points="0,34 3,54 0,60 -3,54" fill="#ffffff" />
+        <path d="M -28 54 C -14 45 0 45 0 45 C 0 45 14 45 28 54 C 22 62 11 67 0 67 C -11 67 -22 62 -28 54 Z" fill="url(#emblemMini)" opacity="0.95"/>
+        <polygon points="0,37 3.5,58 0,65 -3.5,58" fill="#ffffff" />
       </g>
 
-      <!-- Mini Monogram inside icon -->
-      <text x="62" y="108" text-anchor="middle" font-family="'Segoe UI', Arial, sans-serif" font-size="11" font-weight="900" letter-spacing="1.5" fill="#ffffff">ĐBAQ</text>
+      <!-- Mini Monogram label inside icon -->
+      <text x="65" y="114" text-anchor="middle" font-family="'Segoe UI', Arial, sans-serif" font-size="12" font-weight="900" letter-spacing="2" fill="#ffffff">ĐBAQ</text>
     </g>
 
-    <!-- B. Main Monogram Title: ĐBAQ - LMS (In Beautiful Glass Box) -->
-    <g transform="translate(0, 195)">
-      <!-- Pill Box -->
-      <rect x="-190" y="-48" width="380" height="74" rx="37" fill="rgba(2, 6, 23, 0.55)" stroke="rgba(255, 255, 255, 0.28)" stroke-width="2" filter="url(#cardShadow)"/>
-      <text x="0" y="3" text-anchor="middle" font-family="'Segoe UI', Arial, sans-serif" font-size="44" font-weight="900" letter-spacing="5" fill="url(#titleMetal)">
+    <!-- LEVEL 2: BOX CHỨA ĐBAQ - LMS (Ngay dưới Logo) -->
+    <g transform="translate(0, 182)">
+      <!-- Liquid Glass Pill Box -->
+      <rect x="-185" y="0" width="370" height="66" rx="33" fill="rgba(255, 255, 255, 0.14)" stroke="rgba(255, 255, 255, 0.4)" stroke-width="2" filter="url(#cardShadow)"/>
+      <rect x="-182" y="3" width="364" height="28" rx="14" fill="#ffffff" opacity="0.12"/>
+      <text x="0" y="47" text-anchor="middle" font-family="'Segoe UI', Arial, sans-serif" font-size="38" font-weight="900" letter-spacing="5" fill="url(#titleMetal)">
         ĐBAQ - LMS
       </text>
     </g>
 
-    <!-- C. Full Educator Name -->
-    <text x="0" y="292" font-family="'Segoe UI', Arial, sans-serif" font-size="34" font-weight="700" letter-spacing="0.5" fill="#ffffff">
+    <!-- LEVEL 3: GIA SƯ ĐÀO BÁ ANH QUÂN -->
+    <text x="0" y="318" font-family="'Segoe UI', Arial, sans-serif" font-size="40" font-weight="800" letter-spacing="0.5" fill="#ffffff" filter="url(#cardShadow)">
       Gia sư Đào Bá Anh Quân
     </text>
 
-    <!-- D. Subtitle Tagline -->
-    <text x="0" y="338" font-family="'Segoe UI', Arial, sans-serif" font-size="20" font-weight="400" fill="#94a3b8">
-      Hệ thống Học tập &amp; Luyện thi Trực tuyến
+    <!-- LEVEL 4: HỆ THỐNG HỌC TẬP & LUYỆN THI TRỰC TUYẾN -->
+    <text x="0" y="372" font-family="'Segoe UI', Arial, sans-serif" font-size="22" font-weight="500" letter-spacing="0.5" fill="#dbeafe">
+      Hệ thống Học tập &amp; Luyện thi trực tuyến
     </text>
 
-    <!-- E. Minimalist Feature Pills (Centered row) -->
-    <g transform="translate(0, 375)">
-      <!-- Pill 1 -->
-      <g transform="translate(-250, 0)">
-        <rect x="0" y="0" width="150" height="38" rx="19" fill="rgba(255,255,255,0.06)" stroke="rgba(255,255,255,0.15)" stroke-width="1"/>
-        <text x="75" y="24" text-anchor="middle" font-family="'Segoe UI', Arial, sans-serif" font-size="13" font-weight="600" fill="#cbd5e1">Toán &amp; Tự Nhiên</text>
-      </g>
-      <!-- Pill 2 -->
-      <g transform="translate(-85, 0)">
-        <rect x="0" y="0" width="170" height="38" rx="19" fill="rgba(255,255,255,0.06)" stroke="rgba(255,255,255,0.15)" stroke-width="1"/>
-        <text x="85" y="24" text-anchor="middle" font-family="'Segoe UI', Arial, sans-serif" font-size="13" font-weight="600" fill="#cbd5e1">Chấm điểm tự động</text>
-      </g>
-      <!-- Pill 3 -->
-      <g transform="translate(100, 0)">
-        <rect x="0" y="0" width="150" height="38" rx="19" fill="rgba(255,255,255,0.06)" stroke="rgba(255,255,255,0.15)" stroke-width="1"/>
-        <text x="75" y="24" text-anchor="middle" font-family="'Segoe UI', Arial, sans-serif" font-size="13" font-weight="600" fill="#cbd5e1">Đăng ký ca học</text>
-      </g>
-    </g>
-
-    <!-- F. Minimalist URL Badge at bottom -->
-    <g transform="translate(0, 445)">
-      <rect x="-140" y="0" width="280" height="36" rx="18" fill="rgba(2, 132, 199, 0.15)" stroke="rgba(56, 189, 248, 0.35)" stroke-width="1.2"/>
-      <text x="0" y="23" text-anchor="middle" font-family="'Segoe UI', Arial, sans-serif" font-size="14" font-weight="700" letter-spacing="1" fill="#38bdf8">
+    <!-- LEVEL 5: BOX ĐƯỜNG DẪN LINK TỚI WEB (dbaq-lms.vercel.app) -->
+    <g transform="translate(0, 432)">
+      <!-- Luminous Domain Capsule Box -->
+      <rect x="-165" y="0" width="330" height="48" rx="24" fill="rgba(2, 132, 199, 0.3)" stroke="rgba(56, 189, 248, 0.6)" stroke-width="1.8" filter="url(#cardShadow)"/>
+      <text x="0" y="31" text-anchor="middle" font-family="'Segoe UI', Arial, sans-serif" font-size="16" font-weight="700" letter-spacing="1.5" fill="#e0f2fe">
         dbaq-lms.vercel.app
       </text>
     </g>

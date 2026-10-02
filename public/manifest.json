@@ -8,13 +8,13 @@
   "description": "Hệ thống bài tập trực tuyến - Gia sư Đào Bá Anh Quân",
   "icons": [
     {
-      "src": "/icon.png?v=4",
+      "src": "/icon.png?v=5",
       "sizes": "512x512",
       "type": "image/png",
       "purpose": "any"
     },
     {
-      "src": "/app-icon.png?v=4",
+      "src": "/app-icon.png?v=5",
       "sizes": "512x512",
       "type": "image/png",
       "purpose": "maskable"

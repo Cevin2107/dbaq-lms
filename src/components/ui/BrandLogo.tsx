@@ -37,7 +37,7 @@ export function BrandLogo({
     >
       {/* Glow Ambient behind */}
       {glow && (
-        <div className="absolute -inset-2 bg-gradient-to-tr from-[#0284c7] to-[#38bdf8] opacity-70 blur-lg pointer-events-none -z-10 animate-pulse-slow" />
+        <div className="absolute -inset-2 bg-gradient-to-tr from-[#0084ff] to-[#38bdf8] opacity-80 blur-lg pointer-events-none -z-10 animate-pulse-slow" />
       )}
 
       {/* Vector SVG: Academic Cap + Stylized Pen Nib + ĐBAQ - LMS Box */}
@@ -49,21 +49,21 @@ export function BrandLogo({
       >
         <defs>
           <linearGradient id="brandIconBg" x1="0%" y1="0%" x2="100%" y2="100%">
-            <stop offset="0%" stopColor="#38bdf8" />
-            <stop offset="30%" stopColor="#0284c7" />
-            <stop offset="70%" stopColor="#0066cc" />
-            <stop offset="100%" stopColor="#0f172a" />
+            <stop offset="0%" stopColor="#00d2ff" />
+            <stop offset="25%" stopColor="#0084ff" />
+            <stop offset="65%" stopColor="#0066cc" />
+            <stop offset="100%" stopColor="#1e3a8a" />
           </linearGradient>
 
           <radialGradient id="brandTopGlow" cx="45%" cy="25%" r="75%">
-            <stop offset="0%" stopColor="#ffffff" stopOpacity="0.45" />
-            <stop offset="45%" stopColor="#38bdf8" stopOpacity="0.25" />
+            <stop offset="0%" stopColor="#ffffff" stopOpacity="0.65" />
+            <stop offset="40%" stopColor="#38bdf8" stopOpacity="0.35" />
             <stop offset="100%" stopColor="#000000" stopOpacity="0" />
           </radialGradient>
 
           <linearGradient id="brandGlassSheen" x1="0%" y1="0%" x2="0%" y2="100%">
-            <stop offset="0%" stopColor="#ffffff" stopOpacity="0.5" />
-            <stop offset="35%" stopColor="#ffffff" stopOpacity="0.15" />
+            <stop offset="0%" stopColor="#ffffff" stopOpacity="0.65" />
+            <stop offset="35%" stopColor="#ffffff" stopOpacity="0.22" />
             <stop offset="100%" stopColor="#ffffff" stopOpacity="0" />
           </linearGradient>
 
@@ -81,7 +81,7 @@ export function BrandLogo({
           </linearGradient>
 
           <filter id="brandShadow" x="-20%" y="-20%" width="140%" height="140%">
-            <feDropShadow dx="0" dy="8" stdDeviation="10" floodColor="#020617" floodOpacity="0.45" />
+            <feDropShadow dx="0" dy="8" stdDeviation="10" floodColor="#051532" floodOpacity="0.4" />
           </filter>
         </defs>
 
@@ -103,7 +103,7 @@ export function BrandLogo({
           height="507"
           rx="112.5"
           fill="none"
-          stroke="rgba(255,255,255,0.4)"
+          stroke="rgba(255,255,255,0.5)"
           strokeWidth="6"
         />
 
@@ -111,8 +111,8 @@ export function BrandLogo({
         <g filter="url(#brandShadow)">
           {/* Cap Top Rhombus */}
           <polygon points="256,92 396,152 256,212 116,152" fill="url(#brandEmblemGrad)" />
-          <polygon points="116,152 256,212 256,224 116,164" fill="#93c5fd" opacity="0.75" />
-          <polygon points="396,152 256,212 256,224 396,164" fill="#60a5fa" opacity="0.85" />
+          <polygon points="116,152 256,212 256,224 116,164" fill="#93c5fd" opacity="0.8" />
+          <polygon points="396,152 256,212 256,224 396,164" fill="#60a5fa" opacity="0.9" />
 
           {/* Skullcap */}
           <path
@@ -146,8 +146,8 @@ export function BrandLogo({
             width="300"
             height="52"
             rx="26"
-            fill="rgba(2, 6, 23, 0.45)"
-            stroke="rgba(255, 255, 255, 0.25)"
+            fill="rgba(2, 6, 23, 0.4)"
+            stroke="rgba(255, 255, 255, 0.35)"
             strokeWidth="2"
           />
           <text
