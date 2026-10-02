@@ -37,7 +37,7 @@ export function BrandLogo({
     >
       {/* Glow Ambient behind */}
       {glow && (
-        <div className="absolute -inset-2 bg-gradient-to-tr from-[#0066cc] to-[#38bdf8] opacity-60 blur-lg pointer-events-none -z-10 animate-pulse-slow" />
+        <div className="absolute -inset-2 bg-gradient-to-tr from-[#0084ff] to-[#38bdf8] opacity-70 blur-lg pointer-events-none -z-10 animate-pulse-slow" />
       )}
 
       {/* High-fidelity Vector SVG Logo */}
@@ -48,110 +48,109 @@ export function BrandLogo({
         xmlns="http://www.w3.org/2000/svg"
       >
         <defs>
-          <linearGradient id="logoBg" x1="0%" y1="0%" x2="100%" y2="100%">
-            <stop offset="0%" stopColor="#0071e3" />
-            <stop offset="30%" stopColor="#0066cc" />
-            <stop offset="70%" stopColor="#1e40af" />
-            <stop offset="100%" stopColor="#0f172a" />
+          <linearGradient id="logoBgGradBright" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" stopColor="#38bdf8" />
+            <stop offset="25%" stopColor="#0084ff" />
+            <stop offset="60%" stopColor="#0066cc" />
+            <stop offset="100%" stopColor="#1d4ed8" />
           </linearGradient>
 
-          <radialGradient id="logoGlow" cx="35%" cy="25%" r="75%">
-            <stop offset="0%" stopColor="#60a5fa" stopOpacity="0.5" />
-            <stop offset="50%" stopColor="#0066cc" stopOpacity="0.1" />
+          <radialGradient id="logoInnerGlowBright" cx="40%" cy="30%" r="70%">
+            <stop offset="0%" stopColor="#ffffff" stopOpacity="0.5" />
+            <stop offset="40%" stopColor="#60a5fa" stopOpacity="0.3" />
             <stop offset="100%" stopColor="#000000" stopOpacity="0" />
           </radialGradient>
 
-          <linearGradient id="logoGlass" x1="0%" y1="0%" x2="0%" y2="100%">
-            <stop offset="0%" stopColor="#ffffff" stopOpacity="0.45" />
-            <stop offset="45%" stopColor="#ffffff" stopOpacity="0.12" />
+          <linearGradient id="logoGlassArcBright" x1="0%" y1="0%" x2="0%" y2="100%">
+            <stop offset="0%" stopColor="#ffffff" stopOpacity="0.55" />
+            <stop offset="35%" stopColor="#ffffff" stopOpacity="0.2" />
             <stop offset="100%" stopColor="#ffffff" stopOpacity="0" />
           </linearGradient>
 
-          <linearGradient id="logoEmblem" x1="0%" y1="0%" x2="100%" y2="100%">
+          <linearGradient id="metalGradBright" x1="0%" y1="0%" x2="100%" y2="100%">
             <stop offset="0%" stopColor="#ffffff" />
-            <stop offset="35%" stopColor="#f0f9ff" />
-            <stop offset="75%" stopColor="#bae6fd" />
-            <stop offset="100%" stopColor="#38bdf8" />
+            <stop offset="50%" stopColor="#f0f9ff" />
+            <stop offset="100%" stopColor="#bae6fd" />
           </linearGradient>
 
-          <linearGradient id="logoGold" x1="0%" y1="0%" x2="100%" y2="100%">
+          <linearGradient id="goldStarBright" x1="0%" y1="0%" x2="100%" y2="100%">
             <stop offset="0%" stopColor="#fef08a" />
-            <stop offset="50%" stopColor="#f59e0b" />
-            <stop offset="100%" stopColor="#d97706" />
+            <stop offset="100%" stopColor="#f59e0b" />
           </linearGradient>
 
-          <filter id="logoDropShadow" x="-20%" y="-20%" width="140%" height="140%">
-            <feDropShadow dx="0" dy="8" stdDeviation="10" floodColor="#051532" floodOpacity="0.4" />
+          <filter id="softShadowBright" x="-20%" y="-20%" width="140%" height="140%">
+            <feDropShadow dx="0" dy="8" stdDeviation="10" floodColor="#0f172a" floodOpacity="0.4" />
           </filter>
         </defs>
 
         {/* Base Background */}
-        <rect width="512" height="512" fill="url(#logoBg)" />
-        <rect width="512" height="512" fill="url(#logoGlow)" />
+        <rect width="512" height="512" fill="url(#logoBgGradBright)" />
+        <rect width="512" height="512" fill="url(#logoInnerGlowBright)" />
 
-        {/* Specular Highlight Arc */}
+        {/* Top Liquid Glass Arc */}
         <path
-          d="M 0 115 C 0 51.5 51.5 0 115 0 L 397 0 C 460.5 0 512 51.5 512 115 C 512 180 390 215 256 215 C 122 215 0 180 0 115 Z"
-          fill="url(#logoGlass)"
+          d="M 0 115 C 0 51.5 51.5 0 115 0 L 397 0 C 460.5 0 512 51.5 512 115 C 512 175 390 210 256 210 C 122 210 0 175 0 115 Z"
+          fill="url(#logoGlassArcBright)"
         />
 
-        {/* Apple Thin Specular Border Rim */}
+        {/* Specular Apple Rim */}
         <rect
-          x="2"
-          y="2"
-          width="508"
-          height="508"
-          rx="113"
+          x="2.5"
+          y="2.5"
+          width="507"
+          height="507"
+          rx="112.5"
           fill="none"
-          stroke="rgba(255,255,255,0.38)"
+          stroke="rgba(255,255,255,0.45)"
           strokeWidth="6"
         />
 
-        {/* Emblem Content */}
-        <g filter="url(#logoDropShadow)">
-          {/* Mortarboard Rhombus */}
-          <polygon points="256,110 398,172 256,234 114,172" fill="url(#logoEmblem)" />
-          <polygon points="114,172 256,234 256,246 114,184" fill="#93c5fd" opacity="0.75" />
-          <polygon points="398,172 256,234 256,246 398,184" fill="#60a5fa" opacity="0.85" />
+        {/* Minimalist, Clean, Luxury Emblem */}
+        <g filter="url(#softShadowBright)">
+          {/* Academic Mortarboard Top */}
+          <polygon points="256,95 405,162 256,228 107,162" fill="url(#metalGradBright)" />
+          
+          {/* Underside Depth */}
+          <polygon points="107,162 256,228 256,242 107,176" fill="#93c5fd" opacity="0.85" />
+          <polygon points="405,162 256,228 256,242 405,176" fill="#60a5fa" opacity="0.95" />
 
           {/* Skullcap */}
           <path
-            d="M 172 205 Q 256 268 340 205 L 340 236 C 340 285 172 285 172 236 Z"
-            fill="url(#logoEmblem)"
+            d="M 166 198 Q 256 264 346 198 L 346 232 C 346 284 166 284 166 232 Z"
+            fill="url(#metalGradBright)"
             opacity="0.95"
           />
 
-          {/* Golden Tassel */}
-          <path d="M 256 172 Q 380 185 392 258 L 386 258 Q 374 190 256 176 Z" fill="url(#logoGold)" />
-          <circle cx="392" cy="268" r="9" fill="url(#logoGold)" />
+          {/* Golden Tassel & Star */}
+          <path d="M 256 162 Q 384 176 398 250 L 392 250 Q 378 180 256 166 Z" fill="url(#goldStarBright)" />
+          <circle cx="398" cy="260" r="10" fill="url(#goldStarBright)" />
 
-          {/* Stylized A & Q wings */}
+          {/* Stylized Book Wings */}
           <path
-            d="M 140 376 C 140 326 210 292 244 290 L 244 322 C 220 324 176 344 176 376 C 176 394 212 404 244 406 L 244 436 C 180 432 140 408 140 376 Z"
-            fill="url(#logoEmblem)"
+            d="M 136 366 C 136 312 210 278 246 276 L 246 310 C 220 312 174 332 174 366 C 174 386 212 396 246 398 L 246 430 C 178 426 136 400 136 366 Z"
+            fill="url(#metalGradBright)"
           />
           <path
-            d="M 372 376 C 372 326 302 292 268 290 L 268 322 C 292 324 336 344 336 376 C 336 394 300 404 268 406 L 268 436 C 332 432 372 408 372 376 Z"
-            fill="url(#logoEmblem)"
+            d="M 376 366 C 376 312 302 278 266 276 L 266 310 C 292 312 338 332 338 366 C 338 386 300 396 266 398 L 266 430 C 334 426 376 400 376 366 Z"
+            fill="url(#metalGradBright)"
           />
 
           {/* Center Spire */}
-          <polygon points="256,275 272,370 256,410 240,370" fill="#ffffff" />
-          <circle cx="256" cy="345" r="5" fill="#0066cc" />
+          <polygon points="256,260 274,360 256,400 238,360" fill="#ffffff" />
+          <circle cx="256" cy="336" r="5" fill="#0066cc" />
 
-          {/* Text DBAQ • LMS */}
+          {/* Prominent Monogram: ĐBAQ */}
           <text
             x="256"
-            y="468"
+            y="472"
             textAnchor="middle"
             fontFamily="-apple-system, BlinkMacSystemFont, 'SF Pro Display', sans-serif"
-            fontSize="36"
-            fontWeight="800"
-            letterSpacing="5"
+            fontSize="46"
+            fontWeight="900"
+            letterSpacing="8"
             fill="#ffffff"
-            opacity="0.95"
           >
-            DBAQ • LMS
+            ĐBAQ
           </text>
         </g>
       </svg>
