@@ -46,14 +46,14 @@ export function HomeTabs({ assignments, schedules = [], studentName, greeting, g
 
   return (
     <div className="w-full max-w-[1440px] mx-auto px-3.5 sm:px-6 md:px-8 pb-28 sm:pb-16">
-      {/* Desktop & Tablet Segmented Control with Liquid Sliding Pill */}
-      <div className="flex justify-center mb-6 sm:mb-8">
-        <div className="relative inline-flex items-center p-1.5 rounded-full bg-white/60 dark:bg-[#1f1f23]/70 backdrop-blur-2xl border border-white/50 dark:border-white/10 shadow-glass max-w-full overflow-hidden">
-          {/* Liquid Sliding Indicator Pill */}
+      {/* Desktop & Mobile Segmented Control with Liquid Sliding Pill */}
+      <div className="flex justify-center mb-6 sm:mb-8 px-1">
+        <div className="relative grid grid-cols-3 p-1.5 rounded-full bg-white/70 dark:bg-[#1a1a1e]/80 backdrop-blur-2xl border border-white/60 dark:border-white/10 shadow-glass w-full max-w-md sm:max-w-lg select-none">
+          {/* Liquid Sliding Indicator Pill (Mathematical Pixel-Perfect Match to Grid Columns) */}
           <div
-            className="absolute top-1.5 bottom-1.5 rounded-full bg-white dark:bg-[#323236] shadow-md border border-black/[0.04] dark:border-white/10 transition-all duration-400 ease-liquid pointer-events-none"
+            className="absolute top-1.5 bottom-1.5 rounded-full bg-white dark:bg-[#2c2c30] shadow-md border border-black/[0.04] dark:border-white/10 transition-transform duration-400 ease-liquid pointer-events-none"
             style={{
-              width: `calc((100% - 12px) / ${tabs.length})`,
+              width: "calc((100% - 12px) / 3)",
               left: "6px",
               transform: `translateX(${activeIndex * 100}%)`,
             }}
@@ -67,14 +67,23 @@ export function HomeTabs({ assignments, schedules = [], studentName, greeting, g
                 key={tab.id}
                 onClick={() => setActiveTab(tab.id)}
                 className={clsx(
-                  "relative z-10 flex items-center justify-center gap-2 px-4 sm:px-6 py-2 sm:py-2.5 rounded-full text-xs sm:text-sm font-semibold transition-colors duration-300 whitespace-nowrap",
+                  "relative z-10 w-full flex items-center justify-center gap-1 sm:gap-2 px-1.5 sm:px-4 py-2 sm:py-2.5 rounded-full text-xs sm:text-sm font-semibold transition-colors duration-300 min-w-0 select-none",
                   isActive
                     ? "text-[#0066cc] dark:text-[#2997ff]"
                     : "text-slate-500 dark:text-slate-400 hover:text-slate-800 dark:hover:text-white"
                 )}
               >
-                <Icon className={clsx("h-4 w-4 shrink-0 transition-transform duration-300", isActive ? "scale-110" : "scale-100")} />
-                <span>{tab.label}</span>
+                <Icon className={clsx("h-3.5 w-3.5 sm:h-4 sm:w-4 shrink-0 transition-transform duration-300", isActive ? "scale-110" : "scale-100")} />
+                <span className="truncate">
+                  {tab.id === "schedule" ? (
+                    <>
+                      <span>Đăng ký lịch</span>
+                      <span className="hidden min-[450px]:inline"> học</span>
+                    </>
+                  ) : (
+                    tab.label
+                  )}
+                </span>
               </button>
             );
           })}
@@ -187,8 +196,8 @@ export function HomeTabs({ assignments, schedules = [], studentName, greeting, g
                     <span className="absolute -bottom-1 left-1/2 -translate-x-1/2 h-1 w-1 rounded-full bg-[#0066cc] dark:bg-[#2997ff]" />
                   )}
                 </div>
-                <span className="text-[10px] tracking-tight leading-none mt-0.5 truncate max-w-[80px]">
-                  {tab.label}
+                <span className="text-[10px] tracking-tight leading-none mt-0.5 truncate max-w-[90px]">
+                  {tab.id === "schedule" ? "Lịch học" : tab.label}
                 </span>
               </button>
             );
