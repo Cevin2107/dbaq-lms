@@ -45,7 +45,7 @@ export function HomeTabs({ assignments, schedules = [], studentName, greeting, g
   const activeIndex = tabs.findIndex((t) => t.id === activeTab);
 
   return (
-    <div className="w-full max-w-[1440px] mx-auto px-3.5 sm:px-6 md:px-8 pb-28 sm:pb-16">
+    <div className="w-full max-w-[1440px] mx-auto px-3.5 sm:px-6 md:px-8 pb-12 sm:pb-16">
       {/* Desktop & Mobile Segmented Control with Liquid Sliding Pill */}
       <div className="flex justify-center mb-6 sm:mb-8 px-1">
         <div className="relative grid grid-cols-3 p-1.5 rounded-full bg-white/70 dark:bg-[#1a1a1e]/80 backdrop-blur-2xl border border-white/60 dark:border-white/10 shadow-glass w-full max-w-md sm:max-w-lg select-none">
@@ -164,46 +164,6 @@ export function HomeTabs({ assignments, schedules = [], studentName, greeting, g
         {activeTab === "schedule" && <ScheduleRegistrationPanel />}
         {activeTab === "documents" && <DocumentsPanel />}
       </div>
-
-      {/* Mobile Floating Liquid Bottom Dock for PWA & Touch UX */}
-      <nav
-        aria-label="Thanh điều hướng di động"
-        className="fixed bottom-4 left-1/2 -translate-x-1/2 z-40 md:hidden w-[calc(100%-2rem)] max-w-sm"
-      >
-        <div className="relative flex items-center justify-around p-1.5 rounded-full bg-white/80 dark:bg-[#1a1a1f]/85 backdrop-blur-2xl border border-white/70 dark:border-white/10 shadow-[0_12px_36px_rgba(0,102,204,0.18)] dark:shadow-[0_12px_36px_rgba(0,0,0,0.6)]">
-          {tabs.map((tab) => {
-            const Icon = tab.icon;
-            const isActive = activeTab === tab.id;
-            return (
-              <button
-                key={tab.id}
-                onClick={() => {
-                  setActiveTab(tab.id);
-                  if (typeof window !== "undefined") {
-                    window.scrollTo({ top: 0, behavior: "smooth" });
-                  }
-                }}
-                className={clsx(
-                  "flex-1 flex flex-col items-center justify-center py-2 px-1 rounded-full transition-all duration-300 active:scale-90",
-                  isActive
-                    ? "bg-[#0066cc]/10 dark:bg-blue-500/20 text-[#0066cc] dark:text-[#2997ff] font-bold"
-                    : "text-slate-500 dark:text-slate-400 hover:text-slate-800 dark:hover:text-white font-medium"
-                )}
-              >
-                <div className="relative">
-                  <Icon className={clsx("h-5 w-5 mb-0.5 transition-transform duration-300", isActive && "scale-115")} />
-                  {isActive && (
-                    <span className="absolute -bottom-1 left-1/2 -translate-x-1/2 h-1 w-1 rounded-full bg-[#0066cc] dark:bg-[#2997ff]" />
-                  )}
-                </div>
-                <span className="text-[10px] tracking-tight leading-none mt-0.5 truncate max-w-[90px]">
-                  {tab.id === "schedule" ? "Lịch học" : tab.label}
-                </span>
-              </button>
-            );
-          })}
-        </div>
-      </nav>
     </div>
   );
 }
