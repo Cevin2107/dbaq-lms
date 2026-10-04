@@ -83,7 +83,7 @@ export const AssignmentQuestion = memo(function AssignmentQuestion({
                     />
                   </div>
                 )}
-                <div className={clsx("prose prose-sm sm:prose-base max-w-none font-medium leading-relaxed", isDark ? "text-slate-200" : "text-slate-700")}>
+                <div className={clsx("prose prose-sm sm:prose-base max-w-none font-medium leading-relaxed dark:text-slate-200", isDark ? "text-slate-200" : "text-slate-700")}>
                   <MathText text={q.content || ""} />
                 </div>
               </div>
@@ -115,7 +115,7 @@ export const AssignmentQuestion = memo(function AssignmentQuestion({
                 </div>
               )}
               {q.content && (
-                <div className={clsx("prose prose-sm sm:prose-base max-w-none font-semibold leading-relaxed mb-4", isDark ? "text-slate-200" : "text-slate-800")}>
+                <div className={clsx("prose prose-sm sm:prose-base max-w-none font-semibold leading-relaxed mb-4 dark:text-slate-100", isDark ? "text-slate-100" : "text-slate-800")}>
                   <MathText text={q.content} />
                 </div>
               )}
@@ -147,7 +147,7 @@ export const AssignmentQuestion = memo(function AssignmentQuestion({
                     ? "border-transparent bg-[#0066cc] text-white shadow-md shadow-blue-500/30 z-10 scale-[1.02]"
                     : isDark 
                       ? "border-white/10 bg-[#1d1d1f]/60 text-slate-200 hover:bg-white/10 hover:border-white/20 hover:text-white" 
-                      : "border-black/5 bg-slate-50/50 text-slate-700 hover:border-[#0066cc]/30 hover:bg-white hover:shadow-sm"
+                      : "border-black/5 bg-slate-50/50 text-slate-700 hover:border-[#0066cc]/30 hover:bg-white hover:shadow-sm dark:border-white/10 dark:bg-[#1d1d1f]/60 dark:text-slate-200 dark:hover:bg-white/10 dark:hover:border-white/20 dark:hover:text-white"
                 )}
               >
                 {/* Background shimmer on selected */}
@@ -157,12 +157,12 @@ export const AssignmentQuestion = memo(function AssignmentQuestion({
                   "flex h-6 w-6 sm:h-7 sm:w-7 shrink-0 items-center justify-center rounded-full text-xs sm:text-[13px] font-bold transition-all duration-300 relative z-10",
                   checked 
                     ? "bg-white text-[#0066cc] shadow-sm scale-110" 
-                    : isDark ? "bg-white/10 text-slate-300 group-hover:bg-white/20 group-hover:text-white" : "bg-white text-slate-500 shadow-sm border border-black/5 group-hover:border-[#0066cc]/30 group-hover:text-[#0066cc]"
+                    : isDark ? "bg-white/10 text-slate-300 group-hover:bg-white/20 group-hover:text-white" : "bg-white text-slate-500 shadow-sm border border-black/5 group-hover:border-[#0066cc]/30 group-hover:text-[#0066cc] dark:bg-white/10 dark:text-slate-300 dark:group-hover:bg-white/20 dark:group-hover:text-white"
                 )}>
                   {val}
                 </span>
                 <input type="radio" name={`q-${q.id}`} className="sr-only" checked={checked} disabled={locked} onChange={() => onSetChoice(q.id, val)} />
-                {choice && <span className="flex-1 font-medium sm:text-[15px] pt-0.5 sm:pt-0 relative z-10"><MathText text={choice} /></span>}
+                {choice && <span className="flex-1 font-medium sm:text-[15px] pt-0.5 sm:pt-0 relative z-10 dark:text-slate-200"><MathText text={choice} /></span>}
               </label>
             );
           })}
@@ -323,7 +323,7 @@ export const AssignmentQuestion = memo(function AssignmentQuestion({
               )}>
                 <div className="flex items-start sm:items-center gap-3 sm:gap-4 flex-1">
                   <span className={clsx("flex h-6 w-6 items-center justify-center rounded-lg text-xs font-black", isDark ? "bg-slate-700 text-slate-400" : "bg-slate-200 text-slate-600")}>{String.fromCharCode(97 + si)}</span>
-                  <span className={clsx("text-sm sm:text-[15px] font-medium pt-0.5 sm:pt-0", isDark ? "text-slate-300" : "text-slate-800")}>
+                  <span className={clsx("text-sm sm:text-[15px] font-medium pt-0.5 sm:pt-0 dark:text-slate-200", isDark ? "text-slate-200" : "text-slate-800")}>
                     {sq.content ? <MathText text={sq.content} /> : <em className="not-italic opacity-50">Câu {String.fromCharCode(97 + si)}</em>}
                   </span>
                 </div>

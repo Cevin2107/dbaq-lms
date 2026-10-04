@@ -207,7 +207,7 @@ export function QuestionEditorModal({ assignmentId, isOpen, onClose, onSuccess, 
 
         <div className="p-6 space-y-6">
           {error && (
-            <div className="rounded-xl border border-red-200 bg-red-50 p-4 text-sm font-semibold text-red-600">
+            <div className="rounded-xl border border-red-200 dark:border-red-900/50 bg-red-50 dark:bg-red-950/40 p-4 text-sm font-semibold text-red-600 dark:text-red-400">
               {error}
             </div>
           )}
@@ -360,7 +360,7 @@ export function QuestionEditorModal({ assignmentId, isOpen, onClose, onSuccess, 
                         className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all ${
                           sq.answerKey === "true"
                             ? "bg-emerald-600 text-white shadow-sm"
-                            : "bg-slate-200 dark:bg-slate-700 text-slate-600 dark:text-slate-400 hover:bg-emerald-100 hover:text-emerald-700"
+                            : "bg-slate-200 dark:bg-slate-700 text-slate-600 dark:text-slate-400 hover:bg-emerald-100 dark:hover:bg-emerald-950/50 hover:text-emerald-700 dark:hover:text-emerald-300"
                         }`}
                       >
                         ✓ Đúng
@@ -371,7 +371,7 @@ export function QuestionEditorModal({ assignmentId, isOpen, onClose, onSuccess, 
                         className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all ${
                           sq.answerKey === "false"
                             ? "bg-rose-600 text-white shadow-sm"
-                            : "bg-slate-200 dark:bg-slate-700 text-slate-600 dark:text-slate-400 hover:bg-rose-100 hover:text-rose-700"
+                            : "bg-slate-200 dark:bg-slate-700 text-slate-600 dark:text-slate-400 hover:bg-rose-100 dark:hover:bg-rose-950/50 hover:text-rose-700 dark:hover:text-rose-300"
                         }`}
                       >
                         ✗ Sai
