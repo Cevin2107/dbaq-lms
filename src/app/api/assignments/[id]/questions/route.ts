@@ -1,6 +1,9 @@
 import { NextResponse } from "next/server";
 import { createClient } from "@supabase/supabase-js";
 
+export const dynamic = "force-dynamic";
+export const revalidate = 0;
+
 export async function GET(
   req: Request,
   { params }: { params: Promise<{ id: string }> }
@@ -24,19 +27,28 @@ export async function GET(
       return NextResponse.json({ error: "Failed to fetch questions" }, { status: 500 });
     }
 
-    return NextResponse.json({
-      questions: (questions || []).map((row) => ({
-        id: row.id,
-        assignmentId: row.assignment_id,
-        order: row.order,
-        type: row.type,
-        content: row.content,
-        choices: row.choices,
-        points: row.points,
-        imageUrl: row.image_url,
-        subQuestions: row.sub_questions || undefined,
-      })),
-    });
+    return NextResponse.json(
+      {
+        questions: (questions || []).map((row) => ({
+          id: row.id,
+          assignmentId: row.assignment_id,
+          order: row.order,
+          type: row.type,
+          content: row.content,
+          choices: row.choices,
+          points: row.points,
+          imageUrl: row.image_url,
+          subQuestions: row.sub_questions || undefined,
+        })),
+      },
+      {
+        headers: {
+          "Cache-Control": "no-store, no-cache, must-revalidate, proxy-revalidate",
+          Pragma: "no-cache",
+          Expires: "0",
+        },
+      }
+    );
   } catch (error) {
     console.error("Error in questions API:", error);
     return NextResponse.json({ error: "Internal server error" }, { status: 500 });

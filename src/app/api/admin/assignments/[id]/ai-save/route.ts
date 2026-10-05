@@ -3,6 +3,7 @@ import { NextRequest, NextResponse } from "next/server";
 export const dynamic = "force-dynamic";
 import { checkAdminAuth } from "@/lib/adminAuth";
 import { createQuestion } from "@/lib/supabaseHelpers";
+import { broadcastQuestionsUpdate } from "@/lib/broadcastQuestions";
 import { createClient } from "@supabase/supabase-js";
 
 type AiQuestion = {
@@ -152,6 +153,10 @@ export async function POST(
       }
 
       seenFingerprints.add(fingerprint);
+    }
+
+    if (created.length > 0) {
+      broadcastQuestionsUpdate(assignmentId);
     }
 
     return NextResponse.json({

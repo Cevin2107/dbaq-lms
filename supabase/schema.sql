@@ -481,6 +481,8 @@ CREATE POLICY "Service role manage schedule_registrations" on schedule_registrat
 -- 14. REALTIME CONFIGURATION
 -- ============================================
 ALTER PUBLICATION supabase_realtime ADD TABLE student_sessions;
+ALTER PUBLICATION supabase_realtime ADD TABLE questions;
+ALTER PUBLICATION supabase_realtime ADD TABLE assignments;
 
 -- ==============================================================
 -- 15. TABLE: documents - Tài liệu & Tài liệu đính kèm

@@ -1,4 +1,5 @@
 import { createClient } from "@supabase/supabase-js";
+import { broadcastQuestionsUpdate } from "@/lib/broadcastQuestions";
 import { Assignment, Question, SubmissionSummary, StudentScheduleItem } from "./types";
 
 const getSupabaseClient = () => {
@@ -294,6 +295,8 @@ export async function createQuestion(question: {
   // Reload the inserted question after potential rebalance to return accurate point
   const { data: finalQuestion } = await supabase.from("questions").select("*").eq("id", inserted.id).single();
 
+  broadcastQuestionsUpdate(question.assignmentId);
+
   return finalQuestion || inserted;
 }
 
@@ -415,6 +418,8 @@ export async function rebalanceQuestionPoints(assignmentId: string) {
       .neq("type", "section");
     if (updateError) throw updateError;
   }
+
+  broadcastQuestionsUpdate(assignmentId);
 }
 
 export async function deleteCatboxImages(urls: string[]) {
@@ -543,6 +548,8 @@ export async function deleteQuestion(questionId: string) {
     }
     await rebalanceQuestionPoints(question.assignment_id);
   }
+
+  broadcastQuestionsUpdate(question.assignment_id);
 }
 
 export async function bulkDeleteQuestions(questionIds: string[], assignmentId: string) {
@@ -601,6 +608,8 @@ export async function bulkDeleteQuestions(questionIds: string[], assignmentId: s
     }
     await rebalanceQuestionPoints(assignmentId);
   }
+
+  broadcastQuestionsUpdate(assignmentId);
 }
 
 export async function updateQuestion(questionId: string, data: {
@@ -656,6 +665,9 @@ export async function updateQuestion(questionId: string, data: {
   }
 
   if (error) throw error;
+  if (question?.assignment_id) {
+    broadcastQuestionsUpdate(question.assignment_id);
+  }
   return question;
 }
 

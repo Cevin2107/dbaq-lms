@@ -2,6 +2,7 @@ import React, { useCallback, useState, useEffect } from "react";
 import { createPortal } from "react-dom";
 import { Button } from "@/components/ui/Button";
 import { X, Plus, Trash2, Upload, ClipboardPaste } from "lucide-react";
+import { broadcastQuestionsUpdate } from "@/lib/broadcastQuestions";
 
 interface QuestionEditorModalProps {
   assignmentId: string;
@@ -173,6 +174,7 @@ export function QuestionEditorModal({ assignmentId, isOpen, onClose, onSuccess, 
         const d = await res.json();
         throw new Error(d.error || "Lỗi lưu câu hỏi");
       }
+      broadcastQuestionsUpdate(assignmentId);
       onSuccess();
       onClose();
     } catch (err: any) {

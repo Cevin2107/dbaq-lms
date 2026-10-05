@@ -1,9 +1,83 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import clsx from "clsx";
-import { ChevronDown } from "lucide-react";
+import { 
+  ChevronDown, 
+  CheckCircle2, 
+  XCircle, 
+  AlertCircle, 
+  FileCheck, 
+  HelpCircle,
+  ChevronsUpDown,
+  Filter
+} from "lucide-react";
 import { MathText } from "@/components/MathText";
+
+export function getStudentSubChoice(
+  studentAnswer: string | null | undefined,
+  sq: { id?: string; order?: number } | undefined,
+  index: number
+): "true" | "false" | null {
+  if (!studentAnswer) return null;
+  let parsed: Record<string, unknown> | null = null;
+  if (typeof studentAnswer === "object") {
+    parsed = studentAnswer as Record<string, unknown>;
+  } else {
+    try {
+      parsed = JSON.parse(studentAnswer);
+    } catch {
+      return null;
+    }
+  }
+  if (!parsed || typeof parsed !== "object") return null;
+
+  const candidateKeys: (string | number)[] = [];
+  if (sq?.id !== undefined && sq?.id !== null) {
+    candidateKeys.push(sq.id);
+    candidateKeys.push(String(sq.id));
+  }
+  candidateKeys.push(index);
+  candidateKeys.push(String(index));
+  candidateKeys.push(String.fromCharCode(97 + index)); // a, b, c, d
+  candidateKeys.push(String.fromCharCode(65 + index)); // A, B, C, D
+  if (sq?.order !== undefined && sq?.order !== null) {
+    candidateKeys.push(sq.order);
+    candidateKeys.push(String(sq.order));
+    candidateKeys.push(Number(sq.order) - 1);
+    candidateKeys.push(String(Number(sq.order) - 1));
+  }
+
+  for (const key of candidateKeys) {
+    if (key in parsed) {
+      const val = parsed[key as keyof typeof parsed];
+      if (val === true || val === "true" || val === "T" || val === "Đúng" || val === "dung") return "true";
+      if (val === false || val === "false" || val === "F" || val === "Sai" || val === "sai") return "false";
+    }
+  }
+
+  return null;
+}
+
+export function getSubAnswerKey(
+  sq?: { answerKey?: string | boolean; answer_key?: string | boolean } | null
+): "true" | "false" | null {
+  if (!sq) return null;
+  const rawKey = sq.answerKey ?? sq.answer_key;
+  if (rawKey === true || rawKey === "true" || rawKey === "T" || rawKey === "Đúng" || rawKey === "dung") return "true";
+  if (rawKey === false || rawKey === "false" || rawKey === "F" || rawKey === "Sai" || rawKey === "sai") return "false";
+  return null;
+}
+
+function toMathRenderableText(content: string) {
+  return content
+    .replace(/<br\s*\/?>/gi, "\n")
+    .replace(/<\/p>/gi, "\n")
+    .replace(/<[^>]*>/g, "")
+    .trim();
+}
+
+type FilterType = "all" | "correct" | "incorrect" | "unanswered";
 
 export function ResultQuestionsAccordion({ 
   questions, 
@@ -14,9 +88,14 @@ export function ResultQuestionsAccordion({
   answers: any[]; 
   isScoreHidden: boolean;
 }) {
+  const actualQuestions = useMemo(() => questions?.filter((q) => q.type !== "section") || [], [questions]);
+  const answerMap = useMemo(() => new Map(answers?.map((a) => [a.question_id, a]) || []), [answers]);
+
   const [expandedIds, setExpandedIds] = useState<Set<string>>(() => {
-    return new Set((questions || []).map(q => q.id));
+    return new Set(actualQuestions.map((q) => q.id));
   });
+
+  const [activeFilter, setActiveFilter] = useState<FilterType>("all");
 
   const toggleExpand = (id: string) => {
     const newSet = new Set(expandedIds);
@@ -25,117 +104,354 @@ export function ResultQuestionsAccordion({
     setExpandedIds(newSet);
   };
 
-  const answerMap = new Map(answers?.map((a) => [a.question_id, a]) || []);
+  const toggleAll = () => {
+    if (expandedIds.size === actualQuestions.length) {
+      setExpandedIds(new Set());
+    } else {
+      setExpandedIds(new Set(actualQuestions.map((q) => q.id)));
+    }
+  };
 
   const formatPoints = (value: number | null | undefined) => {
     if (value == null) return "0";
     return parseFloat(Number(value).toFixed(2)).toString().replace(".", ",");
   };
 
+  const isQuestionUnanswered = (q: any, answer: any) => {
+    if (!answer || !answer.answer) return true;
+    const trimmed = String(answer.answer).trim();
+    if (trimmed === "") return true;
+    if (q.type === "true_false") {
+      try {
+        const studentTf = typeof answer.answer === "string" ? JSON.parse(trimmed) : answer.answer;
+        return !studentTf || Object.keys(studentTf).length === 0;
+      } catch {
+        return true;
+      }
+    }
+    return false;
+  };
+
+  // Phân loại câu hỏi để phục vụ bộ lọc
+  const filteredQuestions = useMemo(() => {
+    return actualQuestions.filter((q) => {
+      const answer = answerMap.get(q.id);
+      const isUnanswered = isQuestionUnanswered(q, answer);
+
+      if (activeFilter === "all") return true;
+      if (activeFilter === "unanswered") return isUnanswered;
+
+      let isCorrect = answer?.is_correct;
+      if (isCorrect === null && q.type === "short_answer") {
+        isCorrect = answer?.points_awarded === q.points;
+      }
+
+      if (activeFilter === "correct") return !isUnanswered && isCorrect === true;
+      if (activeFilter === "incorrect") return !isUnanswered && isCorrect === false;
+      return true;
+    });
+  }, [actualQuestions, answerMap, activeFilter]);
+
+  // Đếm số lượng theo trạng thái
+  const counts = useMemo(() => {
+    let correct = 0;
+    let incorrect = 0;
+    let unanswered = 0;
+
+    actualQuestions.forEach((q) => {
+      const answer = answerMap.get(q.id);
+      if (isQuestionUnanswered(q, answer)) {
+        unanswered++;
+        return;
+      }
+      let isCorrect = answer?.is_correct;
+      if (isCorrect === null && q.type === "short_answer") {
+        isCorrect = answer?.points_awarded === q.points;
+      }
+      if (isCorrect === true) correct++;
+      else if (isCorrect === false) incorrect++;
+    });
+
+    return { all: actualQuestions.length, correct, incorrect, unanswered };
+  }, [actualQuestions, answerMap]);
+
   if (isScoreHidden) {
     return (
-      <div className="rounded-[2rem] border border-amber-200/50 dark:border-amber-500/20 bg-amber-50/50 dark:bg-amber-500/10 p-8 text-center backdrop-blur-xl shadow-[0_4px_20px_rgba(0,0,0,0.03)]">
+      <div className="rounded-[2rem] border border-amber-200/50 dark:border-amber-500/20 bg-amber-50/50 dark:bg-amber-500/10 p-8 sm:p-10 text-center backdrop-blur-xl shadow-[0_4px_20px_rgba(0,0,0,0.03)]">
         <div className="mb-4 flex justify-center">
-          <div className="flex h-14 w-14 items-center justify-center rounded-3xl bg-amber-100 dark:bg-amber-500/20">
-            <svg className="h-7 w-7 text-amber-600 dark:text-amber-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-              <path strokeLinecap="round" strokeLinejoin="round" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
-            </svg>
+          <div className="flex h-16 w-16 items-center justify-center rounded-3xl bg-amber-100 dark:bg-amber-500/20 text-amber-600 dark:text-amber-400">
+            <AlertCircle className="h-8 w-8" />
           </div>
         </div>
-        <p className="text-[17px] font-bold text-amber-900 dark:text-amber-200">Bài đã nộp thành công!</p>
-        <p className="text-[15px] text-amber-700 dark:text-amber-400 mt-1">Giáo viên sẽ chấm bài và công bố điểm sau.</p>
+        <p className="text-xl font-bold text-amber-900 dark:text-amber-200 tracking-[-0.01em]">Bài đã nộp thành công!</p>
+        <p className="text-[15px] text-amber-700/80 dark:text-amber-400/80 mt-1.5 max-w-md mx-auto">
+          Điểm số và đáp án chi tiết chưa được công bố. Giáo viên sẽ mở kết quả sau khi hoàn tất chấm bài.
+        </p>
       </div>
     );
   }
 
-  const actualQuestions = questions?.filter((q) => q.type !== 'section') || [];
-
   return (
     <div className="space-y-4">
-      {actualQuestions.map((q, idx) => {
-        const answer = answerMap.get(q.id);
-        // Fallback cho short_answer: nếu is_correct null, dùng points_awarded
-        let isCorrect = answer?.is_correct;
-        if (isCorrect === null && q.type === "short_answer") {
-          isCorrect = answer?.points_awarded === q.points;
-        }
-        const studentAnswer = answer?.answer;
-        const isExpanded = expandedIds.has(q.id);
-
-        const imgUrl = q.image_url || q.imageUrl;
-
-        return (
-          <div key={q.id} className={clsx(
-            "rounded-[1.5rem] border transition-all duration-300 overflow-hidden backdrop-blur-md",
-            isExpanded ? "shadow-[0_8px_30px_rgba(0,0,0,0.04)]" : "shadow-[0_4px_20px_rgba(0,0,0,0.03)] hover:border-black/10 dark:hover:border-white/10",
-            isCorrect === true 
-              ? (isExpanded ? "border-emerald-300 dark:border-emerald-500/50 bg-emerald-50/10 dark:bg-emerald-500/10" : "border-emerald-200/50 dark:border-emerald-500/20 bg-white/80 dark:bg-[#1d1d1f]/80") :
-            isCorrect === false 
-              ? (isExpanded ? "border-rose-300 dark:border-rose-500/50 bg-rose-50/10 dark:bg-rose-500/10" : "border-rose-200/50 dark:border-rose-500/20 bg-white/80 dark:bg-[#1d1d1f]/80") :
-            "border-black/5 dark:border-white/5 bg-white/80 dark:bg-[#1d1d1f]/80"
-          )}>
-            {/* Header (Always Visible) */}
-            <button
-               onClick={() => toggleExpand(q.id)}
-               className="w-full flex items-center justify-between gap-4 p-5 focus:outline-none"
-            >
-              <div className="flex items-center gap-3">
-                <span className={clsx(
-                  "flex h-8 w-8 items-center justify-center rounded-full text-sm font-black shrink-0 shadow-sm transition-colors",
-                  isCorrect === true ? "bg-emerald-100 text-emerald-700 ring-1 ring-emerald-200 dark:bg-emerald-500/20 dark:text-emerald-400 dark:ring-emerald-500/30" :
-                  isCorrect === false ? "bg-rose-100 text-rose-700 ring-1 ring-rose-200 dark:bg-rose-500/20 dark:text-rose-400 dark:ring-rose-500/30" :
-                  "bg-slate-100 text-slate-600 ring-1 ring-slate-200 dark:bg-slate-700 dark:text-slate-300 dark:ring-slate-600"
-                )}>{idx + 1}</span>
-                
-                <div className="text-left">
-                   <p className="text-[13px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-widest leading-none mb-1.5 transition-colors">
-                     Câu {idx + 1}
-                   </p>
-                   {q.type === "mcq" && isCorrect !== null && (
-                     <p className={clsx(
-                       "text-[14px] font-bold transition-colors",
-                       isCorrect ? "text-emerald-600 dark:text-emerald-400" : "text-rose-600 dark:text-rose-400"
-                     )}>
-                       {isCorrect ? "Trả lời đúng" : "Trả lời sai"}
-                     </p>
-                   )}
-                   {q.type !== "mcq" && (
-                      <p className="text-[14px] font-bold text-slate-600 dark:text-slate-300 transition-colors">
-                         {q.type === 'essay' ? 'Tự luận' : q.type === 'short_answer' ? (isCorrect ? 'Trả lời ngắn - Đúng' : 'Trả lời ngắn - Sai') : q.type === 'true_false' ? 'Đúng/Sai' : 'Đọc hiểu'}
-                      </p>
-                   )}
-                </div>
-              </div>
-              
-              <div className="flex items-center gap-4">
-                 <span className="shrink-0 rounded-full bg-amber-50 dark:bg-amber-500/10 px-3 py-1 text-xs font-bold text-amber-700 dark:text-amber-400 ring-1 ring-amber-200/60 dark:ring-amber-500/30 transition-colors">
-                   {formatPoints(answer?.points_awarded)} / {formatPoints(q.points)} điểm
-                 </span>
-                 <ChevronDown className={clsx(
-                    "h-5 w-5 text-slate-400 dark:text-slate-500 transition-transform duration-300",
-                    isExpanded && "rotate-180 text-slate-700 dark:text-slate-300"
-                 )} />
-              </div>
-            </button>
-
-            {/* Content (Expanded) */}
-            <div className={clsx(
-               "grid transition-all duration-300",
-               isExpanded ? "grid-rows-[1fr] opacity-100" : "grid-rows-[0fr] opacity-0"
+      {/* Thanh công cụ lọc & Thu gọn/Mở rộng */}
+      <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3 p-2 rounded-[2rem] bg-white/60 dark:bg-[#1d1d1f]/60 backdrop-blur-xl border border-black/5 dark:border-white/5 shadow-[0_4px_20px_rgba(0,0,0,0.02)]">
+        {/* Filter Pills */}
+        <div className="flex items-center gap-1.5 overflow-x-auto p-1 scrollbar-none">
+          <button
+            onClick={() => setActiveFilter("all")}
+            className={clsx(
+              "px-3.5 py-1.5 rounded-full text-xs font-bold transition-all duration-300 flex items-center gap-1.5 whitespace-nowrap",
+              activeFilter === "all"
+                ? "bg-[#0066cc] text-white shadow-md shadow-blue-500/25"
+                : "bg-transparent text-slate-600 dark:text-slate-400 hover:bg-black/5 dark:hover:bg-white/5"
+            )}
+          >
+            <span>Tất cả</span>
+            <span className={clsx(
+              "px-1.5 py-0.2 rounded-full text-[10px] font-extrabold",
+              activeFilter === "all" ? "bg-white/20 text-white" : "bg-black/5 dark:bg-white/10 text-slate-500 dark:text-slate-400"
             )}>
-              <div className="overflow-hidden">
-                 <div className="p-5 pt-0 border-t border-slate-100/50 dark:border-slate-700/50">
+              {counts.all}
+            </span>
+          </button>
+
+          <button
+            onClick={() => setActiveFilter("correct")}
+            className={clsx(
+              "px-3.5 py-1.5 rounded-full text-xs font-bold transition-all duration-300 flex items-center gap-1.5 whitespace-nowrap",
+              activeFilter === "correct"
+                ? "bg-emerald-600 text-white shadow-md shadow-emerald-500/25"
+                : "bg-transparent text-emerald-700 dark:text-emerald-400 hover:bg-emerald-50 dark:hover:bg-emerald-950/20"
+            )}
+          >
+            <CheckCircle2 className="h-3.5 w-3.5" />
+            <span>Đúng</span>
+            <span className={clsx(
+              "px-1.5 py-0.2 rounded-full text-[10px] font-extrabold",
+              activeFilter === "correct" ? "bg-white/20 text-white" : "bg-emerald-100 dark:bg-emerald-900/30 text-emerald-800 dark:text-emerald-300"
+            )}>
+              {counts.correct}
+            </span>
+          </button>
+
+          <button
+            onClick={() => setActiveFilter("incorrect")}
+            className={clsx(
+              "px-3.5 py-1.5 rounded-full text-xs font-bold transition-all duration-300 flex items-center gap-1.5 whitespace-nowrap",
+              activeFilter === "incorrect"
+                ? "bg-rose-600 text-white shadow-md shadow-rose-500/25"
+                : "bg-transparent text-rose-700 dark:text-rose-400 hover:bg-rose-50 dark:hover:bg-rose-950/20"
+            )}
+          >
+            <XCircle className="h-3.5 w-3.5" />
+            <span>Sai</span>
+            <span className={clsx(
+              "px-1.5 py-0.2 rounded-full text-[10px] font-extrabold",
+              activeFilter === "incorrect" ? "bg-white/20 text-white" : "bg-rose-100 dark:bg-rose-900/30 text-rose-800 dark:text-rose-300"
+            )}>
+              {counts.incorrect}
+            </span>
+          </button>
+
+          {counts.unanswered > 0 && (
+            <button
+              onClick={() => setActiveFilter("unanswered")}
+              className={clsx(
+                "px-3.5 py-1.5 rounded-full text-xs font-bold transition-all duration-300 flex items-center gap-1.5 whitespace-nowrap",
+                activeFilter === "unanswered"
+                  ? "bg-slate-700 text-white shadow-md shadow-slate-500/25 dark:bg-slate-300 dark:text-slate-900"
+                  : "bg-transparent text-slate-500 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800"
+              )}
+            >
+              <AlertCircle className="h-3.5 w-3.5" />
+              <span>Chưa làm</span>
+              <span className={clsx(
+                "px-1.5 py-0.2 rounded-full text-[10px] font-extrabold",
+                activeFilter === "unanswered" ? "bg-white/20 text-white" : "bg-slate-200 dark:bg-slate-700 text-slate-600 dark:text-slate-300"
+              )}>
+                {counts.unanswered}
+              </span>
+            </button>
+          )}
+        </div>
+
+        {/* Toggle All Button */}
+        <button
+          onClick={toggleAll}
+          className="flex items-center justify-center gap-1.5 px-4 py-2 rounded-full text-xs font-bold text-slate-600 dark:text-slate-400 hover:text-[#0066cc] dark:hover:text-blue-400 hover:bg-black/5 dark:hover:bg-white/5 transition-all self-end sm:self-auto"
+        >
+          <ChevronsUpDown className="h-4 w-4" />
+          <span>{expandedIds.size === actualQuestions.length ? "Thu gọn tất cả" : "Mở rộng tất cả"}</span>
+        </button>
+      </div>
+
+      {/* Danh sách các câu hỏi */}
+      {filteredQuestions.length === 0 ? (
+        <div className="rounded-[2rem] bg-white/70 dark:bg-[#1d1d1f]/70 backdrop-blur-xl border border-black/5 dark:border-white/5 p-10 text-center shadow-[0_4px_20px_rgba(0,0,0,0.02)]">
+          <Filter className="h-10 w-10 text-slate-300 dark:text-slate-600 mx-auto mb-3" />
+          <p className="text-sm font-semibold text-slate-600 dark:text-slate-400">
+            Không có câu hỏi nào thuộc phân loại này.
+          </p>
+        </div>
+      ) : (
+        filteredQuestions.map((q) => {
+          const originalIdx = actualQuestions.findIndex((aq) => aq.id === q.id);
+          const questionNumber = originalIdx >= 0 ? originalIdx + 1 : 1;
+          const answer = answerMap.get(q.id);
+          const isUnanswered = isQuestionUnanswered(q, answer);
+
+          let isCorrect = answer?.is_correct;
+          if (isCorrect === null && q.type === "short_answer") {
+            isCorrect = answer?.points_awarded === q.points;
+          }
+
+          const studentAnswer = answer?.answer;
+          const isExpanded = expandedIds.has(q.id);
+          const imgUrl = q.image_url || q.imageUrl;
+
+          // Xác định màu sắc chỉ báo
+          let statusTheme = {
+            border: "border-black/5 dark:border-white/5",
+            badgeBg: "bg-slate-100 text-slate-600 dark:bg-slate-800 dark:text-slate-300",
+            statusLabel: "Chưa trả lời",
+            statusColor: "text-slate-500 dark:text-slate-400",
+            icon: AlertCircle,
+          };
+
+          if (!isUnanswered) {
+            if (isCorrect === true) {
+              statusTheme = {
+                border: "border-emerald-200/80 dark:border-emerald-500/30",
+                badgeBg: "bg-emerald-500 text-white shadow-emerald-500/20",
+                statusLabel: "Trả lời đúng",
+                statusColor: "text-emerald-600 dark:text-emerald-400",
+                icon: CheckCircle2,
+              };
+            } else if (isCorrect === false) {
+              statusTheme = {
+                border: "border-rose-200/80 dark:border-rose-500/30",
+                badgeBg: "bg-rose-500 text-white shadow-rose-500/20",
+                statusLabel: "Trả lời sai",
+                statusColor: "text-rose-600 dark:text-rose-400",
+                icon: XCircle,
+              };
+            }
+          }
+
+          return (
+            <div
+              key={q.id}
+              className={clsx(
+                "rounded-[1.75rem] border transition-all duration-300 overflow-hidden backdrop-blur-xl",
+                statusTheme.border,
+                isExpanded 
+                  ? "bg-white/90 dark:bg-[#1d1d1f]/90 shadow-[0_8px_30px_rgba(0,0,0,0.04)]" 
+                  : "bg-white/70 dark:bg-[#1d1d1f]/70 shadow-[0_4px_20px_rgba(0,0,0,0.02)] hover:border-[#0066cc]/30"
+              )}
+            >
+              {/* Header (Accordion Trigger) */}
+              <button
+                type="button"
+                onClick={() => toggleExpand(q.id)}
+                className="w-full flex items-center justify-between gap-3.5 p-4 sm:p-5 text-left focus:outline-none transition-colors"
+              >
+                <div className="flex items-center gap-3.5 min-w-0">
+                  {/* Số câu hỏi hình tròn Liquid Glass */}
+                  <span
+                    className={clsx(
+                      "flex h-9 w-9 sm:h-10 sm:w-10 items-center justify-center rounded-2xl text-xs sm:text-sm font-black shrink-0 shadow-sm transition-all duration-300",
+                      statusTheme.badgeBg
+                    )}
+                  >
+                    {questionNumber}
+                  </span>
+
+                  <div className="min-w-0">
+                    <div className="flex items-center gap-2">
+                      <span className="text-[11px] sm:text-xs font-bold uppercase tracking-wider text-slate-400 dark:text-slate-500">
+                        Câu {questionNumber}
+                      </span>
+                      <span className="text-slate-300 dark:text-slate-700">•</span>
+                      <span className="text-[11px] sm:text-xs font-bold text-slate-500 dark:text-slate-400">
+                        {q.type === "mcq"
+                          ? "Trắc nghiệm"
+                          : q.type === "true_false"
+                          ? "Đúng/Sai"
+                          : q.type === "short_answer"
+                          ? "Trả lời ngắn"
+                          : q.type === "essay"
+                          ? "Tự luận"
+                          : "Đọc hiểu"}
+                      </span>
+                    </div>
+
+                    <div className="flex items-center gap-2 mt-0.5">
+                      <p className={clsx("text-sm sm:text-[15px] font-bold tracking-[-0.01em]", statusTheme.statusColor)}>
+                        {statusTheme.statusLabel}
+                      </p>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="flex items-center gap-2.5 sm:gap-4 shrink-0">
+                  {/* Điểm số */}
+                  <span className="rounded-full bg-slate-100 dark:bg-white/5 border border-black/5 dark:border-white/5 px-3 py-1.5 text-xs font-bold text-slate-700 dark:text-slate-300">
+                    <strong className={clsx(isCorrect ? "text-emerald-600 dark:text-emerald-400" : "")}>
+                      {formatPoints(answer?.points_awarded)}
+                    </strong>
+                    <span className="text-slate-400">/{formatPoints(q.points)}đ</span>
+                  </span>
+
+                  <div className="flex h-8 w-8 items-center justify-center rounded-full bg-black/5 dark:bg-white/5 text-slate-500">
+                    <ChevronDown
+                      className={clsx(
+                        "h-4 w-4 transition-transform duration-300",
+                        isExpanded && "rotate-180 text-slate-900 dark:text-white"
+                      )}
+                    />
+                  </div>
+                </div>
+              </button>
+
+              {/* Nội dung chi tiết (Accordion Body) */}
+              <div
+                className={clsx(
+                  "grid transition-all duration-300 ease-in-out",
+                  isExpanded ? "grid-rows-[1fr] opacity-100" : "grid-rows-[0fr] opacity-0"
+                )}
+              >
+                <div className="overflow-hidden">
+                  <div className="p-4 sm:p-6 pt-0 border-t border-black/5 dark:border-white/5 mt-1 space-y-4">
+                    {/* Hình ảnh đính kèm (nếu có) */}
                     {imgUrl && (
-                      <div className="mb-4 overflow-hidden rounded-xl border border-slate-200 dark:border-slate-700 shadow-sm mt-4">
-                        <img src={imgUrl} alt="Câu hỏi" className="max-h-64 w-auto object-contain bg-slate-50 dark:bg-slate-900 mx-auto" />
+                      <div className="overflow-hidden rounded-2xl border border-black/5 dark:border-white/10 shadow-sm mt-4 bg-slate-50 dark:bg-slate-900/50">
+                        <img
+                          src={imgUrl}
+                          alt={`Câu hỏi ${questionNumber}`}
+                          className="max-h-72 w-auto object-contain mx-auto"
+                        />
                       </div>
                     )}
-                    {q.content && <div className="text-[15px] font-semibold text-slate-800 dark:text-slate-200 mt-4 mb-5 leading-relaxed"><MathText text={q.content} /></div>}
 
-                    {/* MCQ Choices */}
+                    {/* Nội dung câu hỏi */}
+                    {q.content && (
+                      <div className="text-[15px] font-medium text-slate-800 dark:text-slate-200 leading-relaxed mt-4">
+                        <MathText text={toMathRenderableText(q.content)} />
+                      </div>
+                    )}
+
+                    {/* ===== CÂU HỎI TRẮC NGHIỆM (MCQ) ===== */}
                     {q.type === "mcq" && (() => {
-                      const parsedChoices = Array.isArray(q.choices) ? q.choices : [];
-                      
+                      const parsedChoices = Array.isArray(q.choices)
+                        ? q.choices
+                        : (() => {
+                            try {
+                              return JSON.parse(q.choices);
+                            } catch {
+                              return [];
+                            }
+                          })();
+
                       const normalizeToIndex = (value: unknown) => {
                         if (value == null) return -1;
                         const normalized = String(value).trim().toUpperCase();
@@ -147,106 +463,71 @@ export function ResultQuestionsAccordion({
 
                       const selectedIndex = normalizeToIndex(studentAnswer);
                       const keyIndex = normalizeToIndex(q.answer_key || q.answerKey);
-                      
+
                       const maxIndex = Math.max(parsedChoices.length - 1, selectedIndex, keyIndex, 3);
                       const optionIndexes = Array.from({ length: maxIndex + 1 }, (_, i) => i);
 
                       return (
-                        <div className="space-y-2.5">
+                        <div className="space-y-2.5 mt-3">
                           {optionIndexes.map((ci) => {
                             const choiceLabel = String.fromCharCode(65 + ci);
                             const choice = typeof parsedChoices[ci] === "string" ? parsedChoices[ci] : "";
                             const isStudentChoice = ci === selectedIndex;
                             const isCorrectAnswer = ci === keyIndex;
-                            
+
                             return (
-                              <div key={ci} className={clsx(
-                                "flex items-center gap-3 rounded-2xl border px-4 py-3 text-[14px] transition-colors",
-                                isCorrectAnswer ? "border-emerald-300 dark:border-emerald-500/50 bg-emerald-50 dark:bg-emerald-500/10 font-bold text-emerald-900 dark:text-emerald-100 shadow-sm" :
-                                isStudentChoice && !isCorrectAnswer ? "border-rose-300 dark:border-rose-500/50 bg-rose-50 dark:bg-rose-500/10 font-bold text-rose-900 dark:text-rose-100" :
-                                "border-black/5 dark:border-white/5 bg-slate-50/50 dark:bg-[#1d1d1f]/50 text-slate-700 dark:text-slate-300"
-                              )}>
-                                <span className={clsx(
-                                  "flex h-6 w-6 shrink-0 items-center justify-center rounded-full text-[12px] font-bold",
-                                  isCorrectAnswer ? "bg-emerald-200 text-emerald-800 dark:bg-emerald-500/30 dark:text-emerald-300" :
-                                  isStudentChoice ? "bg-rose-200 text-rose-800 dark:bg-rose-500/30 dark:text-rose-300" :
-                                  "bg-white border border-black/5 text-slate-600 dark:bg-slate-700 dark:text-slate-400 dark:border-none shadow-sm"
-                                )}>{choiceLabel}</span>
-                                <span className="flex-1 leading-relaxed">
-                                  {choice ? <MathText text={choice} /> : <span className="italic text-slate-400 dark:text-slate-500">(Không có nội dung)</span>}
-                                </span>
-                                {isCorrectAnswer && <span className="text-[11px] font-bold tracking-wide text-emerald-600 dark:text-emerald-400 uppercase bg-emerald-500/10 px-2 py-1 rounded-md">Đúng</span>}
-                                {isStudentChoice && !isCorrectAnswer && <span className="text-[11px] font-bold tracking-wide text-rose-600 dark:text-rose-400 uppercase bg-rose-500/10 px-2 py-1 rounded-md">Bạn chọn</span>}
-                              </div>
-                            );
-                          })}
-                        </div>
-                      );
-                    })()}
-
-                    {/* Short Answer */}
-                    {q.type === "short_answer" && (
-                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        <div className={clsx("rounded-2xl border px-5 py-4",
-                          isCorrect ? "border-emerald-200 bg-emerald-50 dark:border-emerald-500/30 dark:bg-emerald-500/10" : "border-rose-200 bg-rose-50 dark:border-rose-500/30 dark:bg-rose-500/10"
-                        )}>
-                          <span className="text-[11px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-widest block mb-1">Bạn trả lời: </span>
-                          <span className={clsx("font-bold text-[15px]", isCorrect ? "text-emerald-900 dark:text-emerald-200" : "text-rose-900 dark:text-rose-200")}>{studentAnswer || <em className="text-slate-400 opacity-70 font-normal">Đã bỏ trống</em>}</span>
-                        </div>
-                        {!isCorrect && (q.answer_key || q.answerKey) && (
-                          <div className="rounded-2xl border border-emerald-200 bg-emerald-50 dark:border-emerald-500/30 dark:bg-emerald-500/10 px-5 py-4">
-                            <span className="text-[11px] font-bold text-emerald-700 dark:text-emerald-400 uppercase tracking-widest block mb-1">Đáp án gợi ý: </span>
-                            <span className="font-bold text-[15px] text-emerald-900 dark:text-emerald-200"><MathText text={String(q.answer_key || q.answerKey)} /></span>
-                          </div>
-                        )}
-                      </div>
-                    )}
-
-                    {/* Essay */}
-                    {q.type === "essay" && (
-                      <div className="space-y-3">
-                        <div className="rounded-2xl border border-black/5 dark:border-white/5 bg-slate-50/50 dark:bg-slate-900/50 p-5 text-[15px] text-slate-800 dark:text-slate-200 min-h-[100px] whitespace-pre-wrap leading-relaxed shadow-sm">
-                          {studentAnswer || <em className="text-slate-400 dark:text-slate-500">Không có chữ viết.</em>}
-                        </div>
-                        {answer?.answer_image_url && (
-                          <div className="overflow-hidden rounded-2xl border border-black/5 dark:border-white/5 shadow-sm mt-4">
-                            <img src={answer.answer_image_url} alt="Ảnh bài làm" className="max-h-96 w-auto object-contain bg-slate-100 dark:bg-slate-900 mx-auto" />
-                          </div>
-                        )}
-                      </div>
-                    )}
-
-                    {/* True/False Sub-questions */}
-                    {q.type === "true_false" && (() => {
-                      const subQs = (q.sub_questions as Array<{id: string; content: string; answerKey: string; order: number}>) || [];
-                      const studentTf = (() => { try { return JSON.parse(studentAnswer || "{}"); } catch { return {}; } })();
-                      return subQs.length > 0 ? (
-                        <div className="space-y-2">
-                          {subQs.map((sq, si) => {
-                            const studentVal = studentTf[sq.id];
-                            const subCorrect = studentVal === sq.answerKey;
-                            return (
-                              <div key={sq.id} className={clsx(
-                                "flex items-center gap-3 rounded-2xl border px-5 py-4 text-[14px]",
-                                subCorrect ? "border-emerald-200 bg-emerald-50 dark:border-emerald-500/30 dark:bg-emerald-500/10" : "border-rose-200 bg-rose-50 dark:border-rose-500/30 dark:bg-rose-500/10"
-                              )}>
-                                <span className="w-5 text-[13px] font-bold text-slate-400 dark:text-slate-500 shrink-0">{String.fromCharCode(97 + si)}.</span>
-                                <span className={clsx("flex-1 font-bold leading-relaxed", subCorrect ? "text-emerald-900 dark:text-emerald-100" : "text-rose-900 dark:text-rose-100")}>
-                                  {sq.content ? <MathText text={sq.content} /> : <em className="not-italic text-slate-400 dark:text-slate-500">Câu {String.fromCharCode(97 + si)}</em>}
-                                </span>
-                                <div className="flex items-center gap-3 shrink-0">
-                                  <span className={clsx("rounded-md px-2.5 py-1 text-[11px] font-bold uppercase tracking-wider",
-                                    studentVal === "true" ? "bg-emerald-100 text-emerald-800 ring-1 ring-emerald-300 dark:bg-emerald-500/20 dark:text-emerald-300 dark:ring-emerald-500/30" :
-                                    studentVal === "false" ? "bg-rose-100 text-rose-800 ring-1 ring-rose-300 dark:bg-rose-500/20 dark:text-rose-300 dark:ring-rose-500/30" :
-                                    "bg-slate-100 text-slate-500 dark:bg-slate-800 dark:text-slate-400"
-                                  )}>
-                                    {studentVal === "true" ? "Đúng" : studentVal === "false" ? "Sai" : "Trống"}
+                              <div
+                                key={ci}
+                                className={clsx(
+                                  "flex items-start justify-between gap-3 rounded-2xl border p-3.5 text-sm transition-all duration-200",
+                                  isCorrectAnswer && isStudentChoice
+                                    ? "border-emerald-400 bg-emerald-50/80 dark:bg-emerald-950/20 dark:border-emerald-700/60 shadow-sm"
+                                    : isCorrectAnswer
+                                    ? "border-emerald-300 bg-emerald-50/50 dark:bg-emerald-950/10 dark:border-emerald-800/40"
+                                    : isStudentChoice
+                                    ? "border-rose-400 bg-rose-50/80 dark:bg-rose-950/20 dark:border-rose-700/60 shadow-sm"
+                                    : "border-black/5 dark:border-white/5 bg-slate-50/60 dark:bg-[#1d1d1f]/40 text-slate-700 dark:text-slate-300"
+                                )}
+                              >
+                                <div className="flex items-start gap-3 min-w-0">
+                                  <span
+                                    className={clsx(
+                                      "flex h-6 w-6 shrink-0 items-center justify-center rounded-lg text-xs font-bold transition-colors mt-0.5",
+                                      isCorrectAnswer
+                                        ? "bg-emerald-600 text-white"
+                                        : isStudentChoice
+                                        ? "bg-rose-600 text-white"
+                                        : "bg-slate-200 dark:bg-slate-700 text-slate-600 dark:text-slate-400"
+                                    )}
+                                  >
+                                    {choiceLabel}
                                   </span>
-                                  {!subCorrect && (
-                                    <span className="text-[11px] font-bold text-slate-500 flex items-center gap-1.5">
-                                      → <span className="text-emerald-700 dark:text-emerald-400 uppercase bg-emerald-50 dark:bg-emerald-500/10 px-2 py-1 rounded-md border border-emerald-200 dark:border-emerald-500/30">
-                                        {sq.answerKey === "true" ? "Đúng" : "Sai"}
-                                      </span>
+
+                                  <div className="leading-relaxed break-words text-slate-800 dark:text-slate-200">
+                                    {choice ? (
+                                      <MathText text={toMathRenderableText(choice)} />
+                                    ) : (
+                                      <span className="italic text-slate-400 dark:text-slate-500">(Không có nội dung)</span>
+                                    )}
+                                  </div>
+                                </div>
+
+                                <div className="flex items-center gap-1.5 shrink-0">
+                                  {isStudentChoice && (
+                                    <span
+                                      className={clsx(
+                                        "rounded-full px-2.5 py-0.5 text-[11px] font-bold uppercase tracking-wider",
+                                        isCorrectAnswer
+                                          ? "bg-emerald-100 dark:bg-emerald-900/40 text-emerald-800 dark:text-emerald-300 border border-emerald-300 dark:border-emerald-700"
+                                          : "bg-rose-100 dark:bg-rose-900/40 text-rose-800 dark:text-rose-300 border border-rose-300 dark:border-rose-700"
+                                      )}
+                                    >
+                                      Bạn chọn
+                                    </span>
+                                  )}
+                                  {isCorrectAnswer && (
+                                    <span className="rounded-full bg-emerald-100 dark:bg-emerald-900/30 border border-emerald-300 dark:border-emerald-700/60 px-2.5 py-0.5 text-[11px] font-bold uppercase tracking-wider text-emerald-800 dark:text-emerald-300">
+                                      Đáp án đúng
                                     </span>
                                   )}
                                 </div>
@@ -254,14 +535,233 @@ export function ResultQuestionsAccordion({
                             );
                           })}
                         </div>
+                      );
+                    })()}
+
+                    {/* ===== CÂU HỎI ĐÚNG / SAI (TRUE_FALSE) ===== */}
+                    {q.type === "true_false" && (() => {
+                      const subQs = (q.sub_questions || q.subQuestions || []) as Array<{
+                        id: string;
+                        content: string;
+                        answerKey?: string;
+                        answer_key?: string;
+                        order?: number;
+                      }>;
+
+                      return subQs.length > 0 ? (
+                        <div className="space-y-3 mt-3">
+                          {subQs.map((sq, si) => {
+                            const studentChoice = getStudentSubChoice(studentAnswer, sq, si);
+                            const keyChoice = getSubAnswerKey(sq);
+                            const hasChoice = studentChoice !== null;
+                            const isSubCorrect = hasChoice && keyChoice !== null && studentChoice === keyChoice;
+
+                            const isStuTrue = studentChoice === "true";
+                            const isStuFalse = studentChoice === "false";
+                            const isKeyTrue = keyChoice === "true";
+                            const isKeyFalse = keyChoice === "false";
+
+                            return (
+                              <div
+                                key={sq.id || si}
+                                className={clsx(
+                                  "rounded-2xl border p-4 transition-all duration-200",
+                                  hasChoice
+                                    ? isSubCorrect
+                                      ? "border-emerald-200 bg-emerald-50/40 dark:border-emerald-800/40 dark:bg-emerald-950/10"
+                                      : "border-rose-200 bg-rose-50/40 dark:border-rose-800/40 dark:bg-rose-950/10"
+                                    : "border-black/5 bg-slate-50/60 dark:border-white/5 dark:bg-[#1d1d1f]/40"
+                                )}
+                              >
+                                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                                  {/* Mệnh đề */}
+                                  <div className="space-y-1.5 flex-1 min-w-0">
+                                    <div className="flex items-start gap-2.5 text-sm text-slate-800 dark:text-slate-200">
+                                      <span className="flex-shrink-0 flex h-6 w-6 items-center justify-center rounded-lg bg-indigo-50 dark:bg-indigo-900/30 text-indigo-600 dark:text-indigo-400 font-bold text-xs">
+                                        {String.fromCharCode(97 + si)}
+                                      </span>
+                                      <span className="break-words pt-0.5">
+                                        <MathText text={toMathRenderableText(sq.content || "")} />
+                                      </span>
+                                    </div>
+
+                                    {/* Badges thông tin */}
+                                    <div className="flex flex-wrap items-center gap-1.5 pt-0.5">
+                                      <span
+                                        className={clsx(
+                                          "inline-flex items-center gap-1 rounded-full border px-2.5 py-0.5 text-[11px] font-semibold",
+                                          isStuTrue
+                                            ? "bg-emerald-50 border-emerald-300 text-emerald-800 dark:bg-emerald-900/30 dark:border-emerald-700 dark:text-emerald-300"
+                                            : isStuFalse
+                                            ? "bg-rose-50 border-rose-300 text-rose-800 dark:bg-rose-900/30 dark:border-rose-700 dark:text-rose-300"
+                                            : "bg-slate-100 border-slate-200 text-slate-500 dark:bg-slate-800 dark:border-slate-700 dark:text-slate-400"
+                                        )}
+                                      >
+                                        <FileCheck className="h-3 w-3" />
+                                        Bạn chọn: <strong className="font-bold">{isStuTrue ? "Đúng" : isStuFalse ? "Sai" : "Chưa làm"}</strong>
+                                      </span>
+
+                                      <span className="inline-flex items-center gap-1 rounded-full border border-indigo-200 dark:border-indigo-800/60 bg-indigo-50/80 dark:bg-indigo-900/20 px-2.5 py-0.5 text-[11px] font-semibold text-indigo-700 dark:text-indigo-300">
+                                        <CheckCircle2 className="h-3 w-3 text-indigo-600 dark:text-indigo-400" />
+                                        Đáp án: <strong className="font-bold">{isKeyTrue ? "Đúng" : isKeyFalse ? "Sai" : "-"}</strong>
+                                      </span>
+
+                                      {hasChoice && (
+                                        <span
+                                          className={clsx(
+                                            "inline-flex items-center gap-1 rounded-full border px-2.5 py-0.5 text-[11px] font-bold",
+                                            isSubCorrect
+                                              ? "bg-emerald-100/80 border-emerald-300 text-emerald-800 dark:bg-emerald-900/40 dark:border-emerald-700 dark:text-emerald-200"
+                                              : "bg-rose-100/80 border-rose-300 text-rose-800 dark:bg-rose-900/40 dark:border-rose-700 dark:text-rose-200"
+                                          )}
+                                        >
+                                          {isSubCorrect ? (
+                                            <>
+                                              <CheckCircle2 className="h-3 w-3" />
+                                              Đúng
+                                            </>
+                                          ) : (
+                                            <>
+                                              <XCircle className="h-3 w-3" />
+                                              Sai
+                                            </>
+                                          )}
+                                        </span>
+                                      )}
+                                    </div>
+                                  </div>
+
+                                  {/* Hai nút [Đúng] [Sai] trực quan */}
+                                  <div className="flex items-center gap-2 shrink-0 self-end sm:self-center">
+                                    <div
+                                      className={clsx(
+                                        "relative flex items-center justify-center min-w-[70px] px-3 py-1.5 rounded-xl text-xs font-bold transition-all border",
+                                        isStuTrue
+                                          ? "bg-emerald-500 text-white border-emerald-600 shadow-sm"
+                                          : isKeyTrue
+                                          ? "bg-emerald-50/60 dark:bg-emerald-950/20 text-emerald-700 dark:text-emerald-300 border-emerald-300 dark:border-emerald-700/60 border-dashed"
+                                          : "bg-white/80 dark:bg-slate-800/40 text-slate-400 dark:text-slate-500 border-black/5 dark:border-white/5"
+                                      )}
+                                    >
+                                      <span>Đúng</span>
+                                      {isStuTrue && (
+                                        <span className="absolute -top-2 -right-1 px-1.5 py-0.2 rounded-full text-[9px] font-extrabold bg-blue-600 text-white shadow-sm">
+                                          Bạn chọn
+                                        </span>
+                                      )}
+                                      {!isStuTrue && isKeyTrue && (
+                                        <span className="absolute -top-2 -right-1 px-1.5 py-0.2 rounded-full text-[9px] font-extrabold bg-emerald-600 text-white shadow-sm">
+                                          Đáp án
+                                        </span>
+                                      )}
+                                    </div>
+
+                                    <div
+                                      className={clsx(
+                                        "relative flex items-center justify-center min-w-[70px] px-3 py-1.5 rounded-xl text-xs font-bold transition-all border",
+                                        isStuFalse
+                                          ? "bg-rose-500 text-white border-rose-600 shadow-sm"
+                                          : isKeyFalse
+                                          ? "bg-emerald-50/60 dark:bg-emerald-950/20 text-emerald-700 dark:text-emerald-300 border-emerald-300 dark:border-emerald-700/60 border-dashed"
+                                          : "bg-white/80 dark:bg-slate-800/40 text-slate-400 dark:text-slate-500 border-black/5 dark:border-white/5"
+                                      )}
+                                    >
+                                      <span>Sai</span>
+                                      {isStuFalse && (
+                                        <span className="absolute -top-2 -right-1 px-1.5 py-0.2 rounded-full text-[9px] font-extrabold bg-blue-600 text-white shadow-sm">
+                                          Bạn chọn
+                                        </span>
+                                      )}
+                                      {!isStuFalse && isKeyFalse && (
+                                        <span className="absolute -top-2 -right-1 px-1.5 py-0.2 rounded-full text-[9px] font-extrabold bg-emerald-600 text-white shadow-sm">
+                                          Đáp án
+                                        </span>
+                                      )}
+                                    </div>
+                                  </div>
+                                </div>
+                              </div>
+                            );
+                          })}
+                        </div>
                       ) : null;
                     })()}
-                 </div>
+
+                    {/* ===== CÂU HỎI TRẢ LỜI NGẮN (SHORT_ANSWER) ===== */}
+                    {q.type === "short_answer" && (
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-3 mt-3">
+                        <div
+                          className={clsx(
+                            "rounded-2xl border p-4",
+                            isCorrect
+                              ? "border-emerald-200 bg-emerald-50/50 dark:border-emerald-800/30 dark:bg-emerald-950/20"
+                              : "border-rose-200 bg-rose-50/50 dark:border-rose-800/30 dark:bg-rose-950/20"
+                          )}
+                        >
+                          <span className="text-[11px] font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400 block mb-1">
+                            Câu trả lời của bạn:
+                          </span>
+                          <span
+                            className={clsx(
+                              "font-bold text-[15px]",
+                              isCorrect
+                                ? "text-emerald-900 dark:text-emerald-200"
+                                : "text-rose-900 dark:text-rose-200"
+                            )}
+                          >
+                            {studentAnswer ? (
+                              <MathText text={toMathRenderableText(studentAnswer)} />
+                            ) : (
+                              <em className="text-slate-400 font-normal">Chưa trả lời</em>
+                            )}
+                          </span>
+                        </div>
+
+                        {!isCorrect && (q.answer_key || q.answerKey) && (
+                          <div className="rounded-2xl border border-emerald-200 bg-emerald-50/50 dark:border-emerald-800/30 dark:bg-emerald-950/20 p-4">
+                            <span className="text-[11px] font-bold uppercase tracking-wider text-emerald-700 dark:text-emerald-400 block mb-1">
+                              Đáp án chính xác:
+                            </span>
+                            <span className="font-bold text-[15px] text-emerald-900 dark:text-emerald-200">
+                              <MathText text={toMathRenderableText(String(q.answer_key || q.answerKey))} />
+                            </span>
+                          </div>
+                        )}
+                      </div>
+                    )}
+
+                    {/* ===== CÂU HỎI TỰ LUẬN (ESSAY) ===== */}
+                    {q.type === "essay" && (
+                      <div className="space-y-3 mt-3">
+                        <div className="rounded-2xl border border-black/5 dark:border-white/5 bg-slate-50/50 dark:bg-slate-900/50 p-4 text-[15px] text-slate-800 dark:text-slate-200 whitespace-pre-wrap leading-relaxed">
+                          {studentAnswer ? (
+                            <MathText text={toMathRenderableText(studentAnswer)} />
+                          ) : (
+                            <em className="text-slate-400 dark:text-slate-500">Chưa nhập nội dung bài làm.</em>
+                          )}
+                        </div>
+
+                        {answer?.answer_image_url && (
+                          <div className="overflow-hidden rounded-2xl border border-black/5 dark:border-white/10 shadow-sm mt-3 bg-slate-50 dark:bg-slate-900/50">
+                            <p className="p-3 text-xs font-semibold text-slate-500 dark:text-slate-400 border-b border-black/5 dark:border-white/5">
+                              Ảnh bài làm đính kèm:
+                            </p>
+                            <img
+                              src={answer.answer_image_url}
+                              alt="Ảnh bài làm"
+                              className="max-h-96 w-auto object-contain mx-auto p-2"
+                            />
+                          </div>
+                        )}
+                      </div>
+                    )}
+                  </div>
+                </div>
               </div>
             </div>
-          </div>
-        );
-      })}
+          );
+        })
+      )}
     </div>
   );
 }

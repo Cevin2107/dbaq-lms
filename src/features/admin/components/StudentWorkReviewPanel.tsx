@@ -74,7 +74,18 @@ export function StudentWorkReviewPanel({
     return () => clearInterval(timer);
   }, [isSubmitted, isPaused]);
 
-  const answeredCountFromQuestions = questions.filter((q) => q.studentAnswer && q.type !== "section").length;
+  const answeredCountFromQuestions = questions.filter((q) => {
+    if (!q.studentAnswer || q.type === "section") return false;
+    if (q.type === "true_false") {
+      try {
+        const parsed = typeof q.studentAnswer === "string" ? JSON.parse(q.studentAnswer) : q.studentAnswer;
+        return Boolean(parsed && typeof parsed === "object" && Object.keys(parsed).length > 0);
+      } catch {
+        return false;
+      }
+    }
+    return true;
+  }).length;
   const answeredCount =
     typeof answeredCountOverride === "number" ? answeredCountOverride : answeredCountFromQuestions;
   const totalQuestions = countActualQuestions(questions as any);

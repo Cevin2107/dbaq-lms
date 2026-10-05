@@ -8,6 +8,7 @@ import { QuestionEditorModal } from "./QuestionEditorModal";
 import { GripVertical, Plus, Settings2, Trash2, Edit2, CheckCircle2 } from "lucide-react";
 import Toast from "@/components/Toast";
 import { MathText } from "@/components/MathText";
+import { broadcastQuestionsUpdate } from "@/lib/broadcastQuestions";
 
 export function QuestionBuilderTab({ assignmentId, initialQuestions }: { assignmentId: string; initialQuestions: any[] }) {
   const [questions, setQuestions] = useState<any[]>(initialQuestions);
@@ -108,6 +109,7 @@ export function QuestionBuilderTab({ assignmentId, initialQuestions }: { assignm
       if (!res.ok) {
         throw new Error("Reorder failed");
       }
+      broadcastQuestionsUpdate(assignmentId);
       setToast({ message: "Sắp xếp thành công", type: "success" });
     } catch {
       setToast({ message: "Sắp xếp thất bại", type: "error" });
@@ -120,6 +122,7 @@ export function QuestionBuilderTab({ assignmentId, initialQuestions }: { assignm
     try {
       const res = await fetch(`/api/admin/questions/${id}`, { method: "DELETE" });
       if (!res.ok) throw new Error("Xóa thất bại");
+      broadcastQuestionsUpdate(assignmentId);
       setToast({ message: "Xóa thành công", type: "success" });
       refreshQuestions();
     } catch (e) {
@@ -142,6 +145,7 @@ export function QuestionBuilderTab({ assignmentId, initialQuestions }: { assignm
         })
       });
       if (!res.ok) throw new Error("Xóa thất bại");
+      broadcastQuestionsUpdate(assignmentId);
       setToast({ message: `Đã xóa ${selectedIds.size} câu hỏi`, type: "success" });
       setSelectedIds(new Set());
       setIsSelectionMode(false);

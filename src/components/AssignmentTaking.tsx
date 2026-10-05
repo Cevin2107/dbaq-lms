@@ -253,38 +253,82 @@ export function AssignmentTaking({ assignment, questions: initialQuestions, init
     return () => clearTimeout(id);
   }, [answers, sessionId, isOnline]);
 
+  // Đồng bộ realtime tức thì khi giáo viên/admin thay đổi câu hỏi, số câu, hình ảnh, đáp án...
   useEffect(() => {
     if (!sessionId || submitting || hasSubmitted) return;
+
     const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!;
     const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!;
     const supabase = createClient(supabaseUrl, supabaseAnonKey);
+
     const fetchQuestions = async () => {
       try {
-        const res = await fetch(`/api/assignments/${assignment.id}/questions`);
+        const res = await fetch(`/api/assignments/${assignment.id}/questions?t=${Date.now()}`, {
+          cache: "no-store",
+          headers: {
+            "Cache-Control": "no-cache, no-store, must-revalidate",
+            Pragma: "no-cache",
+          },
+        });
         if (!res.ok) return;
         const data = await res.json();
         const newQs = data.questions as Question[];
         if (!newQs || !Array.isArray(newQs)) return;
-        
-        if (newQs.length !== questionsRef.current.length) {
+
+        // So sánh sâu để phát hiện mọi thay đổi: nội dung, số câu, hình ảnh, lựa chọn, subQuestions...
+        const currentQs = questionsRef.current;
+        const isDifferent =
+          newQs.length !== currentQs.length ||
+          JSON.stringify(newQs) !== JSON.stringify(currentQs);
+
+        if (isDifferent) {
           setQuestions(newQs);
-        } else if (newQs.length > 0) {
-          const updated = questionsRef.current.map(oldQ => {
-            const newQ = newQs.find(q => q.id === oldQ.id);
-            if (!newQ) return oldQ;
-            const hasChange = newQ.content !== oldQ.content || JSON.stringify(newQ.choices) !== JSON.stringify(oldQ.choices) || (newQ.imageUrl || '') !== (oldQ.imageUrl || '');
-            if (hasChange) {
-              if (!newQ.imageUrl && oldQ.imageUrl) return { ...newQ, imageUrl: oldQ.imageUrl };
-              return newQ;
-            }
-            return oldQ;
-          });
-          if (updated.some((q, i) => q !== questionsRef.current[i])) setQuestions(updated);
         }
-      } catch (err) {}
+      } catch (err) {
+        console.error("Error syncing questions in realtime:", err);
+      }
     };
-    const c = supabase.channel(`questions-${assignment.id}`).on('postgres_changes', { event: '*', schema: 'public', table: 'questions', filter: `assignment_id=eq.${assignment.id}` }, fetchQuestions).subscribe();
-    return () => { supabase.removeChannel(c); };
+
+    // 1. Kênh Realtime kết hợp Broadcast siêu tốc và Postgres CDC
+    const channelName = `assignment-sync-${assignment.id}`;
+    const channel = supabase
+      .channel(channelName)
+      // Nhận broadcast tức thì từ Admin khi vừa bấm lưu/xóa/thêm (<50ms)
+      .on("broadcast", { event: "questions_updated" }, () => {
+        fetchQuestions();
+      })
+      // Nhận postgres CDC trực tiếp từ bảng questions
+      .on(
+        "postgres_changes",
+        {
+          event: "*",
+          schema: "public",
+          table: "questions",
+          filter: `assignment_id=eq.${assignment.id}`,
+        },
+        () => {
+          fetchQuestions();
+        }
+      )
+      .subscribe();
+
+    // 2. Tự động đồng bộ ngay khi học sinh quay lại tab hoặc cửa sổ
+    const handleFocus = () => fetchQuestions();
+    const handleVisibilityChange = () => {
+      if (!document.hidden) fetchQuestions();
+    };
+    window.addEventListener("focus", handleFocus);
+    document.addEventListener("visibilitychange", handleVisibilityChange);
+
+    // 3. Heartbeat polling nhẹ nhàng định kỳ mỗi 8s (đề phòng mạng lag tạm thời)
+    const pollInterval = setInterval(fetchQuestions, 8000);
+
+    return () => {
+      clearInterval(pollInterval);
+      window.removeEventListener("focus", handleFocus);
+      document.removeEventListener("visibilitychange", handleVisibilityChange);
+      supabase.removeChannel(channel);
+    };
   }, [assignment.id, sessionId, submitting, hasSubmitted]);
 
   const timeUp = hasTimer && remaining === 0;

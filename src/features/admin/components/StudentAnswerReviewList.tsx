@@ -111,6 +111,61 @@ function getScoreBadge(isCorrect: boolean | null, pointsAwarded: number | undefi
   };
 }
 
+export function getStudentSubChoice(
+  studentAnswer: string | null | undefined,
+  sq: { id?: string; order?: number } | undefined,
+  index: number
+): "true" | "false" | null {
+  if (!studentAnswer) return null;
+  let parsed: Record<string, unknown> | null = null;
+  if (typeof studentAnswer === "object") {
+    parsed = studentAnswer as Record<string, unknown>;
+  } else {
+    try {
+      parsed = JSON.parse(studentAnswer);
+    } catch {
+      return null;
+    }
+  }
+  if (!parsed || typeof parsed !== "object") return null;
+
+  const candidateKeys: (string | number)[] = [];
+  if (sq?.id !== undefined && sq?.id !== null) {
+    candidateKeys.push(sq.id);
+    candidateKeys.push(String(sq.id));
+  }
+  candidateKeys.push(index);
+  candidateKeys.push(String(index));
+  candidateKeys.push(String.fromCharCode(97 + index)); // a, b, c, d
+  candidateKeys.push(String.fromCharCode(65 + index)); // A, B, C, D
+  if (sq?.order !== undefined && sq?.order !== null) {
+    candidateKeys.push(sq.order);
+    candidateKeys.push(String(sq.order));
+    candidateKeys.push(Number(sq.order) - 1);
+    candidateKeys.push(String(Number(sq.order) - 1));
+  }
+
+  for (const key of candidateKeys) {
+    if (key in parsed) {
+      const val = parsed[key as keyof typeof parsed];
+      if (val === true || val === "true" || val === "T" || val === "Đúng" || val === "dung") return "true";
+      if (val === false || val === "false" || val === "F" || val === "Sai" || val === "sai") return "false";
+    }
+  }
+
+  return null;
+}
+
+export function getSubAnswerKey(
+  sq?: { answerKey?: string | boolean; answer_key?: string | boolean } | null
+): "true" | "false" | null {
+  if (!sq) return null;
+  const rawKey = sq.answerKey ?? sq.answer_key;
+  if (rawKey === true || rawKey === "true" || rawKey === "T" || rawKey === "Đúng" || rawKey === "dung") return "true";
+  if (rawKey === false || rawKey === "false" || rawKey === "F" || rawKey === "Sai" || rawKey === "sai") return "false";
+  return null;
+}
+
 export function StudentAnswerReviewList({
   questions,
   isSubmitted,
@@ -182,8 +237,18 @@ export function StudentAnswerReviewList({
           }
 
           // ===== REGULAR QUESTION =====
-          const hasAnswer =
-            q.studentAnswer !== undefined && q.studentAnswer !== null && q.studentAnswer !== "";
+          const hasAnswer = (() => {
+            if (q.studentAnswer === undefined || q.studentAnswer === null || q.studentAnswer === "") return false;
+            if (q.type === "true_false") {
+              try {
+                const parsed = typeof q.studentAnswer === "string" ? JSON.parse(q.studentAnswer) : q.studentAnswer;
+                return Boolean(parsed && typeof parsed === "object" && Object.keys(parsed).length > 0);
+              } catch {
+                return false;
+              }
+            }
+            return true;
+          })();
           const regradeAnswer = regradeAnswers.get(q.questionId);
           const displayIsCorrect = regradingMode
             ? regradeAnswer?.isCorrect ?? (q.isCorrect ?? false)
@@ -286,6 +351,19 @@ export function StudentAnswerReviewList({
                       <div className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-bold bg-amber-50 border border-amber-200 text-amber-700 shadow-sm">
                         <Zap className="h-3.5 w-3.5" />
                         <span>{q.isCorrect ? "Đúng (tạm)" : "Sai (tạm)"}</span>
+                      </div>
+                    )}
+
+                    {!isSubmitted && q.type === "true_false" && hasAnswer && (
+                      <div className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-bold bg-blue-50 dark:bg-blue-900/30 border border-blue-200 dark:border-blue-800/40 text-blue-700 dark:text-blue-300 shadow-sm">
+                        <Zap className="h-3.5 w-3.5 text-blue-500" />
+                        <span>
+                          {(() => {
+                            const total = q.subQuestions?.length || 0;
+                            const done = q.subQuestions?.filter((sq, i) => getStudentSubChoice(q.studentAnswer, sq, i) !== null).length || 0;
+                            return `Đã chọn ${done}/${total} ý`;
+                          })()}
+                        </span>
                       </div>
                     )}
                   </div>
@@ -456,60 +534,114 @@ export function StudentAnswerReviewList({
                   </div>
                 ) : q.type === "true_false" ? (
                   /* ===== TRUE/FALSE TYPE ===== */
-                  <div className="space-y-2.5 mt-3">
-                    {q.subQuestions?.map((sq, i) => {
-                      const stuAnsObj = (() => {
-                        try {
-                          return JSON.parse(q.studentAnswer || "{}");
-                        } catch {
-                          return {};
-                        }
-                      })();
-                      const isStuTrue = stuAnsObj[sq.id] === "true";
-                      const isStuFalse = stuAnsObj[sq.id] === "false";
-                      const isKeyTrue = sq.answerKey === "true" || sq.answer_key === "true";
-                      const isKeyFalse = sq.answerKey === "false" || sq.answer_key === "false";
+                  <div className="space-y-3 mt-3">
+                    {/* Header thông tin so sánh nhanh */}
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 mb-1">
+                      <div className="flex items-center justify-between rounded-xl border border-blue-200 bg-blue-50/80 dark:bg-blue-900/20 dark:border-blue-800/30 px-3 py-2">
+                        <span className="text-xs font-semibold text-blue-700 dark:text-blue-300">
+                          <FileCheck className="h-3.5 w-3.5 inline mr-1 text-blue-600 dark:text-blue-400" />
+                          Tiến độ làm bài
+                        </span>
+                        <span className="inline-flex items-center rounded-full border border-blue-300 dark:border-blue-700 bg-blue-100 dark:bg-blue-900/40 px-2.5 py-0.5 text-xs font-bold text-blue-800 dark:text-blue-300">
+                          {(() => {
+                            const total = q.subQuestions?.length || 0;
+                            const done = q.subQuestions?.filter((sq, i) => getStudentSubChoice(q.studentAnswer, sq, i) !== null).length || 0;
+                            return `${done}/${total} ý`;
+                          })()}
+                        </span>
+                      </div>
+                      <div className="flex items-center justify-between rounded-xl border border-indigo-200 bg-indigo-50/80 dark:bg-indigo-900/20 dark:border-indigo-800/30 px-3 py-2">
+                        <span className="text-xs font-semibold text-indigo-700 dark:text-indigo-300">
+                          <CheckCircle2 className="h-3.5 w-3.5 inline mr-1 text-indigo-600 dark:text-indigo-400" />
+                          Hình thức
+                        </span>
+                        <span className="inline-flex items-center rounded-full border border-indigo-300 dark:border-indigo-700 bg-indigo-100 dark:bg-indigo-900/40 px-2.5 py-0.5 text-xs font-bold text-indigo-800 dark:text-indigo-300">
+                          Chọn Đúng hoặc Sai từng mệnh đề
+                        </span>
+                      </div>
+                    </div>
 
-                      const isCorrectSub = (isStuTrue && isKeyTrue) || (isStuFalse && isKeyFalse);
-                      const isIncorrectSub = (isStuTrue && isKeyFalse) || (isStuFalse && isKeyTrue);
+                    {q.subQuestions?.map((sq, i) => {
+                      const studentChoice = getStudentSubChoice(q.studentAnswer, sq, i);
+                      const isStuTrue = studentChoice === "true";
+                      const isStuFalse = studentChoice === "false";
+                      const hasAnsweredSub = studentChoice !== null;
+
+                      const keyChoice = getSubAnswerKey(sq);
+                      const isKeyTrue = keyChoice === "true";
+                      const isKeyFalse = keyChoice === "false";
+
+                      const isSubEvaluated = hasAnsweredSub && keyChoice !== null;
+                      const isCorrectSub = isSubEvaluated && studentChoice === keyChoice;
+                      const isIncorrectSub = isSubEvaluated && studentChoice !== keyChoice;
 
                       return (
                         <div
-                          key={sq.id}
-                          className="p-3 sm:p-4 rounded-2xl bg-white/80 dark:bg-slate-800/50 backdrop-blur-sm border border-slate-200/50 dark:border-slate-700/50 shadow-sm hover:shadow-md transition-all"
+                          key={sq.id || i}
+                          className="p-3.5 sm:p-4 rounded-2xl bg-white/80 dark:bg-slate-800/50 backdrop-blur-sm border border-slate-200/50 dark:border-slate-700/50 shadow-sm hover:shadow-md transition-all"
                         >
-                          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-                            <div className="space-y-1.5 flex-1">
-                              <div className="flex gap-2 text-sm text-slate-700 dark:text-slate-300">
-                                <span className="font-semibold text-slate-400 dark:text-slate-500">
-                                  {String.fromCharCode(97 + i)}.
+                          <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-3">
+                            <div className="space-y-2 flex-1 min-w-0">
+                              <div className="flex items-start gap-2.5 text-sm text-slate-800 dark:text-slate-200 leading-relaxed">
+                                <span className="flex-shrink-0 flex h-6 w-6 items-center justify-center rounded-lg bg-indigo-50 dark:bg-indigo-900/30 text-indigo-600 dark:text-indigo-400 font-bold text-xs">
+                                  {String.fromCharCode(97 + i)}
                                 </span>
-                                <span>
+                                <span className="break-words pt-0.5">
                                   <MathText text={toMathRenderableText(sq.content || "")} />
                                 </span>
                               </div>
-                              <div className="flex flex-wrap items-center gap-1.5">
+
+                              {/* Badges thông tin */}
+                              <div className="flex flex-wrap items-center gap-1.5 pt-0.5">
+                                {/* Lựa chọn của HS */}
                                 <span
-                                  className={`rounded-full border px-2.5 py-0.5 text-[11px] font-semibold ${
-                                    isCorrectSub
-                                      ? "bg-emerald-50 border-emerald-200 text-emerald-700 dark:bg-emerald-900/20 dark:border-emerald-800 dark:text-emerald-300"
-                                      : isIncorrectSub
-                                      ? "bg-rose-50 border-rose-200 text-rose-700 dark:bg-rose-900/20 dark:border-rose-800 dark:text-rose-300"
-                                      : "bg-slate-50 border-slate-200 text-slate-600 dark:bg-slate-800 dark:border-slate-700 dark:text-slate-400"
+                                  className={`inline-flex items-center gap-1 rounded-full border px-2.5 py-0.5 text-[11px] font-semibold ${
+                                    isStuTrue
+                                      ? "bg-emerald-50 border-emerald-300 text-emerald-800 dark:bg-emerald-900/30 dark:border-emerald-700 dark:text-emerald-300"
+                                      : isStuFalse
+                                      ? "bg-rose-50 border-rose-300 text-rose-800 dark:bg-rose-900/30 dark:border-rose-700 dark:text-rose-300"
+                                      : "bg-slate-100 border-slate-200 text-slate-500 dark:bg-slate-800 dark:border-slate-700 dark:text-slate-400"
                                   }`}
                                 >
-                                  HS chọn: {isStuTrue ? "Đúng" : isStuFalse ? "Sai" : "-"}
+                                  <FileCheck className="h-3 w-3" />
+                                  HS chọn: <strong className="font-bold">{isStuTrue ? "Đúng" : isStuFalse ? "Sai" : "Chưa chọn"}</strong>
                                 </span>
-                                <span className="rounded-full border border-emerald-200 dark:border-emerald-800 bg-emerald-50 dark:bg-emerald-900/20 px-2.5 py-0.5 text-[11px] font-semibold text-emerald-700 dark:text-emerald-300">
-                                  Đáp án: {isKeyTrue ? "Đúng" : isKeyFalse ? "Sai" : "-"}
+
+                                {/* Đáp án chuẩn */}
+                                <span className="inline-flex items-center gap-1 rounded-full border border-indigo-200 dark:border-indigo-800/60 bg-indigo-50/80 dark:bg-indigo-900/20 px-2.5 py-0.5 text-[11px] font-semibold text-indigo-700 dark:text-indigo-300">
+                                  <CheckCircle2 className="h-3 w-3 text-indigo-600 dark:text-indigo-400" />
+                                  Đáp án: <strong className="font-bold">{isKeyTrue ? "Đúng" : isKeyFalse ? "Sai" : "Chưa rõ"}</strong>
                                 </span>
+
+                                {/* Đánh giá kết quả (nếu học sinh đã chọn) */}
+                                {hasAnsweredSub && keyChoice !== null && (
+                                  <span
+                                    className={`inline-flex items-center gap-1 rounded-full border px-2.5 py-0.5 text-[11px] font-bold ${
+                                      isCorrectSub
+                                        ? "bg-emerald-100/80 border-emerald-300 text-emerald-800 dark:bg-emerald-900/40 dark:border-emerald-700 dark:text-emerald-200"
+                                        : "bg-rose-100/80 border-rose-300 text-rose-800 dark:bg-rose-900/40 dark:border-rose-700 dark:text-rose-200"
+                                    }`}
+                                  >
+                                    {isCorrectSub ? (
+                                      <>
+                                        <CheckCircle2 className="h-3 w-3" />
+                                        {isSubmitted ? "Đúng" : "Đúng (tạm)"}
+                                      </>
+                                    ) : (
+                                      <>
+                                        <XCircle className="h-3 w-3" />
+                                        {isSubmitted ? "Sai" : "Sai (tạm)"}
+                                      </>
+                                    )}
+                                  </span>
+                                )}
                               </div>
                             </div>
 
-                            {/* Regrade toggle buttons */}
-                            <div className="flex items-center gap-1.5 shrink-0">
+                            {/* Cột hiển thị lựa chọn Đúng / Sai trực quan */}
+                            <div className="flex items-center gap-2 shrink-0 self-end lg:self-center">
                               {regradingMode && onSetSubQuestionAnswer ? (
-                                <>
+                                <div className="flex items-center gap-1.5 p-1 rounded-xl bg-slate-100 dark:bg-slate-800/80 border border-slate-200 dark:border-slate-700">
                                   <button
                                     onClick={() =>
                                       onSetSubQuestionAnswer(
@@ -520,13 +652,13 @@ export function StudentAnswerReviewList({
                                         q.subQuestions?.length || 0
                                       )
                                     }
-                                    className={`px-3 py-1.5 text-xs font-semibold rounded-full transition-all duration-200 ${
+                                    className={`px-3 py-1.5 text-xs font-semibold rounded-lg transition-all duration-200 ${
                                       regradeAnswer?.subAnswers?.[i.toString()] === true
-                                        ? "bg-emerald-100 dark:bg-emerald-900/40 border border-emerald-300 dark:border-emerald-700 text-emerald-800 dark:text-emerald-300 ring-2 ring-emerald-200 dark:ring-emerald-700/50 shadow-md"
-                                        : "bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 border border-slate-300 dark:border-slate-600 hover:bg-emerald-50 dark:hover:bg-emerald-900/20"
+                                        ? "bg-emerald-600 text-white shadow-md shadow-emerald-600/30"
+                                        : "text-slate-600 dark:text-slate-400 hover:bg-emerald-50 dark:hover:bg-emerald-950/30 hover:text-emerald-700 dark:hover:text-emerald-300"
                                     }`}
                                   >
-                                    Đúng
+                                    ✓ Chấm Đúng
                                   </button>
                                   <button
                                     onClick={() =>
@@ -538,36 +670,63 @@ export function StudentAnswerReviewList({
                                         q.subQuestions?.length || 0
                                       )
                                     }
-                                    className={`px-3 py-1.5 text-xs font-semibold rounded-full transition-all duration-200 ${
+                                    className={`px-3 py-1.5 text-xs font-semibold rounded-lg transition-all duration-200 ${
                                       regradeAnswer?.subAnswers?.[i.toString()] === false
-                                        ? "bg-rose-100 dark:bg-rose-900/40 border border-rose-300 dark:border-rose-700 text-rose-800 dark:text-rose-300 ring-2 ring-rose-200 dark:ring-rose-700/50 shadow-md"
-                                        : "bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 border border-slate-300 dark:border-slate-600 hover:bg-rose-50 dark:hover:bg-rose-900/20"
+                                        ? "bg-rose-600 text-white shadow-md shadow-rose-600/30"
+                                        : "text-slate-600 dark:text-slate-400 hover:bg-rose-50 dark:hover:bg-rose-950/30 hover:text-rose-700 dark:hover:text-rose-300"
                                     }`}
                                   >
-                                    Sai
+                                    ✗ Chấm Sai
                                   </button>
-                                </>
+                                </div>
                               ) : (
-                                <>
-                                  <span
-                                    className={`px-3 py-1.5 text-xs font-semibold rounded-full transition-all ${
-                                      isCorrectSub
-                                        ? "bg-emerald-50 dark:bg-emerald-900/30 border border-emerald-200 dark:border-emerald-700 text-emerald-700 dark:text-emerald-300 ring-2 ring-emerald-200 dark:ring-emerald-700/50 shadow-md"
-                                        : "bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-400 border border-slate-200 dark:border-slate-700"
+                                <div className="flex items-center gap-2">
+                                  {/* Nút / Thẻ hiển thị ĐÚNG */}
+                                  <div
+                                    className={`relative flex items-center justify-center min-w-[76px] px-3.5 py-2 rounded-xl text-xs font-bold transition-all duration-200 border ${
+                                      isStuTrue
+                                        ? "bg-emerald-500 text-white border-emerald-600 shadow-md shadow-emerald-500/25 ring-2 ring-emerald-400/50"
+                                        : isKeyTrue
+                                        ? "bg-emerald-50/70 dark:bg-emerald-950/30 text-emerald-700 dark:text-emerald-300 border-emerald-300 dark:border-emerald-700/60 border-dashed"
+                                        : "bg-slate-50 dark:bg-slate-800/40 text-slate-400 dark:text-slate-500 border-slate-200 dark:border-slate-700/60"
                                     }`}
                                   >
-                                    Đúng
-                                  </span>
-                                  <span
-                                    className={`px-3 py-1.5 text-xs font-semibold rounded-full transition-all ${
-                                      isIncorrectSub
-                                        ? "bg-rose-50 dark:bg-rose-900/30 border border-rose-200 dark:border-rose-700 text-rose-700 dark:text-rose-300 ring-2 ring-rose-200 dark:ring-rose-700/50 shadow-md"
-                                        : "bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-400 border border-slate-200 dark:border-slate-700"
+                                    <span>Đúng</span>
+                                    {isStuTrue && (
+                                      <span className="absolute -top-2 -right-1 px-1.5 py-0.2 rounded-full text-[9px] font-extrabold bg-blue-600 text-white border border-white shadow-sm">
+                                        HS chọn
+                                      </span>
+                                    )}
+                                    {!isStuTrue && isKeyTrue && (
+                                      <span className="absolute -top-2 -right-1 px-1.5 py-0.2 rounded-full text-[9px] font-extrabold bg-emerald-600 text-white border border-white shadow-sm">
+                                        Đáp án
+                                      </span>
+                                    )}
+                                  </div>
+
+                                  {/* Nút / Thẻ hiển thị SAI */}
+                                  <div
+                                    className={`relative flex items-center justify-center min-w-[76px] px-3.5 py-2 rounded-xl text-xs font-bold transition-all duration-200 border ${
+                                      isStuFalse
+                                        ? "bg-rose-500 text-white border-rose-600 shadow-md shadow-rose-500/25 ring-2 ring-rose-400/50"
+                                        : isKeyFalse
+                                        ? "bg-emerald-50/70 dark:bg-emerald-950/30 text-emerald-700 dark:text-emerald-300 border-emerald-300 dark:border-emerald-700/60 border-dashed"
+                                        : "bg-slate-50 dark:bg-slate-800/40 text-slate-400 dark:text-slate-500 border-slate-200 dark:border-slate-700/60"
                                     }`}
                                   >
-                                    Sai
-                                  </span>
-                                </>
+                                    <span>Sai</span>
+                                    {isStuFalse && (
+                                      <span className="absolute -top-2 -right-1 px-1.5 py-0.2 rounded-full text-[9px] font-extrabold bg-blue-600 text-white border border-white shadow-sm">
+                                        HS chọn
+                                      </span>
+                                    )}
+                                    {!isStuFalse && isKeyFalse && (
+                                      <span className="absolute -top-2 -right-1 px-1.5 py-0.2 rounded-full text-[9px] font-extrabold bg-emerald-600 text-white border border-white shadow-sm">
+                                        Đáp án
+                                      </span>
+                                    )}
+                                  </div>
+                                </div>
                               )}
                             </div>
                           </div>
