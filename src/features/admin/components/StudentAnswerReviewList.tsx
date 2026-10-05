@@ -113,7 +113,7 @@ function getScoreBadge(isCorrect: boolean | null, pointsAwarded: number | undefi
 
 export function getStudentSubChoice(
   studentAnswer: string | null | undefined,
-  sq: { id?: string; order?: number } | undefined,
+  sq: { id?: string | number; order?: number } | undefined,
   index: number
 ): "true" | "false" | null {
   if (!studentAnswer) return null;
@@ -127,30 +127,81 @@ export function getStudentSubChoice(
       return null;
     }
   }
-  if (!parsed || typeof parsed !== "object") return null;
+  if (!parsed) return null;
 
-  const candidateKeys: (string | number)[] = [];
-  if (sq?.id !== undefined && sq?.id !== null) {
-    candidateKeys.push(sq.id);
-    candidateKeys.push(String(sq.id));
-  }
-  candidateKeys.push(index);
-  candidateKeys.push(String(index));
-  candidateKeys.push(String.fromCharCode(97 + index)); // a, b, c, d
-  candidateKeys.push(String.fromCharCode(65 + index)); // A, B, C, D
-  if (sq?.order !== undefined && sq?.order !== null) {
-    candidateKeys.push(sq.order);
-    candidateKeys.push(String(sq.order));
-    candidateKeys.push(Number(sq.order) - 1);
-    candidateKeys.push(String(Number(sq.order) - 1));
-  }
+  const normalizeVal = (val: unknown): "true" | "false" | null => {
+    if (val === true || val === "true" || val === "T" || val === "Đúng" || val === "dung" || val === 1 || val === "1") return "true";
+    if (val === false || val === "false" || val === "F" || val === "Sai" || val === "sai" || val === 0 || val === "0") return "false";
+    return null;
+  };
 
-  for (const key of candidateKeys) {
-    if (key in parsed) {
-      const val = parsed[key as keyof typeof parsed];
-      if (val === true || val === "true" || val === "T" || val === "Đúng" || val === "dung") return "true";
-      if (val === false || val === "false" || val === "F" || val === "Sai" || val === "sai") return "false";
+  // Case 1: Array of answers [ "true", "false", ... ]
+  if (Array.isArray(parsed)) {
+    if (index >= 0 && index < parsed.length) {
+      const res = normalizeVal(parsed[index]);
+      if (res !== null) return res;
     }
+    return null;
+  }
+
+  if (typeof parsed !== "object") return null;
+
+  // Case 2: Exact sq.id match (e.g. UUID or specific string ID)
+  if (sq?.id !== undefined && sq?.id !== null) {
+    const rawId = String(sq.id);
+    if (rawId in parsed) {
+      const res = normalizeVal(parsed[rawId]);
+      if (res !== null) return res;
+    }
+  }
+
+  // Case 3: Letter match ('a', 'b', 'c', 'd' or 'A', 'B', 'C', 'D')
+  const lowerLetter = String.fromCharCode(97 + index);
+  const upperLetter = String.fromCharCode(65 + index);
+  if (lowerLetter in parsed) {
+    const res = normalizeVal(parsed[lowerLetter]);
+    if (res !== null) return res;
+  }
+  if (upperLetter in parsed) {
+    const res = normalizeVal(parsed[upperLetter]);
+    if (res !== null) return res;
+  }
+
+  // Case 4: Numeric / order keys detection
+  const keys = Object.keys(parsed);
+  const hasZero = keys.includes("0");
+  const hasOne = keys.includes("1");
+
+  if (hasZero) {
+    // 0-based indexed: 0, 1, 2, 3
+    const keyStr = String(index);
+    if (keyStr in parsed) {
+      const res = normalizeVal(parsed[keyStr]);
+      if (res !== null) return res;
+    }
+  } else if (hasOne) {
+    // 1-based indexed: 1, 2, 3, 4
+    const orderKey = String(sq?.order ?? (index + 1));
+    if (orderKey in parsed) {
+      const res = normalizeVal(parsed[orderKey]);
+      if (res !== null) return res;
+    }
+  } else if (sq?.order !== undefined && sq?.order !== null) {
+    const orderKey = String(sq.order);
+    if (orderKey in parsed) {
+      const res = normalizeVal(parsed[orderKey]);
+      if (res !== null) return res;
+    }
+  }
+
+  // Fallback: Check index or order if not already checked
+  if (String(index) in parsed) {
+    const res = normalizeVal(parsed[String(index)]);
+    if (res !== null) return res;
+  }
+  if (String(index + 1) in parsed) {
+    const res = normalizeVal(parsed[String(index + 1)]);
+    if (res !== null) return res;
   }
 
   return null;
@@ -596,10 +647,8 @@ export function StudentAnswerReviewList({
                                 {/* Lựa chọn của HS */}
                                 <span
                                   className={`inline-flex items-center gap-1 rounded-full border px-2.5 py-0.5 text-[11px] font-semibold ${
-                                    isStuTrue
-                                      ? "bg-emerald-50 border-emerald-300 text-emerald-800 dark:bg-emerald-900/30 dark:border-emerald-700 dark:text-emerald-300"
-                                      : isStuFalse
-                                      ? "bg-rose-50 border-rose-300 text-rose-800 dark:bg-rose-900/30 dark:border-rose-700 dark:text-rose-300"
+                                    hasAnsweredSub
+                                      ? "bg-blue-50 border-blue-200 text-blue-700 dark:bg-blue-900/30 dark:border-blue-700 dark:text-blue-300"
                                       : "bg-slate-100 border-slate-200 text-slate-500 dark:bg-slate-800 dark:border-slate-700 dark:text-slate-400"
                                   }`}
                                 >
@@ -684,22 +733,36 @@ export function StudentAnswerReviewList({
                                   {/* Nút / Thẻ hiển thị ĐÚNG */}
                                   <div
                                     className={`relative flex items-center justify-center min-w-[76px] px-3.5 py-2 rounded-xl text-xs font-bold transition-all duration-200 border ${
-                                      isStuTrue
+                                      isStuTrue && isKeyTrue
                                         ? "bg-emerald-500 text-white border-emerald-600 shadow-md shadow-emerald-500/25 ring-2 ring-emerald-400/50"
-                                        : isKeyTrue
-                                        ? "bg-emerald-50/70 dark:bg-emerald-950/30 text-emerald-700 dark:text-emerald-300 border-emerald-300 dark:border-emerald-700/60 border-dashed"
-                                        : "bg-slate-50 dark:bg-slate-800/40 text-slate-400 dark:text-slate-500 border-slate-200 dark:border-slate-700/60"
+                                        : isStuTrue && keyChoice !== null && !isKeyTrue
+                                        ? "bg-rose-500 text-white border-rose-600 shadow-md shadow-rose-500/25 ring-2 ring-rose-400/50"
+                                        : !isStuTrue && isKeyTrue
+                                        ? "bg-emerald-50/80 dark:bg-emerald-950/30 text-emerald-700 dark:text-emerald-300 border-2 border-dashed border-emerald-400 dark:border-emerald-600"
+                                        : isStuTrue
+                                        ? "bg-[#0066cc] text-white border-[#0066cc] shadow-md shadow-blue-500/25"
+                                        : "bg-slate-50 dark:bg-slate-800/40 text-slate-400 dark:text-slate-500 border border-slate-200 dark:border-slate-700/60"
                                     }`}
                                   >
                                     <span>Đúng</span>
-                                    {isStuTrue && (
-                                      <span className="absolute -top-2 -right-1 px-1.5 py-0.2 rounded-full text-[9px] font-extrabold bg-blue-600 text-white border border-white shadow-sm">
-                                        HS chọn
+                                    {isStuTrue && isKeyTrue && (
+                                      <span className="absolute -top-2.5 -right-1 px-1.5 py-0.2 rounded-full text-[9px] font-extrabold bg-blue-600 text-white border border-white shadow-sm whitespace-nowrap">
+                                        HS chọn • ✓
+                                      </span>
+                                    )}
+                                    {isStuTrue && keyChoice !== null && !isKeyTrue && (
+                                      <span className="absolute -top-2.5 -right-1 px-1.5 py-0.2 rounded-full text-[9px] font-extrabold bg-rose-700 text-white border border-white shadow-sm whitespace-nowrap">
+                                        HS chọn • ✗
                                       </span>
                                     )}
                                     {!isStuTrue && isKeyTrue && (
-                                      <span className="absolute -top-2 -right-1 px-1.5 py-0.2 rounded-full text-[9px] font-extrabold bg-emerald-600 text-white border border-white shadow-sm">
+                                      <span className="absolute -top-2.5 -right-1 px-1.5 py-0.2 rounded-full text-[9px] font-extrabold bg-emerald-600 text-white border border-white shadow-sm whitespace-nowrap">
                                         Đáp án
+                                      </span>
+                                    )}
+                                    {isStuTrue && keyChoice === null && (
+                                      <span className="absolute -top-2.5 -right-1 px-1.5 py-0.2 rounded-full text-[9px] font-extrabold bg-blue-600 text-white border border-white shadow-sm whitespace-nowrap">
+                                        HS chọn
                                       </span>
                                     )}
                                   </div>
@@ -707,22 +770,36 @@ export function StudentAnswerReviewList({
                                   {/* Nút / Thẻ hiển thị SAI */}
                                   <div
                                     className={`relative flex items-center justify-center min-w-[76px] px-3.5 py-2 rounded-xl text-xs font-bold transition-all duration-200 border ${
-                                      isStuFalse
+                                      isStuFalse && isKeyFalse
+                                        ? "bg-emerald-500 text-white border-emerald-600 shadow-md shadow-emerald-500/25 ring-2 ring-emerald-400/50"
+                                        : isStuFalse && keyChoice !== null && !isKeyFalse
                                         ? "bg-rose-500 text-white border-rose-600 shadow-md shadow-rose-500/25 ring-2 ring-rose-400/50"
-                                        : isKeyFalse
-                                        ? "bg-emerald-50/70 dark:bg-emerald-950/30 text-emerald-700 dark:text-emerald-300 border-emerald-300 dark:border-emerald-700/60 border-dashed"
-                                        : "bg-slate-50 dark:bg-slate-800/40 text-slate-400 dark:text-slate-500 border-slate-200 dark:border-slate-700/60"
+                                        : !isStuFalse && isKeyFalse
+                                        ? "bg-emerald-50/80 dark:bg-emerald-950/30 text-emerald-700 dark:text-emerald-300 border-2 border-dashed border-emerald-400 dark:border-emerald-600"
+                                        : isStuFalse
+                                        ? "bg-[#0066cc] text-white border-[#0066cc] shadow-md shadow-blue-500/25"
+                                        : "bg-slate-50 dark:bg-slate-800/40 text-slate-400 dark:text-slate-500 border border-slate-200 dark:border-slate-700/60"
                                     }`}
                                   >
                                     <span>Sai</span>
-                                    {isStuFalse && (
-                                      <span className="absolute -top-2 -right-1 px-1.5 py-0.2 rounded-full text-[9px] font-extrabold bg-blue-600 text-white border border-white shadow-sm">
-                                        HS chọn
+                                    {isStuFalse && isKeyFalse && (
+                                      <span className="absolute -top-2.5 -right-1 px-1.5 py-0.2 rounded-full text-[9px] font-extrabold bg-blue-600 text-white border border-white shadow-sm whitespace-nowrap">
+                                        HS chọn • ✓
+                                      </span>
+                                    )}
+                                    {isStuFalse && keyChoice !== null && !isKeyFalse && (
+                                      <span className="absolute -top-2.5 -right-1 px-1.5 py-0.2 rounded-full text-[9px] font-extrabold bg-rose-700 text-white border border-white shadow-sm whitespace-nowrap">
+                                        HS chọn • ✗
                                       </span>
                                     )}
                                     {!isStuFalse && isKeyFalse && (
-                                      <span className="absolute -top-2 -right-1 px-1.5 py-0.2 rounded-full text-[9px] font-extrabold bg-emerald-600 text-white border border-white shadow-sm">
+                                      <span className="absolute -top-2.5 -right-1 px-1.5 py-0.2 rounded-full text-[9px] font-extrabold bg-emerald-600 text-white border border-white shadow-sm whitespace-nowrap">
                                         Đáp án
+                                      </span>
+                                    )}
+                                    {isStuFalse && keyChoice === null && (
+                                      <span className="absolute -top-2.5 -right-1 px-1.5 py-0.2 rounded-full text-[9px] font-extrabold bg-blue-600 text-white border border-white shadow-sm whitespace-nowrap">
+                                        HS chọn
                                       </span>
                                     )}
                                   </div>

@@ -315,9 +315,10 @@ export const AssignmentQuestion = memo(function AssignmentQuestion({
         <div className="mt-4 space-y-3">
           {q.subQuestions.map((sq, si) => {
             const tfAnswers = (() => { try { return JSON.parse(answer || "{}"); } catch { return {}; } })();
-            const selected = tfAnswers[sq.id];
+            const subId = sq.id || (sq.order !== undefined && sq.order !== null ? String(sq.order) : String(si));
+            const selected = tfAnswers[subId] ?? (sq.id ? tfAnswers[sq.id] : undefined) ?? tfAnswers[String(si)] ?? (sq.order ? tfAnswers[String(sq.order)] : undefined);
             return (
-              <div key={sq.id} className={clsx(
+              <div key={sq.id || si} className={clsx(
                 "flex flex-col sm:flex-row sm:items-center gap-3 rounded-2xl border px-4 py-3 sm:py-4 transition-all duration-300",
                 isDark ? "bg-slate-800/50 border-slate-700 hover:bg-slate-800" : "bg-slate-50/80 border-slate-200 hover:bg-white hover:shadow-sm"
               )}>
@@ -334,7 +335,8 @@ export const AssignmentQuestion = memo(function AssignmentQuestion({
                       type="button"
                       disabled={locked}
                       onClick={() => {
-                        const updated = { ...tfAnswers, [sq.id]: val };
+                        const updated = { ...tfAnswers, [subId]: val };
+                        if (sq.id && sq.id !== subId) updated[sq.id] = val;
                         onSetChoice(q.id, JSON.stringify(updated));
                       }}
                       className={clsx(
