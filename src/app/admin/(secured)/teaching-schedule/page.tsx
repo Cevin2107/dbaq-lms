@@ -19,8 +19,6 @@ import {
   Search,
   X,
   AlertCircle,
-  CalendarCheck,
-  UserCheck,
 } from "lucide-react";
 import { Button } from "@/components/ui/Button";
 import clsx from "clsx";
@@ -412,63 +410,7 @@ export default function TeachingSchedulePage() {
         </div>
       </div>
 
-      {/* ─── 3. Executive KPI Stats Overview (Command Center) ─── */}
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-3.5 sm:gap-4 md:gap-5">
-        {/* Stat 1: Shifts */}
-        <div className="rounded-[2.25rem] bg-white/80 dark:bg-[#18181b]/80 backdrop-blur-2xl border border-white/80 dark:border-white/10 p-5 sm:p-6 shadow-[0_8px_30px_rgba(0,0,0,0.04)] dark:shadow-[0_12px_36px_rgba(0,0,0,0.5)] hover:shadow-md hover:-translate-y-0.5 transition-all duration-300 ease-spring">
-          <div className="flex items-center justify-between text-slate-500 dark:text-slate-400 mb-2">
-            <span className="text-xs font-bold">Khung Ca học</span>
-            <div className="h-8 w-8 rounded-xl bg-blue-500/10 text-[#0066cc] dark:text-blue-400 flex items-center justify-center">
-              <Clock className="h-4 w-4" />
-            </div>
-          </div>
-          <div className="text-2xl sm:text-3xl font-extrabold text-[#1d1d1f] dark:text-white">
-            {shifts.length}
-          </div>
-          <p className="text-[11px] text-slate-400 mt-1">Đang thiết lập trong ngày</p>
-        </div>
 
-        {/* Stat 2: Available Slots */}
-        <div className="rounded-[2.25rem] bg-white/80 dark:bg-[#18181b]/80 backdrop-blur-2xl border border-white/80 dark:border-white/10 p-5 sm:p-6 shadow-[0_8px_30px_rgba(0,0,0,0.04)] dark:shadow-[0_12px_36px_rgba(0,0,0,0.5)] hover:shadow-md hover:-translate-y-0.5 transition-all duration-300 ease-spring">
-          <div className="flex items-center justify-between text-slate-500 dark:text-slate-400 mb-2">
-            <span className="text-xs font-bold">Tổng Ca rảnh mở</span>
-            <div className="h-8 w-8 rounded-xl bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 flex items-center justify-center">
-              <CalendarCheck className="h-4 w-4" />
-            </div>
-          </div>
-          <div className="text-2xl sm:text-3xl font-extrabold text-emerald-600 dark:text-emerald-400">
-            {availableSchedules.length}
-          </div>
-          <p className="text-[11px] text-slate-400 mt-1">Ca mở cho học sinh chọn</p>
-        </div>
-
-        {/* Stat 3: Registered Students */}
-        <div className="rounded-[2.25rem] bg-white/80 dark:bg-[#18181b]/80 backdrop-blur-2xl border border-white/80 dark:border-white/10 p-5 sm:p-6 shadow-[0_8px_30px_rgba(0,0,0,0.04)] dark:shadow-[0_12px_36px_rgba(0,0,0,0.5)] hover:shadow-md hover:-translate-y-0.5 transition-all duration-300 ease-spring">
-          <div className="flex items-center justify-between text-slate-500 dark:text-slate-400 mb-2">
-            <span className="text-xs font-bold">Học sinh đã đăng ký</span>
-            <div className="h-8 w-8 rounded-xl bg-indigo-500/10 text-indigo-600 dark:text-indigo-400 flex items-center justify-center">
-              <UserCheck className="h-4 w-4" />
-            </div>
-          </div>
-          <div className="text-2xl sm:text-3xl font-extrabold text-[#1d1d1f] dark:text-white">
-            <span>{totalRegisteredStudents}</span>
-            <span className="text-sm font-semibold text-slate-400 ml-1">/ {studentLimits.length}</span>
-          </div>
-          <p className="text-[11px] text-slate-400 mt-1">Học sinh đã chọn lịch</p>
-        </div>
-
-        {/* Stat 4: Total Booked Slots */}
-        <div className="rounded-[1.75rem] bg-white/80 dark:bg-[#1d1d1f]/80 backdrop-blur-xl border border-black/5 dark:border-white/5 p-4 sm:p-5 shadow-sm">
-          <div className="flex items-center justify-between text-slate-500 dark:text-slate-400 mb-2">
-            <span className="text-xs font-semibold">Tổng lượt ca chốt</span>
-            <Sparkles className="h-4 w-4 text-amber-500" />
-          </div>
-          <div className="text-2xl sm:text-3xl font-extrabold text-amber-600 dark:text-amber-400">
-            {totalRegisteredSlots}
-          </div>
-          <p className="text-[11px] text-slate-400 mt-1">Lượt ca học đã xác nhận</p>
-        </div>
-      </div>
 
       {/* Floating Alert Feedback */}
       {message.text && (
@@ -599,15 +541,6 @@ export default function TeachingSchedulePage() {
               title="Bỏ chọn toàn bộ ca"
             >
               Đóng tất cả
-            </Button>
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={handleCopyLink}
-              className="rounded-full border-blue-200 dark:border-blue-900/60 text-[#0066cc] dark:text-blue-400 hover:bg-blue-50 dark:hover:bg-blue-950/40 text-xs font-bold px-4"
-            >
-              {copied ? <Check className="h-3.5 w-3.5 mr-1.5 text-emerald-500 stroke-[3]" /> : <Copy className="h-3.5 w-3.5 mr-1.5" />}
-              <span>{copied ? "Đã chép link!" : "Sao chép link gửi HS"}</span>
             </Button>
             <Button
               onClick={handleSaveAvailability}
