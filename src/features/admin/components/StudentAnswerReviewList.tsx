@@ -313,20 +313,64 @@ export function StudentAnswerReviewList({
 
           const typeInfo = getQuestionTypeLabel(q.type);
 
+          // Check if true_false is all correct or partial
+          const tfStats = !isSubmitted && q.type === "true_false" ? (() => {
+            const total = q.subQuestions?.length || 0;
+            if (total === 0) return { total: 0, done: 0, correct: 0, allCorrect: false, allWrong: false };
+            let done = 0;
+            let correct = 0;
+            for (let i = 0; i < total; i++) {
+              const sq = q.subQuestions![i];
+              const stu = getStudentSubChoice(q.studentAnswer, sq, i);
+              const key = getSubAnswerKey(sq);
+              if (stu !== null) {
+                done++;
+                if (key !== null && stu === key) correct++;
+              }
+            }
+            return {
+              total,
+              done,
+              correct,
+              allCorrect: done === total && correct === total,
+              allWrong: done === total && correct === 0,
+            };
+          })() : null;
+
           // Determine top bar color
           const topBarColor = hasAnswer
-            ? isSubmitted && displayIsCorrect
+            ? isSubmitted
+              ? displayIsCorrect
+                ? "bg-gradient-to-r from-emerald-400 to-emerald-500"
+                : "bg-gradient-to-r from-rose-400 to-rose-500"
+              : q.type === "mcq" || q.type === "short_answer"
+              ? q.isCorrect === true
+                ? "bg-gradient-to-r from-emerald-400 to-emerald-500"
+                : q.isCorrect === false
+                ? "bg-gradient-to-r from-rose-400 to-rose-500"
+                : "bg-gradient-to-r from-[#0066cc] to-blue-400"
+              : tfStats?.allCorrect
               ? "bg-gradient-to-r from-emerald-400 to-emerald-500"
-              : isSubmitted && !displayIsCorrect
+              : tfStats?.allWrong
               ? "bg-gradient-to-r from-rose-400 to-rose-500"
               : "bg-gradient-to-r from-[#0066cc] to-blue-400"
             : "bg-gradient-to-r from-slate-300 to-slate-400 dark:from-slate-700 dark:to-slate-600";
 
           // Question number circle color
           const numberCircleColor = hasAnswer
-            ? isSubmitted && displayIsCorrect
+            ? isSubmitted
+              ? displayIsCorrect
+                ? "bg-gradient-to-br from-emerald-500 to-emerald-600 text-white shadow-emerald-500/30"
+                : "bg-gradient-to-br from-rose-500 to-rose-600 text-white shadow-rose-500/30"
+              : q.type === "mcq" || q.type === "short_answer"
+              ? q.isCorrect === true
+                ? "bg-gradient-to-br from-emerald-500 to-emerald-600 text-white shadow-emerald-500/30"
+                : q.isCorrect === false
+                ? "bg-gradient-to-br from-rose-500 to-rose-600 text-white shadow-rose-500/30"
+                : "bg-gradient-to-br from-[#0066cc] to-blue-500 text-white shadow-blue-500/20"
+              : tfStats?.allCorrect
               ? "bg-gradient-to-br from-emerald-500 to-emerald-600 text-white shadow-emerald-500/30"
-              : isSubmitted && !displayIsCorrect
+              : tfStats?.allWrong
               ? "bg-gradient-to-br from-rose-500 to-rose-600 text-white shadow-rose-500/30"
               : "bg-gradient-to-br from-[#0066cc] to-blue-500 text-white shadow-blue-500/20"
             : "bg-slate-300 dark:bg-slate-600 text-white shadow-slate-400/30";
@@ -399,24 +443,61 @@ export function StudentAnswerReviewList({
                     )}
 
                     {!isSubmitted && (q.type === "mcq" || q.type === "short_answer") && q.studentAnswer && (
-                      <div className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-bold bg-amber-50 border border-amber-200 text-amber-700 shadow-sm">
-                        <Zap className="h-3.5 w-3.5" />
-                        <span>{q.isCorrect ? "Đúng (tạm)" : "Sai (tạm)"}</span>
-                      </div>
+                      q.isCorrect === true ? (
+                        <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-emerald-50 dark:bg-emerald-950/40 border border-emerald-300 dark:border-emerald-700 text-emerald-700 dark:text-emerald-300 shadow-sm">
+                          <CheckCircle2 className="h-3.5 w-3.5 text-emerald-600 dark:text-emerald-400" />
+                          <span>Đúng (tạm)</span>
+                        </div>
+                      ) : q.isCorrect === false ? (
+                        <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-rose-50 dark:bg-rose-950/40 border border-rose-300 dark:border-rose-700 text-rose-700 dark:text-rose-300 shadow-sm">
+                          <XCircle className="h-3.5 w-3.5 text-rose-600 dark:text-rose-400" />
+                          <span>Sai (tạm)</span>
+                        </div>
+                      ) : (
+                        <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-blue-50 dark:bg-blue-950/40 border border-blue-200 dark:border-blue-800 text-blue-700 dark:text-blue-300 shadow-sm">
+                          <Zap className="h-3.5 w-3.5 text-blue-500" />
+                          <span>Đã làm (tạm)</span>
+                        </div>
+                      )
                     )}
 
-                    {!isSubmitted && q.type === "true_false" && hasAnswer && (
-                      <div className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-bold bg-blue-50 dark:bg-blue-900/30 border border-blue-200 dark:border-blue-800/40 text-blue-700 dark:text-blue-300 shadow-sm">
-                        <Zap className="h-3.5 w-3.5 text-blue-500" />
-                        <span>
-                          {(() => {
-                            const total = q.subQuestions?.length || 0;
-                            const done = q.subQuestions?.filter((sq, i) => getStudentSubChoice(q.studentAnswer, sq, i) !== null).length || 0;
-                            return `Đã chọn ${done}/${total} ý`;
-                          })()}
-                        </span>
-                      </div>
-                    )}
+                    {!isSubmitted && q.type === "true_false" && hasAnswer && (() => {
+                      if (!tfStats) return null;
+                      const { total, done, correct, allCorrect, allWrong } = tfStats;
+                      if (allCorrect) {
+                        return (
+                          <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-emerald-50 dark:bg-emerald-950/40 border border-emerald-300 dark:border-emerald-700 text-emerald-700 dark:text-emerald-300 shadow-sm">
+                            <CheckCircle2 className="h-3.5 w-3.5 text-emerald-600 dark:text-emerald-400" />
+                            <span>Đúng tất cả {total}/{total} ý (tạm)</span>
+                          </div>
+                        );
+                      }
+                      if (allWrong) {
+                        return (
+                          <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-rose-50 dark:bg-rose-950/40 border border-rose-300 dark:border-rose-700 text-rose-700 dark:text-rose-300 shadow-sm">
+                            <XCircle className="h-3.5 w-3.5 text-rose-600 dark:text-rose-400" />
+                            <span>Sai cả {total} ý (tạm)</span>
+                          </div>
+                        );
+                      }
+                      if (done === total) {
+                        return (
+                          <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-blue-50 dark:bg-blue-900/30 border border-blue-200 dark:border-blue-800/40 text-blue-700 dark:text-blue-300 shadow-sm">
+                            <Zap className="h-3.5 w-3.5 text-blue-500" />
+                            <span>{correct}/{total} ý đúng (tạm)</span>
+                          </div>
+                        );
+                      }
+                      return (
+                        <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-blue-50 dark:bg-blue-900/30 border border-blue-200 dark:border-blue-800/40 text-blue-700 dark:text-blue-300 shadow-sm">
+                          <Zap className="h-3.5 w-3.5 text-blue-500" />
+                          <span>
+                            Đã chọn {done}/{total} ý
+                            {done > 0 ? ` (${correct} đúng tạm)` : ""}
+                          </span>
+                        </div>
+                      );
+                    })()}
                   </div>
                 </div>
 
@@ -500,6 +581,8 @@ export function StudentAnswerReviewList({
                                   className={`rounded-xl border px-3 py-2.5 text-sm transition-all duration-200 ${
                                     isSelected && isKey
                                       ? "border-emerald-400 bg-emerald-50 dark:bg-emerald-900/20 dark:border-emerald-700 shadow-sm"
+                                      : isSelected && keyIndex !== -1
+                                      ? "border-rose-400 bg-rose-50/80 dark:bg-rose-950/30 dark:border-rose-700 shadow-sm"
                                       : isSelected
                                       ? "border-blue-400 bg-blue-50 dark:bg-blue-900/20 dark:border-blue-700 shadow-sm"
                                       : isKey
@@ -513,6 +596,8 @@ export function StudentAnswerReviewList({
                                         className={`mt-0.5 inline-flex h-6 w-6 shrink-0 items-center justify-center rounded-lg text-xs font-bold transition-all ${
                                           isSelected && isKey
                                             ? "bg-emerald-600 text-white shadow-sm"
+                                            : isSelected && keyIndex !== -1
+                                            ? "bg-rose-600 text-white shadow-sm"
                                             : isSelected
                                             ? "bg-blue-600 text-white shadow-sm"
                                             : isKey
@@ -533,13 +618,19 @@ export function StudentAnswerReviewList({
 
                                     <div className="shrink-0 flex flex-row flex-wrap sm:flex-nowrap items-center justify-end gap-1 sm:gap-1.5">
                                       {isSelected && (
-                                        <span className="rounded-full border border-blue-300 dark:border-blue-700 bg-blue-100 dark:bg-blue-900/40 px-1.5 sm:px-2 py-0.5 text-[10px] sm:text-[11px] font-bold text-blue-800 dark:text-blue-300 whitespace-nowrap">
-                                          HS chọn
+                                        <span className={`rounded-full border px-2 py-0.5 text-[10px] sm:text-[11px] font-bold whitespace-nowrap shadow-sm ${
+                                          isKey
+                                            ? "border-emerald-300 dark:border-emerald-700 bg-emerald-100 dark:bg-emerald-900/40 text-emerald-800 dark:text-emerald-300"
+                                            : keyIndex !== -1
+                                            ? "border-rose-300 dark:border-rose-700 bg-rose-100 dark:bg-rose-900/40 text-rose-800 dark:text-rose-300"
+                                            : "border-blue-300 dark:border-blue-700 bg-blue-100 dark:bg-blue-900/40 text-blue-800 dark:text-blue-300"
+                                        }`}>
+                                          HS chọn {isKey ? "• ✓" : keyIndex !== -1 ? "• ✗" : ""}
                                         </span>
                                       )}
-                                      {isKey && (
-                                        <span className="rounded-full border border-emerald-300 dark:border-emerald-700 bg-emerald-100 dark:bg-emerald-900/40 px-1.5 sm:px-2 py-0.5 text-[10px] sm:text-[11px] font-bold text-emerald-800 dark:text-emerald-300 whitespace-nowrap">
-                                          Đáp án
+                                      {isKey && !isSelected && (
+                                        <span className="rounded-full border border-emerald-300 dark:border-emerald-700 bg-emerald-100 dark:bg-emerald-900/40 px-2 py-0.5 text-[10px] sm:text-[11px] font-bold text-emerald-800 dark:text-emerald-300 whitespace-nowrap shadow-sm">
+                                          Đáp án đúng
                                         </span>
                                       )}
                                     </div>
@@ -667,8 +758,8 @@ export function StudentAnswerReviewList({
                                   <span
                                     className={`inline-flex items-center gap-1 rounded-full border px-2.5 py-0.5 text-[11px] font-bold ${
                                       isCorrectSub
-                                        ? "bg-emerald-100/80 border-emerald-300 text-emerald-800 dark:bg-emerald-900/40 dark:border-emerald-700 dark:text-emerald-200"
-                                        : "bg-rose-100/80 border-rose-300 text-rose-800 dark:bg-rose-900/40 dark:border-rose-700 dark:text-rose-200"
+                                        ? "bg-emerald-50 dark:bg-emerald-950/60 border-emerald-300 dark:border-emerald-700 text-emerald-700 dark:text-emerald-300 shadow-sm"
+                                        : "bg-rose-50 dark:bg-rose-950/60 border-rose-300 dark:border-rose-700 text-rose-700 dark:text-rose-300 shadow-sm"
                                     }`}
                                   >
                                     {isCorrectSub ? (
@@ -815,12 +906,36 @@ export function StudentAnswerReviewList({
                   /* ===== SHORT ANSWER TYPE ===== */
                   <div className="space-y-2 mt-3">
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
-                      <div className="flex items-center justify-between rounded-xl border border-blue-200 bg-blue-50/80 dark:bg-blue-900/20 dark:border-blue-800/30 px-3 py-2.5">
-                        <span className="text-xs font-semibold text-blue-700 dark:text-blue-300 shrink-0 mr-2">
+                      <div className={`flex items-center justify-between rounded-xl border px-3 py-2.5 ${
+                        hasAnswer
+                          ? q.isCorrect === true
+                            ? "border-emerald-300 bg-emerald-50/80 dark:bg-emerald-950/30 dark:border-emerald-800/40"
+                            : q.isCorrect === false
+                            ? "border-rose-300 bg-rose-50/80 dark:bg-rose-950/30 dark:border-rose-800/40"
+                            : "border-blue-200 bg-blue-50/80 dark:bg-blue-900/20 dark:border-blue-800/30"
+                          : "border-slate-200 bg-slate-50 dark:bg-slate-800/40 dark:border-slate-700/50"
+                      }`}>
+                        <span className={`text-xs font-semibold shrink-0 mr-2 ${
+                          hasAnswer
+                            ? q.isCorrect === true
+                              ? "text-emerald-700 dark:text-emerald-300"
+                              : q.isCorrect === false
+                              ? "text-rose-700 dark:text-rose-300"
+                              : "text-blue-700 dark:text-blue-300"
+                            : "text-slate-500"
+                        }`}>
                           <FileCheck className="h-3.5 w-3.5 inline mr-1" />
                           Lựa chọn HS:
                         </span>
-                        <span className="text-xs font-bold text-blue-900 dark:text-blue-100 break-words text-right">
+                        <span className={`text-xs font-bold break-words text-right ${
+                          hasAnswer
+                            ? q.isCorrect === true
+                              ? "text-emerald-900 dark:text-emerald-100"
+                              : q.isCorrect === false
+                              ? "text-rose-900 dark:text-rose-100"
+                              : "text-blue-900 dark:text-blue-100"
+                            : "text-slate-400 font-normal"
+                        }`}>
                           {hasAnswer ? (
                             <MathText text={toMathRenderableText(q.studentAnswer || "")} />
                           ) : (

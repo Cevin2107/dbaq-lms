@@ -19,7 +19,8 @@ import {
   X,
   Trophy,
   FileText,
-  Download
+  Download,
+  LogOut
 } from "lucide-react";
 
 export function StudentSessionsTab({ assignmentId }: { assignmentId: string }) {
@@ -400,19 +401,48 @@ export function StudentSessionsTab({ assignmentId }: { assignmentId: string }) {
                       <div className={`flex h-11 w-11 sm:h-12 sm:w-12 items-center justify-center rounded-2xl shadow-md ${
                         isSubmitted 
                           ? 'bg-emerald-500/15 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20' 
-                          : 'bg-amber-500/15 text-amber-600 dark:text-amber-400 border border-amber-500/20'
+                          : session.status === "exited"
+                          ? 'bg-rose-500/15 text-rose-600 dark:text-rose-400 border border-rose-500/20'
+                          : 'bg-[#0066cc]/15 text-[#0066cc] dark:text-blue-400 border border-blue-500/20'
                       }`}>
                         {isSubmitted ? (
                           <CheckCircle2 className="h-6 w-6" />
+                        ) : session.status === "exited" ? (
+                          <LogOut className="h-6 w-6" />
                         ) : (
                           <Clock className="h-6 w-6" />
                         )}
                       </div>
                       <div>
-                        <h2 className="text-base sm:text-xl font-extrabold text-[#1d1d1f] dark:text-white tracking-tight">
-                          {isSubmitted ? 'Chi tiết bài nộp' : 'Bài đang làm trực tuyến'}
-                        </h2>
-                        <div className="flex items-center gap-2">
+                        <div className="flex items-center gap-2.5 flex-wrap">
+                          <h2 className="text-base sm:text-xl font-extrabold text-[#1d1d1f] dark:text-white tracking-tight">
+                            {isSubmitted ? 'Chi tiết bài nộp' : 'Bài đang làm trực tuyến'}
+                          </h2>
+                          {!isSubmitted ? (
+                            session.status === "exited" ? (
+                              <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-rose-50 dark:bg-rose-950/60 text-rose-700 dark:text-rose-300 border border-rose-300/80 dark:border-rose-800 shadow-sm animate-pulse">
+                                <span className="relative flex h-2 w-2">
+                                  <span className="relative rounded-full bg-rose-600 dark:bg-rose-400 h-2 w-2" />
+                                </span>
+                                Đã thoát
+                              </span>
+                            ) : (
+                              <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-emerald-50 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-300 border border-emerald-300/80 dark:border-emerald-800 shadow-sm">
+                                <span className="relative flex h-2 w-2">
+                                  <span className="absolute inset-0 rounded-full bg-emerald-500 animate-ping opacity-75" />
+                                  <span className="relative rounded-full bg-emerald-600 dark:bg-emerald-400 h-2 w-2" />
+                                </span>
+                                Đang làm
+                              </span>
+                            )
+                          ) : (
+                            <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-emerald-50 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-300 border border-emerald-300/80 dark:border-emerald-800 shadow-sm">
+                              <CheckCircle2 className="h-3.5 w-3.5 text-emerald-600 dark:text-emerald-400" />
+                              Đã nộp bài
+                            </span>
+                          )}
+                        </div>
+                        <div className="flex items-center gap-2 mt-0.5">
                           <p className="text-xs sm:text-sm text-slate-600 dark:text-slate-400 font-bold">
                             {session.student_name}
                           </p>
