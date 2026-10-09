@@ -1,3 +1,5 @@
+"use client";
+
 import Link from "next/link";
 import { Footer } from "@/components/Footer";
 import { ArrowLeft, Home, Compass } from "lucide-react";
