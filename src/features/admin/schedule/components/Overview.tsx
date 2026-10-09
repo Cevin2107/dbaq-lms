@@ -134,22 +134,22 @@ export function Overview({ onOpenSettings, refreshKey }: OverviewProps) {
   return (
     <div className="space-y-6">
       {/* Month Navigator Toolbar */}
-      <div className="rounded-[2rem] bg-white/80 dark:bg-[#1d1d1f]/80 backdrop-blur-xl border border-black/5 dark:border-white/5 p-4 sm:p-5 shadow-[0_4px_20px_rgba(0,0,0,0.03)] flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-        <div className="flex items-center gap-3">
-          <div className="p-2.5 rounded-xl bg-blue-50 dark:bg-blue-950/60 text-[#0066cc]">
+      <div className="rounded-[2.25rem] bg-white/80 dark:bg-[#18181b]/80 backdrop-blur-2xl border border-white/80 dark:border-white/10 p-5 shadow-[0_4px_24px_rgba(0,0,0,0.04)] flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+        <div className="flex items-center gap-3.5">
+          <div className="p-3 rounded-2xl bg-blue-500/10 text-[#0066cc] dark:text-blue-400">
             <BarChart3 className="w-5 h-5" />
           </div>
           <div>
             <h2 className="text-base font-bold text-slate-900 dark:text-white">Thống kê Tổng quan</h2>
-            <p className="text-xs text-slate-500">Xem báo cáo tổng hợp theo từng tháng</p>
+            <p className="text-xs text-slate-500 dark:text-slate-400">Xem báo cáo tổng hợp theo từng tháng và năm</p>
           </div>
         </div>
 
         <div className="flex items-center gap-2 self-start sm:self-auto">
-          <div className="flex items-center gap-1.5 bg-slate-100 dark:bg-slate-800 p-1.5 rounded-full border border-slate-200/80 dark:border-white/10">
+          <div className="flex items-center gap-1.5 bg-slate-100/80 dark:bg-white/[0.05] p-1.5 rounded-full border border-slate-200/80 dark:border-white/10">
             <button
               onClick={handlePrevMonth}
-              className="p-1.5 rounded-full hover:bg-white dark:hover:bg-[#1d1d1f] text-slate-600 dark:text-slate-300 transition-colors"
+              className="p-1.5 rounded-full hover:bg-white dark:hover:bg-white/10 text-slate-600 dark:text-slate-300 transition-colors"
               title="Tháng trước"
             >
               <ChevronLeft className="w-4 h-4" />
@@ -159,7 +159,7 @@ export function Overview({ onOpenSettings, refreshKey }: OverviewProps) {
             </span>
             <button
               onClick={handleNextMonth}
-              className="p-1.5 rounded-full hover:bg-white dark:hover:bg-[#1d1d1f] text-slate-600 dark:text-slate-300 transition-colors"
+              className="p-1.5 rounded-full hover:bg-white dark:hover:bg-white/10 text-slate-600 dark:text-slate-300 transition-colors"
               title="Tháng sau"
             >
               <ChevronRight className="w-4 h-4" />
@@ -169,75 +169,79 @@ export function Overview({ onOpenSettings, refreshKey }: OverviewProps) {
       </div>
 
       {/* Overall Metric Cards */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-        <div className="p-6 rounded-[2rem] bg-white/80 dark:bg-[#1d1d1f]/80 backdrop-blur-xl border border-black/5 dark:border-white/5 shadow-[0_4px_20px_rgba(0,0,0,0.03)] flex items-center gap-4">
-          <div className="p-4 bg-blue-50 dark:bg-blue-950/60 text-[#0066cc] dark:text-blue-400 rounded-2xl shrink-0">
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
+        <div className="p-6 sm:p-7 rounded-[2.25rem] bg-white/80 dark:bg-[#18181b]/80 backdrop-blur-2xl border border-white/80 dark:border-white/10 shadow-[0_4px_24px_rgba(0,0,0,0.04)] flex items-center gap-4.5">
+          <div className="p-4 bg-blue-500/10 text-[#0066cc] dark:text-blue-400 rounded-2xl shrink-0">
             <Calendar className="w-7 h-7" />
           </div>
           <div>
             <p className="text-xs font-semibold text-slate-500 dark:text-slate-400">Tổng số buổi dạy ({getMonthName(selectedMonth)})</p>
-            <p className="text-2xl sm:text-3xl font-extrabold text-slate-900 dark:text-white tracking-[-0.02em] mt-1">{totalSessions} <span className="text-sm font-semibold text-slate-500">buổi</span></p>
+            <p className="text-2xl sm:text-3xl font-black text-slate-900 dark:text-white tracking-[-0.02em] mt-1">{totalSessions} <span className="text-sm font-semibold text-slate-400">buổi</span></p>
           </div>
         </div>
 
-        <div className="p-6 rounded-[2rem] bg-gradient-to-br from-emerald-500 to-emerald-600 shadow-lg shadow-emerald-500/20 text-white flex items-center gap-4 relative overflow-hidden">
+        <div className="p-6 sm:p-7 rounded-[2.25rem] bg-gradient-to-br from-emerald-500 to-teal-600 shadow-xl shadow-emerald-500/20 text-white flex items-center gap-4.5 relative overflow-hidden">
           <div className="absolute inset-0 bg-white/10 blur-xl pointer-events-none" />
           <div className="p-4 bg-white/20 rounded-2xl backdrop-blur-sm shrink-0">
             <DollarSign className="w-7 h-7 text-white" />
           </div>
           <div className="relative">
-            <p className="text-xs font-semibold text-emerald-100">Tổng thu nhập ({getMonthName(selectedMonth)})</p>
-            <p className="text-2xl sm:text-3xl font-extrabold tracking-[-0.02em] mt-1">{formatCurrency(totalIncome)}</p>
+            <p className="text-xs font-bold text-emerald-100">Tổng thu nhập ({getMonthName(selectedMonth)})</p>
+            <p className="text-2xl sm:text-3xl font-black tracking-[-0.02em] mt-1">{formatCurrency(totalIncome)}</p>
           </div>
         </div>
       </div>
 
       {/* Per-Student Breakdown */}
-      <div className="p-6 sm:p-8 rounded-[2rem] bg-white/80 dark:bg-[#1d1d1f]/80 backdrop-blur-xl border border-black/5 dark:border-white/5 shadow-[0_4px_20px_rgba(0,0,0,0.03)] space-y-6">
+      <div className="p-6 sm:p-8 rounded-[2.25rem] bg-white/80 dark:bg-[#18181b]/80 backdrop-blur-2xl border border-white/80 dark:border-white/10 shadow-[0_4px_24px_rgba(0,0,0,0.04)] space-y-6">
         <div className="flex items-center justify-between pb-4 border-b border-slate-100 dark:border-white/5">
-          <h3 className="font-bold text-slate-900 dark:text-white flex items-center gap-2 text-base">
-            <TrendingUp className="w-5 h-5 text-[#0066cc]" />
-            Thống kê theo từng học sinh ({getMonthName(selectedMonth)})
+          <h3 className="font-bold text-slate-900 dark:text-white flex items-center gap-2.5 text-base">
+            <div className="p-2 rounded-xl bg-blue-500/10 text-[#0066cc] dark:text-blue-400">
+              <TrendingUp className="w-4 h-4" />
+            </div>
+            <span>Thống kê theo từng học sinh ({getMonthName(selectedMonth)})</span>
           </h3>
-          <span className="text-xs font-semibold text-slate-500">{studentStats.length} học sinh có buổi dạy</span>
+          <span className="text-xs font-bold px-3 py-1 rounded-full bg-slate-100 dark:bg-white/10 text-slate-600 dark:text-slate-300">
+            {studentStats.length} học sinh có buổi
+          </span>
         </div>
 
         {studentStats.length === 0 ? (
-          <div className="py-12 text-center text-slate-400 text-sm italic">
+          <div className="py-12 text-center text-slate-400 text-xs italic border border-dashed border-slate-200 dark:border-white/10 rounded-2xl">
             Chưa có dữ liệu buổi dạy trong {getMonthName(selectedMonth)} {selectedYear}.
           </div>
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             {studentStats.map((stat) => (
-              <div key={stat.student.id} className="p-5 rounded-2xl bg-slate-50/80 dark:bg-slate-800/40 border border-slate-200/60 dark:border-white/5 space-y-3 hover:border-[#0066cc]/40 transition-colors">
+              <div key={stat.student.id} className="p-5 rounded-2xl bg-slate-50/70 dark:bg-white/[0.03] border border-slate-200/80 dark:border-white/10 space-y-3 hover:border-[#0066cc]/40 transition-colors">
                 <div className="flex items-center justify-between gap-3">
                   <div className="flex items-center gap-3">
                     <div
-                      className="w-4 h-4 rounded-full shadow-xs shrink-0"
+                      className="w-4 h-4 rounded-full shadow-xs shrink-0 ring-2 ring-white dark:ring-black"
                       style={{ backgroundColor: stat.student.color }}
                     />
-                    <h4 className="font-bold text-slate-900 dark:text-white text-base">
+                    <h4 className="font-bold text-slate-900 dark:text-white text-sm">
                       {stat.student.name}
                     </h4>
                   </div>
                   <div className="flex items-center gap-2">
-                    <span className="text-xs font-extrabold text-[#0066cc] dark:text-blue-400 bg-blue-50 dark:bg-blue-950/60 px-2.5 py-1 rounded-xl border border-blue-100/80 dark:border-blue-900/40">
+                    <span className="text-xs font-bold text-[#0066cc] dark:text-blue-400 bg-blue-500/10 px-2.5 py-1 rounded-xl border border-blue-500/20">
                       {stat.totalSessions} buổi
                     </span>
-                    <span className="text-xs font-extrabold text-emerald-600 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-950/60 px-2.5 py-1 rounded-xl border border-emerald-100/80 dark:border-emerald-900/40">
+                    <span className="text-xs font-bold text-emerald-600 dark:text-emerald-400 bg-emerald-500/10 px-2.5 py-1 rounded-xl border border-emerald-500/20">
                       {formatCurrency(stat.totalIncome)}
                     </span>
                   </div>
                 </div>
 
                 {Object.keys(stat.subjects).length > 0 && (
-                  <div className="flex flex-wrap gap-1.5 pt-2 border-t border-slate-200/50 dark:border-white/5">
+                  <div className="flex flex-wrap gap-1.5 pt-2 border-t border-slate-200/60 dark:border-white/5">
                     {Object.entries(stat.subjects).map(([subject, count]) => (
                       <span
                         key={subject}
-                        className="text-[11px] font-bold px-2.5 py-0.5 rounded-md bg-white dark:bg-[#1d1d1f] text-slate-700 dark:text-slate-300 border border-slate-200/80 dark:border-white/10"
+                        className="text-[11px] font-bold px-2.5 py-0.5 rounded-lg bg-white dark:bg-white/10 text-slate-700 dark:text-slate-300 border border-slate-200/80 dark:border-white/10"
                       >
-                        {SUBJECT_NAMES[subject as keyof typeof SUBJECT_NAMES]}: <strong className="text-[#0066cc]">{count} buổi</strong>
+                        {SUBJECT_NAMES[subject as keyof typeof SUBJECT_NAMES]}: <strong className="text-[#0066cc] dark:text-blue-400">{count} buổi</strong>
                       </span>
                     ))}
                   </div>
@@ -249,15 +253,15 @@ export function Overview({ onOpenSettings, refreshKey }: OverviewProps) {
       </div>
 
       {/* Monthly Trend Chart for the Year */}
-      <div className="p-6 sm:p-8 rounded-[2rem] bg-white/80 dark:bg-[#1d1d1f]/80 backdrop-blur-xl border border-black/5 dark:border-white/5 shadow-[0_4px_20px_rgba(0,0,0,0.03)] space-y-6">
+      <div className="p-6 sm:p-8 rounded-[2.25rem] bg-white/80 dark:bg-[#18181b]/80 backdrop-blur-2xl border border-white/80 dark:border-white/10 shadow-[0_4px_24px_rgba(0,0,0,0.04)] space-y-6">
         <div className="flex items-center justify-between pb-4 border-b border-slate-100 dark:border-white/5">
           <div className="flex items-center gap-3">
-            <div className="p-2 rounded-xl bg-blue-50 dark:bg-blue-950/60 text-[#0066cc]">
+            <div className="p-2.5 rounded-2xl bg-blue-500/10 text-[#0066cc] dark:text-blue-400">
               <BarChart3 className="w-5 h-5" />
             </div>
             <div>
               <h4 className="font-bold text-slate-900 dark:text-white text-base">Phân bổ Buổi dạy trong năm</h4>
-              <p className="text-xs text-slate-500">Biểu đồ tổng số buổi dạy 12 tháng năm {selectedYear}</p>
+              <p className="text-xs text-slate-500 dark:text-slate-400">Biểu đồ tổng số buổi dạy 12 tháng năm {selectedYear}</p>
             </div>
           </div>
         </div>
@@ -269,7 +273,7 @@ export function Overview({ onOpenSettings, refreshKey }: OverviewProps) {
                 <span className="w-8 text-right text-[11px] font-semibold text-slate-400 dark:text-slate-500 pr-2">
                   {Math.round(maxMonthlyCount * tick)}
                 </span>
-                <div className="flex-1 border-t border-dashed border-slate-200/80 dark:border-slate-800" />
+                <div className="flex-1 border-t border-dashed border-slate-200/80 dark:border-white/10" />
               </div>
             ))}
           </div>
@@ -290,7 +294,7 @@ export function Overview({ onOpenSettings, refreshKey }: OverviewProps) {
                       className={`w-6 sm:w-10 rounded-t-xl transition-all duration-300 group-hover:opacity-80 relative flex items-end justify-center ${isCurrentMonth ? 'bg-gradient-to-t from-emerald-600 to-emerald-400 shadow-md shadow-emerald-500/30' : 'bg-gradient-to-t from-[#0066cc] to-[#005bb5] shadow-xs dark:from-blue-600 dark:to-blue-400'}`}
                       style={{ height: `${heightPercent}%`, minHeight: count > 0 ? '6px' : '0' }}
                     >
-                      <div className="absolute -top-12 opacity-0 group-hover:opacity-100 transition-all duration-200 bg-slate-900 text-white text-xs font-bold py-1.5 px-2.5 rounded-xl pointer-events-none whitespace-nowrap shadow-xl z-20 flex flex-col items-center gap-0.5 border border-slate-700">
+                      <div className="absolute -top-12 opacity-0 group-hover:opacity-100 transition-all duration-200 bg-slate-900/90 backdrop-blur-md text-white text-xs font-bold py-1.5 px-2.5 rounded-xl pointer-events-none whitespace-nowrap shadow-xl z-20 flex flex-col items-center gap-0.5 border border-white/10">
                         <span>T{index + 1}: {count} buổi</span>
                         {monthlyIncomes[index] > 0 && (
                           <span className="text-emerald-400 font-semibold">{formatCurrency(monthlyIncomes[index])}</span>

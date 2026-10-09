@@ -173,16 +173,16 @@ export default function AdminLoginPage() {
         <div className="w-full max-w-md animate-fade-in">
           
           {/* Card Container */}
-          <div className="rounded-[2rem] sm:rounded-[2.5rem] bg-white/85 dark:bg-[#1a1a1f]/85 backdrop-blur-2xl border border-white/80 dark:border-white/10 shadow-[0_20px_50px_rgba(0,102,204,0.08)] dark:shadow-[0_20px_50px_rgba(0,0,0,0.6)] p-5 sm:p-8 md:p-9 transition-all relative overflow-hidden">
+          <div className="rounded-[2.5rem] bg-white/80 dark:bg-[#161618]/85 backdrop-blur-2xl border border-white/80 dark:border-white/10 shadow-[0_24px_60px_-15px_rgba(0,102,204,0.12)] dark:shadow-[0_25px_60px_-15px_rgba(0,0,0,0.8)] p-6 sm:p-9 transition-all relative overflow-hidden">
             
             {/* Card Header */}
             <div className="mb-6">
-              <div className="flex items-center gap-3 mb-2">
-                <div className="flex h-11 w-11 items-center justify-center rounded-2xl bg-blue-50 dark:bg-blue-900/40 text-[#0066cc] dark:text-blue-400">
+              <div className="flex items-center gap-3.5 mb-2">
+                <div className="flex h-11 w-11 items-center justify-center rounded-2xl bg-blue-500/10 dark:bg-blue-500/20 text-[#0066cc] dark:text-[#2997ff] border border-blue-500/20">
                   <Lock className="h-5 w-5" />
                 </div>
                 <div>
-                  <h2 className="text-2xl font-bold text-slate-900 dark:text-white tracking-[-0.02em]">
+                  <h2 className="text-2xl font-extrabold text-[#1d1d1f] dark:text-white tracking-tight">
                     Đăng nhập Quản trị
                   </h2>
                   <p className="text-xs text-slate-500 dark:text-slate-400">
@@ -193,19 +193,19 @@ export default function AdminLoginPage() {
             </div>
 
             {/* Clear, Concise Admin Warning */}
-            <div className="mb-6 rounded-2xl border border-amber-200/80 dark:border-amber-500/20 bg-amber-50/80 dark:bg-amber-950/30 p-3.5 backdrop-blur-md flex items-center gap-3 text-xs text-amber-800 dark:text-amber-300">
+            <div className="mb-6 rounded-2xl border border-amber-500/20 bg-amber-500/10 p-3.5 backdrop-blur-md flex items-center gap-3 text-xs text-amber-800 dark:text-amber-300">
               <ShieldAlert className="h-4 w-4 shrink-0 text-amber-600 dark:text-amber-400" />
               <span>Khu vực dành riêng cho Quản trị viên và Gia sư Đào Bá Anh Quân.</span>
             </div>
 
             {/* Error notifications */}
             {error && (
-              <div className="mb-4 rounded-2xl bg-red-50 dark:bg-red-950/40 border border-red-200 dark:border-red-900/50 p-3.5 text-xs text-red-600 dark:text-red-400 leading-relaxed">
+              <div className="mb-4 rounded-2xl bg-rose-500/10 border border-rose-500/20 p-3.5 text-xs text-rose-600 dark:text-rose-400 leading-relaxed">
                 {error}
               </div>
             )}
             {passkeyError && (
-              <div className="mb-4 rounded-2xl bg-amber-50 dark:bg-amber-950/40 border border-amber-200 dark:border-amber-900/50 p-3.5 text-xs text-amber-700 dark:text-amber-400 leading-relaxed">
+              <div className="mb-4 rounded-2xl bg-amber-500/10 border border-amber-500/20 p-3.5 text-xs text-amber-700 dark:text-amber-400 leading-relaxed">
                 {passkeyError}
               </div>
             )}
@@ -224,7 +224,7 @@ export default function AdminLoginPage() {
                     type={showPassword ? "text" : "password"}
                     name="password"
                     placeholder="••••••••"
-                    className="w-full h-12 rounded-2xl border border-slate-200 dark:border-slate-700/80 bg-slate-50/70 dark:bg-slate-800/40 pl-10 pr-11 py-2.5 sm:py-3 text-base sm:text-sm text-slate-900 dark:text-white placeholder-slate-400 placeholder:text-sm transition-all focus:border-[#0066cc] dark:focus:border-blue-500 focus:bg-white dark:focus:bg-slate-800 focus:outline-none focus:ring-2 focus:ring-[#0066cc]/20 dark:focus:ring-blue-500/20"
+                    className="w-full h-12 rounded-2xl border border-black/[0.08] dark:border-white/[0.08] bg-black/[0.02] dark:bg-white/[0.04] pl-10 pr-11 py-2.5 sm:py-3 text-base sm:text-sm text-slate-900 dark:text-white placeholder-slate-400 placeholder:text-sm transition-all duration-300 focus:border-[#0066cc] dark:focus:border-[#2997ff] focus:bg-white dark:focus:bg-[#1f1f23] focus:outline-none focus:ring-4 focus:ring-blue-500/15"
                     required
                     autoFocus
                     disabled={loading || passkeyLoading}
@@ -242,25 +242,23 @@ export default function AdminLoginPage() {
               </div>
 
               {/* Submit Button */}
-              <Button
+              <button
                 type="submit"
-                variant="brand"
-                className="w-full h-12 rounded-2xl text-sm font-bold shadow-md shadow-blue-500/20 hover:shadow-lg transition-all"
                 disabled={loading || passkeyLoading}
-                loading={loading}
+                className="w-full h-12 rounded-full text-sm font-bold text-white bg-[#0066cc] hover:bg-[#005bb5] shadow-lg shadow-blue-500/25 hover:shadow-xl hover:shadow-blue-500/30 hover:-translate-y-0.5 active:scale-95 transition-all duration-300 ease-spring flex items-center justify-center gap-2 disabled:opacity-50 disabled:pointer-events-none"
               >
                 <span>{loading ? "Đang xác thực quyền..." : "Đăng nhập Quản trị"}</span>
                 {!loading && <ArrowRight className="h-4 w-4" />}
-              </Button>
+              </button>
             </form>
 
             {/* Passkey Alternative */}
-            <div className="mt-4 pt-4 border-t border-slate-100 dark:border-white/5">
+            <div className="mt-5 pt-5 border-t border-black/[0.05] dark:border-white/5">
               <button
                 type="button"
                 onClick={handlePasskeyLogin}
                 disabled={passkeyLoading || loading}
-                className="w-full flex items-center justify-center gap-2 py-3 rounded-2xl border border-slate-200 dark:border-slate-700/70 bg-slate-50/60 dark:bg-slate-800/40 text-xs font-semibold text-slate-700 dark:text-slate-300 transition hover:border-blue-200 dark:hover:border-blue-800 hover:bg-blue-50 dark:hover:bg-blue-900/30 hover:text-[#0066cc] dark:hover:text-blue-400 disabled:opacity-60"
+                className="w-full h-12 flex items-center justify-center gap-2 rounded-full border border-black/[0.06] dark:border-white/10 bg-black/[0.02] dark:bg-white/[0.04] text-xs sm:text-sm font-semibold text-slate-700 dark:text-slate-300 transition-all duration-300 ease-spring hover:border-[#0066cc]/30 hover:bg-[#0066cc]/10 hover:text-[#0066cc] dark:hover:text-[#2997ff] hover:-translate-y-0.5 active:scale-95 disabled:opacity-50"
               >
                 <Fingerprint className={`h-4 w-4 ${passkeyLoading ? "animate-pulse text-[#0066cc]" : ""}`} />
                 <span>{passkeyLoading ? "Đang xác thực Passkey..." : "Đăng nhập nhanh bằng Passkey"}</span>
@@ -271,7 +269,7 @@ export default function AdminLoginPage() {
             <div className="mt-6 text-center">
               <Link
                 href="/login"
-                className="inline-flex items-center gap-1.5 text-xs font-semibold text-slate-500 dark:text-slate-400 hover:text-[#0066cc] dark:hover:text-blue-400 transition"
+                className="inline-flex items-center gap-1.5 text-xs font-semibold text-slate-500 dark:text-slate-400 hover:text-[#0066cc] dark:hover:text-[#2997ff] transition"
               >
                 <ArrowLeft className="h-3.5 w-3.5" />
                 <span>Quay lại trang học sinh</span>

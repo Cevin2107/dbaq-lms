@@ -92,11 +92,13 @@ export const QuestionRenderer: React.FC<QuestionRendererProps> = React.memo(({
                           className="h-4 w-4 text-indigo-500 border-white/30 focus:ring-indigo-500 bg-transparent"
                         />
                       </div>
-                      <div className="flex items-start gap-2.5 flex-1 min-w-0">
-                        <span className={`shrink-0 flex h-6 w-6 items-center justify-center rounded-lg text-xs font-black transition-all ${
+                      <div className="flex items-start gap-2.5 flex-1 min-w-0 max-w-full overflow-hidden">
+                        <span className={`shrink-0 flex h-6 w-6 items-center justify-center rounded-lg text-xs font-black transition-all mt-0.5 ${
                           isSelected ? "bg-indigo-500 text-white" : "bg-white/10 text-slate-400"
                         }`}>{letter}</span>
-                        <span className={`text-sm md:text-base leading-snug mt-0.5 ${isSelected ? "text-indigo-100 font-medium" : "text-slate-300"}`}><MathText text={choice || ""} /></span>
+                        <div className={`flex-1 min-w-0 max-w-full text-sm md:text-base leading-snug break-words [overflow-wrap:anywhere] [&_.katex]:max-w-full [&_.katex-display]:max-w-full [&_.katex-display]:overflow-x-auto ${isSelected ? "text-indigo-100 font-medium" : "text-slate-300"}`}>
+                          <MathText text={choice || ""} />
+                        </div>
                       </div>
                     </label>
                   );

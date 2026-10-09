@@ -819,19 +819,19 @@ export function DocumentsPanel() {
         </div>
       )}
 
-      <div className="rounded-[2rem] bg-white dark:bg-[#1d1d1f] shadow-[0_4px_20px_rgba(0,0,0,0.03)] border border-black/5 dark:border-white/5 p-6">
+      <div className="rounded-[2.5rem] bg-white/80 dark:bg-[#18181b]/80 backdrop-blur-2xl shadow-[0_12px_36px_rgba(0,0,0,0.04)] dark:shadow-[0_12px_36px_rgba(0,0,0,0.45)] border border-white/80 dark:border-white/10 p-6 sm:p-7">
         <div className="relative mb-6">
-          <Search className="absolute left-4 top-1/2 h-5 w-5 -translate-y-1/2 text-slate-400" />
+          <Search className="absolute left-4 top-1/2 h-5 w-5 -translate-y-1/2 text-slate-400 dark:text-slate-500" />
           <input
-            className="w-full rounded-full bg-slate-50 dark:bg-[#2a2a2c] py-3.5 pl-12 pr-4 text-[16px] text-[#1d1d1f] dark:text-white placeholder-slate-400 transition-all focus:bg-white dark:focus:bg-[#333] focus:outline-none focus:ring-4 focus:ring-[#0066cc]/10 border border-transparent focus:border-[#0066cc]/20"
-            placeholder="Tìm tài liệu..."
+            className="w-full rounded-full bg-black/[0.03] dark:bg-white/[0.05] py-3.5 pl-12 pr-4 text-[15px] text-[#1d1d1f] dark:text-white placeholder-slate-400 dark:placeholder-slate-500 transition-all duration-300 focus:bg-white dark:focus:bg-[#222226] focus:outline-none focus:ring-4 focus:ring-blue-500/15 border border-black/[0.06] dark:border-white/10 focus:border-[#0066cc] dark:focus:border-[#2997ff]"
+            placeholder="Tìm kiếm tài liệu học tập theo tiêu đề, môn hoặc khối lớp..."
             value={search}
             onChange={(event) => setSearch(event.target.value)}
           />
         </div>
 
         <div className="space-y-4">
-          <div className="flex items-center gap-2 bg-slate-100 dark:bg-[#2a2a2c] p-1 rounded-[1.5rem] sm:rounded-full w-full sm:w-fit overflow-x-auto no-scrollbar max-w-full">
+          <div className="flex items-center gap-1.5 bg-black/[0.04] dark:bg-white/[0.05] p-1.5 rounded-full w-full sm:w-fit overflow-x-auto no-scrollbar max-w-full border border-black/[0.03] dark:border-white/[0.06] select-none">
             {[ALL, ...grades.map((grade) => `Lớp ${grade}`)].map((label) => {
               const value = label === ALL ? ALL : label.replace(/^Lớp\s+/, "");
               return (
@@ -839,10 +839,10 @@ export function DocumentsPanel() {
                   key={label}
                   onClick={() => setGradeFilter(value)}
                   className={clsx(
-                    "rounded-full px-5 py-2 text-[14px] font-medium transition-all duration-300 whitespace-nowrap",
+                    "rounded-full px-5 py-2 text-xs sm:text-sm font-semibold transition-all duration-300 ease-spring whitespace-nowrap",
                     gradeFilter === value
-                      ? "bg-white dark:bg-[#444] text-[#1d1d1f] dark:text-white shadow-sm"
-                      : "text-slate-500 dark:text-slate-400 hover:text-[#1d1d1f] dark:hover:text-white"
+                      ? "bg-white dark:bg-[#2c2c32] text-[#0066cc] dark:text-[#2997ff] shadow-sm border border-black/[0.04] dark:border-white/10 scale-[1.02]"
+                      : "text-slate-600 dark:text-slate-400 hover:text-[#1d1d1f] dark:hover:text-white active:scale-95"
                   )}
                 >
                   {label}
@@ -858,10 +858,10 @@ export function DocumentsPanel() {
                   key={subject}
                   onClick={() => setSubjectFilter(subject)}
                   className={clsx(
-                    "rounded-full px-4 py-2 text-[14px] font-semibold transition-all border whitespace-nowrap",
+                    "rounded-full px-4 py-2 text-xs sm:text-sm font-semibold transition-all duration-300 ease-spring border whitespace-nowrap",
                     subjectFilter === subject
                       ? "bg-[#0066cc] text-white border-[#0066cc] shadow-md shadow-blue-500/20"
-                      : "bg-white dark:bg-[#2a2a2c] border-slate-200 dark:border-white/10 text-slate-600 dark:text-slate-300 hover:border-[#0066cc]/30"
+                      : "bg-black/[0.02] dark:bg-white/[0.04] border-black/[0.06] dark:border-white/10 text-slate-600 dark:text-slate-300 hover:border-[#0066cc]/30 active:scale-95"
                   )}
                 >
                   {subject}
@@ -871,17 +871,17 @@ export function DocumentsPanel() {
           )}
 
           {(search || gradeFilter !== ALL || subjectFilter !== ALL) && (
-            <div className="flex items-center gap-2 px-1">
-              <p className="text-[14px] text-[#1d1d1f]/60 dark:text-white/60">{filteredDocuments.length} kết quả</p>
+            <div className="flex items-center gap-2 px-1 pt-1">
+              <p className="text-xs text-slate-500 dark:text-slate-400 font-medium">Tìm thấy {filteredDocuments.length} tài liệu</p>
               <button
                 onClick={() => {
                   setSearch("");
                   setGradeFilter(ALL);
                   setSubjectFilter(ALL);
                 }}
-                className="ml-auto text-[14px] text-[#0066cc] dark:text-[#2997ff] hover:underline"
+                className="ml-auto text-xs font-semibold text-[#0066cc] dark:text-[#2997ff] hover:underline"
               >
-                Xóa bộ lọc
+                Xóa tất cả bộ lọc
               </button>
             </div>
           )}
@@ -891,8 +891,8 @@ export function DocumentsPanel() {
       {loading ? (
         <div className="grid gap-6 lg:gap-8 sm:grid-cols-2 lg:grid-cols-3">
           {[1, 2, 3, 4, 5, 6].map((item) => (
-            <div key={item} className="rounded-[2rem] bg-white dark:bg-[#1d1d1f] border border-black/5 dark:border-white/5 p-4">
-              <div className="skeleton h-44 rounded-[1.5rem] mb-5" />
+            <div key={item} className="rounded-[2.25rem] bg-white/80 dark:bg-[#18181b]/80 border border-black/5 dark:border-white/5 p-5">
+              <div className="skeleton h-44 rounded-2xl mb-5" />
               <div className="skeleton h-6 w-3/4 mb-3 rounded-full" />
               <div className="skeleton h-4 w-full mb-2 rounded-full" />
               <div className="skeleton h-4 w-2/3 rounded-full" />
@@ -900,15 +900,15 @@ export function DocumentsPanel() {
           ))}
         </div>
       ) : filteredDocuments.length === 0 ? (
-        <div className="flex flex-col items-center justify-center rounded-[2rem] bg-white dark:bg-[#1d1d1f] shadow-[0_2px_10px_rgba(0,0,0,0.02)] border border-black/5 dark:border-white/5 p-16 text-center">
-          <div className="mb-5 flex h-24 w-24 items-center justify-center rounded-full bg-slate-50 dark:bg-slate-800/50">
-            <FileText className="h-10 w-10 text-slate-400 dark:text-slate-500" />
+        <div className="flex flex-col items-center justify-center rounded-[2.5rem] bg-white/70 dark:bg-[#18181b]/70 backdrop-blur-2xl shadow-[0_12px_36px_rgba(0,0,0,0.03)] border border-white/80 dark:border-white/10 p-16 text-center animate-fade-in">
+          <div className="mb-4 flex h-20 w-20 items-center justify-center rounded-3xl bg-blue-500/10 dark:bg-blue-500/15 text-[#0066cc] dark:text-[#2997ff] border border-blue-500/20">
+            <FileText className="h-9 w-9" />
           </div>
-          <p className="text-[17px] font-semibold text-[#1d1d1f] dark:text-white tracking-[-0.02em] mb-2">
+          <p className="text-lg font-bold text-[#1d1d1f] dark:text-white tracking-[-0.02em] mb-1.5">
             Chưa có tài liệu phù hợp
           </p>
-          <p className="text-[14px] text-[#1d1d1f]/60 dark:text-white/60">
-            Thử thay đổi bộ lọc hoặc upload tài liệu đầu tiên.
+          <p className="text-xs sm:text-sm text-slate-500 dark:text-slate-400 max-w-sm leading-relaxed">
+            Thử thay đổi bộ lọc hoặc upload tài liệu đầu tiên lên hệ thống.
           </p>
         </div>
       ) : (
@@ -916,7 +916,7 @@ export function DocumentsPanel() {
           {filteredDocuments.map((document) => (
             <article
               key={document.id}
-              className="group flex flex-col overflow-hidden rounded-[2rem] bg-white dark:bg-[#1d1d1f] shadow-[0_2px_12px_rgba(0,0,0,0.03)] border border-black/5 dark:border-white/5 transition-all duration-300 hover:-translate-y-1 hover:shadow-[0_12px_40px_rgba(0,0,0,0.08)]"
+              className="group flex flex-col overflow-hidden rounded-[2.25rem] bg-white/80 dark:bg-[#18181b]/80 backdrop-blur-2xl shadow-[0_8px_30px_rgba(0,0,0,0.04)] dark:shadow-[0_12px_36px_rgba(0,0,0,0.5)] border border-white/80 dark:border-white/10 transition-all duration-300 ease-spring hover:-translate-y-1.5 hover:shadow-[0_20px_45px_rgba(0,102,204,0.12)] hover:border-blue-500/30"
             >
               <button
                 type="button"
@@ -927,29 +927,29 @@ export function DocumentsPanel() {
                 <DocumentThumbnail document={document} />
               </button>
 
-              <div className="flex flex-1 flex-col p-5">
+              <div className="flex flex-1 flex-col p-6">
                 <div className="mb-4 flex flex-wrap items-center gap-2">
-                  <span className={clsx("rounded-full px-3 py-1 text-[13px] font-semibold", subjectColor(document.subject))}>
+                  <span className={clsx("rounded-full px-3 py-1 text-xs font-bold border", subjectColor(document.subject))}>
                     {document.subject}
                   </span>
-                  <span className="rounded-full bg-slate-50 dark:bg-slate-800 px-3 py-1 text-[13px] font-semibold text-slate-500 dark:text-slate-300">
+                  <span className="rounded-full bg-black/[0.03] dark:bg-white/5 border border-black/[0.04] dark:border-white/10 px-3 py-1 text-xs font-semibold text-slate-600 dark:text-slate-300">
                     Lớp {document.grade}
                   </span>
                 </div>
 
                 <button type="button" onClick={() => openDocument(document)} className="text-left">
-                  <h3 className="text-[19px] font-bold text-[#1d1d1f] dark:text-white leading-[1.3] tracking-[-0.02em] line-clamp-2 group-hover:text-[#0066cc] dark:group-hover:text-sky-400 transition-colors">
+                  <h3 className="text-lg font-bold text-[#1d1d1f] dark:text-white leading-[1.3] tracking-[-0.02em] line-clamp-2 group-hover:text-[#0066cc] dark:group-hover:text-[#2997ff] transition-colors">
                     {document.title}
                   </h3>
                 </button>
 
-                <div className="mt-4 flex flex-col gap-2 text-[13px] text-slate-500 dark:text-slate-400 flex-1">
+                <div className="mt-4 flex flex-col gap-1.5 text-xs text-slate-500 dark:text-slate-400 flex-1">
                   <span>{formatFileSize(document.fileSizeBytes)} · {formatDate(document.createdAt)}</span>
                   {document.uploaderName && <span>Người upload: {document.uploaderName}</span>}
                 </div>
 
-                <div className="mt-5 flex items-center justify-between border-t border-slate-100 dark:border-[#333] pt-4">
-                  <span className="inline-flex items-center gap-1.5 rounded-full bg-slate-50 dark:bg-slate-800 px-3 py-1 text-[12px] font-semibold uppercase text-slate-500 dark:text-slate-300">
+                <div className="mt-5 flex items-center justify-between border-t border-black/[0.05] dark:border-white/5 pt-4">
+                  <span className="inline-flex items-center gap-1.5 rounded-full bg-black/[0.03] dark:bg-white/5 px-3 py-1 text-[11px] font-bold uppercase tracking-wider text-slate-500 dark:text-slate-300 border border-black/[0.04] dark:border-white/5">
                     {document.fileType === "image" ? <FileImage className="h-3.5 w-3.5" /> : <FileText className="h-3.5 w-3.5" />}
                     {document.fileExtension}
                   </span>
@@ -957,10 +957,10 @@ export function DocumentsPanel() {
                     href={`/api/documents/${document.id}/file?download=1`}
                     target="_blank"
                     rel="noreferrer"
-                    className="inline-flex items-center gap-2 rounded-full bg-[#0066cc] px-4 py-2 text-[14px] font-semibold text-white shadow-sm shadow-blue-500/20 hover:bg-[#005bb5] active:scale-95 transition-all"
+                    className="inline-flex items-center gap-2 rounded-full bg-[#0066cc] px-4 py-2 text-xs sm:text-sm font-semibold text-white shadow-md shadow-blue-500/20 hover:bg-[#005bb5] hover:shadow-lg hover:-translate-y-0.5 active:scale-95 transition-all duration-300 ease-spring"
                   >
                     <Download className="h-4 w-4" />
-                    Tải
+                    Tải về
                   </a>
                 </div>
               </div>

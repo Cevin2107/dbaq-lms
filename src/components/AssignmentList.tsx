@@ -167,21 +167,21 @@ export function AssignmentList({ assignments, schedules = [], onNavigateToSchedu
       {/* 2 Companion Side-by-Side Boxes: Left = Search & Filter, Right = Upcoming Schedule */}
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-5 sm:gap-6 items-stretch" suppressHydrationWarning>
         {/* Left Box: Tìm kiếm bài tập & Bộ lọc trạng thái */}
-        <div className="lg:col-span-7 rounded-[2rem] bg-white dark:bg-[#1d1d1f] shadow-[0_4px_20px_rgba(0,0,0,0.03)] border border-black/5 dark:border-white/5 p-5 sm:p-6 flex flex-col justify-between space-y-4">
+        <div className="lg:col-span-7 rounded-[2.5rem] bg-white/80 dark:bg-[#18181b]/80 backdrop-blur-2xl shadow-[0_12px_36px_rgba(0,0,0,0.04)] dark:shadow-[0_12px_36px_rgba(0,0,0,0.45)] border border-white/80 dark:border-white/10 p-6 sm:p-7 flex flex-col justify-between space-y-5 transition-all">
           <div className="relative">
-            <svg className="absolute left-4 top-1/2 h-5 w-5 -translate-y-1/2 text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <svg className="absolute left-4 top-1/2 h-5 w-5 -translate-y-1/2 text-slate-400 dark:text-slate-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
             </svg>
             <input
-              className="w-full rounded-full bg-slate-50 dark:bg-[#2a2a2c] py-3.5 pl-12 pr-4 text-[15px] text-[#1d1d1f] dark:text-white placeholder-slate-400 transition-all focus:bg-white dark:focus:bg-[#333] focus:outline-none focus:ring-4 focus:ring-[#0066cc]/10 border border-transparent focus:border-[#0066cc]/20 focus:shadow-sm"
-              placeholder="Tìm kiếm bài tập..."
+              className="w-full rounded-full bg-black/[0.03] dark:bg-white/[0.05] py-3.5 pl-12 pr-10 text-[15px] text-[#1d1d1f] dark:text-white placeholder-slate-400 dark:placeholder-slate-500 transition-all duration-300 focus:bg-white dark:focus:bg-[#222226] focus:outline-none focus:ring-4 focus:ring-blue-500/15 border border-black/[0.06] dark:border-white/10 focus:border-[#0066cc] dark:focus:border-[#2997ff]"
+              placeholder="Tìm kiếm bài tập theo tên hoặc chủ đề..."
               value={search}
               onChange={(e) => setSearch(e.target.value)}
             />
             {search && (
               <button
                 onClick={() => setSearch("")}
-                className="absolute right-4 top-1/2 -translate-y-1/2 rounded-full p-1.5 text-slate-400 hover:bg-slate-200 dark:hover:bg-slate-700 hover:text-slate-600 transition-colors"
+                className="absolute right-4 top-1/2 -translate-y-1/2 rounded-full p-1 text-slate-400 hover:bg-slate-200 dark:hover:bg-slate-700 hover:text-slate-600 dark:hover:text-slate-200 transition-colors"
               >
                 <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                   <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
@@ -192,7 +192,7 @@ export function AssignmentList({ assignments, schedules = [], onNavigateToSchedu
 
           <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 flex-wrap">
             {/* Segmented Control for Tabs */}
-            <div className="flex flex-wrap items-center bg-slate-100/80 dark:bg-[#2a2a2c]/80 backdrop-blur-md p-1.5 rounded-full w-full sm:w-auto shadow-sm border border-black/5 dark:border-white/5">
+            <div className="flex flex-wrap items-center bg-black/[0.04] dark:bg-white/[0.05] backdrop-blur-md p-1.5 rounded-full w-full sm:w-auto border border-black/[0.03] dark:border-white/[0.06] select-none">
               {[
                 { value: "not_started", label: "Chưa làm" },
                 { value: "completed", label: "Đã làm" },
@@ -203,10 +203,10 @@ export function AssignmentList({ assignments, schedules = [], onNavigateToSchedu
                   key={tab.value}
                   onClick={() => setStatusFilter(tab.value)}
                   className={clsx(
-                    "flex-1 sm:flex-none rounded-full px-4 sm:px-5 py-2 text-[13px] sm:text-[14px] font-medium transition-all duration-300 ease-spring",
+                    "flex-1 sm:flex-none rounded-full px-4 sm:px-5 py-2 text-xs sm:text-sm font-semibold transition-all duration-300 ease-spring",
                     statusFilter === tab.value
-                      ? "bg-white dark:bg-[#444] text-[#0066cc] dark:text-white shadow-sm scale-[1.02]"
-                      : "text-slate-500 dark:text-slate-400 hover:text-slate-800 dark:hover:text-white hover:bg-black/5 dark:hover:bg-white/5 active:scale-95"
+                      ? "bg-white dark:bg-[#2c2c32] text-[#0066cc] dark:text-[#2997ff] shadow-sm scale-[1.02] border border-black/[0.04] dark:border-white/10"
+                      : "text-slate-600 dark:text-slate-400 hover:text-[#1d1d1f] dark:hover:text-white active:scale-95"
                   )}
                 >
                   {tab.label}
@@ -216,13 +216,13 @@ export function AssignmentList({ assignments, schedules = [], onNavigateToSchedu
 
             {subjects.length > 1 && (
               <select
-                className="w-full sm:w-auto rounded-full bg-slate-50 dark:bg-[#2a2a2c] px-4 py-2 text-[13px] font-medium text-slate-700 dark:text-slate-200 transition focus:outline-none focus:ring-4 focus:ring-[#0066cc]/10 border border-slate-200 dark:border-[#444]"
+                className="w-full sm:w-auto rounded-full bg-black/[0.03] dark:bg-white/[0.05] px-4 py-2 text-xs sm:text-sm font-semibold text-slate-700 dark:text-slate-200 transition focus:outline-none focus:ring-4 focus:ring-blue-500/15 border border-black/[0.06] dark:border-white/10"
                 value={subjectFilter}
                 onChange={(e) => setSubjectFilter(e.target.value)}
               >
-                <option value="Tất cả">Tất cả môn</option>
+                <option value="Tất cả">Tất cả môn học</option>
                 {subjects.map((s) => (
-                  <option key={s}>{s}</option>
+                  <option key={s} value={s}>{s}</option>
                 ))}
               </select>
             )}
@@ -230,14 +230,14 @@ export function AssignmentList({ assignments, schedules = [], onNavigateToSchedu
 
           {(search || subjectFilter !== "Tất cả" || statusFilter !== "Tất cả") && (
             <div className="flex items-center gap-2 px-1 pt-1">
-              <p className="text-[13px] text-[#1d1d1f]/60 dark:text-white/60 font-normal">
-                {filtered.length} kết quả
+              <p className="text-xs text-slate-500 dark:text-slate-400 font-medium">
+                Tìm thấy {filtered.length} bài tập
               </p>
               <button
                 onClick={() => { setSearch(""); setSubjectFilter("Tất cả"); setStatusFilter("Tất cả"); }}
-                className="ml-auto text-[13px] text-[#0066cc] dark:text-[#2997ff] hover:underline"
+                className="ml-auto text-xs font-semibold text-[#0066cc] dark:text-[#2997ff] hover:underline"
               >
-                Xóa bộ lọc
+                Xóa tất cả bộ lọc
               </button>
             </div>
           )}
@@ -267,9 +267,9 @@ export function AssignmentList({ assignments, schedules = [], onNavigateToSchedu
             <div
               key={assignment.id}
               className={clsx(
-                "group flex flex-col rounded-[2rem] bg-white dark:bg-[#1d1d1f] shadow-[0_2px_12px_rgba(0,0,0,0.03)] border border-black/5 dark:border-white/5 p-6 transition-all duration-300 ease-spring hover:-translate-y-1 hover:shadow-glass hover:scale-[1.01]",
-                urgent && "ring-1 ring-red-400/30",
-                overdue && "opacity-80"
+                "group flex flex-col rounded-[2rem] bg-white/80 dark:bg-[#18181b]/80 backdrop-blur-2xl shadow-[0_12px_36px_-10px_rgba(0,102,204,0.06)] dark:shadow-[0_16px_40px_-10px_rgba(0,0,0,0.6)] border border-white/80 dark:border-white/10 p-6 sm:p-7 transition-all duration-300 ease-spring hover:-translate-y-1.5 hover:shadow-[0_20px_45px_-10px_rgba(0,102,204,0.15)] dark:hover:shadow-[0_20px_45px_-10px_rgba(0,0,0,0.8)] hover:border-blue-500/30",
+                urgent && "ring-2 ring-rose-500/30",
+                overdue && "opacity-85"
               )}
               suppressHydrationWarning
             >
@@ -328,13 +328,13 @@ export function AssignmentList({ assignments, schedules = [], onNavigateToSchedu
                     <>
                       <Link
                         href={`/assignments/${assignment.id}/result?sid=${latest.id}`}
-                        className="rounded-full bg-slate-50 dark:bg-[#2a2a2c] px-4 py-2 text-[14px] font-medium text-slate-600 dark:text-slate-300 transition-all duration-300 ease-spring hover:bg-slate-100 dark:hover:bg-[#333] hover:shadow-sm hover:-translate-y-0.5 active:scale-95"
+                        className="rounded-full bg-black/[0.04] dark:bg-white/5 border border-black/[0.05] dark:border-white/10 px-4 py-2 text-xs sm:text-sm font-semibold text-slate-700 dark:text-slate-200 transition-all duration-300 ease-spring hover:bg-black/[0.08] dark:hover:bg-white/10 hover:-translate-y-0.5 active:scale-95"
                       >
                         Kết quả
                       </Link>
                       <Link
                         href={`/assignments/${assignment.id}/start`}
-                        className="rounded-full bg-[#0066cc] px-5 py-2 text-[14px] font-medium text-white transition-all duration-300 ease-spring hover:bg-[#0071e3] hover:shadow-md hover:-translate-y-0.5 active:scale-95 shadow-sm shadow-blue-500/20"
+                        className="rounded-full bg-[#0066cc] px-5 py-2 text-xs sm:text-sm font-semibold text-white transition-all duration-300 ease-spring hover:bg-[#005bb5] hover:shadow-lg hover:shadow-blue-500/25 hover:-translate-y-0.5 active:scale-95 shadow-md shadow-blue-500/20"
                       >
                         Làm lại
                       </Link>
@@ -344,10 +344,10 @@ export function AssignmentList({ assignments, schedules = [], onNavigateToSchedu
                       href={overdue ? "#" : `/assignments/${assignment.id}/start`}
                       aria-disabled={overdue}
                       className={clsx(
-                        "rounded-full px-6 py-2.5 text-[14px] font-medium transition-all duration-300 ease-spring text-center",
+                        "rounded-full px-6 py-2.5 text-xs sm:text-sm font-semibold transition-all duration-300 ease-spring text-center",
                         overdue
-                          ? "cursor-not-allowed bg-slate-100 dark:bg-slate-800 text-slate-400 dark:text-slate-500 shadow-none"
-                          : "bg-[#0066cc] text-white hover:bg-[#0071e3] shadow-md shadow-blue-500/20 hover:shadow-lg hover:shadow-blue-500/30 hover:-translate-y-0.5 active:scale-95"
+                          ? "cursor-not-allowed bg-black/[0.04] dark:bg-white/5 text-slate-400 dark:text-slate-500 shadow-none border border-black/[0.04] dark:border-white/5"
+                          : "bg-[#0066cc] text-white hover:bg-[#005bb5] shadow-lg shadow-blue-500/25 hover:shadow-xl hover:shadow-blue-500/35 hover:-translate-y-0.5 active:scale-95"
                       )}
                     >
                       {overdue ? "Đã hết hạn" : "Bắt đầu làm bài"}
@@ -359,14 +359,14 @@ export function AssignmentList({ assignments, schedules = [], onNavigateToSchedu
           );
         })}
         {filtered.length === 0 && (
-          <div className="sm:col-span-2 lg:col-span-3 flex flex-col items-center justify-center rounded-[2rem] bg-white dark:bg-[#1d1d1f] shadow-[0_2px_10px_rgba(0,0,0,0.02)] border border-black/5 dark:border-white/5 p-16 text-center">
-            <div className="mb-5 flex h-24 w-24 items-center justify-center rounded-full bg-slate-50 dark:bg-slate-800/50">
-              <svg className="h-10 w-10 text-slate-400 dark:text-slate-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+          <div className="sm:col-span-2 lg:col-span-3 flex flex-col items-center justify-center rounded-[2.5rem] bg-white/70 dark:bg-[#18181b]/70 backdrop-blur-2xl shadow-[0_12px_36px_rgba(0,0,0,0.03)] border border-white/80 dark:border-white/10 p-12 sm:p-16 text-center animate-fade-in">
+            <div className="mb-4 flex h-20 w-20 items-center justify-center rounded-3xl bg-blue-500/10 dark:bg-blue-500/15 text-[#0066cc] dark:text-[#2997ff] border border-blue-500/20">
+              <svg className="h-9 w-9" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.75} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
               </svg>
             </div>
-            <p className="text-[17px] font-semibold text-[#1d1d1f] dark:text-white tracking-[-0.02em] mb-2">Không tìm thấy bài tập phù hợp</p>
-            <p className="text-[14px] text-[#1d1d1f]/60 dark:text-white/60">Thử thay đổi bộ lọc hoặc tìm kiếm khác</p>
+            <p className="text-lg font-bold text-[#1d1d1f] dark:text-white tracking-[-0.02em] mb-1.5">Không tìm thấy bài tập phù hợp</p>
+            <p className="text-xs sm:text-sm text-slate-500 dark:text-slate-400 max-w-sm leading-relaxed">Bạn có thể thử tìm kiếm từ khoá khác hoặc đặt lại bộ lọc để xem toàn bộ danh sách bài tập.</p>
           </div>
         )}
       </div>

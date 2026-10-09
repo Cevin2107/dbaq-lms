@@ -168,19 +168,19 @@ export function AdminSidebar() {
       </div>
 
       {/* ─── DESKTOP: Sticky Sidebar (Visible on >= lg) ──── */}
-      <aside className="hidden lg:flex sticky top-0 left-0 z-40 h-screen w-64 flex-col border-r border-white/40 dark:border-white/5 bg-white/70 dark:bg-[#2a2a2c]/70 backdrop-blur-xl shadow-glass">
-        <div className="flex h-16 shrink-0 items-center justify-between border-b border-slate-200 dark:border-white/5 px-4">
-        <Link href="/admin/dashboard" className="flex items-center gap-3">
-          <BrandLogo size="md" animate glow className="shadow-lg ring-1 ring-white/30 dark:ring-white/10" />
+      <aside className="hidden lg:flex sticky top-0 left-0 z-40 h-screen w-64 flex-col border-r border-white/60 dark:border-white/10 bg-white/80 dark:bg-[#161618]/85 backdrop-blur-2xl shadow-[0_4px_30px_rgba(0,0,0,0.04)] dark:shadow-[0_4px_30px_rgba(0,0,0,0.5)]">
+        <div className="flex h-16 shrink-0 items-center justify-between border-b border-black/[0.05] dark:border-white/10 px-5">
+        <Link href="/admin/dashboard" className="flex items-center gap-3 group">
+          <BrandLogo size="md" animate glow className="shadow-md ring-1 ring-white/40 dark:ring-white/10 transition-transform duration-300 group-hover:scale-105" />
           <div className="min-w-0">
-            <h1 className="text-sm font-bold text-slate-900 dark:text-white leading-tight truncate">Admin Đào Bá Anh Quân</h1>
-            <p className="text-[10px] text-slate-500 uppercase tracking-wider font-semibold">Workspace</p>
+            <h1 className="text-sm font-bold text-[#1d1d1f] dark:text-white leading-tight truncate group-hover:text-[#0066cc] dark:group-hover:text-[#2997ff] transition-colors">Admin Đào Bá Anh Quân</h1>
+            <p className="text-[10px] text-[#0066cc] dark:text-[#2997ff] uppercase tracking-wider font-bold">LMS Workspace Pro</p>
           </div>
         </Link>
       </div>
 
       {/* Nav */}
-      <nav className="flex-1 space-y-1.5 p-3 overflow-y-auto">
+      <nav className="flex-1 space-y-1.5 p-3.5 overflow-y-auto">
         {NAV_ITEMS.map((item) => {
           const isActive = pathname.startsWith(item.href);
           const Icon = item.icon;
@@ -189,13 +189,13 @@ export function AdminSidebar() {
               key={item.name}
               href={item.href}
               className={cn(
-                "flex items-center gap-3 rounded-[1.25rem] px-3 py-3 text-sm font-semibold transition-all duration-300 ease-spring",
+                "flex items-center gap-3 rounded-2xl px-3.5 py-3 text-sm font-semibold transition-all duration-300 ease-spring",
                 isActive
-                  ? "bg-[#0066cc] text-white shadow-md shadow-blue-500/20 translate-x-1"
-                  : "text-slate-600 dark:text-slate-400 hover:bg-slate-100/50 dark:hover:bg-white/5 hover:backdrop-blur-md hover:text-slate-900 dark:hover:text-white active:scale-95"
+                  ? "bg-[#0066cc] text-white shadow-lg shadow-blue-500/25 translate-x-1"
+                  : "text-slate-600 dark:text-slate-400 hover:bg-black/[0.03] dark:hover:bg-white/5 hover:text-[#1d1d1f] dark:hover:text-white active:scale-95"
               )}
             >
-              <Icon className={cn("h-5 w-5 flex-shrink-0", isActive ? "text-white" : "text-slate-400")} />
+              <Icon className={cn("h-5 w-5 flex-shrink-0 transition-transform duration-300", isActive ? "text-white scale-105" : "text-slate-400 dark:text-slate-500")} />
               <span className="truncate">{item.name}</span>
             </Link>
           );
@@ -203,10 +203,10 @@ export function AdminSidebar() {
       </nav>
 
       {/* Footer Nav */}
-      <div className="shrink-0 border-t border-slate-200 dark:border-white/5 p-3 space-y-2">
+      <div className="shrink-0 border-t border-black/[0.05] dark:border-white/10 p-3.5 space-y-2">
         <button
           onClick={toggleTheme}
-          className="flex w-full items-center gap-3 rounded-[1.25rem] px-3 py-3 text-sm font-semibold transition-all hover:bg-slate-100 dark:hover:bg-slate-800/80 active:scale-95 text-slate-700 dark:text-slate-200 border border-transparent hover:border-slate-200 dark:hover:border-slate-700"
+          className="flex w-full items-center gap-3 rounded-2xl px-3.5 py-3 text-sm font-semibold transition-all duration-300 ease-spring hover:bg-black/[0.03] dark:hover:bg-white/5 active:scale-95 text-slate-700 dark:text-slate-300 border border-transparent hover:border-black/[0.04] dark:hover:border-white/5"
         >
           {theme === "dark" ? (
             <Sun className="h-5 w-5 flex-shrink-0 text-amber-500" />
@@ -218,9 +218,9 @@ export function AdminSidebar() {
         <form action="/api/admin/logout" method="POST">
           <button
             type="submit"
-            className="flex w-full items-center gap-3 rounded-[1.25rem] px-3 py-3 text-sm font-semibold text-red-600 bg-red-50 dark:bg-red-500/10 transition-all hover:bg-red-100 dark:hover:bg-red-500/20 active:scale-95 border border-red-100 dark:border-red-500/20"
+            className="flex w-full items-center gap-3 rounded-2xl px-3.5 py-3 text-sm font-semibold text-rose-600 dark:text-rose-400 bg-rose-500/10 transition-all duration-300 ease-spring hover:bg-rose-500/20 active:scale-95 border border-rose-500/20"
           >
-            <LogOut className="h-5 w-5 text-red-500 flex-shrink-0" />
+            <LogOut className="h-5 w-5 text-rose-500 flex-shrink-0" />
             <span>Đăng xuất</span>
           </button>
         </form>

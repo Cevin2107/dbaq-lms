@@ -152,27 +152,24 @@ export function StudentSessionsTab({ assignmentId }: { assignmentId: string }) {
   return (
     <div className="space-y-4 animate-fade-in">
       {/* Header Section - Glassmorphism */}
-      <div className="relative overflow-hidden rounded-[2rem] bg-white/80 dark:bg-[#1d1d1f]/80 backdrop-blur-xl border border-black/5 dark:border-white/5 shadow-[0_4px_20px_rgba(0,0,0,0.03)] p-4 sm:p-6">
+      <div className="relative overflow-hidden rounded-[2.5rem] bg-white/80 dark:bg-[#18181b]/80 backdrop-blur-2xl border border-white/80 dark:border-white/10 shadow-[0_8px_30px_rgba(0,0,0,0.04)] dark:shadow-[0_12px_36px_rgba(0,0,0,0.5)] p-5 sm:p-7">
         <div className="relative flex flex-col gap-4">
           <div className="flex-1">
-            <div className="flex items-center gap-2.5 mb-1.5">
-              <h2 className="text-xl font-bold text-slate-900 dark:text-white tracking-[-0.02em]">
-                Danh sách học sinh
+            <div className="flex items-center gap-2.5 mb-1.5 flex-wrap">
+              <h2 className="text-lg sm:text-xl font-extrabold text-[#1d1d1f] dark:text-white tracking-tight">
+                Danh sách bài nộp & Phiên làm bài
               </h2>
-              <div className={`flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-xs font-bold shadow-md ${
+              <div className={`flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold shadow-xs ${
                 sessions.length > 0 
-                  ? 'bg-gradient-to-r from-blue-500 to-cyan-500 text-white shadow-blue-500/30'
-                  : 'bg-slate-200 text-slate-500'
+                  ? 'bg-blue-500/10 text-[#0066cc] dark:text-blue-300 border border-blue-500/20'
+                  : 'bg-slate-200/50 dark:bg-white/10 text-slate-500'
               }`}>
-                {sessions.length} {sessions.length === 1 ? 'học sinh' : 'học sinh'}
+                {sessions.length} học sinh
               </div>
             </div>
-            <div className="flex items-center gap-1.5 text-xs text-slate-500">
-              <div className="relative">
-                <div className="absolute inset-0 bg-indigo-500/20 rounded-full blur animate-pulse" />
-                <RefreshCw className="relative h-3.5 w-3.5 animate-spin" />
-              </div>
-              <span className="font-medium">Tự động đồng bộ mỗi 2 giây</span>
+            <div className="flex items-center gap-1.5 text-xs text-slate-500 dark:text-slate-400">
+              <RefreshCw className="h-3.5 w-3.5 animate-spin text-[#0066cc]" />
+              <span className="font-medium">Tự động đồng bộ thời gian thực theo giây</span>
             </div>
           </div>
 
@@ -185,13 +182,13 @@ export function StudentSessionsTab({ assignmentId }: { assignmentId: string }) {
                   placeholder="Tìm kiếm học sinh..."
                   value={searchTerm}
                   onChange={e => setSearchTerm(e.target.value)}
-                  className="w-full pl-11 pr-4 py-2.5 bg-slate-50 dark:bg-[#1d1d1f]/50 border border-slate-200 dark:border-white/10 rounded-full text-[14px] text-slate-900 dark:text-white placeholder-slate-400 focus:bg-white dark:focus:bg-[#1d1d1f] focus:ring-4 focus:ring-blue-100 dark:focus:ring-blue-900/30 focus:border-[#0066cc] dark:focus:border-blue-500 transition-all outline-none"
+                  className="w-full pl-11 pr-4 py-2.5 bg-slate-50/80 dark:bg-white/5 border border-slate-200/80 dark:border-white/10 rounded-full text-xs sm:text-sm text-slate-900 dark:text-white placeholder-slate-400 focus:bg-white dark:focus:bg-[#18181b] focus:ring-4 focus:ring-blue-500/15 focus:border-[#0066cc] transition-all outline-none"
                   aria-label="Tìm kiếm học sinh"
                 />
               </div>
               <button
                 onClick={() => window.open(`/api/admin/assignments/${assignmentId}/export`, '_blank')}
-                className="flex items-center gap-1.5 px-4 py-2.5 bg-emerald-50 dark:bg-emerald-900/20 text-emerald-600 dark:text-emerald-400 hover:bg-emerald-100 dark:hover:bg-emerald-900/40 font-semibold rounded-full border border-emerald-200 dark:border-emerald-800/30 transition-colors flex-shrink-0 text-[14px]"
+                className="flex items-center gap-1.5 px-4 py-2.5 bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 hover:bg-emerald-500/15 font-bold rounded-full border border-emerald-500/20 transition-all flex-shrink-0 text-xs active:scale-95"
               >
                 <Download className="h-4 w-4" />
                 <span className="hidden sm:inline">Xuất bảng điểm</span>
@@ -203,42 +200,36 @@ export function StudentSessionsTab({ assignmentId }: { assignmentId: string }) {
 
       {/* Sessions List */}
       {isLoading ? (
-        <div className="relative overflow-hidden rounded-[2rem] bg-white/80 dark:bg-[#1d1d1f]/80 backdrop-blur-xl border border-black/5 dark:border-white/5 shadow-[0_4px_20px_rgba(0,0,0,0.03)] p-10">
+        <div className="relative overflow-hidden rounded-[2.5rem] bg-white/80 dark:bg-[#18181b]/80 backdrop-blur-2xl border border-white/80 dark:border-white/10 shadow-[0_8px_30px_rgba(0,0,0,0.04)] dark:shadow-[0_12px_36px_rgba(0,0,0,0.5)] p-12">
           <div className="flex flex-col items-center justify-center">
-            <div className="relative mb-4">
-              <RefreshCw className="relative h-10 w-10 text-[#0066cc] animate-spin" />
-            </div>
-            <p className="text-slate-600 dark:text-slate-400 font-medium text-[15px]">Đang tải danh sách...</p>
+            <RefreshCw className="h-10 w-10 text-[#0066cc] animate-spin mb-4" />
+            <p className="text-slate-600 dark:text-slate-400 font-semibold text-xs sm:text-sm">Đang tải danh sách học sinh...</p>
           </div>
         </div>
       ) : filteredSessions.length === 0 ? (
-        <div className="relative overflow-hidden rounded-[2rem] bg-white/80 dark:bg-[#1d1d1f]/80 backdrop-blur-xl border border-black/5 dark:border-white/5 shadow-[0_4px_20px_rgba(0,0,0,0.03)] p-10">
-          <div className="absolute inset-0 bg-gradient-to-br from-slate-50/50 via-transparent to-slate-50/50 pointer-events-none" />
-          
+        <div className="relative overflow-hidden rounded-[2.5rem] bg-white/80 dark:bg-[#18181b]/80 backdrop-blur-2xl border border-white/80 dark:border-white/10 shadow-[0_8px_30px_rgba(0,0,0,0.04)] dark:shadow-[0_12px_36px_rgba(0,0,0,0.5)] p-12 text-center">
           <div className="relative text-center">
             {searchTerm ? (
               <>
-                <div className="relative inline-block mb-3">
-                  <div className="absolute inset-0 bg-slate-300/20 rounded-full blur-xl" />
-                  <AlertCircle className="relative h-12 w-12 text-slate-300 mx-auto" />
+                <div className="h-14 w-14 rounded-2xl bg-amber-500/10 text-amber-600 dark:text-amber-400 flex items-center justify-center mx-auto mb-3">
+                  <AlertCircle className="h-7 w-7" />
                 </div>
-                <p className="text-base font-bold text-slate-700 mb-1.5">Không tìm thấy học sinh</p>
-                <p className="text-xs text-slate-500">Thử tìm kiếm với từ khóa khác</p>
+                <p className="text-base font-bold text-slate-800 dark:text-slate-200 mb-1">Không tìm thấy học sinh</p>
+                <p className="text-xs text-slate-500 dark:text-slate-400">Thử tìm kiếm với từ khóa khác</p>
               </>
             ) : (
               <>
-                <div className="relative inline-block mb-3">
-                  <div className="absolute inset-0 bg-indigo-300/20 rounded-full blur-xl" />
-                  <User className="relative h-12 w-12 text-slate-300 mx-auto" />
+                <div className="h-14 w-14 rounded-2xl bg-blue-500/10 text-[#0066cc] dark:text-blue-400 flex items-center justify-center mx-auto mb-3">
+                  <User className="h-7 w-7" />
                 </div>
-                <p className="text-base font-bold text-slate-700 mb-1.5">Chưa có học sinh nào</p>
-                <p className="text-xs text-slate-500">Khi học sinh truy cập bài tập, danh sách sẽ hiển thị tại đây.</p>
+                <p className="text-base font-bold text-slate-800 dark:text-slate-200 mb-1">Chưa có học sinh nào</p>
+                <p className="text-xs text-slate-500 dark:text-slate-400">Khi học sinh truy cập bài tập, danh sách phiên làm bài sẽ tự động hiển thị tại đây.</p>
               </>
             )}
           </div>
         </div>
       ) : (
-        <div className="grid grid-cols-1 gap-4">
+        <div className="grid grid-cols-1 gap-3.5 sm:gap-4">
           {paginatedSessions.map((s: any) => {
             const isSubmitted = !!s.submissions?.id;
             const duration = s.submissions?.id 
@@ -258,28 +249,22 @@ export function StudentSessionsTab({ assignmentId }: { assignmentId: string }) {
               : 0;
 
             const cardBorderClass = isSubmitted 
-              ? 'border-slate-200/50 dark:border-white/5 shadow-indigo-200/10' 
+              ? 'border-white/80 dark:border-white/10' 
               : s.status === "exited"
-              ? 'border-rose-200/50 dark:border-rose-800/30 shadow-rose-200/10'
-              : 'border-amber-200/50 dark:border-amber-800/30 shadow-amber-200/10';
-
-            const cardBgHoverClass = isSubmitted
-              ? 'hover:shadow-indigo-200/30 dark:hover:shadow-indigo-900/20'
-              : s.status === "exited"
-              ? 'hover:shadow-rose-200/30 dark:hover:shadow-rose-900/20'
-              : 'hover:shadow-amber-200/30 dark:hover:shadow-amber-900/20';
+              ? 'border-rose-500/30' 
+              : 'border-amber-500/30';
 
             return (
               <div 
                 key={s.id} 
-                className={`group relative overflow-hidden rounded-2xl border p-4 text-sm transition-all duration-300 bg-white/60 dark:bg-[#1d1d1f]/60 backdrop-blur-sm hover:bg-white/80 dark:hover:bg-[#1d1d1f]/80 hover:shadow-lg ${cardBorderClass} ${cardBgHoverClass} cursor-pointer`}
+                className={`group relative overflow-hidden rounded-[2.25rem] border p-4 sm:p-5 text-sm transition-all duration-300 ease-spring bg-white/80 dark:bg-[#18181b]/80 backdrop-blur-2xl shadow-[0_4px_20px_rgba(0,0,0,0.02)] hover:shadow-[0_12px_36px_rgba(0,102,204,0.08)] hover:-translate-y-0.5 ${cardBorderClass} cursor-pointer`}
                 onClick={() => setSelectedSessionId(s.id)}
               >
-                <div className="flex items-start gap-3">
+                <div className="flex items-start gap-3.5">
                   {/* Avatar */}
                   <div className="relative group/avatar flex-shrink-0">
-                    <div className="relative flex h-11 w-11 items-center justify-center rounded-2xl bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-400">
-                      <User className="h-5 w-5" />
+                    <div className="relative flex h-11 w-11 items-center justify-center rounded-2xl bg-gradient-to-br from-[#0066cc]/15 to-blue-500/10 text-[#0066cc] dark:text-blue-400 font-extrabold text-sm border border-blue-500/20">
+                      {s.student_name ? s.student_name.charAt(0).toUpperCase() : <User className="h-5 w-5" />}
                     </div>
                   </div>
 
@@ -397,47 +382,42 @@ export function StudentSessionsTab({ assignmentId }: { assignmentId: string }) {
         if (!session) return null;
         const isSubmitted = !!session.submissions?.id;
         return (
-          <div className="fixed inset-0 z-[9999] flex items-center justify-center p-2 sm:p-4 animate-fade-in">
-            <div className="fixed inset-0 bg-black/60 dark:bg-[#0a0a0a]/80 backdrop-blur-md" onClick={() => setSelectedSessionId(null)} />
-            <div className="relative z-10 bg-white dark:bg-[#1d1d1f] rounded-2xl sm:rounded-3xl shadow-2xl border border-black/5 dark:border-white/10 max-w-5xl w-full max-h-[95vh] sm:max-h-[90vh] overflow-hidden flex flex-col animate-scale-in">
+          <div className="fixed inset-0 z-[9999] flex items-center justify-center p-3 sm:p-6 animate-fade-in">
+            <div className="fixed inset-0 bg-slate-950/60 backdrop-blur-md" onClick={() => setSelectedSessionId(null)} />
+            <div className="relative z-10 bg-white/95 dark:bg-[#161618]/95 backdrop-blur-2xl rounded-[2.5rem] shadow-2xl border border-white/80 dark:border-white/10 max-w-5xl w-full max-h-[92vh] overflow-hidden flex flex-col animate-scale-in">
               {detailLoading ? (
                 <div className="p-8 sm:p-12 text-center flex-1 flex items-center justify-center">
                   <div className="space-y-4">
-                    <div className="inline-flex h-16 w-16 items-center justify-center rounded-2xl bg-gradient-to-br from-indigo-100 to-violet-100 dark:from-indigo-900/30 dark:to-violet-900/30">
-                      <div className="h-8 w-8 border-3 border-indigo-600 dark:border-indigo-400 border-t-transparent rounded-full animate-spin" />
-                    </div>
-                    <p className="text-slate-600 dark:text-slate-400 font-medium">Đang tải chi tiết...</p>
+                    <RefreshCw className="h-10 w-10 text-[#0066cc] animate-spin mx-auto" />
+                    <p className="text-slate-600 dark:text-slate-400 font-semibold text-xs sm:text-sm">Đang tải chi tiết bài làm...</p>
                   </div>
                 </div>
               ) : detailData ? (
                 <>
                   {/* Sticky Header */}
-                  <div className="sticky top-0 bg-white/95 dark:bg-[#1d1d1f]/95 backdrop-blur-xl border-b border-black/5 dark:border-white/5 p-3.5 sm:p-6 flex items-center justify-between z-10">
+                  <div className="sticky top-0 bg-white/95 dark:bg-[#161618]/95 backdrop-blur-2xl border-b border-black/5 dark:border-white/5 p-4 sm:p-6 flex items-center justify-between z-10">
                     <div className="flex items-center gap-3">
-                      <div className="relative">
-                        <div className="absolute inset-0 bg-gradient-to-br from-indigo-500 to-violet-600 rounded-2xl blur opacity-30" />
-                        <div className={`relative flex h-10 w-10 sm:h-12 sm:w-12 items-center justify-center rounded-xl sm:rounded-2xl shadow-lg ${
-                          isSubmitted 
-                            ? 'bg-gradient-to-br from-emerald-500 to-teal-600 shadow-emerald-500/30' 
-                            : 'bg-gradient-to-br from-amber-500 to-orange-600 shadow-amber-500/30'
-                        }`}>
-                          {isSubmitted ? (
-                            <CheckCircle2 className="h-5 w-5 sm:h-6 sm:w-6 text-white" />
-                          ) : (
-                            <Clock className="h-5 w-5 sm:h-6 sm:w-6 text-white" />
-                          )}
-                        </div>
+                      <div className={`flex h-11 w-11 sm:h-12 sm:w-12 items-center justify-center rounded-2xl shadow-md ${
+                        isSubmitted 
+                          ? 'bg-emerald-500/15 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20' 
+                          : 'bg-amber-500/15 text-amber-600 dark:text-amber-400 border border-amber-500/20'
+                      }`}>
+                        {isSubmitted ? (
+                          <CheckCircle2 className="h-6 w-6" />
+                        ) : (
+                          <Clock className="h-6 w-6" />
+                        )}
                       </div>
                       <div>
-                        <h2 className="text-base sm:text-xl font-bold bg-gradient-to-r from-slate-900 to-slate-700 dark:from-white dark:to-slate-300 bg-clip-text text-transparent">
-                          {isSubmitted ? 'Bài đã nộp' : 'Bài đang làm'}
+                        <h2 className="text-base sm:text-xl font-extrabold text-[#1d1d1f] dark:text-white tracking-tight">
+                          {isSubmitted ? 'Chi tiết bài nộp' : 'Bài đang làm trực tuyến'}
                         </h2>
                         <div className="flex items-center gap-2">
-                          <p className="text-xs sm:text-sm text-slate-600 dark:text-slate-400 font-medium">
+                          <p className="text-xs sm:text-sm text-slate-600 dark:text-slate-400 font-bold">
                             {session.student_name}
                           </p>
                           {!registeredStudentNames.includes(session.student_name?.toLowerCase().trim()) && Boolean(session.is_guest || session.draft_answers?.__sessionMeta?.isGuest) && (
-                            <span className="px-2 py-0.5 rounded-full text-[11px] font-bold bg-amber-100 dark:bg-amber-900/40 text-amber-800 dark:text-amber-300 border border-amber-300/80 dark:border-amber-700/60 shadow-sm flex items-center gap-1">
+                            <span className="px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-amber-500/10 text-amber-800 dark:text-amber-300 border border-amber-500/20 flex items-center gap-1">
                               <User className="h-3 w-3" />
                               Học sinh ngoài
                             </span>
@@ -447,7 +427,8 @@ export function StudentSessionsTab({ assignmentId }: { assignmentId: string }) {
                     </div>
                     <button
                       onClick={() => setSelectedSessionId(null)}
-                      className="flex h-9 w-9 sm:h-10 sm:w-10 items-center justify-center rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 hover:bg-red-100 hover:text-red-600 dark:hover:bg-red-900/30 dark:hover:text-red-400 transition-all"
+                      className="rounded-full p-2 text-slate-400 hover:bg-black/5 dark:hover:bg-white/10 hover:text-slate-700 dark:hover:text-slate-200 transition-colors active:scale-95"
+                      aria-label="Đóng cửa sổ"
                     >
                       <X className="h-5 w-5" />
                     </button>

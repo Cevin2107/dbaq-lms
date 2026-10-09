@@ -135,28 +135,28 @@ export function ScheduleRegistrationPanel() {
           </p>
         </div>
 
-        <div className="bg-white/80 dark:bg-[#0a0a0a]/40 backdrop-blur-md rounded-[1.5rem] border border-white/40 dark:border-white/10 p-5 flex flex-col md:items-end shadow-sm shrink-0 min-w-[140px]">
-          <span className="text-[14px] font-medium text-slate-500 dark:text-slate-400 mb-1">Đã chọn</span>
-          <div className="text-3xl font-bold text-slate-800 dark:text-white flex items-baseline">
-            <span className={clsx(selectedIds.size === maxShifts && "text-[#0066cc] dark:text-blue-400")}>
+        <div className="bg-white/80 dark:bg-[#18181b]/80 backdrop-blur-2xl rounded-2xl border border-white/80 dark:border-white/10 p-5 flex flex-col md:items-end shadow-sm shrink-0 min-w-[140px]">
+          <span className="text-xs font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400 mb-1">Đã chọn</span>
+          <div className="text-3xl font-extrabold text-[#1d1d1f] dark:text-white flex items-baseline">
+            <span className={clsx(selectedIds.size === maxShifts && "text-[#0066cc] dark:text-[#2997ff]")}>
               {selectedIds.size}
             </span>
-            <span className="text-slate-400 text-xl ml-1"> / {maxShifts}</span>
+            <span className="text-slate-400 text-xl ml-1 font-medium"> / {maxShifts}</span>
           </div>
         </div>
       </div>
 
       {error && (
-        <div className="flex items-center gap-3 p-5 bg-red-50 dark:bg-red-500/10 border border-red-200 dark:border-red-500/20 text-red-700 dark:text-red-400 rounded-[1.5rem] shadow-sm">
-          <AlertCircle className="h-6 w-6 shrink-0" />
-          <p className="text-[15px] font-medium">{error}</p>
+        <div className="flex items-center gap-3 p-4 sm:p-5 bg-rose-500/10 border border-rose-500/20 text-rose-700 dark:text-rose-400 rounded-2xl shadow-sm">
+          <AlertCircle className="h-5 w-5 shrink-0" />
+          <p className="text-sm font-medium">{error}</p>
         </div>
       )}
 
       {success && (
-        <div className="flex items-center gap-3 p-5 bg-emerald-50 dark:bg-emerald-500/10 border border-emerald-200 dark:border-emerald-500/20 text-emerald-700 dark:text-emerald-400 rounded-[1.5rem] shadow-sm">
-          <span className="h-6 w-6 rounded-full bg-emerald-500 flex items-center justify-center shrink-0 text-white text-sm">✓</span>
-          <p className="text-[15px] font-medium">{success}</p>
+        <div className="flex items-center gap-3 p-4 sm:p-5 bg-emerald-500/10 border border-emerald-500/20 text-emerald-700 dark:text-emerald-400 rounded-2xl shadow-sm">
+          <span className="h-6 w-6 rounded-full bg-emerald-500 flex items-center justify-center shrink-0 text-white text-xs font-bold">✓</span>
+          <p className="text-sm font-medium">{success}</p>
         </div>
       )}
 
@@ -194,18 +194,18 @@ export function ScheduleRegistrationPanel() {
         </div>
       </div>
 
-      <div className="bg-white dark:bg-[#1d1d1f] rounded-[2rem] shadow-[0_4px_20px_rgba(0,0,0,0.03)] border border-black/5 dark:border-white/5 overflow-hidden transition-all duration-300 hover:shadow-[0_12px_40px_rgba(0,0,0,0.08)]">
+      <div className="bg-white/80 dark:bg-[#18181b]/80 backdrop-blur-2xl rounded-[2.5rem] shadow-[0_16px_45px_rgba(0,0,0,0.04)] dark:shadow-[0_16px_45px_rgba(0,0,0,0.6)] border border-white/80 dark:border-white/10 overflow-hidden transition-all duration-300">
         <div className="overflow-x-auto">
           <table className="w-full text-left border-collapse">
-            <thead className="bg-slate-50/50 dark:bg-slate-800/30 text-slate-500 dark:text-slate-400 font-medium">
+            <thead className="bg-black/[0.02] dark:bg-white/[0.02] text-slate-500 dark:text-slate-400 font-medium">
               <tr>
-                <th className="px-6 py-5 border-b border-slate-100 dark:border-white/5 w-36 sticky left-0 bg-slate-50/90 dark:bg-slate-800/90 backdrop-blur z-10 font-semibold uppercase text-[13px]">
+                <th className="px-6 py-5 border-b border-black/[0.05] dark:border-white/5 w-36 sticky left-0 bg-white/95 dark:bg-[#18181b]/95 backdrop-blur z-10 font-bold uppercase text-[12px] tracking-wider text-slate-600 dark:text-slate-300">
                   Thứ \ Ca
                 </th>
                 {shifts.map((shift) => (
-                  <th key={shift.id} className="px-6 py-5 border-b border-slate-100 dark:border-white/5 text-center min-w-[140px]">
-                    <div className="font-bold text-slate-800 dark:text-white text-[15px]">{shift.name}</div>
-                    <div className="text-[13px] text-slate-400 mt-1">
+                  <th key={shift.id} className="px-6 py-5 border-b border-black/[0.05] dark:border-white/5 text-center min-w-[140px]">
+                    <div className="font-extrabold text-[#1d1d1f] dark:text-white text-[15px]">{shift.name}</div>
+                    <div className="text-xs text-slate-400 font-medium mt-1">
                       {shift.start_time.substring(0, 5)} - {shift.end_time.substring(0, 5)}
                     </div>
                   </th>
@@ -217,11 +217,11 @@ export function ScheduleRegistrationPanel() {
                 <tr
                   key={day.value}
                   className={clsx(
-                    "hover:bg-slate-50/50 dark:hover:bg-white/[0.02] transition-colors",
-                    idx !== DAYS.length - 1 && "border-b border-slate-100 dark:border-white/5"
+                    "hover:bg-blue-500/[0.02] transition-colors",
+                    idx !== DAYS.length - 1 && "border-b border-black/[0.04] dark:border-white/5"
                   )}
                 >
-                  <td className="px-6 py-5 font-semibold text-slate-800 dark:text-white sticky left-0 bg-white/90 dark:bg-[#1d1d1f]/90 backdrop-blur z-10 border-r border-slate-100 dark:border-white/5">
+                  <td className="px-6 py-5 font-bold text-[#1d1d1f] dark:text-white sticky left-0 bg-white/95 dark:bg-[#18181b]/95 backdrop-blur z-10 border-r border-black/[0.05] dark:border-white/5 text-sm">
                     {day.label}
                   </td>
                   {shifts.map((shift) => {
@@ -281,10 +281,10 @@ export function ScheduleRegistrationPanel() {
           </table>
         </div>
 
-        <div className="bg-slate-50 dark:bg-[#1d1d1f] p-6 sm:px-8 border-t border-slate-100 dark:border-white/5 flex flex-col md:flex-row items-center justify-between gap-6">
-          <div className="flex items-center gap-3 text-[15px] text-slate-500 dark:text-slate-400 text-center md:text-left">
-            <span className="p-2 bg-slate-200 dark:bg-slate-800 rounded-full text-slate-600 dark:text-slate-300">
-              <Info className="w-5 h-5" />
+        <div className="bg-black/[0.02] dark:bg-white/[0.02] p-6 sm:px-8 border-t border-black/[0.05] dark:border-white/5 flex flex-col md:flex-row items-center justify-between gap-6">
+          <div className="flex items-center gap-3 text-xs sm:text-sm text-slate-500 dark:text-slate-400 text-center md:text-left">
+            <span className="p-2 bg-black/[0.04] dark:bg-white/5 rounded-full text-slate-600 dark:text-slate-300 shrink-0">
+              <Info className="w-4 h-4 sm:w-5 sm:h-5" />
             </span>
             <span>Nhấn vào ô trống để đăng ký, nhấn lại để huỷ chọn. Bạn có thể thay đổi lịch bất kỳ lúc nào trước khi ca học bắt đầu.</span>
           </div>
@@ -292,10 +292,10 @@ export function ScheduleRegistrationPanel() {
           <button
             onClick={handleRegister}
             disabled={saving}
-            className="w-full md:w-auto shrink-0 flex items-center justify-center gap-2 px-8 py-3.5 rounded-full bg-[#0066cc] hover:bg-[#0071e3] active:scale-95 text-white font-semibold transition-all duration-300 ease-spring disabled:opacity-50 disabled:pointer-events-none shadow-md shadow-blue-500/20 hover:shadow-lg hover:-translate-y-0.5 text-[16px]"
+            className="w-full md:w-auto shrink-0 flex items-center justify-center gap-2 px-8 py-3.5 rounded-full bg-[#0066cc] hover:bg-[#005bb5] active:scale-95 text-white font-semibold transition-all duration-300 ease-spring disabled:opacity-50 disabled:pointer-events-none shadow-lg shadow-blue-500/25 hover:shadow-xl hover:-translate-y-0.5 text-sm sm:text-base"
           >
             {saving ? <RefreshCw className="w-5 h-5 animate-spin" /> : <Save className="w-5 h-5" />}
-            Xác nhận đăng ký
+            <span>Xác nhận đăng ký</span>
           </button>
         </div>
       </div>

@@ -16,21 +16,21 @@ export default async function AdminLayout({
   }
 
   return (
-    <div className="flex h-screen overflow-hidden bg-[#f5f5f7] dark:bg-[#0a0a0a] relative">
+    <div className="flex h-screen overflow-hidden bg-[#f5f5f7] dark:bg-[#0a0a0a] relative transition-colors duration-500">
       {/* Soft background elements */}
-      <div className="pointer-events-none fixed inset-0 overflow-hidden">
-        <div className="absolute -top-40 right-1/4 h-[500px] w-[500px] rounded-full bg-blue-200/20 dark:bg-blue-900/20 blur-[120px]" />
-        <div className="absolute -bottom-40 left-1/4 h-[500px] w-[500px] rounded-full bg-sky-200/20 dark:bg-sky-900/20 blur-[120px]" />
+      <div className="pointer-events-none fixed inset-0 overflow-hidden select-none">
+        <div className="absolute -top-40 right-1/4 h-[550px] w-[550px] rounded-full bg-blue-500/10 dark:bg-blue-600/15 blur-[140px] transform-gpu" />
+        <div className="absolute -bottom-40 left-1/4 h-[550px] w-[550px] rounded-full bg-indigo-500/10 dark:bg-sky-600/10 blur-[140px] transform-gpu" />
       </div>
 
       <AdminSidebar />
-      <main className="flex-1 overflow-hidden relative flex flex-col p-2 sm:p-3 lg:p-4">
-        <div className="flex-1 overflow-auto bg-white/90 dark:bg-[#1d1d1f]/90 backdrop-blur-md transform-gpu rounded-[2rem] shadow-glass border border-white/40 dark:border-white/10 relative">
+      <main className="flex-1 overflow-hidden relative flex flex-col p-2.5 sm:p-3.5 lg:p-4 z-10">
+        <div className="flex-1 overflow-auto bg-white/85 dark:bg-[#18181b]/90 backdrop-blur-2xl transform-gpu rounded-[2.5rem] shadow-[0_16px_50px_rgba(0,0,0,0.04)] dark:shadow-[0_24px_60px_rgba(0,0,0,0.7)] border border-white/80 dark:border-white/10 relative">
           <div className="min-h-full flex flex-col justify-between pb-24 lg:pb-0">
             <div>
               {children}
             </div>
-            <Footer variant="admin" className="rounded-b-[2rem] mt-8" />
+            <Footer variant="admin" className="rounded-b-[2.5rem] mt-8" />
           </div>
         </div>
       </main>

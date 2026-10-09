@@ -51,13 +51,13 @@ export function SessionModal({
   return createPortal(
     <div className="fixed inset-0 z-[9999] flex items-center justify-center p-4 animate-in fade-in duration-200">
       <div className="fixed inset-0 bg-slate-950/60 backdrop-blur-md" onClick={onClose} />
-      <div className="relative z-10 bg-white/90 dark:bg-[#1d1d1f]/90 backdrop-blur-xl rounded-[2rem] shadow-[0_12px_40px_rgba(0,0,0,0.25)] border border-black/5 dark:border-white/10 max-w-md w-full animate-in zoom-in-95 duration-200 overflow-hidden">
-        <div className="flex items-center justify-between p-6 border-b border-black/5 dark:border-white/5">
-          <h3 className="text-[19px] font-bold text-slate-900 dark:text-white tracking-[-0.01em]">
+      <div className="relative z-10 bg-white/95 dark:bg-[#18181b]/95 backdrop-blur-2xl rounded-[2.5rem] shadow-[0_20px_60px_rgba(0,0,0,0.3)] border border-white/80 dark:border-white/10 max-w-md w-full animate-in zoom-in-95 duration-200 overflow-hidden">
+        <div className="flex items-center justify-between p-6 border-b border-slate-100 dark:border-white/5">
+          <h3 className="text-lg font-bold text-slate-900 dark:text-white tracking-[-0.01em]">
             Buổi dạy ngày {dateStr}
             {studentName && (
               <span
-                className="ml-2 text-[13px] font-semibold px-2.5 py-0.5 rounded-full shadow-sm"
+                className="ml-2 text-xs font-bold px-3 py-1 rounded-full shadow-xs"
                 style={{ backgroundColor: studentColor || "#0066cc", color: "white" }}
               >
                 {studentName}
@@ -72,38 +72,38 @@ export function SessionModal({
           </button>
         </div>
 
-        <div className="p-6 space-y-6">
+        <div className="p-6 space-y-5">
           {existingSessions.length > 0 && (
-            <div className="space-y-3">
-              <p className="text-[14px] font-medium text-slate-500 dark:text-slate-400">Buổi dạy hiện tại:</p>
-              <div className="space-y-2.5">
+            <div className="space-y-2.5">
+              <p className="text-xs font-bold text-slate-500 dark:text-slate-400">Buổi dạy đã lên lịch:</p>
+              <div className="space-y-2">
                 {existingSessions.map((session) => (
                   <div
                     key={session.id}
                     className={`
                       ${SUBJECT_COLORS[session.subject].bg}
-                      text-white px-4 py-3 rounded-2xl font-medium
-                      shadow-sm flex items-center justify-between
+                      text-white px-4 py-3 rounded-2xl font-bold
+                      shadow-xs flex items-center justify-between text-xs
                     `}
                   >
-                    <span className="text-[15px]">{SUBJECT_NAMES[session.subject]}</span>
+                    <span>{SUBJECT_NAMES[session.subject]}</span>
                   </div>
                 ))}
               </div>
             </div>
           )}
 
-          <div className="space-y-3">
-            <label className="block text-[14px] font-medium text-slate-700 dark:text-slate-300">
-              Thêm buổi dạy mới:
+          <div className="space-y-2">
+            <label className="block text-xs font-bold text-slate-700 dark:text-slate-300">
+              Thêm môn học mới:
             </label>
             <select
               value={selectedSubject}
               onChange={(e) => setSelectedSubject(e.target.value as Subject)}
-              className="w-full px-4 py-3 border border-slate-200 dark:border-slate-700 bg-white/50 dark:bg-[#0a0a0a]/20 text-slate-900 dark:text-white rounded-2xl focus:ring-2 focus:ring-[#0066cc] focus:border-transparent transition-all duration-200 outline-none text-[15px]"
+              className="w-full px-4 py-3 border border-slate-200/80 dark:border-white/10 bg-slate-50/80 dark:bg-white/[0.04] text-slate-900 dark:text-white rounded-2xl focus:bg-white dark:focus:bg-[#18181b] focus:ring-4 focus:ring-blue-100 dark:focus:ring-blue-900/30 focus:border-[#0066cc] transition-all outline-none text-xs font-semibold"
             >
               {SUBJECTS.map((subject) => (
-                <option key={subject} value={subject} className="text-slate-900">
+                <option key={subject} value={subject} className="text-slate-900 dark:text-white dark:bg-[#18181b]">
                   {SUBJECT_NAMES[subject]}
                 </option>
               ))}
@@ -111,26 +111,26 @@ export function SessionModal({
           </div>
         </div>
 
-        <div className="flex gap-3 p-6 bg-slate-50/50 dark:bg-slate-800/30 border-t border-black/5 dark:border-white/5">
+        <div className="flex gap-2.5 p-6 bg-slate-50/60 dark:bg-white/[0.02] border-t border-slate-100 dark:border-white/5">
           {existingSessions.length > 0 && (
             <button
               onClick={handleDelete}
-              className="flex-1 px-6 py-3 bg-rose-500 text-white rounded-full font-bold hover:bg-rose-600 transition-all duration-200 flex items-center justify-center gap-2 shadow-sm hover:shadow-md active:scale-[0.98]"
+              className="flex-1 px-4 py-2.5 bg-rose-500 text-white rounded-full font-bold text-xs hover:bg-rose-600 transition-all duration-200 flex items-center justify-center gap-1.5 shadow-sm active:scale-[0.98]"
             >
               <Trash2 className="w-4 h-4" />
-              Xóa
+              Xóa ca
             </button>
           )}
           <button
             onClick={handleAdd}
-            className="flex-1 px-6 py-3 bg-[#0066cc] text-white rounded-full font-bold hover:bg-[#005bb5] transition-all duration-200 flex items-center justify-center gap-2 shadow-sm hover:shadow-md shadow-blue-500/20 active:scale-[0.98]"
+            className="flex-1 px-4 py-2.5 bg-gradient-to-r from-[#0066cc] to-sky-600 hover:from-blue-700 hover:to-sky-700 text-white rounded-full font-bold text-xs transition-all duration-200 flex items-center justify-center gap-1.5 shadow-lg shadow-blue-500/25 active:scale-[0.98]"
           >
             <Plus className="w-4 h-4" />
-            Thêm
+            Thêm ca
           </button>
           <button
             onClick={onClose}
-            className="flex-1 px-6 py-3 bg-slate-100 dark:bg-white/10 text-slate-700 dark:text-slate-200 rounded-full font-bold hover:bg-slate-200 dark:hover:bg-white/20 transition-all duration-200 active:scale-[0.98]"
+            className="flex-1 px-4 py-2.5 bg-slate-100 dark:bg-white/10 text-slate-700 dark:text-slate-200 rounded-full font-bold text-xs hover:bg-slate-200 dark:hover:bg-white/20 transition-all duration-200 active:scale-[0.98]"
           >
             Đóng
           </button>

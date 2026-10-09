@@ -40,23 +40,23 @@ export const AssignmentQuestion = memo(function AssignmentQuestion({
       id={`q-${q.id}`}
       style={{ animationDelay: `${Math.min(idx * 35, 350)}ms` }}
       className={clsx(
-        "rounded-[2rem] p-5 sm:p-6 transition-all duration-300 animate-slide-up relative overflow-hidden",
+        "rounded-[2.25rem] p-6 sm:p-7 transition-all duration-300 animate-slide-up relative overflow-hidden",
         q.type === "section"
           ? isDark 
-            ? "bg-[#1d1d1f]/80 border border-white/5 shadow-sm backdrop-blur-xl" 
-            : "bg-slate-50/90 border border-black/5 shadow-[0_4px_20px_rgba(0,0,0,0.03)] backdrop-blur-xl"
+            ? "bg-[#18181b]/80 border border-white/10 shadow-sm backdrop-blur-2xl" 
+            : "bg-white/80 border border-black/5 shadow-[0_8px_30px_rgba(0,0,0,0.03)] backdrop-blur-2xl"
           : isAnswered
             ? isDark
-              ? "bg-[#1d1d1f]/95 border border-[#0066cc]/30 shadow-[0_4px_20px_rgba(0,0,0,0.03)] ring-1 ring-[#0066cc]/10"
-              : "bg-white border border-[#0066cc]/20 shadow-[0_4px_20px_rgba(0,0,0,0.03)] ring-1 ring-[#0066cc]/10"
+              ? "bg-[#18181b]/95 border border-[#0066cc]/40 shadow-[0_8px_30px_rgba(0,102,204,0.1)] ring-2 ring-[#0066cc]/20 backdrop-blur-2xl"
+              : "bg-white/95 border border-[#0066cc]/30 shadow-[0_8px_30px_rgba(0,102,204,0.08)] ring-2 ring-[#0066cc]/15 backdrop-blur-2xl"
             : isDark
-              ? "bg-[#1d1d1f]/60 border border-white/5 hover:border-white/10 shadow-[0_4px_20px_rgba(0,0,0,0.03)]"
-              : "bg-white/95 border border-black/5 shadow-[0_4px_20px_rgba(0,0,0,0.03)] hover:shadow-[0_8px_30px_rgba(0,0,0,0.05)] backdrop-blur-md"
+              ? "bg-[#18181b]/70 border border-white/10 hover:border-white/20 shadow-[0_8px_30px_rgba(0,0,0,0.4)] backdrop-blur-2xl"
+              : "bg-white/85 border border-white/80 hover:border-[#0066cc]/30 shadow-[0_8px_30px_rgba(0,0,0,0.04)] hover:shadow-[0_12px_40px_rgba(0,102,204,0.08)] backdrop-blur-2xl"
       )}
     >
       {/* Accent glow on top edge */}
       {isAnswered && !isDark && <div className="absolute top-0 inset-x-0 h-1 bg-[#0066cc]" />}
-      {isAnswered && isDark && <div className="absolute top-0 inset-x-0 h-1 bg-gradient-to-r from-emerald-500 to-teal-500 opacity-50" />}
+      {isAnswered && isDark && <div className="absolute top-0 inset-x-0 h-1 bg-gradient-to-r from-[#0066cc] to-sky-400 opacity-70" />}
 
       <div className="flex items-start justify-between gap-4">
         <div className="flex-1 min-w-0">
@@ -134,7 +134,12 @@ export const AssignmentQuestion = memo(function AssignmentQuestion({
 
       {/* Answer inputs */}
       {q.type === "mcq" && (
-        <div className="mt-2 grid gap-3 grid-cols-1 sm:grid-cols-2">
+        <div className={clsx(
+          "mt-2 grid gap-3",
+          (q.choices && q.choices.some(c => c && (c.length > 40 || c.includes('\n') || c.includes('$$') || c.includes('\\begin') || c.includes('\\frac'))))
+            ? "grid-cols-1"
+            : "grid-cols-1 sm:grid-cols-2"
+        )}>
           {(q.choices && q.choices.length > 0 ? q.choices : ["", "", "", ""]).map((choice, ci) => {
             const val = String.fromCharCode(65 + ci);
             const checked = answer === val;
@@ -142,9 +147,9 @@ export const AssignmentQuestion = memo(function AssignmentQuestion({
               <label
                 key={ci}
                 className={clsx(
-                  "group relative flex cursor-pointer items-start sm:items-center gap-3 rounded-2xl border px-4 py-3 sm:py-4 transition-all duration-300 overflow-hidden",
+                  "group relative flex cursor-pointer items-start gap-3 rounded-2xl border px-4 py-3 sm:py-4 transition-all duration-300 min-w-0 max-w-full overflow-hidden break-words",
                   checked
-                    ? "border-transparent bg-[#0066cc] text-white shadow-md shadow-blue-500/30 z-10 scale-[1.02]"
+                    ? "border-transparent bg-[#0066cc] text-white shadow-md shadow-blue-500/30 z-10 scale-[1.01]"
                     : isDark 
                       ? "border-white/10 bg-[#1d1d1f]/60 text-slate-200 hover:bg-white/10 hover:border-white/20 hover:text-white" 
                       : "border-black/5 bg-slate-50/50 text-slate-700 hover:border-[#0066cc]/30 hover:bg-white hover:shadow-sm dark:border-white/10 dark:bg-[#1d1d1f]/60 dark:text-slate-200 dark:hover:bg-white/10 dark:hover:border-white/20 dark:hover:text-white"
@@ -154,7 +159,7 @@ export const AssignmentQuestion = memo(function AssignmentQuestion({
                 {checked && <div className="absolute inset-0 bg-gradient-to-r from-white/0 via-white/15 to-white/0 translate-x-[-100%] animate-[shimmer_2s_infinite] pointer-events-none" />}
 
                 <span className={clsx(
-                  "flex h-6 w-6 sm:h-7 sm:w-7 shrink-0 items-center justify-center rounded-full text-xs sm:text-[13px] font-bold transition-all duration-300 relative z-10",
+                  "mt-0.5 flex h-6 w-6 sm:h-7 sm:w-7 shrink-0 items-center justify-center rounded-full text-xs sm:text-[13px] font-bold transition-all duration-300 relative z-10",
                   checked 
                     ? "bg-white text-[#0066cc] shadow-sm scale-110" 
                     : isDark ? "bg-white/10 text-slate-300 group-hover:bg-white/20 group-hover:text-white" : "bg-white text-slate-500 shadow-sm border border-black/5 group-hover:border-[#0066cc]/30 group-hover:text-[#0066cc] dark:bg-white/10 dark:text-slate-300 dark:group-hover:bg-white/20 dark:group-hover:text-white"
@@ -162,7 +167,11 @@ export const AssignmentQuestion = memo(function AssignmentQuestion({
                   {val}
                 </span>
                 <input type="radio" name={`q-${q.id}`} className="sr-only" checked={checked} disabled={locked} onChange={() => onSetChoice(q.id, val)} />
-                {choice && <span className="flex-1 font-medium sm:text-[15px] pt-0.5 sm:pt-0 relative z-10 dark:text-slate-200"><MathText text={choice} /></span>}
+                {choice && (
+                  <div className="flex-1 min-w-0 max-w-full font-medium text-sm sm:text-[15px] leading-relaxed relative z-10 dark:text-slate-200 select-text break-words [overflow-wrap:anywhere] [&_.katex]:max-w-full [&_.katex-display]:max-w-full [&_.katex-display]:overflow-x-auto">
+                    <MathText text={choice} />
+                  </div>
+                )}
               </label>
             );
           })}
@@ -319,16 +328,16 @@ export const AssignmentQuestion = memo(function AssignmentQuestion({
             const selected = tfAnswers[subId] ?? (sq.id ? tfAnswers[sq.id] : undefined) ?? tfAnswers[String(si)] ?? (sq.order ? tfAnswers[String(sq.order)] : undefined);
             return (
               <div key={sq.id || si} className={clsx(
-                "flex flex-col sm:flex-row sm:items-center gap-3 rounded-2xl border px-4 py-3 sm:py-4 transition-all duration-300",
+                "flex flex-col sm:flex-row sm:items-center justify-between gap-3 rounded-2xl border px-4 py-3 sm:py-4 transition-all duration-300 min-w-0 max-w-full overflow-hidden",
                 isDark ? "bg-slate-800/50 border-slate-700 hover:bg-slate-800" : "bg-slate-50/80 border-slate-200 hover:bg-white hover:shadow-sm"
               )}>
-                <div className="flex items-start sm:items-center gap-3 sm:gap-4 flex-1">
-                  <span className={clsx("flex h-6 w-6 items-center justify-center rounded-lg text-xs font-black", isDark ? "bg-slate-700 text-slate-400" : "bg-slate-200 text-slate-600")}>{String.fromCharCode(97 + si)}</span>
-                  <span className={clsx("text-sm sm:text-[15px] font-medium pt-0.5 sm:pt-0 dark:text-slate-200", isDark ? "text-slate-200" : "text-slate-800")}>
+                <div className="flex items-start gap-3 sm:gap-4 flex-1 min-w-0 max-w-full">
+                  <span className={clsx("mt-0.5 flex h-6 w-6 shrink-0 items-center justify-center rounded-lg text-xs font-black", isDark ? "bg-slate-700 text-slate-400" : "bg-slate-200 text-slate-600")}>{String.fromCharCode(97 + si)}</span>
+                  <div className={clsx("flex-1 min-w-0 max-w-full text-sm sm:text-[15px] font-medium leading-relaxed dark:text-slate-200 break-words [overflow-wrap:anywhere] [&_.katex]:max-w-full [&_.katex-display]:max-w-full [&_.katex-display]:overflow-x-auto", isDark ? "text-slate-200" : "text-slate-800")}>
                     {sq.content ? <MathText text={sq.content} /> : <em className="not-italic opacity-50">Câu {String.fromCharCode(97 + si)}</em>}
-                  </span>
+                  </div>
                 </div>
-                <div className="flex gap-2 self-end sm:self-auto ml-9 sm:ml-0">
+                <div className="flex gap-2 shrink-0 self-end sm:self-center ml-9 sm:ml-0">
                   {["true", "false"].map((val) => (
                     <button
                       key={val}

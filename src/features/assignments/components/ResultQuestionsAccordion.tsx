@@ -540,7 +540,7 @@ export function ResultQuestionsAccordion({
                                     : "border-black/5 dark:border-white/5 bg-slate-50/60 dark:bg-[#1d1d1f]/40 text-slate-700 dark:text-slate-300"
                                 )}
                               >
-                                <div className="flex items-start gap-3 min-w-0">
+                                <div className="flex items-start gap-3 min-w-0 flex-1 max-w-full overflow-hidden">
                                   <span
                                     className={clsx(
                                       "flex h-6 w-6 shrink-0 items-center justify-center rounded-lg text-xs font-bold transition-colors mt-0.5",
@@ -554,7 +554,7 @@ export function ResultQuestionsAccordion({
                                     {choiceLabel}
                                   </span>
 
-                                  <div className="leading-relaxed break-words text-slate-800 dark:text-slate-200">
+                                  <div className="flex-1 min-w-0 max-w-full leading-relaxed break-words [overflow-wrap:anywhere] text-slate-800 dark:text-slate-200 [&_.katex]:max-w-full [&_.katex-display]:max-w-full [&_.katex-display]:overflow-x-auto">
                                     {choice ? (
                                       <MathText text={toMathRenderableText(choice)} />
                                     ) : (

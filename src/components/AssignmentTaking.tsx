@@ -474,10 +474,10 @@ export function AssignmentTaking({ assignment, questions: initialQuestions, init
       {/* Top Navigation */}
       <div className={clsx(
         "sticky top-0 z-40 transition-all duration-300",
-        isDark ? "bg-[#1d1d1f]/80 border-b border-white/10 backdrop-blur-xl shadow-sm" : "bg-white/80 border-b border-black/5 backdrop-blur-xl shadow-[0_4px_20px_rgba(0,0,0,0.03)]"
+        isDark ? "bg-[#161618]/85 border-b border-white/10 backdrop-blur-2xl shadow-[0_4px_24px_rgba(0,0,0,0.45)]" : "bg-white/80 border-b border-black/[0.05] backdrop-blur-2xl shadow-[0_4px_24px_rgba(0,0,0,0.03)]"
       )}>
         <div className="w-full max-w-[1440px] mx-auto px-4 sm:px-6 md:px-8">
-          <div className="flex items-center justify-between gap-4 py-3 sm:py-4">
+          <div className="flex items-center justify-between gap-4 py-3 sm:py-3.5">
             <div className="flex-1 min-w-0 flex items-center gap-3">
               <div className={clsx("hidden sm:flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl shadow-sm bg-[#0066cc] text-white")}>
                 <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
@@ -485,7 +485,7 @@ export function AssignmentTaking({ assignment, questions: initialQuestions, init
                 </svg>
               </div>
               <div className="min-w-0" suppressHydrationWarning>
-                <h1 className={clsx("truncate text-sm sm:text-[17px] font-bold tracking-[-0.01em]", isDark ? "text-white" : "text-slate-900")}>
+                <h1 className={clsx("truncate text-sm sm:text-base font-extrabold tracking-tight", isDark ? "text-white" : "text-[#1d1d1f]")}>
                   {assignment.title}
                 </h1>
                 <p className={clsx("text-[11px] sm:text-xs font-medium truncate mt-0.5", isDark ? "text-slate-400" : "text-slate-500")}>
@@ -496,20 +496,20 @@ export function AssignmentTaking({ assignment, questions: initialQuestions, init
 
             <div className="flex items-center gap-2 sm:gap-3 shrink-0">
               <button onClick={toggleTheme} className={clsx(
-                "p-2 rounded-xl transition-colors hidden sm:block",
-                isDark ? "bg-slate-800 text-amber-400 hover:bg-slate-700" : "bg-slate-100 text-slate-600 hover:bg-slate-200"
+                "p-2 rounded-full transition-all duration-300 ease-spring hidden sm:block border",
+                isDark ? "bg-white/5 border-white/10 text-amber-400 hover:bg-white/10" : "bg-black/[0.03] border-black/[0.05] text-slate-600 hover:bg-black/[0.06]"
               )}>
                 {isDark ? <Sun className="w-4 h-4" /> : <Moon className="w-4 h-4" />}
               </button>
               
               {isMounted && hasTimer && (
                 <div className={clsx(
-                  "flex items-center gap-1.5 rounded-lg sm:rounded-xl px-2.5 sm:px-3 py-1.5 sm:py-2 text-xs sm:text-sm font-bold tabular-nums shadow-sm transition-colors",
+                  "flex items-center gap-1.5 rounded-full px-3.5 py-1.5 sm:py-2 text-xs sm:text-sm font-bold tabular-nums shadow-sm transition-all duration-300 border",
                   remaining <= 300 
-                    ? isDark ? "bg-red-500/20 text-red-400 shadow-[0_0_15px_rgba(239,68,68,0.2)]" : "bg-red-100 text-red-700 border-red-200" 
+                    ? isDark ? "bg-rose-500/20 text-rose-400 border-rose-500/30 shadow-[0_0_20px_rgba(244,63,94,0.3)] animate-pulse" : "bg-rose-50 text-rose-700 border-rose-200 shadow-sm animate-pulse" 
                     : remaining <= 900 
-                      ? isDark ? "bg-amber-500/20 text-amber-400 shadow-[0_0_15px_rgba(245,158,11,0.2)]" : "bg-amber-100 text-amber-700" 
-                      : isDark ? "bg-slate-800 text-slate-300" : "bg-slate-100 text-slate-700"
+                      ? isDark ? "bg-amber-500/20 text-amber-400 border-amber-500/30" : "bg-amber-50 text-amber-700 border-amber-200" 
+                      : isDark ? "bg-white/5 border-white/10 text-slate-200" : "bg-black/[0.03] border-black/[0.05] text-slate-700"
                 )}>
                   <Clock className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
                   {formatClock(remaining)}
@@ -519,8 +519,8 @@ export function AssignmentTaking({ assignment, questions: initialQuestions, init
               <button
                 onClick={handleExitClick}
                 className={clsx(
-                  "flex items-center justify-center gap-1.5 rounded-full px-4 py-2 sm:py-2.5 text-xs sm:text-sm font-bold transition-all border shadow-sm active:scale-[0.98]",
-                  isDark ? "bg-[#1d1d1f] border-white/10 text-slate-300 hover:bg-white/10 hover:text-white" : "bg-white border-black/5 text-slate-600 hover:bg-slate-50"
+                  "flex items-center justify-center gap-1.5 rounded-full px-4 py-2 sm:py-2 text-xs sm:text-sm font-semibold transition-all duration-300 ease-spring border shadow-sm hover:-translate-y-0.5 active:scale-95",
+                  isDark ? "bg-white/5 border-white/10 text-slate-300 hover:bg-white/10 hover:text-white" : "bg-white border-black/[0.06] text-slate-700 hover:bg-slate-50"
                 )}
               >
                 <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
@@ -686,12 +686,12 @@ export function AssignmentTaking({ assignment, questions: initialQuestions, init
             
             {/* Realtime Vietnam Clock */}
             {isMounted && (
-              <div className={clsx("rounded-[2rem] border p-5 text-center shadow-[0_4px_20px_rgba(0,0,0,0.03)] relative overflow-hidden", isDark ? "bg-[#1d1d1f]/80 backdrop-blur-xl border-white/5" : "bg-white/80 backdrop-blur-xl border-black/5")}>
-                <div className="absolute top-0 right-0 p-3 opacity-20 text-[#0066cc] dark:text-blue-500">
+              <div className={clsx("rounded-[2.25rem] border p-5 text-center shadow-[0_8px_30px_rgba(0,0,0,0.04)] dark:shadow-[0_12px_36px_rgba(0,0,0,0.4)] relative overflow-hidden backdrop-blur-2xl transition-all", isDark ? "bg-[#18181b]/80 border-white/10" : "bg-white/80 border-white/80")}>
+                <div className="absolute top-0 right-0 p-3 opacity-15 text-[#0066cc] dark:text-[#2997ff]">
                   <Clock className="w-16 h-16" />
                 </div>
                 <p className={clsx("text-xs font-bold uppercase tracking-widest relative z-10", isDark ? "text-blue-400" : "text-[#0066cc]")}>Giờ chuẩn Việt Nam</p>
-                <p className={clsx("mt-1.5 font-mono text-[1.75rem] font-bold tabular-nums relative z-10", isDark ? "text-white" : "text-slate-900")}>
+                <p className={clsx("mt-1.5 font-mono text-[1.75rem] font-extrabold tabular-nums relative z-10 tracking-tight", isDark ? "text-white" : "text-[#1d1d1f]")}>
                   {formatVietnamTime(currentVietnamTime)}
                 </p>
               </div>
@@ -700,33 +700,35 @@ export function AssignmentTaking({ assignment, questions: initialQuestions, init
             {/* Timer Panel */}
             {isMounted && hasTimer && (
               <div className={clsx(
-                "rounded-[2rem] border p-6 text-center transition-all duration-500 shadow-[0_4px_20px_rgba(0,0,0,0.03)] backdrop-blur-xl",
+                "rounded-[2.25rem] border p-6 text-center transition-all duration-500 shadow-[0_8px_30px_rgba(0,0,0,0.04)] dark:shadow-[0_12px_36px_rgba(0,0,0,0.4)] backdrop-blur-2xl",
                 timeUp 
-                  ? isDark ? "border-red-500/30 bg-red-500/10 shadow-[0_0_20px_rgba(239,68,68,0.15)]" : "border-red-200 bg-red-50 shadow-red-100/50"
+                  ? isDark ? "border-rose-500/30 bg-rose-500/10 shadow-[0_0_24px_rgba(244,63,94,0.2)]" : "border-rose-200 bg-rose-50"
                   : remaining <= 300 
-                    ? isDark ? "border-amber-500/30 bg-amber-500/10 animate-pulse-slow" : "border-amber-200 bg-amber-50"
-                    : isDark ? "border-white/5 bg-[#1d1d1f]/80" : "border-black/5 bg-white/80"
+                    ? isDark ? "border-rose-500/30 bg-rose-500/10 animate-pulse" : "border-rose-200 bg-rose-50 animate-pulse"
+                    : remaining <= 900 
+                      ? isDark ? "border-amber-500/30 bg-amber-500/10" : "border-amber-200 bg-amber-50"
+                      : isDark ? "border-white/10 bg-[#18181b]/80" : "border-white/80 bg-white/80"
               )}>
                 <p className={clsx(
                   "text-[10px] font-bold uppercase tracking-[0.2em] mb-2",
-                  timeUp || remaining <= 300 ? "text-red-500" : remaining <= 900 ? "text-amber-500" : isDark ? "text-slate-400" : "text-slate-500"
+                  timeUp || remaining <= 300 ? "text-rose-500" : remaining <= 900 ? "text-amber-500" : isDark ? "text-slate-400" : "text-slate-500"
                 )}>
                   Thời gian còn lại
                 </p>
                 <p className={clsx(
-                  "font-mono text-5xl font-bold tabular-nums tracking-tight drop-shadow-sm",
-                  timeUp || remaining <= 300 ? "text-red-500" : remaining <= 900 ? "text-amber-500" : isDark ? "text-white" : "text-slate-900"
+                  "font-mono text-5xl font-extrabold tabular-nums tracking-tight",
+                  timeUp || remaining <= 300 ? "text-rose-500 drop-shadow-[0_0_12px_rgba(244,63,94,0.4)]" : remaining <= 900 ? "text-amber-500" : isDark ? "text-white" : "text-[#1d1d1f]"
                 )}>
                   {formatClock(remaining)}
                 </p>
-                {timeUp && <p className="mt-2 text-sm font-bold text-red-500 animate-pulse">Đã hết giờ làm bài!</p>}
+                {timeUp && <p className="mt-2 text-sm font-bold text-rose-500 animate-pulse">Đã hết giờ làm bài!</p>}
                 
                 {!timeUp && hasTimer && (
                   <div className={clsx("mt-5 h-2 w-full rounded-full overflow-hidden shadow-inner", isDark ? "bg-white/5" : "bg-black/5")}>
                     <div
                       className={clsx(
                         "h-full rounded-full transition-all duration-1000 ease-linear",
-                        remaining <= 300 ? "bg-red-500 shadow-[0_0_10px_rgba(239,68,68,0.5)]" : remaining <= 900 ? "bg-amber-500" : "bg-[#0066cc]"
+                        remaining <= 300 ? "bg-rose-500 shadow-[0_0_12px_rgba(244,63,94,0.6)]" : remaining <= 900 ? "bg-amber-500" : "bg-[#0066cc]"
                       )}
                       style={{ width: `${(remaining / ((assignment.durationMinutes ?? 1) * 60)) * 100}%` }}
                     />
@@ -736,10 +738,10 @@ export function AssignmentTaking({ assignment, questions: initialQuestions, init
             )}
 
             {/* Question Map */}
-            <div className={clsx("rounded-[2rem] border p-5 shadow-[0_4px_20px_rgba(0,0,0,0.03)] backdrop-blur-xl flex-1 min-h-0 flex flex-col", isDark ? "bg-[#1d1d1f]/80 border-white/5" : "bg-white/80 border-black/5")}>
+            <div className={clsx("rounded-[2.25rem] border p-5 shadow-[0_8px_30px_rgba(0,0,0,0.04)] dark:shadow-[0_12px_36px_rgba(0,0,0,0.4)] backdrop-blur-2xl flex-1 min-h-0 flex flex-col", isDark ? "bg-[#18181b]/80 border-white/10" : "bg-white/80 border-white/80")}>
               <div className="flex items-center justify-between mb-4 shrink-0">
-                <p className={clsx("text-[11px] font-bold uppercase tracking-widest", isDark ? "text-slate-400" : "text-slate-500")}>Câu hỏi</p>
-                <span className={clsx("text-xs font-bold px-2.5 py-0.5 rounded-full", isDark ? "bg-white/10 text-slate-300" : "bg-slate-100 text-slate-700")}>
+                <p className={clsx("text-xs font-bold uppercase tracking-wider", isDark ? "text-slate-400" : "text-slate-500")}>Bản đồ câu hỏi</p>
+                <span className={clsx("text-xs font-bold px-3 py-1 rounded-full border", isDark ? "bg-white/5 text-slate-300 border-white/10" : "bg-black/[0.03] text-slate-700 border-black/[0.05]")}>
                   {answeredCount}/{nonSectionQuestions.length}
                 </span>
               </div>
@@ -753,16 +755,16 @@ export function AssignmentTaking({ assignment, questions: initialQuestions, init
                       type="button"
                       onClick={() => scrollToQuestion(q.id)}
                       className={clsx(
-                        "flex h-10 w-full items-center justify-center rounded-xl text-[13px] font-bold transition-all duration-200 relative overflow-hidden",
+                        "flex h-10 w-full items-center justify-center rounded-xl text-xs sm:text-[13px] font-bold transition-all duration-200 relative overflow-hidden active:scale-95",
                         done
-                          ? "bg-[#0066cc] text-white shadow-sm hover:bg-[#005bb5] hover:scale-105"
+                          ? "bg-[#0066cc] text-white shadow-md shadow-blue-500/25 hover:bg-[#005bb5] hover:scale-105"
                           : isDark 
                             ? "bg-white/5 text-slate-400 hover:bg-white/10 hover:text-slate-200 border border-white/5" 
-                            : "bg-slate-50 text-slate-500 border border-black/5 hover:border-[#0066cc]/30 hover:bg-[#0066cc]/5 hover:text-[#0066cc]"
+                            : "bg-black/[0.02] text-slate-600 border border-black/[0.05] hover:border-[#0066cc]/40 hover:bg-[#0066cc]/5 hover:text-[#0066cc]"
                       )}
                     >
                       {/* Active indicator dot */}
-                      {done && <div className="absolute top-1 right-1 w-1.5 h-1.5 rounded-full bg-white/50" />}
+                      {done && <div className="absolute top-1 right-1 w-1.5 h-1.5 rounded-full bg-white/70" />}
                       {idx + 1}
                     </button>
                   );
@@ -770,9 +772,9 @@ export function AssignmentTaking({ assignment, questions: initialQuestions, init
               </div>
 
               {nonSectionQuestions.length > 0 && (
-                <div className="mt-4 pt-4 border-t border-black/5 dark:border-white/5 flex flex-wrap justify-center gap-4 text-[11px] font-bold shrink-0">
+                <div className="mt-4 pt-4 border-t border-black/[0.05] dark:border-white/5 flex flex-wrap justify-center gap-4 text-[11px] font-bold shrink-0">
                   <span className="flex items-center gap-1.5"><span className="h-3 w-3 rounded-md bg-[#0066cc] shadow-sm" />Đã làm</span>
-                  <span className="flex items-center gap-1.5"><span className={clsx("h-3 w-3 rounded-md border", isDark ? "bg-white/5 border-white/10" : "bg-slate-50 border-black/5")} />Chưa làm</span>
+                  <span className="flex items-center gap-1.5"><span className={clsx("h-3 w-3 rounded-md border", isDark ? "bg-white/5 border-white/10" : "bg-black/[0.03] border-black/[0.05]")} />Chưa làm</span>
                 </div>
               )}
             </div>

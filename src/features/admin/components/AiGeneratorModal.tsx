@@ -588,40 +588,46 @@ export function AiGeneratorModal({ assignmentId, isOpen, onClose, onSuccess }: A
   return createPortal(
     <div className="fixed inset-0 z-[9999] flex items-center justify-center p-4 sm:p-6 animate-fade-in overflow-hidden">
       <div className="fixed inset-0 bg-slate-950/60 backdrop-blur-md" onClick={onClose} />
-      <Card className="relative z-10 flex w-full max-w-4xl flex-col max-h-[90vh] overflow-hidden rounded-[2rem] bg-white/95 dark:bg-[#1d1d1f]/95 backdrop-blur-xl shadow-[0_12px_40px_rgba(0,0,0,0.25)] border border-black/5 dark:border-white/10">
+      <div className="relative z-10 flex w-full max-w-4xl flex-col max-h-[90vh] overflow-hidden rounded-[2.5rem] bg-white/95 dark:bg-[#161618]/95 backdrop-blur-2xl shadow-[0_24px_70px_rgba(0,0,0,0.3)] border border-white/80 dark:border-white/10">
         {/* Header */}
-        <div className="flex items-center justify-between border-b border-slate-100 dark:border-slate-800 px-6 py-4">
-          <div className="flex items-center gap-2">
-            <Sparkles className="h-5 w-5 text-[#0066cc]" />
-            <h2 className="text-xl font-bold text-slate-900 dark:text-white">Auto Tạo & Bóc tách câu hỏi</h2>
+        <div className="flex items-center justify-between border-b border-black/5 dark:border-white/5 px-6 sm:px-8 py-5">
+          <div className="flex items-center gap-2.5">
+            <div className="h-9 w-9 rounded-2xl bg-blue-500/10 dark:bg-blue-500/20 text-[#0066cc] dark:text-blue-400 flex items-center justify-center font-bold">
+              <Sparkles className="h-5 w-5" />
+            </div>
+            <div>
+              <h2 className="text-lg sm:text-xl font-extrabold text-[#1d1d1f] dark:text-white tracking-tight">Auto Tạo & Bóc tách câu hỏi</h2>
+              <p className="text-[11px] sm:text-xs text-slate-500 dark:text-slate-400">Trí tuệ nhân tạo hỗ trợ bóc tách đề thi tự động từ văn bản thô</p>
+            </div>
           </div>
           <button
             onClick={onClose}
-            className="rounded-full p-2 text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 hover:text-slate-600 dark:hover:text-slate-200 transition"
+            className="rounded-full p-2 text-slate-400 hover:bg-black/5 dark:hover:bg-white/10 hover:text-slate-700 dark:hover:text-slate-200 transition-colors active:scale-95"
+            aria-label="Đóng cửa sổ"
           >
             <X className="h-5 w-5" />
           </button>
         </div>
 
         {/* Content Container */}
-        <div className="flex-1 overflow-y-auto px-6 py-5">
+        <div className="flex-1 overflow-y-auto px-6 sm:px-8 py-6">
           {status === "idle" || status === "error" ? (
             <div className="space-y-6">
               {/* Question Type Selector Tabs */}
               <div className="space-y-2">
-                <label className="text-sm font-semibold text-slate-700 dark:text-slate-300">
+                <label className="text-xs sm:text-sm font-bold text-slate-800 dark:text-slate-200">
                   Chọn loại câu hỏi muốn tạo
                 </label>
-                <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 bg-slate-100 dark:bg-slate-800/60 p-1.5 rounded-2xl">
+                <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 bg-slate-100/80 dark:bg-white/5 p-1.5 rounded-2xl border border-black/5 dark:border-white/5">
                   {QUESTION_TYPE_OPTIONS.map((item) => (
                     <button
                       key={item.id}
                       type="button"
                       onClick={() => setQuestionType(item.id)}
-                      className={`flex flex-col items-center justify-center p-3 rounded-xl transition-all text-xs font-medium ${
+                      className={`flex flex-col items-center justify-center p-3 rounded-xl transition-all text-xs font-semibold active:scale-95 duration-200 ${
                         questionType === item.id
-                          ? "bg-white dark:bg-[#1d1d1f] text-[#0066cc] dark:text-blue-400 font-bold shadow-sm ring-1 ring-black/5 dark:ring-white/10"
-                          : "text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white"
+                          ? "bg-white dark:bg-[#202024] text-[#0066cc] dark:text-blue-400 font-bold shadow-sm border border-blue-500/25"
+                          : "text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-white/40 dark:hover:bg-white/5"
                       }`}
                     >
                       <span className="text-lg mb-1">{item.icon}</span>
@@ -841,33 +847,35 @@ export function AiGeneratorModal({ assignmentId, isOpen, onClose, onSuccess }: A
 
         {/* Footer */}
         {status === "done" && (
-          <div className="border-t border-slate-100 dark:border-slate-800 p-4 bg-slate-50 dark:bg-slate-800/40 flex items-center justify-end gap-3 rounded-b-[2rem]">
-            <Button variant="outline" onClick={() => setStatus("idle")}>
+          <div className="border-t border-black/5 dark:border-white/5 p-4 sm:p-5 bg-slate-50/80 dark:bg-white/5 flex items-center justify-end gap-3 rounded-b-[2.5rem]">
+            <Button variant="outline" onClick={() => setStatus("idle")} className="rounded-full bg-white dark:bg-white/10 text-xs font-semibold px-5 py-2 active:scale-95 transition-all">
               Tạo lại
             </Button>
-            <Button variant="brand" onClick={handleSaveSelected} disabled={saving || selectedIndices.size === 0}>
+            <Button variant="brand" onClick={handleSaveSelected} disabled={saving || selectedIndices.size === 0} className="rounded-full bg-[#0066cc] hover:bg-[#005bb5] shadow-lg shadow-blue-500/25 px-6 py-2 text-xs font-semibold active:scale-95 transition-all">
               {saving ? <Loader2 className="h-4 w-4 mr-2 animate-spin" /> : <Save className="h-4 w-4 mr-2" />}
               Lưu {selectedIndices.size} câu đã chọn
             </Button>
           </div>
         )}
-      </Card>
+      </div>
 
       {/* Sub-modal: Import đáp án */}
       {isImportModalOpen && (
         <div className="fixed inset-0 z-[10000] flex items-center justify-center p-4 animate-fade-in">
           <div className="fixed inset-0 bg-slate-950/60 backdrop-blur-md" onClick={() => setIsImportModalOpen(false)} />
-          <Card className="relative z-10 w-full max-w-lg rounded-[2rem] bg-white dark:bg-[#1d1d1f] p-6 shadow-2xl border border-black/5 dark:border-white/10 space-y-4">
-            <div className="flex items-center justify-between border-b border-slate-100 dark:border-slate-800 pb-3">
-              <div className="flex items-center gap-2">
-                <Download className="h-5 w-5 text-[#0066cc]" />
-                <h3 className="text-lg font-bold text-slate-900 dark:text-white">
+          <div className="relative z-10 w-full max-w-lg rounded-[2.25rem] bg-white/95 dark:bg-[#18181b]/95 backdrop-blur-2xl p-6 sm:p-7 shadow-2xl border border-white/80 dark:border-white/10 space-y-4">
+            <div className="flex items-center justify-between border-b border-black/5 dark:border-white/5 pb-3">
+              <div className="flex items-center gap-2.5">
+                <div className="h-8 w-8 rounded-xl bg-blue-500/10 dark:bg-blue-500/20 text-[#0066cc] dark:text-blue-400 flex items-center justify-center font-bold">
+                  <Download className="h-4 w-4" />
+                </div>
+                <h3 className="text-base sm:text-lg font-bold text-slate-900 dark:text-white">
                   Import đáp án hàng loạt [{activeTypeObj?.label}]
                 </h3>
               </div>
               <button
                 onClick={() => setIsImportModalOpen(false)}
-                className="rounded-full p-1.5 text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 transition"
+                className="rounded-full p-1.5 text-slate-400 hover:bg-black/5 dark:hover:bg-white/10 transition"
               >
                 <X className="h-4 w-4" />
               </button>
@@ -885,7 +893,7 @@ export function AiGeneratorModal({ assignmentId, isOpen, onClose, onSuccess }: A
                 value={importText}
                 onChange={(e) => setImportText(e.target.value)}
                 rows={8}
-                className="w-full rounded-2xl border border-slate-200 dark:border-slate-700 bg-slate-50/50 dark:bg-slate-800/40 px-4 py-3 text-xs font-mono text-slate-900 dark:text-white focus:border-[#0066cc] focus:bg-white dark:focus:bg-slate-800 focus:outline-none focus:ring-4 focus:ring-blue-100 dark:focus:ring-blue-900/30 transition resize-none placeholder:text-slate-400"
+                className="w-full rounded-2xl border border-slate-200/80 dark:border-white/10 bg-slate-50/80 dark:bg-white/5 px-4 py-3 text-xs font-mono text-slate-900 dark:text-white focus:border-[#0066cc] focus:bg-white dark:focus:bg-[#18181b] focus:outline-none focus:ring-4 focus:ring-blue-500/15 transition resize-none placeholder:text-slate-400"
                 placeholder={
                   questionType === "mcq"
                     ? "| Câu | Đáp án |\n|-----|--------|\n| 1   | A      |\n| 2   | B      |"
@@ -896,15 +904,15 @@ export function AiGeneratorModal({ assignmentId, isOpen, onClose, onSuccess }: A
               />
             </div>
 
-            <div className="flex items-center justify-end gap-2 pt-2 border-t border-slate-100 dark:border-slate-800">
-              <Button variant="outline" size="sm" onClick={() => setIsImportModalOpen(false)}>
+            <div className="flex items-center justify-end gap-2 pt-3 border-t border-black/5 dark:border-white/5">
+              <Button variant="outline" size="sm" onClick={() => setIsImportModalOpen(false)} className="rounded-full text-xs px-4">
                 Hủy
               </Button>
-              <Button variant="brand" size="sm" onClick={handleApplyImportAnswers}>
+              <Button variant="brand" size="sm" onClick={handleApplyImportAnswers} className="rounded-full bg-[#0066cc] hover:bg-[#005bb5] text-xs px-5 shadow-md shadow-blue-500/20 active:scale-95 transition-all">
                 Áp dụng đáp án
               </Button>
             </div>
-          </Card>
+          </div>
         </div>
       )}
 

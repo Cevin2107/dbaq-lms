@@ -77,71 +77,112 @@ export function AssignTab({ assignmentId }: { assignmentId: string }) {
   const allAssigned = students.length > 0 && assignedCount === students.length;
 
   if (loading) {
-    return <div className="p-8 text-center text-slate-500">Đang tải danh sách học sinh...</div>;
+    return (
+      <div className="rounded-[2.25rem] bg-white/80 dark:bg-[#18181b]/80 backdrop-blur-2xl border border-white/80 dark:border-white/10 p-12 text-center text-xs font-semibold text-slate-400">
+        <div className="animate-spin w-5 h-5 border-2 border-[#0066cc] border-t-transparent rounded-full mx-auto mb-3" />
+        Đang tải danh sách học sinh...
+      </div>
+    );
   }
 
   return (
-    <div className="bg-white/80 dark:bg-slate-800/90 backdrop-blur-xl border border-slate-200/50 dark:border-slate-700/50 p-6 rounded-3xl shadow-sm">
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between mb-6 gap-4">
+    <div className="rounded-[2.25rem] bg-white/80 dark:bg-[#18181b]/80 backdrop-blur-2xl border border-white/80 dark:border-white/10 p-6 sm:p-8 shadow-[0_4px_24px_rgba(0,0,0,0.04)] space-y-6">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-slate-100 dark:border-white/5">
         <div>
-          <h2 className="text-xl font-bold text-slate-900 dark:text-white flex items-center gap-2">
-            <Users className="w-5 h-5 text-indigo-500" />
-            Giao bài cho học sinh
+          <h2 className="text-xl font-bold text-slate-900 dark:text-white flex items-center gap-2.5">
+            <div className="p-2.5 rounded-2xl bg-blue-500/10 text-[#0066cc] dark:text-blue-400">
+              <Users className="w-5 h-5" />
+            </div>
+            <span>Giao bài cho Học sinh</span>
           </h2>
-          <p className="text-sm text-slate-500 dark:text-slate-400 mt-1">
-            Chỉ hiển thị bài tập này cho những học sinh được chọn.
+          <p className="text-xs text-slate-500 dark:text-slate-400 mt-1">
+            Chỉ những học sinh được tích chọn mới nhìn thấy và làm bài tập này.
           </p>
         </div>
-        <Button onClick={handleSave} disabled={saving} variant="brand">
-          <Save className="w-4 h-4 mr-2" />
+        <Button 
+          onClick={handleSave} 
+          disabled={saving} 
+          className="rounded-full bg-gradient-to-r from-[#0066cc] to-sky-600 hover:from-blue-700 hover:to-sky-700 text-white shadow-lg shadow-blue-500/25 px-6 py-2.5 text-xs font-bold transition-all active:scale-[0.98]"
+        >
+          <Save className="w-4 h-4 mr-1.5" />
           {saving ? "Đang lưu..." : "Lưu phân công"}
         </Button>
       </div>
 
-      <div className="flex items-center gap-2 mb-4 p-3 rounded-xl bg-slate-50 dark:bg-slate-900/50 border border-slate-100 dark:border-slate-800">
+      <div className="flex items-center justify-between p-3.5 rounded-2xl bg-slate-50/80 dark:bg-white/[0.03] border border-slate-200/80 dark:border-white/10">
         <button
+          type="button"
           onClick={toggleAll}
-          className="flex items-center gap-2 text-sm font-semibold text-slate-700 dark:text-slate-300 hover:text-indigo-600 dark:hover:text-indigo-400 transition"
+          className="flex items-center gap-2.5 text-xs font-bold text-slate-700 dark:text-slate-300 hover:text-[#0066cc] dark:hover:text-blue-400 transition"
         >
           {allAssigned ? (
-            <CheckSquare className="w-5 h-5 text-indigo-600 dark:text-indigo-400" />
+            <CheckSquare className="w-4.5 h-4.5 text-[#0066cc] dark:text-blue-400" />
           ) : (
-            <Square className="w-5 h-5 text-slate-400" />
+            <Square className="w-4.5 h-4.5 text-slate-400" />
           )}
-          Chọn tất cả ({assignedCount}/{students.length})
+          <span>Chọn tất cả học sinh</span>
         </button>
+        <span className="text-xs font-bold px-3 py-1 rounded-full bg-blue-500/10 text-[#0066cc] dark:text-blue-400 border border-blue-500/20">
+          Đã chọn {assignedCount} / {students.length}
+        </span>
       </div>
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3">
-        {students.map(student => (
-          <div
-            key={student.id}
-            onClick={() => toggleStudent(student.id)}
-            className={clsx(
-              "flex items-center gap-3 p-4 rounded-2xl border-2 cursor-pointer transition-all duration-200",
-              student.isAssigned
-                ? "border-indigo-500 bg-indigo-50 dark:bg-indigo-500/10 dark:border-indigo-500/50"
-                : "border-transparent bg-slate-50 hover:bg-slate-100 dark:bg-slate-900/50 dark:hover:bg-slate-800"
-            )}
-          >
-            {student.isAssigned ? (
-              <CheckSquare className="w-5 h-5 text-indigo-600 dark:text-indigo-400 shrink-0" />
-            ) : (
-              <Square className="w-5 h-5 text-slate-400 shrink-0" />
-            )}
-            <span className={clsx(
-              "font-medium truncate text-sm",
-              student.isAssigned ? "text-indigo-900 dark:text-indigo-200" : "text-slate-700 dark:text-slate-300"
-            )}>
-              {student.full_name}
-            </span>
-          </div>
-        ))}
+      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3.5">
+        {students.map(student => {
+          const initials = student.full_name
+            ? student.full_name.split(" ").slice(-2).map((n) => n[0]).join("").toUpperCase()
+            : "HS";
+
+          return (
+            <div
+              key={student.id}
+              onClick={() => toggleStudent(student.id)}
+              className={clsx(
+                "group flex items-center justify-between p-3.5 rounded-2xl border cursor-pointer transition-all duration-200 select-none",
+                student.isAssigned
+                  ? "border-[#0066cc]/40 bg-blue-50/60 dark:bg-blue-950/20 shadow-xs"
+                  : "border-slate-200/80 dark:border-white/10 bg-slate-50/50 hover:bg-slate-100/70 dark:bg-white/[0.02] dark:hover:bg-white/[0.05]"
+              )}
+            >
+              <div className="flex items-center gap-3 min-w-0">
+                <div
+                  className={clsx(
+                    "w-9 h-9 rounded-xl flex items-center justify-center font-bold text-xs shrink-0 transition-colors",
+                    student.isAssigned
+                      ? "bg-gradient-to-tr from-[#0066cc] to-sky-400 text-white shadow-xs"
+                      : "bg-slate-200/70 dark:bg-white/10 text-slate-600 dark:text-slate-300"
+                  )}
+                >
+                  {initials}
+                </div>
+                <div className="min-w-0">
+                  <p
+                    className={clsx(
+                      "font-bold truncate text-xs transition-colors",
+                      student.isAssigned ? "text-slate-900 dark:text-white" : "text-slate-700 dark:text-slate-300"
+                    )}
+                  >
+                    {student.full_name}
+                  </p>
+                  <p className="text-[10px] text-slate-400 dark:text-slate-500 mt-0.5">
+                    {student.isAssigned ? "Được làm bài" : "Chưa giao"}
+                  </p>
+                </div>
+              </div>
+
+              {student.isAssigned ? (
+                <CheckSquare className="w-4.5 h-4.5 text-[#0066cc] dark:text-blue-400 shrink-0 ml-2" />
+              ) : (
+                <Square className="w-4.5 h-4.5 text-slate-300 dark:text-white/20 group-hover:text-slate-400 shrink-0 ml-2" />
+              )}
+            </div>
+          );
+        })}
       </div>
       
       {students.length === 0 && (
-        <div className="text-center py-8 text-slate-500 dark:text-slate-400">
-          Chưa có học sinh nào đăng ký tài khoản.
+        <div className="text-center py-12 border border-dashed border-slate-200 dark:border-white/10 rounded-2xl">
+          <p className="text-xs text-slate-400 italic">Chưa có học sinh nào trong cơ sở dữ liệu hệ thống.</p>
         </div>
       )}
     </div>

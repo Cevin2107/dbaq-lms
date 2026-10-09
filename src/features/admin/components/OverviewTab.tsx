@@ -43,10 +43,10 @@ type EditForm = {
 };
 
 const fieldClass =
-  "mt-1.5 w-full rounded-xl border border-slate-200 bg-white px-3.5 py-2.5 text-[14px] text-slate-900 shadow-sm outline-none transition focus:border-[#0066cc] focus:ring-4 focus:ring-[#0066cc]/10 dark:border-white/10 dark:bg-white/5 dark:text-white dark:focus:border-blue-400";
+  "mt-1.5 w-full rounded-2xl border border-slate-200/80 bg-slate-50/80 px-4 py-3 text-sm font-semibold text-slate-900 shadow-xs outline-none transition focus:border-[#0066cc] focus:bg-white focus:ring-4 focus:ring-[#0066cc]/15 dark:border-white/10 dark:bg-white/[0.04] dark:text-white dark:focus:border-blue-400 dark:focus:bg-[#18181b]";
 
 const compactFieldClass =
-  "w-full rounded-lg border border-slate-200 bg-white px-2.5 py-2 text-center text-sm font-semibold text-slate-900 outline-none transition focus:border-[#0066cc] focus:ring-4 focus:ring-[#0066cc]/10 dark:border-white/10 dark:bg-white/5 dark:text-white";
+  "w-full rounded-xl border border-slate-200/80 bg-slate-50/80 px-3 py-2 text-center text-xs font-bold text-slate-900 outline-none transition focus:border-[#0066cc] focus:bg-white focus:ring-4 focus:ring-[#0066cc]/15 dark:border-white/10 dark:bg-white/[0.04] dark:text-white";
 
 function normalizeInitialData(initialData: any): EditForm {
   return {
@@ -70,48 +70,6 @@ function toDatetimeLocalValue(value: string | null) {
   return new Date(date.getTime() - offsetMs).toISOString().substring(0, 16);
 }
 
-function formatDuration(minutes: number | string | null) {
-  const value = Number(minutes || 0);
-  if (!value) return "Không giới hạn";
-  if (value < 60) return `${value} phút`;
-  const hours = Math.floor(value / 60);
-  const mins = value % 60;
-  return mins ? `${hours} giờ ${mins} phút` : `${hours} giờ`;
-}
-
-function StatTile({
-  icon: Icon,
-  label,
-  value,
-  tone,
-}: {
-  icon: typeof BarChart3;
-  label: string;
-  value: string;
-  tone: "blue" | "emerald" | "amber" | "slate";
-}) {
-  const tones = {
-    blue: "bg-blue-50 text-[#0066cc] ring-blue-100 dark:bg-blue-500/10 dark:text-blue-300 dark:ring-blue-500/20",
-    emerald: "bg-emerald-50 text-emerald-600 ring-emerald-100 dark:bg-emerald-500/10 dark:text-emerald-300 dark:ring-emerald-500/20",
-    amber: "bg-amber-50 text-amber-600 ring-amber-100 dark:bg-amber-500/10 dark:text-amber-300 dark:ring-amber-500/20",
-    slate: "bg-slate-100 text-slate-600 ring-slate-200 dark:bg-white/10 dark:text-slate-300 dark:ring-white/10",
-  };
-
-  return (
-    <Card variant="glass" className="rounded-2xl p-4">
-      <div className="flex items-start justify-between gap-3">
-        <div>
-          <p className="text-[12px] font-semibold text-slate-500 dark:text-slate-400">{label}</p>
-          <p className="mt-1.5 text-[19px] font-black tracking-tight text-slate-900 dark:text-white">{value}</p>
-        </div>
-        <div className={`flex h-9 w-9 shrink-0 items-center justify-center rounded-xl ring-1 ${tones[tone]}`}>
-          <Icon className="h-4 w-4" />
-        </div>
-      </div>
-    </Card>
-  );
-}
-
 function SettingToggle({
   checked,
   onChange,
@@ -126,14 +84,14 @@ function SettingToggle({
   description: string;
 }) {
   return (
-    <label className="flex cursor-pointer items-center justify-between gap-3 rounded-xl border border-slate-200 bg-slate-50/70 px-3.5 py-3 transition hover:border-blue-200 hover:bg-blue-50/50 dark:border-white/10 dark:bg-white/[0.03] dark:hover:border-blue-500/30 dark:hover:bg-blue-500/10">
-      <span className="flex min-w-0 items-center gap-3">
-        <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-white text-slate-600 ring-1 ring-slate-200 dark:bg-white/10 dark:text-slate-300 dark:ring-white/10">
-          <Icon className="h-4 w-4" />
+    <label className="flex cursor-pointer items-center justify-between gap-3 rounded-2xl border border-slate-200/80 bg-slate-50/70 p-4 transition hover:border-blue-200 hover:bg-blue-50/40 dark:border-white/10 dark:bg-white/[0.03] dark:hover:border-blue-500/30 dark:hover:bg-blue-500/10">
+      <span className="flex min-w-0 items-center gap-3.5">
+        <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl bg-white text-slate-600 shadow-xs dark:bg-white/10 dark:text-slate-200">
+          <Icon className="h-4.5 w-4.5 text-[#0066cc] dark:text-blue-400" />
         </span>
         <span className="min-w-0">
-          <span className="block text-[14px] font-bold text-slate-900 dark:text-white">{title}</span>
-          <span className="mt-0.5 block text-[12px] leading-4 text-slate-500 dark:text-slate-400">{description}</span>
+          <span className="block text-sm font-bold text-slate-900 dark:text-white">{title}</span>
+          <span className="mt-0.5 block text-xs text-slate-500 dark:text-slate-400">{description}</span>
         </span>
       </span>
       <span className="relative inline-flex h-6 w-11 shrink-0 items-center">
@@ -246,54 +204,53 @@ export function OverviewTab({ assignmentId, initialData }: { assignmentId: strin
   };
 
   const statusBadge = editForm.is_hidden ? (
-    <Badge variant="warning" size="lg">
+    <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-amber-500/10 text-amber-600 dark:text-amber-400 border border-amber-500/20">
       <EyeOff className="h-3.5 w-3.5" />
       Đang ẩn
-    </Badge>
+    </span>
   ) : (
-    <Badge variant="success" size="lg">
+    <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20">
       <Eye className="h-3.5 w-3.5" />
       Đang mở
-    </Badge>
+    </span>
   );
 
-  const dueAtLabel = editForm.due_at ? formatVietnamTime(new Date(editForm.due_at)) || "Chưa đặt hạn" : "Chưa đặt hạn";
   const averageScore = Number(analytics?.averageScore || 0);
   const maxScore = Number(analytics?.maxScore || 0);
   const averageDuration = Math.round(Number(analytics?.averageDuration || 0) / 60) || 0;
 
   return (
-    <div className="space-y-4 sm:space-y-5">
-      <div className="grid grid-cols-1 gap-4 xl:grid-cols-[minmax(0,1fr)_320px]">
+    <div className="space-y-6">
+      <div className="grid grid-cols-1 gap-6 xl:grid-cols-[minmax(0,1fr)_340px]">
         <form onSubmit={handleSave} className="min-w-0">
-          <Card variant="glass" className="overflow-hidden rounded-2xl">
-            <div className="flex flex-col gap-3 border-b border-slate-200/70 p-4 sm:flex-row sm:items-center sm:justify-between sm:px-5 sm:py-4 dark:border-white/10">
+          <div className="rounded-[2.25rem] bg-white/80 dark:bg-[#18181b]/80 backdrop-blur-2xl border border-white/80 dark:border-white/10 shadow-[0_4px_24px_rgba(0,0,0,0.04)] overflow-hidden">
+            <div className="flex flex-col gap-3 border-b border-slate-100 dark:border-white/5 p-6 sm:flex-row sm:items-center sm:justify-between">
               <div>
-                <div className="flex flex-wrap items-center gap-2">
-                  <h2 className="text-[18px] font-black tracking-tight text-slate-900 dark:text-white">Tổng quan & cài đặt</h2>
+                <div className="flex flex-wrap items-center gap-2.5">
+                  <h2 className="text-xl font-bold tracking-tight text-slate-900 dark:text-white">Tổng quan & Cài đặt</h2>
                   {statusBadge}
                 </div>
-                <p className="mt-1 text-[13px] leading-5 text-slate-500 dark:text-slate-400">
+                <p className="mt-1 text-xs text-slate-500 dark:text-slate-400">
                   Điều chỉnh thông tin hiển thị, thời gian làm bài và cách tính điểm.
                 </p>
               </div>
             </div>
 
-            <div className="space-y-6 p-4 sm:p-5">
+            <div className="space-y-6 p-6 sm:p-8">
               <section>
                 <div className="mb-4 flex items-center gap-3">
-                  <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-blue-50 text-[#0066cc] ring-1 ring-blue-100 dark:bg-blue-500/10 dark:text-blue-300 dark:ring-blue-500/20">
-                    <Sparkles className="h-4 w-4" />
+                  <div className="flex h-10 w-10 items-center justify-center rounded-2xl bg-blue-500/10 text-[#0066cc] dark:text-blue-400">
+                    <Sparkles className="h-5 w-5" />
                   </div>
                   <div>
-                    <h3 className="text-[15px] font-black text-slate-900 dark:text-white">Thông tin bài tập</h3>
-                    <p className="text-[12px] text-slate-500 dark:text-slate-400">Tên, môn học và lớp áp dụng.</p>
+                    <h3 className="text-sm font-bold text-slate-900 dark:text-white">Thông tin bài tập</h3>
+                    <p className="text-xs text-slate-500 dark:text-slate-400">Tên, môn học và khối lớp áp dụng.</p>
                   </div>
                 </div>
 
-                <div className="grid grid-cols-1 gap-3 md:grid-cols-2">
+                <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
                   <div className="md:col-span-2">
-                    <label className="text-[13px] font-bold text-slate-700 dark:text-slate-300">Tên bài tập</label>
+                    <label className="text-xs font-bold text-slate-700 dark:text-slate-300">Tên bài tập</label>
                     <input
                       type="text"
                       value={editForm.title || ""}
@@ -303,7 +260,7 @@ export function OverviewTab({ assignmentId, initialData }: { assignmentId: strin
                     />
                   </div>
                   <div>
-                    <label className="text-[13px] font-bold text-slate-700 dark:text-slate-300">Môn học</label>
+                    <label className="text-xs font-bold text-slate-700 dark:text-slate-300">Môn học</label>
                     <input
                       type="text"
                       value={editForm.subject || ""}
@@ -312,7 +269,7 @@ export function OverviewTab({ assignmentId, initialData }: { assignmentId: strin
                     />
                   </div>
                   <div>
-                    <label className="text-[13px] font-bold text-slate-700 dark:text-slate-300">Lớp</label>
+                    <label className="text-xs font-bold text-slate-700 dark:text-slate-300">Khối Lớp</label>
                     <input
                       type="text"
                       value={editForm.grade || ""}
@@ -323,20 +280,20 @@ export function OverviewTab({ assignmentId, initialData }: { assignmentId: strin
                 </div>
               </section>
 
-              <section className="border-t border-slate-200/70 pt-6 dark:border-white/10">
+              <section className="border-t border-slate-100 dark:border-white/5 pt-6">
                 <div className="mb-4 flex items-center gap-3">
-                  <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-amber-50 text-amber-600 ring-1 ring-amber-100 dark:bg-amber-500/10 dark:text-amber-300 dark:ring-amber-500/20">
-                    <CalendarClock className="h-4 w-4" />
+                  <div className="flex h-10 w-10 items-center justify-center rounded-2xl bg-amber-500/10 text-amber-600 dark:text-amber-400">
+                    <CalendarClock className="h-5 w-5" />
                   </div>
                   <div>
-                    <h3 className="text-[15px] font-black text-slate-900 dark:text-white">Thời gian & điểm</h3>
-                    <p className="text-[12px] text-slate-500 dark:text-slate-400">Thiết lập hạn nộp, thời lượng và thang điểm.</p>
+                    <h3 className="text-sm font-bold text-slate-900 dark:text-white">Thời gian & Thang điểm</h3>
+                    <p className="text-xs text-slate-500 dark:text-slate-400">Thiết lập hạn nộp, thời lượng và tổng điểm bài thi.</p>
                   </div>
                 </div>
 
-                <div className="grid grid-cols-1 gap-3 lg:grid-cols-3">
+                <div className="grid grid-cols-1 gap-4 lg:grid-cols-3">
                   <div>
-                    <label className="text-[13px] font-bold text-slate-700 dark:text-slate-300">Hạn nộp</label>
+                    <label className="text-xs font-bold text-slate-700 dark:text-slate-300">Hạn nộp</label>
                     <input
                       type="datetime-local"
                       value={toDatetimeLocalValue(editForm.due_at)}
@@ -345,7 +302,7 @@ export function OverviewTab({ assignmentId, initialData }: { assignmentId: strin
                     />
                   </div>
                   <div>
-                    <label className="text-[13px] font-bold text-slate-700 dark:text-slate-300">Thời gian làm bài</label>
+                    <label className="text-xs font-bold text-slate-700 dark:text-slate-300">Thời gian làm bài</label>
                     <div className="relative">
                       <input
                         type="number"
@@ -354,11 +311,11 @@ export function OverviewTab({ assignmentId, initialData }: { assignmentId: strin
                         onChange={(event) => setEditForm({ ...editForm, duration_minutes: event.target.value })}
                         className={`${fieldClass} pr-16`}
                       />
-                      <span className="pointer-events-none absolute right-3.5 top-[1rem] text-[12px] font-semibold text-slate-400">phút</span>
+                      <span className="pointer-events-none absolute right-4 top-[1.65rem] text-xs font-bold text-slate-400">phút</span>
                     </div>
                   </div>
                   <div>
-                    <label className="text-[13px] font-bold text-slate-700 dark:text-slate-300">Tổng điểm</label>
+                    <label className="text-xs font-bold text-slate-700 dark:text-slate-300">Tổng điểm</label>
                     <input
                       type="number"
                       min={0}
@@ -371,60 +328,58 @@ export function OverviewTab({ assignmentId, initialData }: { assignmentId: strin
                 </div>
               </section>
 
-              <section className="border-t border-slate-200/70 pt-6 dark:border-white/10">
-
-                <div className="grid grid-cols-1 gap-3 lg:grid-cols-2">
+              <section className="border-t border-slate-100 dark:border-white/5 pt-6">
+                <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
                   <SettingToggle
                     checked={Boolean(editForm.is_hidden)}
                     onChange={(checked) => setEditForm({ ...editForm, is_hidden: checked })}
                     icon={EyeOff}
                     title="Ẩn bài tập"
-                    description="Học sinh sẽ không thấy bài này trong danh sách."
+                    description="Học sinh sẽ không nhìn thấy bài này trong danh sách."
                   />
                   <SettingToggle
                     checked={Boolean(editForm.hide_score)}
                     onChange={(checked) => setEditForm({ ...editForm, hide_score: checked })}
                     icon={Trophy}
                     title="Ẩn điểm sau khi nộp"
-                    description="Kết quả vẫn được lưu để giáo viên xem trong admin."
+                    description="Kết quả nộp bài chỉ giáo viên mới có thể xem."
                   />
                 </div>
               </section>
 
-              <section className="border-t border-slate-200/70 pt-6 dark:border-white/10">
+              <section className="border-t border-slate-100 dark:border-white/5 pt-6">
                 <div className="mb-4 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
                   <div className="flex items-center gap-3">
-                    <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-slate-100 text-slate-600 ring-1 ring-slate-200 dark:bg-white/10 dark:text-slate-300 dark:ring-white/10">
-                      <Target className="h-4 w-4" />
+                    <div className="flex h-10 w-10 items-center justify-center rounded-2xl bg-indigo-500/10 text-indigo-600 dark:text-indigo-400">
+                      <Target className="h-5 w-5" />
                     </div>
                     <div>
-                      <h3 className="text-[15px] font-black text-slate-900 dark:text-white">Chia điểm theo nhóm câu</h3>
-                      <p className="text-[12px] text-slate-500 dark:text-slate-400">Để trống nếu muốn hệ thống chia đều tổng điểm.</p>
+                      <h3 className="text-sm font-bold text-slate-900 dark:text-white">Chia điểm theo nhóm câu</h3>
+                      <p className="text-xs text-slate-500 dark:text-slate-400">Mặc định hệ thống sẽ chia đều tổng điểm cho tất cả câu.</p>
                     </div>
                   </div>
-                  <Button type="button" variant="outline" size="sm" onClick={addPointRange}>
-                    <Plus className="h-4 w-4" />
-                    Thêm nhóm
+                  <Button type="button" variant="outline" size="sm" onClick={addPointRange} className="rounded-full text-xs font-bold border-slate-200/80 dark:border-white/10">
+                    <Plus className="h-3.5 w-3.5 mr-1.5" />
+                    Thêm nhóm câu
                   </Button>
                 </div>
 
                 {editForm.point_ranges.length === 0 ? (
-                  <div className="rounded-xl border border-dashed border-slate-300 bg-slate-50/70 px-4 py-5 text-center dark:border-white/15 dark:bg-white/[0.03]">
-                    <Target className="mx-auto h-5 w-5 text-slate-400" />
-                    <p className="mt-2 text-[13px] font-semibold text-slate-600 dark:text-slate-300">Đang chia đều theo tổng điểm</p>
+                  <div className="rounded-2xl border border-dashed border-slate-200 dark:border-white/10 bg-slate-50/50 p-6 text-center dark:bg-white/[0.02]">
+                    <Target className="mx-auto h-6 w-6 text-slate-400" />
+                    <p className="mt-2 text-xs font-semibold text-slate-500 dark:text-slate-400">Đang tự động chia đều theo tổng điểm</p>
                   </div>
                 ) : (
-                  <div className="overflow-hidden rounded-xl border border-slate-200 dark:border-white/10">
-                    <div className="hidden grid-cols-[1fr_1fr_1fr_auto] gap-2 bg-slate-50 px-3 py-2.5 text-[11px] font-black uppercase text-slate-500 dark:bg-white/[0.03] dark:text-slate-400 sm:grid">
+                  <div className="overflow-hidden rounded-2xl border border-slate-200/80 dark:border-white/10">
+                    <div className="hidden grid-cols-[1fr_1fr_1fr_auto] gap-2 bg-slate-50/80 px-4 py-2.5 text-[11px] font-bold uppercase tracking-wider text-slate-500 dark:bg-white/[0.03] dark:text-slate-400 sm:grid">
                       <span>Từ câu</span>
                       <span>Đến câu</span>
-                      <span>Tổng điểm</span>
-                      <span className="text-right">Xóa</span>
+                      <span>Tổng điểm nhóm</span>
+                      <span className="text-right">Hành động</span>
                     </div>
-                    <div className="divide-y divide-slate-200 dark:divide-white/10">
+                    <div className="divide-y divide-slate-100 dark:divide-white/5">
                       {editForm.point_ranges.map((range, idx) => (
-                        <div key={idx} className="grid grid-cols-[1fr_1fr_1fr_auto] items-center gap-2 px-3 py-3">
-                          <label className="sr-only">Từ câu</label>
+                        <div key={idx} className="grid grid-cols-[1fr_1fr_1fr_auto] items-center gap-3 p-3 sm:px-4">
                           <input
                             type="number"
                             min={1}
@@ -432,7 +387,6 @@ export function OverviewTab({ assignmentId, initialData }: { assignmentId: strin
                             onChange={(event) => updatePointRange(idx, "fromQuestion", event.target.value === "" ? "" : parseInt(event.target.value, 10))}
                             className={compactFieldClass}
                           />
-                          <label className="sr-only">Đến câu</label>
                           <input
                             type="number"
                             min={1}
@@ -440,7 +394,6 @@ export function OverviewTab({ assignmentId, initialData }: { assignmentId: strin
                             onChange={(event) => updatePointRange(idx, "toQuestion", event.target.value === "" ? "" : parseInt(event.target.value, 10))}
                             className={compactFieldClass}
                           />
-                          <label className="sr-only">Tổng điểm</label>
                           <input
                             type="number"
                             min={0}
@@ -449,7 +402,7 @@ export function OverviewTab({ assignmentId, initialData }: { assignmentId: strin
                             onChange={(event) => updatePointRange(idx, "totalPoints", event.target.value === "" ? "" : parseFloat(event.target.value))}
                             className={compactFieldClass}
                           />
-                          <Button type="button" variant="ghost" size="icon" onClick={() => removePointRange(idx)} className="justify-self-end text-red-500 hover:bg-red-50 hover:text-red-600 dark:hover:bg-red-500/10">
+                          <Button type="button" variant="ghost" size="icon" onClick={() => removePointRange(idx)} className="justify-self-end text-rose-500 hover:bg-rose-50 hover:text-rose-600 dark:hover:bg-rose-500/10 rounded-xl h-8 w-8">
                             <Trash2 className="h-4 w-4" />
                           </Button>
                         </div>
@@ -459,67 +412,66 @@ export function OverviewTab({ assignmentId, initialData }: { assignmentId: strin
                 )}
               </section>
 
-              <div className="flex flex-col-reverse gap-3 border-t border-slate-200/70 pt-5 sm:flex-row sm:items-center sm:justify-between dark:border-white/10">
-                <Button type="button" variant="destructive" size="sm" onClick={handleDelete} className="w-full sm:w-auto">
-                  <Trash2 className="h-4 w-4" />
-                  Xóa bài
+              <div className="flex flex-col-reverse gap-3 border-t border-slate-100 dark:border-white/5 pt-6 sm:flex-row sm:items-center sm:justify-between">
+                <Button type="button" variant="destructive" size="sm" onClick={handleDelete} className="w-full sm:w-auto rounded-full text-xs font-bold px-5">
+                  <Trash2 className="h-4 w-4 mr-1.5" />
+                  Xóa bài tập
                 </Button>
-                <Button type="submit" variant="brand" size="sm" loading={loading} disabled={loading} className="w-full sm:w-auto">
-                  <Save className="h-4 w-4" />
-                  {loading ? "Đang lưu" : "Lưu thay đổi"}
+                <Button type="submit" size="sm" disabled={loading} className="w-full sm:w-auto rounded-full bg-gradient-to-r from-[#0066cc] to-sky-600 hover:from-blue-700 hover:to-sky-700 text-white shadow-lg shadow-blue-500/25 px-7 py-2.5 text-xs font-bold">
+                  <Save className="h-4 w-4 mr-1.5" />
+                  {loading ? "Đang lưu thay đổi..." : "Lưu thay đổi"}
                 </Button>
               </div>
             </div>
-          </Card>
+          </div>
         </form>
 
         <aside className="space-y-4">
-          <Card variant="glass" className="overflow-hidden rounded-2xl">
-            <div className="border-b border-slate-200/70 p-4 dark:border-white/10">
+          <div className="rounded-[2.25rem] bg-white/80 dark:bg-[#18181b]/80 backdrop-blur-2xl border border-white/80 dark:border-white/10 shadow-[0_4px_24px_rgba(0,0,0,0.04)] overflow-hidden">
+            <div className="border-b border-slate-100 dark:border-white/5 p-5">
               <div className="flex items-center gap-3">
-                <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-blue-50 text-[#0066cc] ring-1 ring-blue-100 dark:bg-blue-500/10 dark:text-blue-300 dark:ring-blue-500/20">
-                  <BarChart3 className="h-4 w-4" />
+                <div className="flex h-10 w-10 items-center justify-center rounded-2xl bg-blue-500/10 text-[#0066cc] dark:text-blue-400">
+                  <BarChart3 className="h-5 w-5" />
                 </div>
                 <div>
-                  <h2 className="text-[15px] font-black text-slate-900 dark:text-white">Thống kê chung</h2>
-                  <p className="text-[12px] text-slate-500 dark:text-slate-400">Dữ liệu nộp bài hiện tại.</p>
+                  <h2 className="text-sm font-bold text-slate-900 dark:text-white">Thống kê nhanh</h2>
+                  <p className="text-xs text-slate-500 dark:text-slate-400">Dữ liệu nộp bài thời gian thực.</p>
                 </div>
               </div>
             </div>
 
             {analyticsLoading ? (
-              <div className="space-y-2.5 p-4">
+              <div className="space-y-3 p-5">
                 {[1, 2, 3, 4].map((item) => (
-                  <div key={item} className="h-10 animate-pulse rounded-xl bg-slate-100 dark:bg-white/10" />
+                  <div key={item} className="h-12 animate-pulse rounded-2xl bg-slate-100 dark:bg-white/5" />
                 ))}
               </div>
             ) : analytics ? (
-              <div className="divide-y divide-slate-200/70 dark:divide-white/10">
+              <div className="divide-y divide-slate-100 dark:divide-white/5 p-2">
                 {[
-                  { label: "Lượt nộp", value: analytics.submissionCount || 0, icon: GraduationCap },
-                  { label: "Điểm trung bình", value: averageScore.toFixed(2).replace(".", ","), icon: Target },
-                  { label: "Điểm cao nhất", value: maxScore.toFixed(2).replace(".", ","), icon: Trophy },
-                  { label: "Thời gian TB", value: `${averageDuration} phút`, icon: Clock3 },
+                  { label: "Lượt nộp bài", value: analytics.submissionCount || 0, icon: GraduationCap, color: "text-blue-500 bg-blue-500/10" },
+                  { label: "Điểm trung bình", value: averageScore.toFixed(2).replace(".", ","), icon: Target, color: "text-emerald-500 bg-emerald-500/10" },
+                  { label: "Điểm cao nhất", value: maxScore.toFixed(2).replace(".", ","), icon: Trophy, color: "text-amber-500 bg-amber-500/10" },
+                  { label: "Thời gian làm TB", value: `${averageDuration} phút`, icon: Clock3, color: "text-indigo-500 bg-indigo-500/10" },
                 ].map((item) => {
                   const Icon = item.icon;
                   return (
-                    <div key={item.label} className="flex items-center justify-between gap-3 px-4 py-3">
-                      <div className="flex items-center gap-2.5">
-                        <span className="flex h-8 w-8 items-center justify-center rounded-full bg-slate-100 text-slate-500 dark:bg-white/10 dark:text-slate-300">
-                          <Icon className="h-4 w-4" />
+                    <div key={item.label} className="flex items-center justify-between gap-3 p-3 rounded-2xl hover:bg-slate-50/50 dark:hover:bg-white/[0.02] transition-colors">
+                      <div className="flex items-center gap-3">
+                        <span className={`flex h-9 w-9 items-center justify-center rounded-xl ${item.color}`}>
+                          <Icon className="h-4.5 w-4.5" />
                         </span>
-                        <span className="text-[13px] font-semibold text-slate-600 dark:text-slate-300">{item.label}</span>
+                        <span className="text-xs font-bold text-slate-600 dark:text-slate-300">{item.label}</span>
                       </div>
-                      <span className="text-[15px] font-black text-slate-900 dark:text-white">{item.value}</span>
+                      <span className="text-sm font-black text-slate-900 dark:text-white">{item.value}</span>
                     </div>
                   );
                 })}
               </div>
             ) : (
-              <div className="p-4 text-center text-[13px] text-slate-500 dark:text-slate-400">Chưa có dữ liệu thống kê</div>
+              <div className="p-6 text-center text-xs text-slate-400">Chưa có dữ liệu thống kê</div>
             )}
-          </Card>
-
+          </div>
         </aside>
       </div>
 

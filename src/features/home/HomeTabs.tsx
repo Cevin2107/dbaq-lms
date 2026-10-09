@@ -95,20 +95,21 @@ export function HomeTabs({ assignments, schedules = [], studentName, greeting, g
         {activeTab === "home" && (
           <div className="space-y-8">
             {/* Hero Card */}
-            <div className="relative overflow-hidden rounded-[2rem] bg-gradient-to-br from-blue-50/90 via-indigo-50/60 to-sky-50/90 dark:from-blue-950/40 dark:via-slate-900/40 dark:to-indigo-950/40 border border-blue-100/80 dark:border-blue-900/30 p-5 sm:p-10 shadow-[0_10px_35px_rgba(0,102,204,0.08)]">
+            <div className="relative overflow-hidden rounded-[2.5rem] bg-gradient-to-br from-white/90 via-blue-50/50 to-indigo-50/30 dark:from-[#18181b]/85 dark:via-[#131317]/70 dark:to-blue-950/25 backdrop-blur-2xl border border-white/80 dark:border-white/10 p-6 sm:p-10 lg:p-12 shadow-[0_20px_60px_-15px_rgba(0,102,204,0.08)] dark:shadow-[0_25px_60px_-15px_rgba(0,0,0,0.7)] transition-all">
               {/* Subtle ambient lighting orb */}
-              <div className="pointer-events-none absolute -right-20 -top-20 w-72 h-72 rounded-full bg-gradient-to-br from-blue-400/20 to-sky-300/10 blur-3xl dark:from-blue-600/15" />
+              <div className="pointer-events-none absolute -right-20 -top-20 w-80 h-80 rounded-full bg-gradient-to-br from-blue-400/25 to-sky-300/10 blur-3xl dark:from-blue-600/15" />
+              <div className="pointer-events-none absolute -left-20 -bottom-20 w-72 h-72 rounded-full bg-gradient-to-tr from-indigo-400/15 to-transparent blur-3xl dark:from-indigo-600/10" />
 
-              <div className="flex flex-col md:flex-row items-center justify-between gap-6 relative z-10">
+              <div className="flex flex-col md:flex-row items-center justify-between gap-8 relative z-10">
                 <div className="flex flex-col items-center md:items-start text-center md:text-left flex-1 min-w-0">
-                  <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-[#0066cc]/10 text-[#0066cc] dark:bg-blue-500/20 dark:text-blue-300 text-xs font-bold mb-4 shadow-sm">
+                  <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-[#0066cc]/10 text-[#0066cc] dark:bg-blue-500/15 dark:text-blue-300 text-xs font-bold mb-4 border border-blue-500/20 shadow-sm backdrop-blur-md">
                     <BookOpen className="h-3.5 w-3.5" />
                     <span>Hệ thống bài tập & học tập trực tuyến</span>
                     <Sparkles className="h-3 w-3 text-amber-500 animate-pulse" />
                   </div>
 
                   {/* Mobile portrait view */}
-                  <div className="md:hidden w-[200px] h-[200px] sm:w-[260px] sm:h-[260px] rounded-[24px] overflow-hidden mb-3 relative shadow-[rgba(0,0,0,0.2)_0px_8px_30px] border-2 border-white/60 dark:border-white/10">
+                  <div className="md:hidden w-[200px] h-[200px] sm:w-[260px] sm:h-[260px] rounded-[2rem] overflow-hidden mb-4 relative shadow-[0_16px_40px_rgba(0,0,0,0.12)] border border-white/80 dark:border-white/10">
                     <Image
                       src={bgImg}
                       alt="Đào Bá Anh Quân"
@@ -118,20 +119,20 @@ export function HomeTabs({ assignments, schedules = [], studentName, greeting, g
                     />
                   </div>
 
-                  <div className="mb-3 md:mb-6 relative z-10 flex justify-center md:justify-start">
+                  <div className="mb-3 md:mb-5 relative z-10 flex justify-center md:justify-start">
                     <h1
-                      className="font-bold tracking-tight text-[#1d1d1f] dark:text-white break-words sm:whitespace-nowrap leading-tight"
-                      style={{ fontSize: "clamp(22px, 3.8vw, 64px)" }}
+                      className="font-extrabold tracking-[-0.03em] text-[#1d1d1f] dark:text-white break-words sm:whitespace-nowrap leading-[1.15]"
+                      style={{ fontSize: "clamp(24px, 3.8vw, 64px)" }}
                     >
                       Gia sư Đào Bá Anh Quân
                     </h1>
                   </div>
 
-                  <div className="flex flex-col items-center md:items-start">
-                    <div className="flex items-center justify-center md:justify-start gap-2.5 text-[18px] sm:text-[22px] md:text-[26px] font-normal text-[#1d1d1f]/80 dark:text-white/80 tracking-tight leading-[1.3]">
+                  <div className="flex flex-col items-center md:items-start w-full">
+                    <div className="flex items-center justify-center md:justify-start gap-2.5 text-[18px] sm:text-[22px] md:text-[26px] font-medium text-[#1d1d1f]/85 dark:text-white/90 tracking-tight leading-[1.3] mb-2">
                       <GreetingIcon className={`h-6 w-6 sm:h-7 sm:w-7 ${iconColor}`} />
                       <h2>
-                        {greeting}, <span className="font-semibold text-[#1d1d1f] dark:text-white">{studentName || "Học sinh"}</span>.
+                        {greeting}, <span className="font-bold text-[#0066cc] dark:text-[#2997ff]">{studentName || "Học sinh"}</span>.
                       </h2>
                     </div>
                     <MotivationalQuoteCard />
@@ -139,8 +140,8 @@ export function HomeTabs({ assignments, schedules = [], studentName, greeting, g
                 </div>
 
                 {/* Desktop portrait view */}
-                <div className="hidden md:block shrink-0 relative w-72 h-72 lg:w-[360px] lg:h-[360px]">
-                  <div className="relative w-full h-full rounded-[24px] overflow-hidden shadow-[rgba(0,0,0,0.22)_0px_12px_36px] border border-white/60 dark:border-white/10 group">
+                <div className="hidden md:block shrink-0 relative w-72 h-72 lg:w-[340px] lg:h-[340px]">
+                  <div className="relative w-full h-full rounded-[2rem] overflow-hidden shadow-[0_20px_50px_rgba(0,0,0,0.15)] dark:shadow-[0_20px_50px_rgba(0,0,0,0.6)] border border-white/80 dark:border-white/10 group">
                     <Image
                       src={bgImg}
                       alt="Đào Bá Anh Quân"

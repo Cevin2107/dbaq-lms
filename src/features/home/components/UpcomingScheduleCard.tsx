@@ -128,15 +128,15 @@ export function UpcomingScheduleCard({
   const hasRegistrations = schedules && schedules.length > 0;
 
   return (
-    <div className="rounded-[2rem] bg-white dark:bg-[#1d1d1f] shadow-[0_4px_20px_rgba(0,0,0,0.03)] border border-black/5 dark:border-white/5 p-5 sm:p-6 flex flex-col gap-3.5 h-full">
+    <div className="rounded-[2.5rem] bg-white/80 dark:bg-[#18181b]/80 backdrop-blur-2xl shadow-[0_12px_36px_rgba(0,0,0,0.04)] dark:shadow-[0_12px_36px_rgba(0,0,0,0.45)] border border-white/80 dark:border-white/10 p-6 sm:p-7 flex flex-col justify-between gap-4 h-full transition-all">
       {/* Header */}
-      <div className="flex items-center justify-between pb-3 border-b border-black/5 dark:border-white/5 gap-2">
+      <div className="flex items-center justify-between pb-3.5 border-b border-black/[0.05] dark:border-white/[0.06] gap-2">
         <div className="flex items-center gap-2.5 min-w-0">
-          <div className="h-8 w-8 rounded-xl bg-gradient-to-br from-[#0066cc] to-[#0052a3] text-white flex items-center justify-center shadow-sm shadow-blue-500/20 shrink-0">
+          <div className="h-9 w-9 rounded-2xl bg-gradient-to-br from-[#0066cc] to-[#0052a3] text-white flex items-center justify-center shadow-md shadow-blue-500/25 shrink-0">
             <CalendarCheck2 className="h-4 w-4" />
           </div>
           <div className="min-w-0">
-            <h3 className="text-sm sm:text-base font-bold text-slate-900 dark:text-white truncate">
+            <h3 className="text-sm sm:text-base font-extrabold text-[#1d1d1f] dark:text-white truncate">
               Ca học sắp tới
             </h3>
           </div>
@@ -145,10 +145,10 @@ export function UpcomingScheduleCard({
         <button
           type="button"
           onClick={onNavigateToSchedule}
-          className="inline-flex items-center gap-1 text-[11px] font-semibold text-[#0066cc] dark:text-[#2997ff] hover:underline shrink-0 bg-blue-50/80 dark:bg-blue-950/40 px-2.5 py-1 rounded-full border border-blue-100 dark:border-blue-900/30 transition active:scale-95"
+          className="inline-flex items-center gap-1.5 text-xs font-semibold text-[#0066cc] dark:text-[#2997ff] hover:text-[#0052a3] shrink-0 bg-blue-500/10 dark:bg-blue-500/15 px-3 py-1.5 rounded-full border border-blue-500/20 transition-all duration-300 ease-spring hover:-translate-y-0.5 active:scale-95"
         >
           <span>{hasRegistrations ? "Đổi ca học" : "Đăng ký ca"}</span>
-          <ChevronRight className="h-3 w-3" />
+          <ChevronRight className="h-3.5 w-3.5" />
         </button>
       </div>
 
@@ -156,12 +156,12 @@ export function UpcomingScheduleCard({
       {hasRegistrations && upcomingInfo ? (
         <div
           className={clsx(
-            "p-3.5 sm:p-4 rounded-2xl border transition-all relative overflow-hidden",
+            "p-4 rounded-2xl border transition-all relative overflow-hidden backdrop-blur-md",
             upcomingInfo.status === "live"
-              ? "bg-gradient-to-r from-emerald-500/10 via-emerald-500/5 to-transparent border-emerald-500/30 dark:border-emerald-500/20"
+              ? "bg-gradient-to-r from-emerald-500/15 via-emerald-500/5 to-transparent border-emerald-500/30 dark:border-emerald-500/25 shadow-sm shadow-emerald-500/10"
               : upcomingInfo.status === "today_soon"
-                ? "bg-gradient-to-r from-[#0066cc]/10 via-[#0066cc]/5 to-transparent border-[#0066cc]/30 dark:border-blue-500/20"
-                : "bg-slate-50/80 dark:bg-white/[0.03] border-slate-200/80 dark:border-white/5"
+                ? "bg-gradient-to-r from-[#0066cc]/15 via-[#0066cc]/5 to-transparent border-[#0066cc]/30 dark:border-blue-500/25 shadow-sm shadow-blue-500/10"
+                : "bg-black/[0.02] dark:bg-white/[0.03] border-black/[0.05] dark:border-white/10"
           )}
         >
           <div className="flex items-center gap-3">

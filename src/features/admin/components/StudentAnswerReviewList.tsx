@@ -508,7 +508,7 @@ export function StudentAnswerReviewList({
                                   }`}
                                 >
                                   <div className="flex items-start justify-between gap-2.5">
-                                    <div className="min-w-0 flex items-start gap-2.5">
+                                    <div className="min-w-0 flex-1 max-w-full flex items-start gap-2.5 overflow-hidden">
                                       <span
                                         className={`mt-0.5 inline-flex h-6 w-6 shrink-0 items-center justify-center rounded-lg text-xs font-bold transition-all ${
                                           isSelected && isKey
@@ -522,13 +522,13 @@ export function StudentAnswerReviewList({
                                       >
                                         {optionLabel}
                                       </span>
-                                      <span className="break-words text-slate-700 dark:text-slate-300">
+                                      <div className="flex-1 min-w-0 max-w-full break-words [overflow-wrap:anywhere] text-slate-700 dark:text-slate-300 [&_.katex]:max-w-full [&_.katex-display]:max-w-full [&_.katex-display]:overflow-x-auto">
                                         {content ? (
                                           <MathText text={content} />
                                         ) : (
                                           <span className="italic opacity-60">(Không có nội dung)</span>
                                         )}
-                                      </span>
+                                      </div>
                                     </div>
 
                                     <div className="shrink-0 flex flex-row flex-wrap sm:flex-nowrap items-center justify-end gap-1 sm:gap-1.5">

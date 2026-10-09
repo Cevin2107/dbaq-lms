@@ -501,14 +501,14 @@ export function AuthPortal({ initialMode = 'login' }: AuthPortalProps) {
 
             {/* Right Column (Desktop) / Top Column (Mobile): Form Container */}
             <div className="order-1 lg:order-2 lg:col-span-5 xl:col-span-5 flex justify-center lg:justify-end animate-slide-up">
-              <div className="w-full max-w-md rounded-[2rem] sm:rounded-[2.5rem] bg-white/85 dark:bg-[#1a1a1f]/85 backdrop-blur-2xl border border-white/80 dark:border-white/10 shadow-[0_20px_50px_rgba(0,102,204,0.08)] dark:shadow-[0_20px_50px_rgba(0,0,0,0.6)] p-5 sm:p-8 md:p-9 transition-all relative overflow-hidden">
+              <div className="w-full max-w-md rounded-[2.5rem] bg-white/80 dark:bg-[#161618]/85 backdrop-blur-2xl border border-white/80 dark:border-white/10 shadow-[0_24px_60px_-15px_rgba(0,102,204,0.12)] dark:shadow-[0_24px_60px_-15px_rgba(0,0,0,0.8)] p-6 sm:p-8 md:p-9 transition-all relative overflow-hidden">
                 
                 {/* Apple Segmented Control: Sliding Pill Indicator */}
                 {mode !== 'forgot-password' ? (
-                  <div className="relative flex p-1 sm:p-1.5 bg-slate-100/90 dark:bg-slate-800/80 rounded-2xl mb-5 sm:mb-7 border border-black/[0.04] dark:border-white/[0.05]">
+                  <div className="relative flex p-1 sm:p-1.5 bg-black/[0.04] dark:bg-white/[0.05] rounded-full mb-6 sm:mb-8 border border-black/[0.03] dark:border-white/[0.06] backdrop-blur-md select-none">
                     {/* Synchronized Morphing Pill */}
                     <div
-                      className="absolute top-1 bottom-1 sm:top-1.5 sm:bottom-1.5 rounded-xl bg-white dark:bg-[#2a2a30] shadow-sm transition-transform duration-300 ease-[cubic-bezier(0.16,1,0.3,1)]"
+                      className="absolute top-1 bottom-1 sm:top-1.5 sm:bottom-1.5 rounded-full bg-white dark:bg-[#2c2c32] shadow-sm border border-black/[0.04] dark:border-white/10 transition-transform duration-300 ease-[cubic-bezier(0.16,1,0.3,1)] pointer-events-none"
                       style={{
                         width: 'calc(50% - 4px)',
                         transform: mode === 'signup' ? 'translateX(calc(100% + 4px))' : 'translateX(0px)',
@@ -519,10 +519,10 @@ export function AuthPortal({ initialMode = 'login' }: AuthPortalProps) {
                     <button
                       type="button"
                       onClick={() => switchMode('login')}
-                      className={`relative z-10 flex-1 py-2 sm:py-2.5 px-1 sm:px-2 text-xs sm:text-sm font-bold rounded-xl transition-colors duration-200 text-center truncate ${
+                      className={`relative z-10 flex-1 py-2 sm:py-2.5 px-2 text-xs sm:text-sm font-bold rounded-full transition-colors duration-200 text-center truncate ${
                         mode === 'login'
-                          ? 'text-slate-900 dark:text-white'
-                          : 'text-slate-500 dark:text-slate-400 hover:text-slate-800 dark:hover:text-slate-200'
+                          ? 'text-[#1d1d1f] dark:text-white'
+                          : 'text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200'
                       }`}
                     >
                       Đăng nhập
@@ -530,21 +530,21 @@ export function AuthPortal({ initialMode = 'login' }: AuthPortalProps) {
                     <button
                       type="button"
                       onClick={() => switchMode('signup')}
-                      className={`relative z-10 flex-1 py-2 sm:py-2.5 px-1 sm:px-2 text-xs sm:text-sm font-bold rounded-xl transition-colors duration-200 text-center truncate ${
+                      className={`relative z-10 flex-1 py-2 sm:py-2.5 px-2 text-xs sm:text-sm font-bold rounded-full transition-colors duration-200 text-center truncate ${
                         mode === 'signup'
-                          ? 'text-slate-900 dark:text-white'
-                          : 'text-slate-500 dark:text-slate-400 hover:text-slate-800 dark:hover:text-slate-200'
+                          ? 'text-[#1d1d1f] dark:text-white'
+                          : 'text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200'
                       }`}
                     >
                       Đăng ký tài khoản
                     </button>
                   </div>
                 ) : (
-                  <div className="mb-5 sm:mb-6 flex items-center justify-between">
+                  <div className="mb-6 flex items-center justify-between">
                     <button
                       type="button"
                       onClick={() => switchMode('login')}
-                      className="inline-flex items-center gap-1.5 text-xs font-semibold text-slate-500 dark:text-slate-400 hover:text-[#0066cc] dark:hover:text-blue-400 transition"
+                      className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-black/[0.03] dark:bg-white/5 border border-black/[0.04] dark:border-white/10 text-xs font-semibold text-slate-600 dark:text-slate-300 hover:text-[#0066cc] dark:hover:text-[#2997ff] hover:-translate-y-0.5 active:scale-95 transition-all duration-300 ease-spring"
                     >
                       <ArrowLeft className="h-4 w-4" />
                       <span>Quay lại đăng nhập</span>
@@ -914,10 +914,10 @@ export function AuthPortal({ initialMode = 'login' }: AuthPortalProps) {
                 )}
 
                 {/* Admin and Passkey Section */}
-                <div className="mt-5 sm:mt-6 pt-5 sm:pt-6 border-t border-slate-100 dark:border-white/5 flex items-center gap-2.5 sm:gap-3">
+                <div className="mt-6 pt-6 border-t border-black/[0.05] dark:border-white/5 flex items-center gap-2.5 sm:gap-3">
                   <Link
                     href="/admin"
-                    className="flex-1 flex items-center justify-center rounded-2xl border border-slate-200 dark:border-slate-700/70 bg-slate-50/60 dark:bg-slate-800/40 px-3 sm:px-4 py-2.5 h-11 sm:h-auto text-xs font-semibold text-slate-700 dark:text-slate-300 transition hover:border-blue-200 dark:hover:border-blue-800 hover:bg-blue-50 dark:hover:bg-blue-900/30 hover:text-[#0066cc] dark:hover:text-blue-400 text-center truncate"
+                    className="flex-1 flex items-center justify-center rounded-full border border-black/[0.06] dark:border-white/10 bg-black/[0.02] dark:bg-white/[0.04] px-4 py-2.5 h-11 text-xs font-semibold text-slate-700 dark:text-slate-300 transition-all duration-300 ease-spring hover:bg-[#0066cc]/10 hover:text-[#0066cc] hover:border-[#0066cc]/30 dark:hover:text-[#2997ff] dark:hover:border-blue-500/30 hover:-translate-y-0.5 active:scale-95 text-center truncate"
                   >
                     Đăng nhập Quản trị viên
                   </Link>
@@ -925,7 +925,7 @@ export function AuthPortal({ initialMode = 'login' }: AuthPortalProps) {
                     type="button"
                     onClick={handleAdminPasskeyLogin}
                     disabled={adminPasskeyLoading || loading}
-                    className={`h-11 w-11 shrink-0 flex items-center justify-center rounded-2xl border border-slate-200 dark:border-slate-700/70 bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-300 shadow-sm transition hover:bg-slate-50 dark:hover:bg-slate-700 disabled:opacity-60 ${adminPasskeyLoading ? 'ring-2 ring-[#0066cc]/40 bg-blue-50/50 dark:bg-blue-900/30' : ''}`}
+                    className={`h-11 w-11 shrink-0 flex items-center justify-center rounded-full border border-black/[0.06] dark:border-white/10 bg-white dark:bg-[#25252a] text-slate-700 dark:text-slate-300 shadow-sm transition-all duration-300 ease-spring hover:bg-slate-50 dark:hover:bg-[#2e2e35] hover:-translate-y-0.5 active:scale-95 disabled:opacity-60 ${adminPasskeyLoading ? 'ring-2 ring-[#0066cc]/40 bg-blue-50/50 dark:bg-blue-900/30' : ''}`}
                     title="Đăng nhập Admin bằng Passkey"
                     aria-label="Đăng nhập admin bằng passkey"
                   >

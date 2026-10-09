@@ -228,34 +228,35 @@ export function ScheduleApp() {
   return (
     <div className="container-custom py-6 md:py-8 space-y-6 md:space-y-8 animate-fade-in pb-16">
       {/* Unified Hero Header Tile */}
-      <div className="rounded-[2rem] bg-gradient-to-br from-white via-[#f0f9ff]/60 to-[#e0f2fe]/40 dark:from-[#1d1d1f]/90 dark:via-[#1d1d1f]/80 dark:to-[#0f172a]/90 backdrop-blur-xl border border-black/5 dark:border-white/5 shadow-[0_8px_30px_rgba(0,102,204,0.06)] p-6 sm:p-8 md:p-10">
-        <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-6">
+      <div className="relative overflow-hidden rounded-[2.5rem] bg-white/80 dark:bg-[#18181b]/80 backdrop-blur-2xl border border-white/80 dark:border-white/10 shadow-[0_8px_30px_rgba(0,0,0,0.04)] dark:shadow-[0_12px_36px_rgba(0,0,0,0.5)] p-6 sm:p-8 md:p-10">
+        <div className="absolute top-0 right-0 -mt-16 -mr-16 w-72 h-72 bg-gradient-to-br from-blue-400/15 to-indigo-500/15 rounded-full blur-3xl pointer-events-none" />
+        <div className="relative z-10 flex flex-col lg:flex-row lg:items-center lg:justify-between gap-6">
           <div className="space-y-2.5">
-            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-blue-50 dark:bg-blue-900/40 text-blue-600 dark:text-blue-400 text-xs font-bold border border-blue-100 dark:border-blue-800/40">
+            <div className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-blue-500/10 text-[#0066cc] dark:text-blue-300 text-xs font-bold border border-blue-500/20">
               <CalendarDays className="w-3.5 h-3.5" />
               <span>{selectedTab === "overview" ? "Tổng quan Hệ thống" : `Bảng điểm danh - ${currentStudent?.name || "Học sinh"}`}</span>
             </div>
 
-            <h1 className="text-2xl sm:text-3xl md:text-4xl font-extrabold text-slate-900 dark:text-white tracking-[-0.02em]">
+            <h1 className="text-2xl sm:text-3xl md:text-4xl font-extrabold text-[#1d1d1f] dark:text-white tracking-tight">
               {selectedTab === "overview"
                 ? "Quản lý Lịch dạy & Học phí"
                 : `Lịch dạy - ${currentStudent?.name || "Học sinh"}`}
             </h1>
 
-            <p className="text-[14px] sm:text-[15px] text-slate-500 dark:text-slate-400 max-w-xl leading-relaxed">
+            <p className="text-xs sm:text-sm text-slate-500 dark:text-slate-400 max-w-xl leading-relaxed">
               {selectedTab === "overview"
-                ? "Theo dõi tổng số buổi dạy, thu nhập và biểu đồ phân bổ lịch học trong năm."
+                ? "Theo dõi tổng số buổi dạy thực tế, doanh thu và biểu đồ phân bổ lịch học chi tiết trong năm."
                 : `Điểm danh trong tháng ${month}/${year} của học sinh ${currentStudent?.name || ""}.`}
             </p>
           </div>
 
-          <div className="flex flex-wrap items-center gap-3 shrink-0">
+          <div className="flex flex-wrap items-center gap-2.5 sm:gap-3 shrink-0">
             {selectedTab === "student" && (
               <Button
                 variant="brand"
                 size="sm"
                 onClick={handleExport}
-                className="rounded-full bg-emerald-600 hover:bg-emerald-700 active:scale-95 text-white shadow-lg shadow-emerald-500/25 px-4 py-2.5 text-xs font-bold transition-all"
+                className="rounded-full bg-emerald-600 hover:bg-emerald-700 active:scale-95 text-white shadow-lg shadow-emerald-500/25 px-5 py-2.5 text-xs font-semibold hover:-translate-y-0.5 transition-all duration-300 ease-spring"
               >
                 <Download className="w-4 h-4 mr-1.5" />
                 <span>Xuất phiếu học phí</span>
@@ -266,7 +267,7 @@ export function ScheduleApp() {
               variant="outline"
               size="sm"
               onClick={() => setShowStudentSettingsModal(true)}
-              className="rounded-full bg-white/80 dark:bg-slate-800/80 backdrop-blur-sm border-slate-200/80 dark:border-slate-700 hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-200 px-4 py-2.5 text-xs font-bold transition-all"
+              className="rounded-full bg-white/80 dark:bg-white/5 backdrop-blur-md border-black/[0.06] dark:border-white/10 hover:bg-black/[0.04] dark:hover:bg-white/10 text-slate-700 dark:text-slate-200 px-4 py-2.5 text-xs font-semibold shadow-sm hover:-translate-y-0.5 active:scale-95 transition-all duration-300 ease-spring"
             >
               <Settings className="h-4 w-4 mr-1.5 text-slate-500" />
               <span>Cấu hình học sinh</span>
@@ -276,7 +277,7 @@ export function ScheduleApp() {
               variant="brand"
               size="sm"
               onClick={() => setShowAddStudentModal(true)}
-              className="rounded-full bg-[#0066cc] hover:bg-[#005bb5] active:scale-95 text-white shadow-lg shadow-blue-500/25 px-5 py-2.5 text-xs font-bold transition-all"
+              className="rounded-full bg-[#0066cc] hover:bg-[#005bb5] active:scale-95 text-white shadow-lg shadow-blue-500/25 hover:shadow-xl px-5 py-2.5 text-xs font-semibold hover:-translate-y-0.5 transition-all duration-300 ease-spring"
             >
               <Plus className="h-4 w-4 mr-1.5" />
               <span>Thêm học sinh</span>

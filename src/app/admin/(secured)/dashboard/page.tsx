@@ -367,17 +367,17 @@ export default function AdminDashboardPage() {
   return (
     <div className="container-custom py-6 md:py-8 space-y-6 md:space-y-8 animate-fade-in">
       {/* Header with Glassmorphic Card */}
-      <div className="rounded-[2rem] bg-gradient-to-br from-white via-[#f0f9ff]/60 to-[#e0f2fe]/40 dark:from-[#1d1d1f]/90 dark:via-[#1d1d1f]/80 dark:to-[#0f172a]/90 backdrop-blur-xl border border-black/5 dark:border-white/5 shadow-[0_8px_30px_rgba(0,102,204,0.06)] p-6 sm:p-8 md:p-10">
+      <div className="rounded-[2.5rem] bg-gradient-to-br from-white via-blue-50/50 to-sky-50/30 dark:from-[#18181b]/90 dark:via-[#141418]/80 dark:to-blue-950/25 backdrop-blur-2xl border border-white/80 dark:border-white/10 shadow-[0_16px_45px_rgba(0,102,204,0.06)] dark:shadow-[0_20px_50px_rgba(0,0,0,0.6)] p-6 sm:p-8 md:p-10 transition-all">
         <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-6">
           <div className="space-y-2">
-            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-blue-50 dark:bg-blue-900/40 text-blue-600 dark:text-blue-400 text-xs font-semibold border border-blue-100 dark:border-blue-800/40">
-              <Sparkles className="w-3.5 h-3.5" />
-              <span>Hệ thống Quản lý Học tập & Lịch dạy LMS</span>
+            <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-blue-500/10 dark:bg-blue-500/15 text-[#0066cc] dark:text-blue-300 text-xs font-bold border border-blue-500/20 shadow-sm backdrop-blur-md">
+              <Sparkles className="w-3.5 h-3.5 text-amber-500" />
+              <span>Hệ thống Quản lý Học tập & Lịch dạy LMS Pro</span>
             </div>
-            <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold text-slate-900 dark:text-white tracking-[-0.02em]">
+            <h1 className="text-2xl sm:text-3xl md:text-4xl font-extrabold text-[#1d1d1f] dark:text-white tracking-tight">
               Tổng quan Hệ thống
             </h1>
-            <p className="text-[15px] text-slate-500 dark:text-slate-400 max-w-xl leading-relaxed">
+            <p className="text-xs sm:text-sm text-slate-500 dark:text-slate-400 max-w-xl leading-relaxed">
               Theo dõi danh sách học sinh chính thức, số buổi học trong Tháng {summary.currentMonth}/{summary.currentYear} và lịch dạy cố định trong tuần.
             </p>
           </div>
@@ -389,7 +389,7 @@ export default function AdminDashboardPage() {
               onClick={handleRefresh}
               disabled={isRefreshing || isLoadingStats}
               loading={isRefreshing}
-              className="rounded-full bg-white/80 dark:bg-slate-800/80 backdrop-blur-sm border-slate-200 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-200 px-4 py-2 text-xs font-semibold"
+              className="rounded-full bg-white/80 dark:bg-white/5 backdrop-blur-md border-black/[0.06] dark:border-white/10 hover:bg-black/[0.04] dark:hover:bg-white/10 text-slate-700 dark:text-slate-200 px-4 py-2 text-xs font-semibold shadow-sm hover:-translate-y-0.5 active:scale-95 transition-all duration-300 ease-spring"
             >
               <RefreshCw className="h-4 w-4 mr-1.5" />
               <span>Làm mới</span>
@@ -399,15 +399,15 @@ export default function AdminDashboardPage() {
               <Button
                 variant="outline"
                 size="sm"
-                className="rounded-full bg-white/80 dark:bg-slate-800/80 backdrop-blur-sm border-slate-200 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-200 px-4 py-2 text-xs font-semibold"
+                className="rounded-full bg-white/80 dark:bg-white/5 backdrop-blur-md border-black/[0.06] dark:border-white/10 hover:bg-blue-500/10 dark:hover:bg-blue-500/20 text-[#0066cc] dark:text-blue-400 px-4 py-2 text-xs font-semibold shadow-sm hover:-translate-y-0.5 active:scale-95 transition-all duration-300 ease-spring"
               >
-                <Clock className="h-4 w-4 mr-1.5 text-blue-600 dark:text-blue-400" />
+                <Clock className="h-4 w-4 mr-1.5 text-[#0066cc] dark:text-blue-400" />
                 <span>Đăng ký ca dạy</span>
               </Button>
             </Link>
 
             <Link href="/admin/assignments/new">
-              <Button variant="brand" size="sm" className="rounded-full bg-[#0066cc] hover:bg-[#005bb5] shadow-lg shadow-blue-500/20 px-5 py-2 text-xs font-semibold">
+              <Button variant="brand" size="sm" className="rounded-full bg-[#0066cc] hover:bg-[#005bb5] shadow-lg shadow-blue-500/25 hover:shadow-xl hover:-translate-y-0.5 px-5 py-2 text-xs font-semibold active:scale-95 transition-all duration-300 ease-spring">
                 <Plus className="h-4 w-4 mr-1.5" />
                 <span>Tạo bài mới</span>
               </Button>
@@ -419,63 +419,63 @@ export default function AdminDashboardPage() {
       {/* Visual Stat Overview Cards - Replaced Old Cards */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-5 md:gap-6">
         {/* Card 1: Học sinh Hệ thống */}
-        <div className="group rounded-[2rem] bg-white/80 dark:bg-[#1d1d1f]/80 backdrop-blur-xl border border-black/5 dark:border-white/5 shadow-[0_4px_20px_rgba(0,0,0,0.03)] p-5 sm:p-6 hover:shadow-[0_8px_30px_rgba(0,102,204,0.1)] hover:-translate-y-1 transition-all duration-300">
+        <div className="group rounded-[2.25rem] bg-white/80 dark:bg-[#18181b]/80 backdrop-blur-2xl border border-white/80 dark:border-white/10 shadow-[0_8px_30px_rgba(0,0,0,0.04)] dark:shadow-[0_12px_36px_rgba(0,0,0,0.5)] p-5 sm:p-6 hover:shadow-[0_16px_40px_rgba(0,102,204,0.12)] hover:border-blue-500/30 hover:-translate-y-1 transition-all duration-300 ease-spring">
           <div className="flex items-center justify-between mb-4">
-            <div className="h-12 w-12 sm:h-13 sm:w-13 rounded-[18px] bg-blue-50 dark:bg-blue-900/40 text-[#0066cc] dark:text-blue-400 flex items-center justify-center shadow-inner group-hover:scale-110 transition-transform duration-300">
+            <div className="h-12 w-12 sm:h-13 sm:w-13 rounded-2xl bg-blue-500/10 dark:bg-blue-500/15 text-[#0066cc] dark:text-blue-400 flex items-center justify-center border border-blue-500/20 group-hover:scale-110 transition-transform duration-300">
               <GraduationCap className="h-6 w-6 sm:h-7 sm:w-7" />
             </div>
-            <span className="text-[11px] font-bold px-2.5 py-1 rounded-full bg-blue-50 dark:bg-blue-900/50 text-[#0066cc] dark:text-blue-300">
+            <span className="text-[11px] font-bold px-2.5 py-1 rounded-full bg-blue-500/10 text-[#0066cc] dark:text-blue-300 border border-blue-500/20">
               Chính thức
             </span>
           </div>
-          <p className="text-3xl sm:text-4xl font-bold text-slate-900 dark:text-white tracking-tight">
+          <p className="text-3xl sm:text-4xl font-extrabold text-[#1d1d1f] dark:text-white tracking-tight">
             {isLoadingStats ? "..." : summary.totalSystemStudents}
           </p>
-          <p className="text-[14px] font-medium text-slate-500 dark:text-slate-400 mt-1 flex items-center gap-1">
+          <p className="text-xs sm:text-sm font-medium text-slate-500 dark:text-slate-400 mt-1 flex items-center gap-1">
             <span>Học sinh hệ thống</span>
           </p>
         </div>
 
         {/* Card 2: Số buổi học Tháng này */}
-        <div className="group rounded-[2rem] bg-white/80 dark:bg-[#1d1d1f]/80 backdrop-blur-xl border border-black/5 dark:border-white/5 shadow-[0_4px_20px_rgba(0,0,0,0.03)] p-5 sm:p-6 hover:shadow-[0_8px_30px_rgba(16,185,129,0.1)] hover:-translate-y-1 transition-all duration-300">
+        <div className="group rounded-[2.25rem] bg-white/80 dark:bg-[#18181b]/80 backdrop-blur-2xl border border-white/80 dark:border-white/10 shadow-[0_8px_30px_rgba(0,0,0,0.04)] dark:shadow-[0_12px_36px_rgba(0,0,0,0.5)] p-5 sm:p-6 hover:shadow-[0_16px_40px_rgba(16,185,129,0.12)] hover:border-emerald-500/30 hover:-translate-y-1 transition-all duration-300 ease-spring">
           <div className="flex items-center justify-between mb-4">
-            <div className="h-12 w-12 sm:h-13 sm:w-13 rounded-[18px] bg-emerald-50 dark:bg-emerald-900/40 text-emerald-600 dark:text-emerald-400 flex items-center justify-center shadow-inner group-hover:scale-110 transition-transform duration-300">
+            <div className="h-12 w-12 sm:h-13 sm:w-13 rounded-2xl bg-emerald-500/10 dark:bg-emerald-500/15 text-emerald-600 dark:text-emerald-400 flex items-center justify-center border border-emerald-500/20 group-hover:scale-110 transition-transform duration-300">
               <CalendarDays className="h-6 w-6 sm:h-7 sm:w-7" />
             </div>
-            <span className="text-[11px] font-bold px-2.5 py-1 rounded-full bg-emerald-50 dark:bg-emerald-900/50 text-emerald-700 dark:text-emerald-300">
+            <span className="text-[11px] font-bold px-2.5 py-1 rounded-full bg-emerald-500/10 text-emerald-700 dark:text-emerald-300 border border-emerald-500/20">
               Tháng {summary.currentMonth}
             </span>
           </div>
-          <p className="text-3xl sm:text-4xl font-bold text-slate-900 dark:text-white tracking-tight">
+          <p className="text-3xl sm:text-4xl font-extrabold text-[#1d1d1f] dark:text-white tracking-tight">
             {isLoadingStats ? "..." : summary.totalMonthlySessions}
           </p>
-          <p className="text-[14px] font-medium text-slate-500 dark:text-slate-400 mt-1 flex items-center gap-1">
+          <p className="text-xs sm:text-sm font-medium text-slate-500 dark:text-slate-400 mt-1 flex items-center gap-1">
             <span>Buổi dạy đã học</span>
           </p>
         </div>
 
         {/* Card 3: Lịch dạy cố định tuần này */}
-        <div className="group rounded-[2rem] bg-white/80 dark:bg-[#1d1d1f]/80 backdrop-blur-xl border border-black/5 dark:border-white/5 shadow-[0_4px_20px_rgba(0,0,0,0.03)] p-5 sm:p-6 hover:shadow-[0_8px_30px_rgba(99,102,241,0.1)] hover:-translate-y-1 transition-all duration-300">
+        <div className="group rounded-[2.25rem] bg-white/80 dark:bg-[#18181b]/80 backdrop-blur-2xl border border-white/80 dark:border-white/10 shadow-[0_8px_30px_rgba(0,0,0,0.04)] dark:shadow-[0_12px_36px_rgba(0,0,0,0.5)] p-5 sm:p-6 hover:shadow-[0_16px_40px_rgba(99,102,241,0.12)] hover:border-indigo-500/30 hover:-translate-y-1 transition-all duration-300 ease-spring">
           <div className="flex items-center justify-between mb-4">
-            <div className="h-12 w-12 sm:h-13 sm:w-13 rounded-[18px] bg-indigo-50 dark:bg-indigo-900/40 text-indigo-600 dark:text-indigo-400 flex items-center justify-center shadow-inner group-hover:scale-110 transition-transform duration-300">
+            <div className="h-12 w-12 sm:h-13 sm:w-13 rounded-2xl bg-indigo-500/10 dark:bg-indigo-500/15 text-indigo-600 dark:text-indigo-400 flex items-center justify-center border border-indigo-500/20 group-hover:scale-110 transition-transform duration-300">
               <Clock className="h-6 w-6 sm:h-7 sm:w-7" />
             </div>
-            <span className="text-[11px] font-bold px-2.5 py-1 rounded-full bg-indigo-50 dark:bg-indigo-900/50 text-indigo-700 dark:text-indigo-300">
+            <span className="text-[11px] font-bold px-2.5 py-1 rounded-full bg-indigo-500/10 text-indigo-700 dark:text-indigo-300 border border-indigo-500/20">
               Trong tuần
             </span>
           </div>
-          <p className="text-3xl sm:text-4xl font-bold text-slate-900 dark:text-white tracking-tight">
+          <p className="text-3xl sm:text-4xl font-extrabold text-[#1d1d1f] dark:text-white tracking-tight">
             {isLoadingStats ? "..." : summary.totalWeeklyShifts}
           </p>
-          <p className="text-[14px] font-medium text-slate-500 dark:text-slate-400 mt-1 flex items-center gap-1">
+          <p className="text-xs sm:text-sm font-medium text-slate-500 dark:text-slate-400 mt-1 flex items-center gap-1">
             <span>Ca dạy đăng ký</span>
           </p>
         </div>
 
         {/* Card 4: Tổng bài tập */}
-        <div className="group rounded-[2rem] bg-white/80 dark:bg-[#1d1d1f]/80 backdrop-blur-xl border border-black/5 dark:border-white/5 shadow-[0_4px_20px_rgba(0,0,0,0.03)] p-5 sm:p-6 hover:shadow-[0_8px_30px_rgba(245,158,11,0.1)] hover:-translate-y-1 transition-all duration-300">
+        <div className="group rounded-[2.25rem] bg-white/80 dark:bg-[#18181b]/80 backdrop-blur-2xl border border-white/80 dark:border-white/10 shadow-[0_8px_30px_rgba(0,0,0,0.04)] dark:shadow-[0_12px_36px_rgba(0,0,0,0.5)] p-5 sm:p-6 hover:shadow-[0_16px_40px_rgba(245,158,11,0.12)] hover:border-amber-500/30 hover:-translate-y-1 transition-all duration-300 ease-spring">
           <div className="flex items-center justify-between mb-4">
-            <div className="h-12 w-12 sm:h-13 sm:w-13 rounded-[18px] bg-amber-50 dark:bg-amber-900/40 text-amber-600 dark:text-amber-400 flex items-center justify-center shadow-inner group-hover:scale-110 transition-transform duration-300">
+            <div className="h-12 w-12 sm:h-13 sm:w-13 rounded-2xl bg-amber-500/10 dark:bg-amber-500/15 text-amber-600 dark:text-amber-400 flex items-center justify-center border border-amber-500/20 group-hover:scale-110 transition-transform duration-300">
               <BookOpen className="h-6 w-6 sm:h-7 sm:w-7" />
             </div>
             <span className="text-[11px] font-bold px-2.5 py-1 rounded-full bg-amber-50 dark:bg-amber-900/50 text-amber-700 dark:text-amber-300">
@@ -517,10 +517,10 @@ export default function AdminDashboardPage() {
               </Link>
             </div>
 
-            <div className="rounded-[2rem] bg-white/80 dark:bg-[#1d1d1f]/80 backdrop-blur-xl border border-black/5 dark:border-white/5 shadow-[0_4px_20px_rgba(0,0,0,0.03)] p-5 sm:p-6 space-y-5">
+            <div className="rounded-[2.5rem] bg-white/80 dark:bg-[#18181b]/80 backdrop-blur-2xl border border-white/80 dark:border-white/10 shadow-[0_8px_30px_rgba(0,0,0,0.04)] dark:shadow-[0_12px_36px_rgba(0,0,0,0.5)] p-5 sm:p-7 space-y-6">
 
               {/* Day Selector Segmented Control (Mobile Responsive + Auto-Center Scroll) */}
-              <div className="flex items-center gap-1.5 sm:gap-2 p-1.5 sm:p-2 bg-slate-100/90 dark:bg-slate-800/70 rounded-[1.25rem] sm:rounded-[1.5rem] overflow-x-auto no-scrollbar scroll-smooth snap-x snap-mandatory shadow-inner border border-black/5 dark:border-white/5">
+              <div className="flex items-center gap-1.5 sm:gap-2 p-1.5 sm:p-2 bg-slate-100/80 dark:bg-[#121214]/80 rounded-[1.75rem] overflow-x-auto no-scrollbar scroll-smooth snap-x snap-mandatory border border-black/[0.04] dark:border-white/5 shadow-inner">
                 {DAYS.map((day) => {
                   const isSelected = selectedDay === day.value;
                   const isToday = todayDayOfWeek === day.value;
@@ -539,9 +539,9 @@ export default function AdminDashboardPage() {
                         dayTabsRef.current[day.value] = el;
                       }}
                       onClick={() => setSelectedDay(day.value)}
-                      className={`flex-1 min-w-[76px] sm:min-w-[95px] shrink-0 snap-center py-2 sm:py-2.5 px-1.5 sm:px-2 rounded-xl sm:rounded-2xl text-xs font-bold transition-all duration-200 flex flex-col items-center justify-center gap-1 ${isSelected
-                          ? "bg-white dark:bg-[#1d1d1f] text-[#0066cc] dark:text-blue-400 shadow-md shadow-blue-500/10 border border-blue-500/20 scale-[1.02]"
-                          : "text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-white/40 dark:hover:bg-slate-800/40"
+                      className={`flex-1 min-w-[76px] sm:min-w-[95px] shrink-0 snap-center py-2 sm:py-2.5 px-1.5 sm:px-2 rounded-2xl text-xs font-bold transition-all duration-300 ease-spring flex flex-col items-center justify-center gap-1 active:scale-95 ${isSelected
+                          ? "bg-white dark:bg-[#202024] text-[#0066cc] dark:text-blue-400 shadow-sm border border-blue-500/25 scale-[1.02]"
+                          : "text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-white/40 dark:hover:bg-white/5"
                         }`}
                     >
                       <div className="flex items-center gap-1 sm:gap-1.5">
@@ -555,7 +555,7 @@ export default function AdminDashboardPage() {
                           {formattedDateVi}
                         </span>
                         {recordedSessionsCount > 0 && (
-                          <span className="px-1 sm:px-1.5 py-0.2 rounded-full bg-emerald-100 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-300 font-extrabold text-[9px] sm:text-[10px]">
+                          <span className="px-1.5 py-0.5 rounded-full bg-emerald-500/15 text-emerald-700 dark:text-emerald-300 border border-emerald-500/20 font-extrabold text-[9px] sm:text-[10px]">
                             <span className="sm:hidden">{recordedSessionsCount}b</span>
                             <span className="hidden sm:inline">{recordedSessionsCount} buổi</span>
                           </span>
@@ -567,9 +567,9 @@ export default function AdminDashboardPage() {
               </div>
 
               {/* Shifts Subheader */}
-              <div className="flex items-center justify-between px-1 pt-1 border-b border-black/5 dark:border-white/5 pb-3">
+              <div className="flex items-center justify-between px-1 border-b border-black/5 dark:border-white/5 pb-3">
                 <div className="flex items-center gap-2.5">
-                  <div className="h-8 w-8 rounded-xl bg-blue-50 dark:bg-blue-900/40 text-[#0066cc] dark:text-blue-400 flex items-center justify-center font-bold shrink-0">
+                  <div className="h-8 w-8 rounded-xl bg-blue-500/10 dark:bg-blue-500/20 text-[#0066cc] dark:text-blue-400 flex items-center justify-center font-bold shrink-0">
                     <Calendar className="w-4 h-4" />
                   </div>
                   <div>
@@ -588,7 +588,7 @@ export default function AdminDashboardPage() {
                 <div className="py-12 text-center text-slate-400 text-sm animate-pulse">Đang tải lịch ca dạy...</div>
               ) : currentDayShifts.length === 0 ? (
                 <div className="py-12 text-center text-slate-400 text-sm flex flex-col items-center gap-2.5">
-                  <div className="p-3 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-400">
+                  <div className="p-3.5 rounded-2xl bg-slate-100 dark:bg-white/5 text-slate-400">
                     <Clock className="w-8 h-8" />
                   </div>
                   <p className="font-bold text-slate-700 dark:text-slate-300">Không có ca dạy cố định vào {DAYS.find((d) => d.value === selectedDay)?.label}</p>
@@ -625,13 +625,13 @@ export default function AdminDashboardPage() {
                     return (
                       <div
                         key={shift.registrationId}
-                        className="p-3.5 sm:p-4 rounded-[1.25rem] sm:rounded-[1.5rem] bg-gradient-to-b from-white to-slate-50/60 dark:from-[#252528] dark:to-[#1d1d1f] border border-slate-200/80 dark:border-white/10 shadow-sm hover:shadow-md hover:border-[#0066cc]/40 transition-all duration-200 flex flex-col justify-between gap-3 sm:gap-3.5 group"
+                        className="p-4 rounded-[2rem] bg-gradient-to-b from-white to-slate-50/60 dark:from-[#202024]/90 dark:to-[#18181b]/90 border border-slate-200/80 dark:border-white/10 shadow-sm hover:shadow-md hover:border-blue-500/30 transition-all duration-300 ease-spring flex flex-col justify-between gap-3.5 group"
                       >
                         {/* Student Name & Shift Info */}
                         <div className="flex items-center justify-between gap-3">
                           <div className="flex items-center gap-3 min-w-0">
                             <div
-                              className="h-9 w-9 sm:h-10 sm:w-10 shrink-0 rounded-2xl flex items-center justify-center text-white font-extrabold text-sm shadow-md"
+                              className="h-10 w-10 shrink-0 rounded-2xl flex items-center justify-center text-white font-extrabold text-sm shadow-md"
                               style={{ backgroundColor: matchedSt?.color || "#0066cc" }}
                             >
                               {shift.studentName.charAt(0).toUpperCase()}
@@ -649,9 +649,9 @@ export default function AdminDashboardPage() {
                         </div>
 
                         {/* Interactive Attendance Checkboxes Row */}
-                        <div className="pt-2 sm:pt-2.5 border-t border-black/5 dark:border-white/5 flex items-center gap-1.5 sm:gap-2">
+                        <div className="pt-2.5 border-t border-black/5 dark:border-white/5 flex items-center gap-2">
                           <span className="text-[10px] sm:text-[11px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-wider shrink-0 mr-0.5">
-                            Tính 1 buổi:
+                            Điểm danh:
                           </span>
 
                           {/* Checkbox 1: Toán */}
@@ -659,14 +659,14 @@ export default function AdminDashboardPage() {
                             type="button"
                             onClick={() => handleToggleSubjectSession(shift.studentName, selectedDay, "Toan")}
                             disabled={isTogglingToan}
-                            className={`flex-1 flex items-center justify-center gap-1 sm:gap-1.5 px-2.5 sm:px-3 py-1.5 sm:py-2 rounded-xl text-[11px] sm:text-xs font-bold transition-all duration-200 border active:scale-[0.97] ${isToanChecked
+                            className={`flex-1 flex items-center justify-center gap-1.5 px-3 py-1.5 rounded-full text-[11px] sm:text-xs font-bold transition-all duration-200 border active:scale-95 ${isToanChecked
                                 ? "bg-[#0066cc] text-white border-[#0066cc] shadow-md shadow-blue-500/25"
-                                : "bg-blue-50/70 dark:bg-blue-950/30 text-blue-700 dark:text-blue-300 border-blue-200/80 dark:border-blue-800/40 hover:bg-blue-100 dark:hover:bg-blue-900/50"
+                                : "bg-blue-500/10 dark:bg-blue-500/15 text-[#0066cc] dark:text-blue-300 border-blue-500/20 hover:bg-blue-500/20"
                               }`}
                           >
-                            <div className={`w-3.5 h-3.5 sm:w-4 sm:h-4 rounded-md border flex items-center justify-center transition-colors shrink-0 ${isToanChecked ? "bg-white border-white text-[#0066cc]" : "border-blue-400 bg-white dark:bg-slate-900"
+                            <div className={`w-3.5 h-3.5 rounded-md border flex items-center justify-center transition-colors shrink-0 ${isToanChecked ? "bg-white border-white text-[#0066cc]" : "border-blue-400 bg-white dark:bg-slate-900"
                               }`}>
-                              {isToanChecked && <Check className="w-2.5 h-2.5 sm:w-3 sm:h-3 stroke-[3]" />}
+                              {isToanChecked && <Check className="w-2.5 h-2.5 stroke-[3]" />}
                             </div>
                             <span>Toán</span>
                           </button>
@@ -676,14 +676,14 @@ export default function AdminDashboardPage() {
                             type="button"
                             onClick={() => handleToggleSubjectSession(shift.studentName, selectedDay, "Ly")}
                             disabled={isTogglingLy}
-                            className={`flex-1 flex items-center justify-center gap-1 sm:gap-1.5 px-2.5 sm:px-3 py-1.5 sm:py-2 rounded-xl text-[11px] sm:text-xs font-bold transition-all duration-200 border active:scale-[0.97] ${isLyChecked
-                                ? "bg-orange-500 text-white border-orange-500 shadow-md shadow-orange-500/25"
-                                : "bg-orange-50/70 dark:bg-orange-950/30 text-orange-700 dark:text-orange-300 border-orange-200/80 dark:border-orange-800/40 hover:bg-orange-100 dark:hover:bg-orange-900/50"
+                            className={`flex-1 flex items-center justify-center gap-1.5 px-3 py-1.5 rounded-full text-[11px] sm:text-xs font-bold transition-all duration-200 border active:scale-95 ${isLyChecked
+                                ? "bg-indigo-600 text-white border-indigo-600 shadow-md shadow-indigo-500/25"
+                                : "bg-indigo-500/10 dark:bg-indigo-500/15 text-indigo-700 dark:text-indigo-300 border-indigo-500/20 hover:bg-indigo-500/20"
                               }`}
                           >
-                            <div className={`w-3.5 h-3.5 sm:w-4 sm:h-4 rounded-md border flex items-center justify-center transition-colors shrink-0 ${isLyChecked ? "bg-white border-white text-orange-600" : "border-orange-400 bg-white dark:bg-slate-900"
+                            <div className={`w-3.5 h-3.5 rounded-md border flex items-center justify-center transition-colors shrink-0 ${isLyChecked ? "bg-white border-white text-indigo-600" : "border-indigo-400 bg-white dark:bg-slate-900"
                               }`}>
-                              {isLyChecked && <Check className="w-2.5 h-2.5 sm:w-3 sm:h-3 stroke-[3]" />}
+                              {isLyChecked && <Check className="w-2.5 h-2.5 stroke-[3]" />}
                             </div>
                             <span>Lý</span>
                           </button>
@@ -716,9 +716,9 @@ export default function AdminDashboardPage() {
               </Link>
             </div>
 
-            <div className="rounded-[2rem] bg-white/80 dark:bg-[#1d1d1f]/80 backdrop-blur-xl border border-black/5 dark:border-white/5 shadow-[0_4px_20px_rgba(0,0,0,0.03)] p-5 sm:p-6 space-y-4">
+            <div className="rounded-[2.5rem] bg-white/80 dark:bg-[#18181b]/80 backdrop-blur-2xl border border-white/80 dark:border-white/10 shadow-[0_8px_30px_rgba(0,0,0,0.04)] dark:shadow-[0_12px_36px_rgba(0,0,0,0.5)] p-5 sm:p-7 space-y-5">
               {isLoadingStats ? (
-                <div className="py-10 text-center text-slate-400 text-sm">Đang nạp danh sách học sinh...</div>
+                <div className="py-10 text-center text-slate-400 text-sm animate-pulse">Đang nạp danh sách học sinh...</div>
               ) : studentsList.length === 0 ? (
                 <div className="py-12 text-center text-slate-400 text-sm">Chưa có học sinh hệ thống nào được đăng ký.</div>
               ) : (
@@ -726,11 +726,11 @@ export default function AdminDashboardPage() {
                   {studentsList.map((st) => (
                     <div
                       key={st.id}
-                      className="p-5 rounded-[1.75rem] bg-gradient-to-b from-slate-50/90 to-slate-100/50 dark:from-slate-800/50 dark:to-slate-900/50 border border-slate-200/80 dark:border-white/10 hover:border-[#0066cc]/40 dark:hover:border-blue-500/40 hover:shadow-lg hover:shadow-blue-500/5 transition-all duration-300 group flex flex-col justify-between"
+                      className="p-5 sm:p-6 rounded-[2rem] bg-gradient-to-b from-white to-slate-50/60 dark:from-[#202024]/90 dark:to-[#18181b]/90 border border-slate-200/80 dark:border-white/10 hover:border-blue-500/40 hover:shadow-lg transition-all duration-300 ease-spring group flex flex-col justify-between"
                     >
                       <div>
                         {/* Student Avatar + Identity Header */}
-                        <div className="flex items-center justify-between gap-3 mb-3.5">
+                        <div className="flex items-center justify-between gap-3 mb-4">
                           <div className="flex items-center gap-3 min-w-0">
                             <div className="relative">
                               <div className="absolute inset-0 bg-[#0066cc] rounded-2xl blur opacity-30 group-hover:opacity-50 transition-opacity" />
@@ -743,8 +743,8 @@ export default function AdminDashboardPage() {
                                 <h3 className="text-[16px] font-bold text-slate-900 dark:text-white truncate tracking-[-0.01em] group-hover:text-[#0066cc] dark:group-hover:text-blue-400 transition-colors">
                                   {st.fullName}
                                 </h3>
-                                <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-blue-100/80 dark:bg-blue-900/40 text-[#0066cc] dark:text-blue-300">
-                                  Hệ thống
+                                <span className="px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-blue-500/10 text-[#0066cc] dark:text-blue-300 border border-blue-500/20">
+                                  Học sinh
                                 </span>
                               </div>
                               {st.email && (
@@ -757,16 +757,16 @@ export default function AdminDashboardPage() {
                         </div>
 
                         {/* Monthly Sessions Highlight Bar */}
-                        <div className="p-3 rounded-2xl bg-white dark:bg-[#1d1d1f] border border-slate-200/60 dark:border-white/5 flex items-center justify-between shadow-xs mb-4">
+                        <div className="p-3 rounded-2xl bg-slate-50/80 dark:bg-white/5 border border-slate-200/60 dark:border-white/5 flex items-center justify-between shadow-xs mb-4">
                           <div className="flex items-center gap-2">
-                            <div className="p-1.5 rounded-xl bg-emerald-50 dark:bg-emerald-950/50 text-emerald-600 dark:text-emerald-400">
+                            <div className="p-1.5 rounded-xl bg-emerald-500/15 text-emerald-600 dark:text-emerald-400">
                               <CheckCircle2 className="h-4 w-4" />
                             </div>
                             <span className="text-xs font-semibold text-slate-600 dark:text-slate-300">
                               Buổi dạy thực tế (Tháng {summary.currentMonth}):
                             </span>
                           </div>
-                          <span className="text-xs sm:text-sm font-extrabold text-[#0066cc] dark:text-blue-400 bg-blue-50 dark:bg-blue-950/60 px-3 py-1 rounded-xl border border-blue-100 dark:border-blue-900/40">
+                          <span className="text-xs sm:text-sm font-extrabold text-[#0066cc] dark:text-blue-400 bg-blue-500/10 dark:bg-blue-500/20 px-3 py-1 rounded-full border border-blue-500/20">
                             {st.monthlySessionCount} buổi
                           </span>
                         </div>
@@ -778,13 +778,13 @@ export default function AdminDashboardPage() {
                               <Clock className="w-3.5 h-3.5 text-[#0066cc] dark:text-blue-400" />
                               Lịch ca cố định hàng tuần
                             </span>
-                            <span className="px-2 py-0.5 rounded-full bg-slate-200/60 dark:bg-slate-700/60 text-slate-700 dark:text-slate-300 font-extrabold text-[10px]">
+                            <span className="px-2.5 py-0.5 rounded-full bg-slate-200/60 dark:bg-white/10 text-slate-700 dark:text-slate-300 font-extrabold text-[10px]">
                               {st.registeredWeeklyShifts.length} ca
                             </span>
                           </div>
 
                           {st.registeredWeeklyShifts.length === 0 ? (
-                            <div className="p-3 rounded-2xl bg-slate-100/60 dark:bg-slate-800/40 text-xs text-slate-400 dark:text-slate-500 italic text-center border border-dashed border-slate-200 dark:border-slate-700">
+                            <div className="p-3 rounded-2xl bg-slate-100/60 dark:bg-white/5 text-xs text-slate-400 dark:text-slate-500 italic text-center border border-dashed border-slate-200 dark:border-white/10">
                               Chưa đăng ký ca cố định trong tuần
                             </div>
                           ) : (
@@ -796,7 +796,7 @@ export default function AdminDashboardPage() {
                                 return (
                                   <div
                                     key={idx}
-                                    className="flex items-center justify-between p-2.5 rounded-2xl bg-white dark:bg-[#1d1d1f] border border-slate-200/80 dark:border-white/10 shadow-xs hover:border-[#0066cc]/30 transition-colors"
+                                    className="flex items-center justify-between p-2.5 rounded-2xl bg-white dark:bg-[#161618] border border-slate-200/80 dark:border-white/10 shadow-xs hover:border-blue-500/30 transition-colors"
                                   >
                                     <div className="flex items-center gap-2">
                                       <span className="font-extrabold px-3 py-1 rounded-xl bg-gradient-to-r from-[#0066cc] to-[#0052a3] text-white text-xs shadow-xs">
@@ -808,7 +808,7 @@ export default function AdminDashboardPage() {
                                         </span>
                                       )}
                                     </div>
-                                    <div className="flex items-center gap-1 text-xs font-bold text-[#0066cc] dark:text-blue-400 bg-blue-50 dark:bg-blue-950/60 px-2.5 py-1 rounded-xl border border-blue-100/80 dark:border-blue-900/40 font-mono">
+                                    <div className="flex items-center gap-1 text-xs font-bold text-[#0066cc] dark:text-blue-400 bg-blue-500/10 dark:bg-blue-500/20 px-2.5 py-1 rounded-full border border-blue-500/20 font-mono">
                                       <Clock className="w-3 h-3 text-blue-500" />
                                       <span>{startTimeStr} – {endTimeStr}</span>
                                     </div>
@@ -838,31 +838,31 @@ export default function AdminDashboardPage() {
                 Bài tập gần đây
               </h2>
               <Link href="/admin/assignments">
-                <Button variant="ghost" size="sm" className="text-xs font-semibold text-[#0066cc] dark:text-blue-400">
+                <Button variant="ghost" size="sm" className="text-xs font-semibold text-[#0066cc] dark:text-blue-400 hover:bg-blue-500/10 rounded-full">
                   Xem tất cả
                   <ChevronRight className="h-3.5 w-3.5 ml-0.5" />
                 </Button>
               </Link>
             </div>
 
-            <div className="rounded-[2rem] bg-white/80 dark:bg-[#1d1d1f]/80 backdrop-blur-xl border border-black/5 dark:border-white/5 shadow-[0_4px_20px_rgba(0,0,0,0.03)] p-5 space-y-3">
+            <div className="rounded-[2.5rem] bg-white/80 dark:bg-[#18181b]/80 backdrop-blur-2xl border border-white/80 dark:border-white/10 shadow-[0_8px_30px_rgba(0,0,0,0.04)] dark:shadow-[0_12px_36px_rgba(0,0,0,0.5)] p-5 sm:p-6 space-y-3">
               {isAssignmentsLoading ? (
-                <div className="py-8 text-center text-slate-400 text-sm">Đang nạp bài tập...</div>
+                <div className="py-8 text-center text-slate-400 text-sm animate-pulse">Đang nạp bài tập...</div>
               ) : assignments.length === 0 ? (
                 <div className="py-8 text-center text-slate-400 text-sm">Chưa có bài tập nào.</div>
               ) : (
                 assignments.slice(0, 5).map((a: any) => (
                   <div
                     key={a.id}
-                    className="p-3.5 rounded-[1.25rem] bg-slate-50/80 dark:bg-slate-800/40 border border-slate-200/50 dark:border-white/5 flex items-center justify-between gap-3 hover:bg-slate-100/80 dark:hover:bg-slate-800 transition-colors"
+                    className="p-3.5 rounded-2xl bg-slate-50/80 dark:bg-white/5 border border-slate-200/50 dark:border-white/5 flex items-center justify-between gap-3 hover:bg-slate-100/80 dark:hover:bg-white/10 transition-colors"
                   >
                     <div className="min-w-0 flex-1">
                       <div className="flex items-center gap-1.5 mb-1">
-                        <span className={`text-[11px] font-extrabold px-2.5 py-0.5 rounded-full ${a.subject === "Toán" || a.subject === "Toan"
-                            ? "bg-blue-50 dark:bg-blue-950/50 text-[#0066cc] dark:text-blue-300"
+                        <span className={`text-[11px] font-extrabold px-2.5 py-0.5 rounded-full border ${a.subject === "Toán" || a.subject === "Toan"
+                            ? "bg-blue-500/10 text-[#0066cc] dark:text-blue-300 border-blue-500/20"
                             : a.subject === "Lý" || a.subject === "Ly"
-                              ? "bg-indigo-50 dark:bg-indigo-950/50 text-indigo-600 dark:text-indigo-300"
-                              : "bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300"
+                              ? "bg-indigo-500/10 text-indigo-600 dark:text-indigo-300 border-indigo-500/20"
+                              : "bg-slate-200/50 dark:bg-white/10 text-slate-600 dark:text-slate-300 border-black/5 dark:border-white/10"
                           }`}>
                           {a.subject || "Chung"}
                         </span>
@@ -882,7 +882,7 @@ export default function AdminDashboardPage() {
                         variant="ghost"
                         size="icon"
                         onClick={(e) => handleCopyLink(a.id, e)}
-                        className="h-8 w-8 rounded-full text-slate-500 hover:text-[#0066cc] hover:bg-white dark:hover:bg-slate-700"
+                        className="h-8 w-8 rounded-full text-slate-500 hover:text-[#0066cc] hover:bg-white dark:hover:bg-slate-700 active:scale-95 transition-all"
                         title="Sao chép link bài tập"
                         aria-label="Sao chép link bài tập"
                       >
@@ -890,7 +890,7 @@ export default function AdminDashboardPage() {
                       </Button>
 
                       <Link href={`/admin/assignments/${a.id}`}>
-                        <Button variant="ghost" size="icon" className="h-8 w-8 rounded-full text-slate-500 hover:text-[#0066cc] hover:bg-white dark:hover:bg-slate-700">
+                        <Button variant="ghost" size="icon" className="h-8 w-8 rounded-full text-slate-500 hover:text-[#0066cc] hover:bg-white dark:hover:bg-slate-700 active:scale-95 transition-all">
                           <ChevronRight className="h-4 w-4" />
                         </Button>
                       </Link>

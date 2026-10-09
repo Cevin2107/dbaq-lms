@@ -347,21 +347,21 @@ export default function TeachingSchedulePage() {
 
   return (
     <div className="container-custom py-6 md:py-8 space-y-6 md:space-y-8 animate-fade-in pb-16">
-      {/* ─── 1. Header Tile Glassmorphic ─── */}
-      <div className="rounded-[2.5rem] bg-gradient-to-br from-white via-[#f0f9ff]/70 to-[#e0f2fe]/50 dark:from-[#1d1d1f]/90 dark:via-[#1d1d1f]/80 dark:to-[#0f172a]/90 backdrop-blur-2xl border border-black/5 dark:border-white/10 shadow-[0_8px_30px_rgba(0,102,204,0.06)] p-6 sm:p-8 md:p-10 relative overflow-hidden">
+      {/* ─── 1. Header Tile Liquid Glass ─── */}
+      <div className="rounded-[2.5rem] bg-white/80 dark:bg-[#18181b]/80 backdrop-blur-2xl border border-white/80 dark:border-white/10 shadow-[0_8px_30px_rgba(0,0,0,0.04)] dark:shadow-[0_12px_36px_rgba(0,0,0,0.5)] p-6 sm:p-8 md:p-10 relative overflow-hidden">
         {/* Soft Ambient Light Glow */}
         <div className="pointer-events-none absolute -right-20 -top-20 w-80 h-80 rounded-full bg-gradient-to-br from-blue-400/20 via-sky-300/15 to-transparent blur-3xl dark:from-blue-600/15" />
 
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-5 relative z-10">
           <div className="space-y-2">
-            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-blue-50 dark:bg-blue-900/40 text-[#0066cc] dark:text-blue-400 text-xs font-bold border border-blue-100 dark:border-blue-800/40 shadow-xs">
+            <div className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-blue-500/10 text-[#0066cc] dark:text-blue-300 text-xs font-bold border border-blue-500/20 shadow-xs">
               <Clock className="w-3.5 h-3.5" />
               <span>Cấu hình Ca học & Phân lịch Đăng ký</span>
             </div>
-            <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold text-slate-900 dark:text-white tracking-[-0.02em]">
+            <h1 className="text-2xl sm:text-3xl md:text-4xl font-extrabold text-[#1d1d1f] dark:text-white tracking-tight">
               Quản lý Đăng ký Ca dạy
             </h1>
-            <p className="text-[15px] text-slate-500 dark:text-slate-400 max-w-xl leading-relaxed">
+            <p className="text-xs sm:text-sm text-slate-500 dark:text-slate-400 max-w-xl leading-relaxed">
               Cấu hình các khung giờ ca học, mở lịch rảnh tuần và chia sẻ liên kết đăng ký trực tuyến cho học sinh.
             </p>
           </div>
@@ -370,10 +370,10 @@ export default function TeachingSchedulePage() {
             <Button
               onClick={handleCopyLink}
               className={clsx(
-                "rounded-full px-5 py-2.5 text-xs sm:text-sm font-bold transition-all duration-300 shadow-md active:scale-95",
+                "rounded-full px-5 py-2.5 text-xs sm:text-sm font-semibold transition-all duration-300 ease-spring shadow-lg active:scale-95 hover:-translate-y-0.5",
                 copied
                   ? "bg-emerald-600 hover:bg-emerald-700 text-white shadow-emerald-500/25"
-                  : "bg-[#0066cc] hover:bg-[#005bb5] text-white shadow-blue-500/25"
+                  : "bg-[#0066cc] hover:bg-[#005bb5] text-white shadow-blue-500/25 hover:shadow-xl"
               )}
             >
               {copied ? (
@@ -393,7 +393,7 @@ export default function TeachingSchedulePage() {
               href="/register-schedule"
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-flex items-center justify-center h-10 w-10 rounded-full border border-slate-200/80 dark:border-white/10 bg-white/90 dark:bg-white/5 hover:bg-slate-100 dark:hover:bg-white/10 text-slate-700 dark:text-slate-200 transition-all duration-200 shadow-2xs active:scale-90"
+              className="inline-flex items-center justify-center h-10 w-10 rounded-full border border-black/[0.06] dark:border-white/10 bg-white/80 dark:bg-white/5 backdrop-blur-md hover:bg-black/[0.04] dark:hover:bg-white/10 text-slate-700 dark:text-slate-200 transition-all duration-300 shadow-sm active:scale-95 hover:-translate-y-0.5"
               title="Mở xem giao diện học sinh trong tab mới"
             >
               <ExternalLink className="h-4 w-4" />
@@ -403,7 +403,7 @@ export default function TeachingSchedulePage() {
               variant="outline"
               size="sm"
               onClick={fetchData}
-              className="rounded-full shadow-2xs border-slate-200 dark:border-white/10 hover:bg-slate-100 dark:hover:bg-slate-800"
+              className="rounded-full bg-white/80 dark:bg-white/5 backdrop-blur-md border-black/[0.06] dark:border-white/10 hover:bg-black/[0.04] dark:hover:bg-white/10 text-slate-700 dark:text-slate-200 px-4 py-2 text-xs font-semibold shadow-sm hover:-translate-y-0.5 active:scale-95 transition-all duration-300 ease-spring"
             >
               <RefreshCw className="h-4 w-4 mr-1.5" />
               <span>Làm mới</span>
@@ -413,24 +413,28 @@ export default function TeachingSchedulePage() {
       </div>
 
       {/* ─── 3. Executive KPI Stats Overview (Command Center) ─── */}
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-3.5 sm:gap-4 md:gap-5">
         {/* Stat 1: Shifts */}
-        <div className="rounded-[1.75rem] bg-white/80 dark:bg-[#1d1d1f]/80 backdrop-blur-xl border border-black/5 dark:border-white/5 p-4 sm:p-5 shadow-sm">
+        <div className="rounded-[2.25rem] bg-white/80 dark:bg-[#18181b]/80 backdrop-blur-2xl border border-white/80 dark:border-white/10 p-5 sm:p-6 shadow-[0_8px_30px_rgba(0,0,0,0.04)] dark:shadow-[0_12px_36px_rgba(0,0,0,0.5)] hover:shadow-md hover:-translate-y-0.5 transition-all duration-300 ease-spring">
           <div className="flex items-center justify-between text-slate-500 dark:text-slate-400 mb-2">
-            <span className="text-xs font-semibold">Khung Ca học</span>
-            <Clock className="h-4 w-4 text-[#0066cc]" />
+            <span className="text-xs font-bold">Khung Ca học</span>
+            <div className="h-8 w-8 rounded-xl bg-blue-500/10 text-[#0066cc] dark:text-blue-400 flex items-center justify-center">
+              <Clock className="h-4 w-4" />
+            </div>
           </div>
-          <div className="text-2xl sm:text-3xl font-extrabold text-slate-900 dark:text-white">
+          <div className="text-2xl sm:text-3xl font-extrabold text-[#1d1d1f] dark:text-white">
             {shifts.length}
           </div>
           <p className="text-[11px] text-slate-400 mt-1">Đang thiết lập trong ngày</p>
         </div>
 
         {/* Stat 2: Available Slots */}
-        <div className="rounded-[1.75rem] bg-white/80 dark:bg-[#1d1d1f]/80 backdrop-blur-xl border border-black/5 dark:border-white/5 p-4 sm:p-5 shadow-sm">
+        <div className="rounded-[2.25rem] bg-white/80 dark:bg-[#18181b]/80 backdrop-blur-2xl border border-white/80 dark:border-white/10 p-5 sm:p-6 shadow-[0_8px_30px_rgba(0,0,0,0.04)] dark:shadow-[0_12px_36px_rgba(0,0,0,0.5)] hover:shadow-md hover:-translate-y-0.5 transition-all duration-300 ease-spring">
           <div className="flex items-center justify-between text-slate-500 dark:text-slate-400 mb-2">
-            <span className="text-xs font-semibold">Tổng Ca rảnh mở</span>
-            <CalendarCheck className="h-4 w-4 text-emerald-500" />
+            <span className="text-xs font-bold">Tổng Ca rảnh mở</span>
+            <div className="h-8 w-8 rounded-xl bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 flex items-center justify-center">
+              <CalendarCheck className="h-4 w-4" />
+            </div>
           </div>
           <div className="text-2xl sm:text-3xl font-extrabold text-emerald-600 dark:text-emerald-400">
             {availableSchedules.length}
@@ -439,12 +443,14 @@ export default function TeachingSchedulePage() {
         </div>
 
         {/* Stat 3: Registered Students */}
-        <div className="rounded-[1.75rem] bg-white/80 dark:bg-[#1d1d1f]/80 backdrop-blur-xl border border-black/5 dark:border-white/5 p-4 sm:p-5 shadow-sm">
+        <div className="rounded-[2.25rem] bg-white/80 dark:bg-[#18181b]/80 backdrop-blur-2xl border border-white/80 dark:border-white/10 p-5 sm:p-6 shadow-[0_8px_30px_rgba(0,0,0,0.04)] dark:shadow-[0_12px_36px_rgba(0,0,0,0.5)] hover:shadow-md hover:-translate-y-0.5 transition-all duration-300 ease-spring">
           <div className="flex items-center justify-between text-slate-500 dark:text-slate-400 mb-2">
-            <span className="text-xs font-semibold">Học sinh đã đăng ký</span>
-            <UserCheck className="h-4 w-4 text-indigo-500" />
+            <span className="text-xs font-bold">Học sinh đã đăng ký</span>
+            <div className="h-8 w-8 rounded-xl bg-indigo-500/10 text-indigo-600 dark:text-indigo-400 flex items-center justify-center">
+              <UserCheck className="h-4 w-4" />
+            </div>
           </div>
-          <div className="text-2xl sm:text-3xl font-extrabold text-slate-900 dark:text-white">
+          <div className="text-2xl sm:text-3xl font-extrabold text-[#1d1d1f] dark:text-white">
             <span>{totalRegisteredStudents}</span>
             <span className="text-sm font-semibold text-slate-400 ml-1">/ {studentLimits.length}</span>
           </div>
