@@ -13,31 +13,17 @@ export async function GET(
 ) {
   try {
     const { id } = await context.params;
-    const supabase = getSupabaseClient();
+    const { fetchAssignmentById } = await import("@/lib/supabaseHelpers");
+    const data = await fetchAssignmentById(id);
 
-    const { data, error } = await supabase
-      .from("assignments")
-      .select("id, title, subject, grade, due_at, duration_minutes, total_score, is_hidden")
-      .eq("id", id)
-      .eq("is_hidden", false)
-      .single();
-
-    if (error || !data) {
+    if (!data || data.isHidden) {
       return NextResponse.json(
         { error: "Assignment not found" },
         { status: 404 }
       );
     }
 
-    return NextResponse.json({
-      id: data.id,
-      title: data.title,
-      subject: data.subject,
-      grade: data.grade,
-      dueAt: data.due_at,
-      durationMinutes: data.duration_minutes,
-      totalScore: data.total_score,
-    });
+    return NextResponse.json(data);
   } catch (error) {
     console.error("Error fetching assignment:", error);
     return NextResponse.json(

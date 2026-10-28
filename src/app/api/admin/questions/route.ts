@@ -29,11 +29,21 @@ export async function POST(req: NextRequest) {
 
   try {
     const body = await req.json();
-    const question = await createQuestion(body);
+    const normalizedBody = {
+      assignmentId: body.assignmentId || body.assignment_id,
+      type: body.type,
+      content: body.content,
+      choices: body.choices,
+      answerKey: body.answerKey || body.answer_key,
+      imageUrl: body.imageUrl || body.image_url,
+      points: body.points !== undefined ? Number(body.points) : undefined,
+      subQuestions: body.subQuestions || body.sub_questions,
+    };
+    const question = await createQuestion(normalizedBody);
     return NextResponse.json(question);
-  } catch (error) {
+  } catch (error: any) {
     console.error("Error creating question:", error);
-    return NextResponse.json({ error: "Failed to create question" }, { status: 500 });
+    return NextResponse.json({ error: error?.message || "Failed to create question" }, { status: 500 });
   }
 }
 

@@ -10,9 +10,10 @@ interface QuestionEditorModalProps {
   onClose: () => void;
   onSuccess: () => void;
   editingQuestion?: any | null;
+  isQuiz?: boolean;
 }
 
-export function QuestionEditorModal({ assignmentId, isOpen, onClose, onSuccess, editingQuestion }: QuestionEditorModalProps) {
+export function QuestionEditorModal({ assignmentId, isOpen, onClose, onSuccess, editingQuestion, isQuiz = false }: QuestionEditorModalProps) {
   const isEditing = !!editingQuestion;
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
@@ -49,8 +50,8 @@ export function QuestionEditorModal({ assignmentId, isOpen, onClose, onSuccess, 
         setPreviewUrl(editingQuestion.imageUrl || editingQuestion.image_url || "");
         setImageFile(null);
       } else {
-        const lastType = (typeof window !== "undefined" && localStorage.getItem("last_question_type") as any) || "mcq";
-        setType(lastType);
+        const lastType = isQuiz ? "mcq" : (typeof window !== "undefined" && localStorage.getItem("last_question_type") as any) || "mcq";
+        setType(isQuiz ? "mcq" : lastType);
         setContent("");
         setChoices(["", "", "", ""]);
         setSubQuestions([
@@ -218,13 +219,16 @@ export function QuestionEditorModal({ assignmentId, isOpen, onClose, onSuccess, 
             <div className="md:col-span-2 lg:col-span-1">
               <label className="text-sm font-semibold text-slate-700 dark:text-slate-300 mb-2 block">Loại câu hỏi</label>
               <div className="flex flex-wrap gap-2">
-                {[
-                  { value: "mcq", label: "Trắc nghiệm" },
-                  { value: "true_false", label: "Đúng/Sai" },
-                  { value: "short_answer", label: "Trả lời ngắn" },
-                  { value: "essay", label: "Tự luận" },
-                  { value: "section", label: "Ghi chú" },
-                ].map((t) => (
+                {(isQuiz
+                  ? [{ value: "mcq", label: "Trắc nghiệm 4 đáp án (Quiz)" }]
+                  : [
+                      { value: "mcq", label: "Trắc nghiệm" },
+                      { value: "true_false", label: "Đúng/Sai" },
+                      { value: "short_answer", label: "Trả lời ngắn" },
+                      { value: "essay", label: "Tự luận" },
+                      { value: "section", label: "Ghi chú" },
+                    ]
+                ).map((t) => (
                   <button
                     key={t.value}
                     type="button"

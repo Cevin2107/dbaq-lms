@@ -14,6 +14,19 @@ const getSupabaseAdmin = () => {
   return createClient(url, key);
 };
 
+export function parseAssignmentType(row: any): "ASSIGNMENT" | "QUIZ" {
+  if (!row) return "ASSIGNMENT";
+  if (row.type === "QUIZ" || row.type === "ASSIGNMENT") return row.type;
+  if (row.point_ranges?.quizMeta?.type === "QUIZ") return "QUIZ";
+  if (typeof row.title === "string" && row.title.startsWith("[QUIZ]")) return "QUIZ";
+  return "ASSIGNMENT";
+}
+
+export function parseQuizConfig(row: any) {
+  if (!row) return undefined;
+  return row.quiz_config || row.point_ranges?.quizMeta?.quizConfig || undefined;
+}
+
 export async function fetchAssignments(): Promise<Assignment[]> {
   const supabase = getSupabaseClient();
   const { data, error } = await supabase
@@ -39,6 +52,8 @@ export async function fetchAssignments(): Promise<Assignment[]> {
     isHidden: row.is_hidden,
     status: "not_started" as const,
     latestSubmission: null,
+    type: parseAssignmentType(row),
+    quizConfig: parseQuizConfig(row),
   }));
 }
 
@@ -107,6 +122,8 @@ export async function fetchAssignmentsWithHistory(studentId: string, studentName
       isHidden: row.is_hidden,
       status: latestSubmission ? "completed" : "not_started",
       latestSubmission,
+      type: parseAssignmentType(row),
+      quizConfig: parseQuizConfig(row),
     } satisfies Assignment;
   });
 }
@@ -133,6 +150,8 @@ export async function fetchAssignmentById(id: string): Promise<Assignment | null
     hideScore: data.hide_score ?? false,
     pointRanges: data.point_ranges ?? undefined,
     status: "not_started",
+    type: parseAssignmentType(data),
+    quizConfig: parseQuizConfig(data),
   };
 }
 
@@ -158,6 +177,8 @@ export async function fetchAssignmentByIdAdmin(id: string): Promise<Assignment |
     hideScore: data.hide_score ?? false,
     pointRanges: data.point_ranges ?? undefined,
     status: "not_started",
+    type: parseAssignmentType(data),
+    quizConfig: parseQuizConfig(data),
   };
 }
 
@@ -202,11 +223,38 @@ export async function createAssignment(assignment: {
   hideScore?: boolean;
   pointRanges?: Array<{ fromQuestion: number; toQuestion: number; totalPoints: number }>;
   assignedIds?: string[];
+  type?: "ASSIGNMENT" | "QUIZ";
+  quizConfig?: any;
 }) {
   const supabase = getSupabaseAdmin();
-  const { data, error } = await supabase
-    .from("assignments")
-    .insert({
+  const isQuiz = assignment.type === "QUIZ";
+
+  const insertPayload: Record<string, any> = {
+    title: assignment.title,
+    subject: assignment.subject,
+    grade: assignment.grade,
+    due_at: assignment.dueAt,
+    duration_minutes: assignment.durationMinutes,
+    total_score: assignment.totalScore,
+    hide_score: assignment.hideScore ?? false,
+    point_ranges: assignment.pointRanges ?? null,
+  };
+
+  if (assignment.type) insertPayload.type = assignment.type;
+  if (assignment.quizConfig) insertPayload.quiz_config = assignment.quizConfig;
+
+  let res = await supabase.from("assignments").insert(insertPayload).select().single();
+
+  // If column does not exist yet in DB, fallback to embedding in point_ranges.quizMeta
+  if (res.error && (res.error.message?.includes("column") || res.error.message?.includes("does not exist"))) {
+    const fallbackPointRanges: any = assignment.pointRanges ? { ...(assignment.pointRanges as any) } : {};
+    if (isQuiz) {
+      fallbackPointRanges.quizMeta = {
+        type: "QUIZ",
+        quizConfig: assignment.quizConfig,
+      };
+    }
+    const fallbackPayload: Record<string, any> = {
       title: assignment.title,
       subject: assignment.subject,
       grade: assignment.grade,
@@ -214,12 +262,13 @@ export async function createAssignment(assignment: {
       duration_minutes: assignment.durationMinutes,
       total_score: assignment.totalScore,
       hide_score: assignment.hideScore ?? false,
-      point_ranges: assignment.pointRanges ?? null,
-    })
-    .select()
-    .single();
+      point_ranges: Object.keys(fallbackPointRanges).length > 0 ? fallbackPointRanges : null,
+    };
+    res = await supabase.from("assignments").insert(fallbackPayload).select().single();
+  }
 
-  if (error) throw error;
+  if (res.error) throw res.error;
+  const data = res.data;
 
   if (assignment.assignedIds && assignment.assignedIds.length > 0) {
     const insertData = assignment.assignedIds.map((id) => ({
@@ -229,7 +278,11 @@ export async function createAssignment(assignment: {
     await supabase.from("assignment_assignments").insert(insertData);
   }
 
-  return data;
+  return {
+    ...data,
+    type: parseAssignmentType(data),
+    quizConfig: parseQuizConfig(data),
+  };
 }
 
 export async function createQuestion(question: {
@@ -311,6 +364,8 @@ export async function updateAssignment(data: {
   isHidden?: boolean;
   hideScore?: boolean;
   pointRanges?: Array<{ fromQuestion: number; toQuestion: number; totalPoints: number }> | null;
+  type?: "ASSIGNMENT" | "QUIZ";
+  quizConfig?: any;
 }) {
   const supabase = getSupabaseAdmin();
 
@@ -335,15 +390,30 @@ export async function updateAssignment(data: {
   if (data.isHidden !== undefined) updateBody.is_hidden = data.isHidden;
   if (data.hideScore !== undefined) updateBody.hide_score = data.hideScore;
   if (data.pointRanges !== undefined) updateBody.point_ranges = data.pointRanges;
+  if (data.type !== undefined) updateBody.type = data.type;
+  if (data.quizConfig !== undefined) updateBody.quiz_config = data.quizConfig;
 
-  const { data: updated, error } = await supabase
+  let updateRes = await supabase
     .from("assignments")
     .update(updateBody)
     .eq("id", data.id)
     .select()
     .single();
 
-  if (error) throw error;
+  if (updateRes.error && (updateRes.error.message?.includes("column") || updateRes.error.message?.includes("does not exist"))) {
+    // Retry without type and quiz_config
+    delete updateBody.type;
+    delete updateBody.quiz_config;
+    updateRes = await supabase
+      .from("assignments")
+      .update(updateBody)
+      .eq("id", data.id)
+      .select()
+      .single();
+  }
+
+  if (updateRes.error) throw updateRes.error;
+  const updated = updateRes.data;
 
   // Nếu duration_minutes thay đổi, cập nhật deadline_at của các session đang active
   if (
@@ -741,7 +811,11 @@ export async function fetchAllAssignmentsAdmin() {
     .order("created_at", { ascending: false });
 
   if (error) throw error;
-  return data || [];
+  return (data || []).map((row) => ({
+    ...row,
+    type: parseAssignmentType(row),
+    quiz_config: parseQuizConfig(row),
+  }));
 }
 
 // Thống kê tổng quát của tất cả học sinh

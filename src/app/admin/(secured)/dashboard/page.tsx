@@ -29,6 +29,7 @@ import {
 import { addSession } from "@/features/admin/schedule/lib/teachingService";
 import { addStudent } from "@/features/admin/schedule/lib/studentService";
 import { supabase } from "@/features/admin/schedule/lib/supabase";
+import { CreateAssignmentModal } from "@/features/admin/components/CreateAssignmentModal";
 
 interface StudentOverview {
   id: string;
@@ -95,6 +96,7 @@ export default function AdminDashboardPage() {
   const [statsData, setStatsData] = useState<DashboardStatsData | null>(null);
   const [isLoadingStats, setIsLoadingStats] = useState(true);
   const [isRefreshing, setIsRefreshing] = useState(false);
+  const [showCreateAssignmentModal, setShowCreateAssignmentModal] = useState(false);
 
   const [monthlySessions, setMonthlySessions] = useState<Array<{
     id: string;
@@ -406,12 +408,15 @@ export default function AdminDashboardPage() {
               </Button>
             </Link>
 
-            <Link href="/admin/assignments/new">
-              <Button variant="brand" size="sm" className="rounded-full bg-[#0066cc] hover:bg-[#005bb5] shadow-lg shadow-blue-500/25 hover:shadow-xl hover:-translate-y-0.5 px-5 py-2 text-xs font-semibold active:scale-95 transition-all duration-300 ease-spring">
-                <Plus className="h-4 w-4 mr-1.5" />
-                <span>Tạo bài mới</span>
-              </Button>
-            </Link>
+            <Button
+              variant="brand"
+              size="sm"
+              onClick={() => setShowCreateAssignmentModal(true)}
+              className="rounded-full bg-[#0066cc] hover:bg-[#005bb5] shadow-lg shadow-blue-500/25 hover:shadow-xl hover:-translate-y-0.5 px-5 py-2 text-xs font-semibold active:scale-95 transition-all duration-300 ease-spring"
+            >
+              <Plus className="h-4 w-4 mr-1.5" />
+              <span>Tạo bài mới</span>
+            </Button>
           </div>
         </div>
       </div>
@@ -909,6 +914,11 @@ export default function AdminDashboardPage() {
         </div>
 
       </div>
+
+      <CreateAssignmentModal
+        isOpen={showCreateAssignmentModal}
+        onClose={() => setShowCreateAssignmentModal(false)}
+      />
     </div>
   );
 }

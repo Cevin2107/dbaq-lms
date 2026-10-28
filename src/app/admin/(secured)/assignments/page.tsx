@@ -8,8 +8,10 @@ import { CardSkeleton } from "@/components/ui/Skeleton";
 import { Tooltip } from "@/components/ui/Tooltip";
 import { useToast } from "@/components/ui/Toast";
 import { MathText } from "@/components/MathText";
-import { LayoutList, Plus, Search, Filter, Edit, Eye, EyeOff, Clock, Award, Copy, Sparkles, BookOpen } from "lucide-react";
+import { LayoutList, Plus, Search, Filter, Edit, Eye, EyeOff, Clock, Award, Copy, Sparkles, BookOpen, Zap } from "lucide-react";
 import { useState } from "react";
+import { CreateQuizModal } from "@/features/admin/components/CreateQuizModal";
+import { CreateAssignmentModal } from "@/features/admin/components/CreateAssignmentModal";
 
 export default function AssignmentsPage() {
   const { data: assignments = [], isLoading } = useAdminAssignments();
@@ -17,6 +19,8 @@ export default function AssignmentsPage() {
   const [searchTerm, setSearchTerm] = useState("");
   const [filter, setFilter] = useState("all");
   const [sortBy, setSortBy] = useState<"title" | "date" | "score">("date");
+  const [showCreateQuizModal, setShowCreateQuizModal] = useState(false);
+  const [showCreateAssignmentModal, setShowCreateAssignmentModal] = useState(false);
 
   const handleCopyLink = (assignmentId: string, e: React.MouseEvent) => {
     e.preventDefault();
@@ -62,7 +66,8 @@ export default function AssignmentsPage() {
   });
 
   return (
-    <div className="container-custom py-6 md:py-8 space-y-6 md:space-y-8 animate-fade-in">
+    <>
+      <div className="container-custom py-6 md:py-8 space-y-6 md:space-y-8 animate-fade-in">
       {/* Header with Liquid Glass Card */}
       <div className="relative overflow-hidden rounded-[2.5rem] bg-white/80 dark:bg-[#18181b]/80 backdrop-blur-2xl border border-white/80 dark:border-white/10 shadow-[0_8px_30px_rgba(0,0,0,0.04)] dark:shadow-[0_12px_36px_rgba(0,0,0,0.5)] p-6 sm:p-8 md:p-10">
         <div className="absolute top-0 right-0 -mt-16 -mr-16 w-72 h-72 bg-gradient-to-br from-blue-400/15 to-indigo-500/15 rounded-full blur-3xl pointer-events-none" />
@@ -79,13 +84,27 @@ export default function AssignmentsPage() {
               Tìm kiếm, lọc và phân loại tất cả đề thi, bài tập và ngân hàng câu hỏi trong hệ thống.
             </p>
           </div>
-          <Link href="/admin/assignments/new">
-            <Button variant="brand" size="sm" className="rounded-full bg-[#0066cc] hover:bg-[#005bb5] shadow-lg shadow-blue-500/25 hover:shadow-xl hover:-translate-y-0.5 px-6 py-2.5 text-xs font-semibold active:scale-95 transition-all duration-300 ease-spring">
+          <div className="flex items-center gap-2">
+            <button
+              id="create-quiz-btn"
+              onClick={() => setShowCreateQuizModal(true)}
+              className="inline-flex items-center gap-1.5 rounded-full bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-700 hover:to-indigo-700 text-white shadow-lg shadow-purple-500/25 hover:shadow-xl hover:-translate-y-0.5 px-4 sm:px-5 py-2.5 text-xs font-bold active:scale-95 transition-all duration-300"
+            >
+              <Zap className="h-4 w-4" />
+              <span className="hidden sm:inline">Tạo Quiz</span>
+              <span className="sm:hidden">Quiz</span>
+            </button>
+            <Button
+              variant="brand"
+              size="sm"
+              onClick={() => setShowCreateAssignmentModal(true)}
+              className="rounded-full bg-[#0066cc] hover:bg-[#005bb5] shadow-lg shadow-blue-500/25 hover:shadow-xl hover:-translate-y-0.5 px-5 sm:px-6 py-2.5 text-xs font-semibold active:scale-95 transition-all duration-300 ease-spring"
+            >
               <Plus className="h-4 w-4 mr-1.5" />
               <span className="hidden sm:inline">Tạo bài tập mới</span>
               <span className="sm:hidden">Tạo mới</span>
             </Button>
-          </Link>
+          </div>
         </div>
       </div>
 
@@ -188,12 +207,14 @@ export default function AssignmentsPage() {
               : "Tạo bài tập đầu tiên để bắt đầu quá trình giảng dạy."}
           </p>
           {!searchTerm && (
-            <Link href="/admin/assignments/new">
-              <Button variant="brand" className="mt-6 rounded-full bg-[#0066cc] hover:bg-[#005bb5] shadow-lg shadow-blue-500/25 px-6 py-2.5 text-xs font-semibold active:scale-95 transition-all">
-                <Plus className="h-4 w-4 mr-1.5" />
-                Tạo bài tập ngay
-              </Button>
-            </Link>
+            <Button
+              variant="brand"
+              onClick={() => setShowCreateAssignmentModal(true)}
+              className="mt-6 rounded-full bg-[#0066cc] hover:bg-[#005bb5] shadow-lg shadow-blue-500/25 px-6 py-2.5 text-xs font-semibold active:scale-95 transition-all"
+            >
+              <Plus className="h-4 w-4 mr-1.5" />
+              Tạo bài tập ngay
+            </Button>
           )}
         </div>
       ) : (
@@ -289,5 +310,16 @@ export default function AssignmentsPage() {
         </div>
       )}
     </div>
+
+      <CreateQuizModal
+        isOpen={showCreateQuizModal}
+        onClose={() => setShowCreateQuizModal(false)}
+      />
+
+      <CreateAssignmentModal
+        isOpen={showCreateAssignmentModal}
+        onClose={() => setShowCreateAssignmentModal(false)}
+      />
+    </>
   );
 }

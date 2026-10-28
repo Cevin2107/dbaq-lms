@@ -89,11 +89,19 @@ export const AssignmentCard: React.FC<AssignmentCardProps> = ({ assignment, now 
       suppressHydrationWarning
     >
       <div className="flex items-center justify-between gap-2 mb-3" suppressHydrationWarning>
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-2 flex-wrap">
           <span className={clsx("rounded-full px-2.5 py-0.5 text-xs font-semibold", subjectColor(assignment.subject))}>
             {assignment.subject}
           </span>
           <span className="text-xs text-slate-400">{assignment.grade}</span>
+          {assignment.type === "QUIZ" && (
+            <span className="inline-flex items-center gap-1 rounded-full bg-gradient-to-r from-purple-500/15 to-indigo-500/15 text-purple-700 dark:text-purple-300 border border-purple-500/25 px-2.5 py-0.5 text-[11px] font-extrabold tracking-wide uppercase">
+              <svg className="w-3 h-3 text-purple-600 dark:text-purple-400 fill-current" viewBox="0 0 24 24">
+                <path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z" />
+              </svg>
+              Quiz
+            </span>
+          )}
         </div>
         <div className="flex flex-wrap items-center gap-1.5">
           {urgent && (

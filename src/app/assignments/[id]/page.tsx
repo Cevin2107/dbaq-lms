@@ -1,5 +1,6 @@
 import { notFound, redirect } from "next/navigation";
 import { AssignmentTaking } from "@/components/AssignmentTaking";
+import { QuizTaking } from "@/components/QuizTaking";
 import { fetchAssignmentById, fetchQuestions } from "@/lib/supabaseHelpers";
 import { createServerClient } from "@supabase/ssr";
 import { cookies } from "next/headers";
@@ -34,7 +35,12 @@ export default async function AssignmentPage({ params }: {
   const assignment = await fetchAssignmentById(id);
   if (!assignment) return notFound();
 
-  const questions = await fetchQuestions(assignment.id);
+  const questions = await fetchQuestions(assignment.id, { includeAnswerKey: true });
+  const studentName = user?.user_metadata?.full_name || 'Học sinh';
 
-  return <AssignmentTaking assignment={assignment} questions={questions} initialStudentName={user?.user_metadata?.full_name || 'Học sinh'} />;
+  if (assignment.type === "QUIZ") {
+    return <QuizTaking assignment={assignment} questions={questions} initialStudentName={studentName} />;
+  }
+
+  return <AssignmentTaking assignment={assignment} questions={questions} initialStudentName={studentName} />;
 }

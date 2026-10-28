@@ -4,15 +4,17 @@ import { Button } from "@/components/ui/Button";
 import { Badge } from "@/components/ui/Badge";
 import { countActualQuestions } from "@/lib/utils";
 import { AiGeneratorModal } from "./AiGeneratorModal";
+import { AutoQuizImportModal } from "./AutoQuizImportModal";
 import { QuestionEditorModal } from "./QuestionEditorModal";
-import { GripVertical, Plus, Settings2, Trash2, Edit2, CheckCircle2 } from "lucide-react";
+import { GripVertical, Plus, Settings2, Trash2, Edit2, CheckCircle2, Zap } from "lucide-react";
 import Toast from "@/components/Toast";
 import { MathText } from "@/components/MathText";
 import { broadcastQuestionsUpdate } from "@/lib/broadcastQuestions";
 
-export function QuestionBuilderTab({ assignmentId, initialQuestions }: { assignmentId: string; initialQuestions: any[] }) {
+export function QuestionBuilderTab({ assignmentId, initialQuestions, isQuiz = false }: { assignmentId: string; initialQuestions: any[]; isQuiz?: boolean }) {
   const [questions, setQuestions] = useState<any[]>(initialQuestions);
   const [showAiModal, setShowAiModal] = useState(false);
+  const [showAutoQuizModal, setShowAutoQuizModal] = useState(false);
   const [showEditorModal, setShowEditorModal] = useState(false);
   const [editingQuestion, setEditingQuestion] = useState<any | null>(null);
   const [toast, setToast] = useState<{ message: string; type: "success" | "error" } | null>(null);
@@ -209,9 +211,18 @@ export function QuestionBuilderTab({ assignmentId, initialQuestions }: { assignm
               <Button variant="outline" size="sm" onClick={() => { setEditingQuestion(null); setShowEditorModal(true); }} className="rounded-full bg-white/80 dark:bg-white/5 border-black/[0.06] dark:border-white/10 text-xs font-semibold px-4 py-2 hover:bg-black/[0.04] dark:hover:bg-white/10 active:scale-95 transition-all">
                  <Plus className="h-4 w-4 mr-1.5" /> Thủ công
               </Button>
-              <Button variant="brand" size="sm" onClick={() => setShowAiModal(true)} className="rounded-full bg-[#0066cc] hover:bg-[#005bb5] shadow-lg shadow-blue-500/25 px-5 py-2 text-xs font-semibold active:scale-95 transition-all duration-300 ease-spring">
-                 <Settings2 className="h-4 w-4 mr-1.5" /> Auto tạo câu hỏi
-              </Button>
+              {isQuiz ? (
+                <button
+                  onClick={() => setShowAutoQuizModal(true)}
+                  className="inline-flex items-center gap-1.5 rounded-full bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-700 hover:to-indigo-700 text-white shadow-lg shadow-purple-500/25 px-5 py-2 text-xs font-bold active:scale-95 transition-all duration-300"
+                >
+                  <Zap className="h-4 w-4" /> Auto Quiz
+                </button>
+              ) : (
+                <Button variant="brand" size="sm" onClick={() => setShowAiModal(true)} className="rounded-full bg-[#0066cc] hover:bg-[#005bb5] shadow-lg shadow-blue-500/25 px-5 py-2 text-xs font-semibold active:scale-95 transition-all duration-300 ease-spring">
+                   <Settings2 className="h-4 w-4 mr-1.5" /> Auto tạo câu hỏi
+                </Button>
+              )}
             </>
           )}
         </div>
@@ -220,14 +231,31 @@ export function QuestionBuilderTab({ assignmentId, initialQuestions }: { assignm
       <div className="space-y-4">
         {questions.length === 0 ? (
           <div className="rounded-[2.5rem] bg-white/80 dark:bg-[#18181b]/80 backdrop-blur-2xl border border-dashed border-slate-200 dark:border-white/10 p-12 text-center flex flex-col items-center justify-center">
-            <div className="h-14 w-14 rounded-2xl bg-blue-500/10 text-[#0066cc] dark:text-blue-400 flex items-center justify-center font-bold mb-4">
-              <Settings2 className="h-7 w-7" />
+            <div className={`h-14 w-14 rounded-2xl flex items-center justify-center font-bold mb-4 ${
+              isQuiz ? "bg-purple-500/10 text-purple-600 dark:text-purple-400" : "bg-blue-500/10 text-[#0066cc] dark:text-blue-400"
+            }`}>
+              {isQuiz ? <Zap className="h-7 w-7" /> : <Settings2 className="h-7 w-7" />}
             </div>
             <p className="text-base font-bold text-slate-800 dark:text-slate-200">Chưa có câu hỏi nào</p>
-            <p className="mt-1 text-xs sm:text-sm text-slate-500 dark:text-slate-400 mb-6 max-w-sm">Bóc tách tự động và import đáp án cho câu hỏi trắc nghiệm, đúng/sai, trả lời ngắn.</p>
-            <Button variant="brand" onClick={() => setShowAiModal(true)} className="rounded-full bg-[#0066cc] hover:bg-[#005bb5] shadow-lg shadow-blue-500/25 px-6 py-2.5 text-xs font-semibold active:scale-95 transition-all">
-              Auto tạo câu hỏi
-            </Button>
+            <p className="mt-1 text-xs sm:text-sm text-slate-500 dark:text-slate-400 mb-6 max-w-sm">
+              {isQuiz
+                ? "Bóc tách tự động và import đáp án A, B, C, D cho câu hỏi Quiz trắc nghiệm."
+                : "Bóc tách tự động và import đáp án cho câu hỏi trắc nghiệm, đúng/sai, trả lời ngắn."}
+            </p>
+            <div className="flex items-center gap-3">
+              {isQuiz ? (
+                <button
+                  onClick={() => setShowAutoQuizModal(true)}
+                  className="inline-flex items-center gap-1.5 rounded-full bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-700 hover:to-indigo-700 text-white shadow-lg shadow-purple-500/25 px-6 py-2.5 text-xs font-bold active:scale-95 transition-all duration-300"
+                >
+                  <Zap className="h-4 w-4" /> Auto Quiz
+                </button>
+              ) : (
+                <Button variant="brand" onClick={() => setShowAiModal(true)} className="rounded-full bg-[#0066cc] hover:bg-[#005bb5] shadow-lg shadow-blue-500/25 px-6 py-2.5 text-xs font-semibold active:scale-95 transition-all">
+                  Auto tạo câu hỏi
+                </Button>
+              )}
+            </div>
           </div>
         ) : (
           questions.map((q) => (
@@ -334,12 +362,25 @@ export function QuestionBuilderTab({ assignmentId, initialQuestions }: { assignm
         onSuccess={refreshQuestions}
       />
       
+      {showAutoQuizModal && (
+        <AutoQuizImportModal
+          assignmentId={assignmentId}
+          isOpen={showAutoQuizModal}
+          onClose={() => setShowAutoQuizModal(false)}
+          onSuccess={async () => {
+            await refreshQuestions();
+            broadcastQuestionsUpdate(assignmentId);
+          }}
+        />
+      )}
+
       <QuestionEditorModal
         assignmentId={assignmentId}
         isOpen={showEditorModal}
         onClose={() => { setShowEditorModal(false); setEditingQuestion(null); }}
         onSuccess={refreshQuestions}
         editingQuestion={editingQuestion}
+        isQuiz={isQuiz}
       />
       
       {toast && <Toast message={toast.message} type={toast.type} onClose={() => setToast(null)} />}

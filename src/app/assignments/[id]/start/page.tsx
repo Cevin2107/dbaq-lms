@@ -6,7 +6,7 @@ import Link from "next/link";
 import { Badge } from "@/components/ui/Badge";
 import { Button } from "@/components/ui/Button";
 import { useToast } from "@/components/ui/Toast";
-import { Copy, CheckCircle2, Clock, Award, Calendar, Share2, User, LogIn } from "lucide-react";
+import { Copy, CheckCircle2, Clock, Award, Calendar, Share2, User, LogIn, Zap } from "lucide-react";
 import { Footer } from "@/components/Footer";
 
 export default function StartAssignmentPage({ params }: { params: Promise<{ id: string }> }) {
@@ -195,19 +195,33 @@ export default function StartAssignmentPage({ params }: { params: Promise<{ id: 
         {/* Compact Hero Section */}
         <div className="mb-8 flex flex-col items-center text-center animate-slide-up">
           {/* Compact Logo */}
-          <div className="mb-4 flex h-16 w-16 items-center justify-center rounded-3xl bg-[#0066cc] shadow-lg shadow-blue-500/30">
-            <svg className="h-8 w-8 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
-              <path strokeLinecap="round" strokeLinejoin="round" d="M9 12.75L11.25 15 15 9.75m-3-7.036A11.959 11.959 0 013.598 6 11.99 11.99 0 003 9.749c0 5.592 3.824 10.29 9 11.623 5.176-1.332 9-6.03 9-11.622 0-1.31-.21-2.571-.598-3.751h-.152c-3.196 0-6.1-1.248-8.25-3.285z" />
-            </svg>
+          <div className={`mb-4 flex h-16 w-16 items-center justify-center rounded-3xl shadow-lg ${
+            assignmentData?.type === "QUIZ"
+              ? "bg-gradient-to-br from-purple-600 to-indigo-600 shadow-purple-500/30"
+              : "bg-[#0066cc] shadow-blue-500/30"
+          }`}>
+            {assignmentData?.type === "QUIZ" ? (
+              <Zap className="h-8 w-8 text-white" />
+            ) : (
+              <svg className="h-8 w-8 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
+                <path strokeLinecap="round" strokeLinejoin="round" d="M9 12.75L11.25 15 15 9.75m-3-7.036A11.959 11.959 0 013.598 6 11.99 11.99 0 003 9.749c0 5.592 3.824 10.29 9 11.623 5.176-1.332 9-6.03 9-11.622 0-1.31-.21-2.571-.598-3.751h-.152c-3.196 0-6.1-1.248-8.25-3.285z" />
+              </svg>
+            )}
           </div>
 
           {/* Responsive Title */}
           <h1 className="text-2xl sm:text-3xl font-bold text-slate-900 dark:text-white tracking-[-0.02em] mb-2">
-            Hệ thống bài tập trực tuyến
+            {assignmentData?.type === "QUIZ" ? "Luyện tập Quiz Trắc nghiệm" : "Hệ thống bài tập trực tuyến"}
           </h1>
 
-          <h2 className="text-[17px] font-bold text-slate-900 dark:text-white mb-1">Sẵn sàng làm bài?</h2>
-          <p className="text-[15px] text-slate-500 dark:text-slate-400">Kiểm tra thông tin và bắt đầu</p>
+          <h2 className="text-[17px] font-bold text-slate-900 dark:text-white mb-1">
+            {assignmentData?.type === "QUIZ" ? "Sẵn sàng thử thách Quiz?" : "Sẵn sàng làm bài?"}
+          </h2>
+          <p className="text-[15px] text-slate-500 dark:text-slate-400">
+            {assignmentData?.type === "QUIZ"
+              ? "Chế độ phản hồi nhanh theo từng câu hỏi"
+              : "Kiểm tra thông tin và bắt đầu"}
+          </p>
         </div>
 
         {/* Assignment Info Card */}
@@ -230,6 +244,11 @@ export default function StartAssignmentPage({ params }: { params: Promise<{ id: 
                   {assignmentData.title}
                 </h2>
                 <div className="flex flex-wrap items-center gap-2">
+                  {assignmentData.type === "QUIZ" && (
+                    <span className="px-3 py-0.5 rounded-full text-[13px] font-extrabold bg-purple-500/10 text-purple-600 dark:text-purple-400 border border-purple-500/20">
+                      ⚡ Quiz
+                    </span>
+                  )}
                   <Badge className="bg-[#0066cc]/10 text-[#0066cc] dark:bg-blue-500/20 dark:text-blue-300 border-none px-3 rounded-full text-[13px] font-semibold">
                     {assignmentData.subject}
                   </Badge>
@@ -379,7 +398,11 @@ export default function StartAssignmentPage({ params }: { params: Promise<{ id: 
               <button
                 onClick={() => handleStart()}
                 disabled={loading || !studentName.trim() || checkingIncomplete || checkingUser}
-                className="w-full flex items-center justify-center h-[52px] rounded-full bg-[#0066cc] shadow-md shadow-blue-500/20 hover:bg-[#005bb5] hover:shadow-lg disabled:opacity-60 px-4 py-3 text-[15px] font-bold text-white transition active:scale-[0.98]"
+                className={`w-full flex items-center justify-center h-[52px] rounded-full disabled:opacity-60 px-4 py-3 text-[15px] font-bold text-white transition active:scale-[0.98] ${
+                  assignmentData?.type === "QUIZ"
+                    ? "bg-gradient-to-r from-purple-600 to-indigo-600 shadow-md shadow-purple-500/25 hover:from-purple-700 hover:to-indigo-700"
+                    : "bg-[#0066cc] shadow-md shadow-blue-500/20 hover:bg-[#005bb5]"
+                }`}
               >
                 {loading ? (
                   <span className="flex items-center gap-2">
@@ -389,7 +412,13 @@ export default function StartAssignmentPage({ params }: { params: Promise<{ id: 
                     </svg>
                     Đang chuẩn bị...
                   </span>
-                ) : "Bắt đầu làm bài →"}
+                ) : assignmentData?.type === "QUIZ" ? (
+                  <span className="flex items-center gap-2">
+                    <Zap className="h-4 w-4" /> Bắt đầu Quiz ngay →
+                  </span>
+                ) : (
+                  "Bắt đầu làm bài →"
+                )}
               </button>
             )}
 

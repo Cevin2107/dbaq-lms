@@ -35,6 +35,8 @@ export async function GET(
         is_hidden: assignment.isHidden ?? false,
         hide_score: assignment.hideScore ?? false,
         point_ranges: assignment.pointRanges ?? null,
+        type: assignment.type ?? "ASSIGNMENT",
+        quiz_config: assignment.quizConfig ?? null,
       } : null,
       questions,
     });
@@ -68,6 +70,8 @@ export async function PATCH(
       isHidden: body.isHidden,
       hideScore: body.hideScore,
       pointRanges: body.pointRanges,
+      type: body.type,
+      quizConfig: body.quizConfig ?? body.quiz_config,
     });
 
     return NextResponse.json(updated);

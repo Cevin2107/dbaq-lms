@@ -7,6 +7,7 @@ import { isBefore } from "date-fns";
 import clsx from "clsx";
 import Link from "next/link";
 import { MathText } from "@/components/MathText";
+import { Zap } from "lucide-react";
 
 interface AssignmentListProps {
   assignments: Assignment[];
@@ -274,11 +275,17 @@ export function AssignmentList({ assignments, schedules = [], onNavigateToSchedu
               suppressHydrationWarning
             >
               <div className="flex items-start justify-between gap-2 mb-5" suppressHydrationWarning>
-                <div className="flex items-center gap-2">
+                <div className="flex items-center gap-2 flex-wrap">
                   <span className={clsx("rounded-full px-3 py-1 text-[13px] font-semibold", subjectColor(assignment.subject))}>
                     {assignment.subject}
                   </span>
                   <span className="text-[13px] text-slate-400 font-medium">{assignment.grade}</span>
+                  {assignment.type === "QUIZ" && (
+                    <span className="inline-flex items-center gap-1 rounded-full bg-gradient-to-r from-purple-500/15 to-indigo-500/15 text-purple-700 dark:text-purple-300 border border-purple-500/25 px-2.5 py-0.5 text-[11px] font-extrabold tracking-wide uppercase">
+                      <Zap className="w-3 h-3 text-purple-600 dark:text-purple-400 fill-current" />
+                      Quiz
+                    </span>
+                  )}
                 </div>
                 <StatusBadge assignment={assignment} />
               </div>

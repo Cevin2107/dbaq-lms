@@ -6,6 +6,17 @@ export interface PointRange {
   totalPoints: number;
 }
 
+export interface QuizConfig {
+  shuffleQuestions?: boolean;
+  shuffleOptions?: boolean;
+  instantFeedback?: boolean;
+  autoAdvance?: boolean;
+  autoAdvanceSeconds?: number;
+  allowRetry?: boolean;
+}
+
+export type AssignmentType = "ASSIGNMENT" | "QUIZ";
+
 export interface Assignment {
   id: string;
   title: string;
@@ -19,6 +30,8 @@ export interface Assignment {
   pointRanges?: PointRange[];
   status: AssignmentStatus;
   latestSubmission?: SubmissionSummary | null;
+  type?: AssignmentType;
+  quizConfig?: QuizConfig;
 }
 
 export interface SubQuestion {
@@ -86,4 +99,3 @@ export interface StudentScheduleItem {
   startTime: string;
   endTime: string;
 }
-

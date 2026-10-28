@@ -46,6 +46,8 @@ create table assignments (
   is_hidden boolean not null default false,
   hide_score boolean not null default false,
   point_ranges jsonb,
+  type text not null default 'ASSIGNMENT',
+  quiz_config jsonb,
   created_at timestamptz not null default now(),
   updated_at timestamptz not null default now()
 );
