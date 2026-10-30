@@ -20,9 +20,13 @@ import {
   Save,
   Sparkles,
   Target,
+  Clock,
+  Shuffle,
   Trash2,
   Trophy,
+  Zap,
 } from "lucide-react";
+import { QuizConfig } from "@/lib/types";
 
 type PointRange = {
   fromQuestion: number | "";
@@ -40,6 +44,8 @@ type EditForm = {
   is_hidden: boolean;
   hide_score: boolean;
   point_ranges: PointRange[];
+  type?: string;
+  quiz_config: QuizConfig;
 };
 
 const fieldClass =
@@ -49,6 +55,7 @@ const compactFieldClass =
   "w-full rounded-xl border border-slate-200/80 bg-slate-50/80 px-3 py-2 text-center text-xs font-bold text-slate-900 outline-none transition focus:border-[#0066cc] focus:bg-white focus:ring-4 focus:ring-[#0066cc]/15 dark:border-white/10 dark:bg-white/[0.04] dark:text-white";
 
 function normalizeInitialData(initialData: any): EditForm {
+  const quizConfig = initialData?.quiz_config ?? initialData?.quizConfig ?? {};
   return {
     title: initialData?.title || "",
     subject: initialData?.subject || "",
@@ -59,6 +66,15 @@ function normalizeInitialData(initialData: any): EditForm {
     is_hidden: initialData?.is_hidden ?? initialData?.isHidden ?? false,
     hide_score: initialData?.hide_score ?? initialData?.hideScore ?? false,
     point_ranges: initialData?.point_ranges ?? initialData?.pointRanges ?? [],
+    type: initialData?.type || "ASSIGNMENT",
+    quiz_config: {
+      shuffleQuestions: quizConfig.shuffleQuestions ?? false,
+      shuffleOptions: quizConfig.shuffleOptions ?? false,
+      instantFeedback: quizConfig.instantFeedback ?? true,
+      autoAdvance: quizConfig.autoAdvance ?? false,
+      autoAdvanceSeconds: quizConfig.autoAdvanceSeconds ?? 2,
+      allowRetry: quizConfig.allowRetry ?? true,
+    },
   };
 }
 
@@ -152,6 +168,8 @@ export function OverviewTab({ assignmentId, initialData }: { assignmentId: strin
         isHidden: editForm.is_hidden,
         hideScore: editForm.hide_score,
         pointRanges: editForm.point_ranges.length > 0 ? editForm.point_ranges : null,
+        type: editForm.type,
+        quizConfig: editForm.type === "QUIZ" ? editForm.quiz_config : undefined,
       };
 
       const res = await fetch(`/api/admin/assignments/${assignmentId}`, {
@@ -347,70 +365,203 @@ export function OverviewTab({ assignmentId, initialData }: { assignmentId: strin
                 </div>
               </section>
 
-              <section className="border-t border-slate-100 dark:border-white/5 pt-6">
-                <div className="mb-4 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-                  <div className="flex items-center gap-3">
-                    <div className="flex h-10 w-10 items-center justify-center rounded-2xl bg-indigo-500/10 text-indigo-600 dark:text-indigo-400">
-                      <Target className="h-5 w-5" />
+              {editForm.type === "QUIZ" ? (
+                <section className="border-t border-slate-100 dark:border-white/5 pt-6">
+                  <div className="rounded-[1.5rem] border border-purple-500/20 bg-purple-50/50 dark:bg-purple-950/20 p-5 sm:p-6 space-y-4">
+                    <div className="flex items-center gap-2.5 text-sm font-bold text-purple-700 dark:text-purple-300">
+                      <div className="flex h-8 w-8 items-center justify-center rounded-xl bg-purple-500/10 text-purple-600 dark:text-purple-400">
+                        <Zap className="h-4.5 w-4.5" />
+                      </div>
+                      <div>
+                        <h3 className="text-sm font-bold text-slate-900 dark:text-white">Cấu hình Quiz</h3>
+                        <p className="text-xs text-slate-500 dark:text-slate-400 font-normal">Thiết lập cơ chế hiển thị và tương tác khi học sinh làm Quiz</p>
+                      </div>
                     </div>
-                    <div>
-                      <h3 className="text-sm font-bold text-slate-900 dark:text-white">Chia điểm theo nhóm câu</h3>
-                      <p className="text-xs text-slate-500 dark:text-slate-400">Mặc định hệ thống sẽ chia đều tổng điểm cho tất cả câu.</p>
-                    </div>
-                  </div>
-                  <Button type="button" variant="outline" size="sm" onClick={addPointRange} className="rounded-full text-xs font-bold border-slate-200/80 dark:border-white/10">
-                    <Plus className="h-3.5 w-3.5 mr-1.5" />
-                    Thêm nhóm câu
-                  </Button>
-                </div>
 
-                {editForm.point_ranges.length === 0 ? (
-                  <div className="rounded-2xl border border-dashed border-slate-200 dark:border-white/10 bg-slate-50/50 p-6 text-center dark:bg-white/[0.02]">
-                    <Target className="mx-auto h-6 w-6 text-slate-400" />
-                    <p className="mt-2 text-xs font-semibold text-slate-500 dark:text-slate-400">Đang tự động chia đều theo tổng điểm</p>
-                  </div>
-                ) : (
-                  <div className="overflow-hidden rounded-2xl border border-slate-200/80 dark:border-white/10">
-                    <div className="hidden grid-cols-[1fr_1fr_1fr_auto] gap-2 bg-slate-50/80 px-4 py-2.5 text-[11px] font-bold uppercase tracking-wider text-slate-500 dark:bg-white/[0.03] dark:text-slate-400 sm:grid">
-                      <span>Từ câu</span>
-                      <span>Đến câu</span>
-                      <span>Tổng điểm nhóm</span>
-                      <span className="text-right">Hành động</span>
-                    </div>
-                    <div className="divide-y divide-slate-100 dark:divide-white/5">
-                      {editForm.point_ranges.map((range, idx) => (
-                        <div key={idx} className="grid grid-cols-[1fr_1fr_1fr_auto] items-center gap-3 p-3 sm:px-4">
-                          <input
-                            type="number"
-                            min={1}
-                            value={range.fromQuestion}
-                            onChange={(event) => updatePointRange(idx, "fromQuestion", event.target.value === "" ? "" : parseInt(event.target.value, 10))}
-                            className={compactFieldClass}
-                          />
-                          <input
-                            type="number"
-                            min={1}
-                            value={range.toQuestion}
-                            onChange={(event) => updatePointRange(idx, "toQuestion", event.target.value === "" ? "" : parseInt(event.target.value, 10))}
-                            className={compactFieldClass}
-                          />
-                          <input
-                            type="number"
-                            min={0}
-                            step={0.5}
-                            value={range.totalPoints}
-                            onChange={(event) => updatePointRange(idx, "totalPoints", event.target.value === "" ? "" : parseFloat(event.target.value))}
-                            className={compactFieldClass}
-                          />
-                          <Button type="button" variant="ghost" size="icon" onClick={() => removePointRange(idx)} className="justify-self-end text-rose-500 hover:bg-rose-50 hover:text-rose-600 dark:hover:bg-rose-500/10 rounded-xl h-8 w-8">
-                            <Trash2 className="h-4 w-4" />
-                          </Button>
-                        </div>
+                    <div className="space-y-3">
+                      {[
+                        {
+                          id: "cfg-shuffle-q",
+                          label: "Xáo trộn thứ tự câu hỏi",
+                          desc: "Mỗi lần làm bài, câu hỏi xuất hiện theo thứ tự ngẫu nhiên",
+                          icon: Shuffle,
+                          value: Boolean(editForm.quiz_config.shuffleQuestions),
+                          setter: (val: boolean) =>
+                            setEditForm((prev) => ({
+                              ...prev,
+                              quiz_config: { ...prev.quiz_config, shuffleQuestions: val },
+                            })),
+                        },
+                        {
+                          id: "cfg-shuffle-o",
+                          label: "Xáo trộn thứ tự đáp án",
+                          desc: "A, B, C, D xuất hiện theo thứ tự ngẫu nhiên mỗi lần làm",
+                          icon: Shuffle,
+                          value: Boolean(editForm.quiz_config.shuffleOptions),
+                          setter: (val: boolean) =>
+                            setEditForm((prev) => ({
+                              ...prev,
+                              quiz_config: { ...prev.quiz_config, shuffleOptions: val },
+                            })),
+                        },
+                        {
+                          id: "cfg-instant-fb",
+                          label: "Hiện đáp án ngay sau khi chọn",
+                          desc: "Học sinh thấy ngay đáp án đúng/sai sau mỗi câu",
+                          icon: Eye,
+                          value: Boolean(editForm.quiz_config.instantFeedback),
+                          setter: (val: boolean) =>
+                            setEditForm((prev) => ({
+                              ...prev,
+                              quiz_config: { ...prev.quiz_config, instantFeedback: val },
+                            })),
+                        },
+                      ].map((cfg) => (
+                        <label
+                          key={cfg.id}
+                          htmlFor={cfg.id}
+                          className="flex items-start gap-3.5 p-3.5 rounded-2xl bg-white/80 dark:bg-[#18181b]/80 border border-slate-200/60 dark:border-white/8 cursor-pointer hover:border-purple-400/40 hover:bg-white dark:hover:bg-[#18181b] transition-all group shadow-xs"
+                        >
+                          <div className="flex items-center pt-0.5">
+                            <input
+                              type="checkbox"
+                              id={cfg.id}
+                              checked={cfg.value}
+                              onChange={(e) => cfg.setter(e.target.checked)}
+                              className="h-4.5 w-4.5 rounded border-slate-300 text-purple-600 focus:ring-purple-500 cursor-pointer"
+                            />
+                          </div>
+                          <div className="flex-1 min-w-0">
+                            <div className="flex items-center gap-1.5">
+                              <cfg.icon className="h-4 w-4 text-purple-500 shrink-0" />
+                              <span className="text-sm font-bold text-slate-800 dark:text-slate-200">{cfg.label}</span>
+                            </div>
+                            <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5 leading-relaxed">{cfg.desc}</p>
+                          </div>
+                        </label>
                       ))}
+
+                      {/* Auto-advance */}
+                      <label
+                        htmlFor="cfg-auto-advance"
+                        className="flex items-start gap-3.5 p-3.5 rounded-2xl bg-white/80 dark:bg-[#18181b]/80 border border-slate-200/60 dark:border-white/8 cursor-pointer hover:border-purple-400/40 hover:bg-white dark:hover:bg-[#18181b] transition-all shadow-xs"
+                      >
+                        <div className="flex items-center pt-0.5">
+                          <input
+                            type="checkbox"
+                            id="cfg-auto-advance"
+                            checked={Boolean(editForm.quiz_config.autoAdvance)}
+                            onChange={(e) =>
+                              setEditForm((prev) => ({
+                                ...prev,
+                                quiz_config: { ...prev.quiz_config, autoAdvance: e.target.checked },
+                              }))
+                            }
+                            className="h-4.5 w-4.5 rounded border-slate-300 text-purple-600 focus:ring-purple-500 cursor-pointer"
+                          />
+                        </div>
+                        <div className="flex-1 min-w-0">
+                          <div className="flex items-center gap-1.5">
+                            <Clock className="h-4 w-4 text-purple-500 shrink-0" />
+                            <span className="text-sm font-bold text-slate-800 dark:text-slate-200">Tự động chuyển câu</span>
+                          </div>
+                          <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5 leading-relaxed">
+                            Tự động chuyển sang câu tiếp theo sau khoảng thời gian đã định
+                          </p>
+                          {editForm.quiz_config.autoAdvance && (
+                            <div className="mt-3 flex items-center gap-2 bg-slate-50 dark:bg-white/5 p-2 rounded-xl border border-slate-200/60 dark:border-white/10 w-fit">
+                              <span className="text-xs font-semibold text-slate-600 dark:text-slate-300">Chờ:</span>
+                              <input
+                                type="number"
+                                min={1}
+                                max={10}
+                                value={editForm.quiz_config.autoAdvanceSeconds ?? 2}
+                                onChange={(e) =>
+                                  setEditForm((prev) => ({
+                                    ...prev,
+                                    quiz_config: {
+                                      ...prev.quiz_config,
+                                      autoAdvanceSeconds: parseInt(e.target.value, 10) || 2,
+                                    },
+                                  }))
+                                }
+                                className="w-16 px-2.5 py-1 rounded-lg bg-white dark:bg-[#18181b] border border-slate-200/80 dark:border-white/10 text-sm font-bold text-slate-900 dark:text-white outline-none focus:ring-2 focus:ring-purple-500/20 focus:border-purple-500 transition-all text-center"
+                                onClick={(e) => e.stopPropagation()}
+                              />
+                              <span className="text-xs font-semibold text-slate-500">giây</span>
+                            </div>
+                          )}
+                        </div>
+                      </label>
                     </div>
                   </div>
-                )}
-              </section>
+                </section>
+              ) : (
+                <section className="border-t border-slate-100 dark:border-white/5 pt-6">
+                  <div className="mb-4 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+                    <div className="flex items-center gap-3">
+                      <div className="flex h-10 w-10 items-center justify-center rounded-2xl bg-indigo-500/10 text-indigo-600 dark:text-indigo-400">
+                        <Target className="h-5 w-5" />
+                      </div>
+                      <div>
+                        <h3 className="text-sm font-bold text-slate-900 dark:text-white">Chia điểm theo nhóm câu</h3>
+                        <p className="text-xs text-slate-500 dark:text-slate-400">Mặc định hệ thống sẽ chia đều tổng điểm cho tất cả câu.</p>
+                      </div>
+                    </div>
+                    <Button type="button" variant="outline" size="sm" onClick={addPointRange} className="rounded-full text-xs font-bold border-slate-200/80 dark:border-white/10">
+                      <Plus className="h-3.5 w-3.5 mr-1.5" />
+                      Thêm nhóm câu
+                    </Button>
+                  </div>
+
+                  {editForm.point_ranges.length === 0 ? (
+                    <div className="rounded-2xl border border-dashed border-slate-200 dark:border-white/10 bg-slate-50/50 p-6 text-center dark:bg-white/[0.02]">
+                      <Target className="mx-auto h-6 w-6 text-slate-400" />
+                      <p className="mt-2 text-xs font-semibold text-slate-500 dark:text-slate-400">Đang tự động chia đều theo tổng điểm</p>
+                    </div>
+                  ) : (
+                    <div className="overflow-hidden rounded-2xl border border-slate-200/80 dark:border-white/10">
+                      <div className="hidden grid-cols-[1fr_1fr_1fr_auto] gap-2 bg-slate-50/80 px-4 py-2.5 text-[11px] font-bold uppercase tracking-wider text-slate-500 dark:bg-white/[0.03] dark:text-slate-400 sm:grid">
+                        <span>Từ câu</span>
+                        <span>Đến câu</span>
+                        <span>Tổng điểm nhóm</span>
+                        <span className="text-right">Hành động</span>
+                      </div>
+                      <div className="divide-y divide-slate-100 dark:divide-white/5">
+                        {editForm.point_ranges.map((range, idx) => (
+                          <div key={idx} className="grid grid-cols-[1fr_1fr_1fr_auto] items-center gap-3 p-3 sm:px-4">
+                            <input
+                              type="number"
+                              min={1}
+                              value={range.fromQuestion}
+                              onChange={(event) => updatePointRange(idx, "fromQuestion", event.target.value === "" ? "" : parseInt(event.target.value, 10))}
+                              className={compactFieldClass}
+                            />
+                            <input
+                              type="number"
+                              min={1}
+                              value={range.toQuestion}
+                              onChange={(event) => updatePointRange(idx, "toQuestion", event.target.value === "" ? "" : parseInt(event.target.value, 10))}
+                              className={compactFieldClass}
+                            />
+                            <input
+                              type="number"
+                              min={0}
+                              step={0.5}
+                              value={range.totalPoints}
+                              onChange={(event) => updatePointRange(idx, "totalPoints", event.target.value === "" ? "" : parseFloat(event.target.value))}
+                              className={compactFieldClass}
+                            />
+                            <Button type="button" variant="ghost" size="icon" onClick={() => removePointRange(idx)} className="justify-self-end text-rose-500 hover:bg-rose-50 hover:text-rose-600 dark:hover:bg-rose-500/10 rounded-xl h-8 w-8">
+                              <Trash2 className="h-4 w-4" />
+                            </Button>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+                </section>
+              )}
 
               <div className="flex flex-col-reverse gap-3 border-t border-slate-100 dark:border-white/5 pt-6 sm:flex-row sm:items-center sm:justify-between">
                 <Button type="button" variant="destructive" size="sm" onClick={handleDelete} className="w-full sm:w-auto rounded-full text-xs font-bold px-5">
