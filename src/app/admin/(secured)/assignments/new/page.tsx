@@ -114,9 +114,9 @@ export default function NewAssignmentPage() {
   }
 
   return (
-    <div className="mx-auto max-w-5xl px-4 sm:px-6 lg:px-8 py-8 space-y-6 md:space-y-8 animate-fade-in pb-24">
+    <div className="mx-auto w-full max-w-[1440px] space-y-5 px-4 py-5 pb-20 animate-fade-in sm:space-y-6 sm:px-6 sm:py-7 md:px-8 md:py-8 lg:pb-8">
       {/* Header Banner */}
-      <div className="relative overflow-hidden rounded-[2.5rem] bg-white/80 dark:bg-[#18181b]/80 backdrop-blur-2xl border border-white/80 dark:border-white/10 shadow-[0_8px_30px_rgba(0,0,0,0.04)] dark:shadow-[0_12px_36px_rgba(0,0,0,0.5)] p-6 sm:p-8 md:p-10">
+      <div className="relative overflow-hidden rounded-[1.75rem] border border-white/80 bg-white/80 p-5 shadow-[0_8px_30px_rgba(0,0,0,0.04)] backdrop-blur-2xl dark:border-white/10 dark:bg-[#18181b]/80 dark:shadow-[0_12px_36px_rgba(0,0,0,0.5)] sm:rounded-[2rem] sm:p-8 md:p-10">
         <div className="absolute top-0 right-0 -mt-16 -mr-16 w-72 h-72 bg-gradient-to-br from-blue-400/15 to-indigo-500/15 rounded-full blur-3xl pointer-events-none" />
         <div className="relative z-10 flex flex-col sm:flex-row sm:items-center justify-between gap-5">
           <div className="space-y-2">

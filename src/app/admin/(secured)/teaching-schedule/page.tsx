@@ -344,13 +344,13 @@ export default function TeachingSchedulePage() {
   }
 
   return (
-    <div className="container-custom py-6 md:py-8 space-y-6 md:space-y-8 animate-fade-in pb-16">
+    <div className="container-custom min-w-0 space-y-5 py-5 pb-20 animate-fade-in sm:space-y-6 sm:py-7 md:space-y-8 md:py-8 lg:pb-8">
       {/* ─── 1. Header Tile Liquid Glass ─── */}
-      <div className="rounded-[2.5rem] bg-white/80 dark:bg-[#18181b]/80 backdrop-blur-2xl border border-white/80 dark:border-white/10 shadow-[0_8px_30px_rgba(0,0,0,0.04)] dark:shadow-[0_12px_36px_rgba(0,0,0,0.5)] p-6 sm:p-8 md:p-10 relative overflow-hidden">
+      <div className="relative overflow-hidden rounded-[1.75rem] border border-white/80 bg-white/80 p-5 shadow-[0_8px_30px_rgba(0,0,0,0.04)] backdrop-blur-2xl dark:border-white/10 dark:bg-[#18181b]/80 dark:shadow-[0_12px_36px_rgba(0,0,0,0.5)] sm:rounded-[2rem] sm:p-8 md:p-10">
         {/* Soft Ambient Light Glow */}
         <div className="pointer-events-none absolute -right-20 -top-20 w-80 h-80 rounded-full bg-gradient-to-br from-blue-400/20 via-sky-300/15 to-transparent blur-3xl dark:from-blue-600/15" />
 
-        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-5 relative z-10">
+        <div className="relative z-10 flex flex-col gap-5 sm:flex-row sm:items-center sm:justify-between">
           <div className="space-y-2">
             <div className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-blue-500/10 text-[#0066cc] dark:text-blue-300 text-xs font-bold border border-blue-500/20 shadow-xs">
               <Clock className="w-3.5 h-3.5" />
@@ -364,7 +364,7 @@ export default function TeachingSchedulePage() {
             </p>
           </div>
 
-          <div className="flex items-center gap-2.5 self-start sm:self-auto flex-wrap">
+          <div className="flex w-full flex-wrap items-center gap-2.5 sm:w-auto sm:self-auto">
             <Button
               onClick={handleCopyLink}
               className={clsx(

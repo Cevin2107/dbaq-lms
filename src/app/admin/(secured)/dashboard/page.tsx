@@ -367,10 +367,10 @@ export default function AdminDashboardPage() {
   const currentDayShifts = weeklyShiftsByDay[selectedDay] || [];
 
   return (
-    <div className="container-custom py-6 md:py-8 space-y-6 md:space-y-8 animate-fade-in">
+    <div className="container-custom min-w-0 space-y-5 py-5 pb-20 animate-fade-in sm:space-y-6 sm:py-7 md:space-y-8 md:py-8 lg:pb-8">
       {/* Header with Glassmorphic Card */}
       <div className="rounded-[2.5rem] bg-gradient-to-br from-white via-blue-50/50 to-sky-50/30 dark:from-[#18181b]/90 dark:via-[#141418]/80 dark:to-blue-950/25 backdrop-blur-2xl border border-white/80 dark:border-white/10 shadow-[0_16px_45px_rgba(0,102,204,0.06)] dark:shadow-[0_20px_50px_rgba(0,0,0,0.6)] p-6 sm:p-8 md:p-10 transition-all">
-        <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-6">
+        <div className="flex flex-col gap-5 sm:gap-6 md:flex-row md:items-center md:justify-between">
           <div className="space-y-2">
             <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-blue-500/10 dark:bg-blue-500/15 text-[#0066cc] dark:text-blue-300 text-xs font-bold border border-blue-500/20 shadow-sm backdrop-blur-md">
               <Sparkles className="w-3.5 h-3.5 text-amber-500" />
@@ -384,7 +384,7 @@ export default function AdminDashboardPage() {
             </p>
           </div>
 
-          <div className="flex flex-wrap items-center gap-2.5 sm:gap-3">
+          <div className="flex w-full flex-wrap items-center gap-2 sm:w-auto sm:gap-3">
             <Button
               variant="outline"
               size="sm"
@@ -422,9 +422,9 @@ export default function AdminDashboardPage() {
       </div>
 
       {/* Visual Stat Overview Cards - Replaced Old Cards */}
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-5 md:gap-6">
+      <div className="grid grid-cols-1 min-[400px]:grid-cols-2 gap-3 sm:gap-5 lg:grid-cols-4 lg:gap-6">
         {/* Card 1: Học sinh Hệ thống */}
-        <div className="group rounded-[2.25rem] bg-white/80 dark:bg-[#18181b]/80 backdrop-blur-2xl border border-white/80 dark:border-white/10 shadow-[0_8px_30px_rgba(0,0,0,0.04)] dark:shadow-[0_12px_36px_rgba(0,0,0,0.5)] p-5 sm:p-6 hover:shadow-[0_16px_40px_rgba(0,102,204,0.12)] hover:border-blue-500/30 hover:-translate-y-1 transition-all duration-300 ease-spring">
+        <div className="group rounded-[1.5rem] border border-white/80 bg-white/80 p-4 shadow-[0_8px_30px_rgba(0,0,0,0.04)] backdrop-blur-2xl transition-all duration-300 ease-spring hover:-translate-y-1 hover:border-blue-500/30 hover:shadow-[0_16px_40px_rgba(0,102,204,0.12)] dark:border-white/10 dark:bg-[#18181b]/80 dark:shadow-[0_12px_36px_rgba(0,0,0,0.5)] sm:rounded-[2rem] sm:p-6">
           <div className="flex items-center justify-between mb-4">
             <div className="h-12 w-12 sm:h-13 sm:w-13 rounded-2xl bg-blue-500/10 dark:bg-blue-500/15 text-[#0066cc] dark:text-blue-400 flex items-center justify-center border border-blue-500/20 group-hover:scale-110 transition-transform duration-300">
               <GraduationCap className="h-6 w-6 sm:h-7 sm:w-7" />
@@ -442,7 +442,7 @@ export default function AdminDashboardPage() {
         </div>
 
         {/* Card 2: Số buổi học Tháng này */}
-        <div className="group rounded-[2.25rem] bg-white/80 dark:bg-[#18181b]/80 backdrop-blur-2xl border border-white/80 dark:border-white/10 shadow-[0_8px_30px_rgba(0,0,0,0.04)] dark:shadow-[0_12px_36px_rgba(0,0,0,0.5)] p-5 sm:p-6 hover:shadow-[0_16px_40px_rgba(16,185,129,0.12)] hover:border-emerald-500/30 hover:-translate-y-1 transition-all duration-300 ease-spring">
+        <div className="group rounded-[1.5rem] border border-white/80 bg-white/80 p-4 shadow-[0_8px_30px_rgba(0,0,0,0.04)] backdrop-blur-2xl transition-all duration-300 ease-spring hover:-translate-y-1 hover:border-emerald-500/30 hover:shadow-[0_16px_40px_rgba(16,185,129,0.12)] dark:border-white/10 dark:bg-[#18181b]/80 dark:shadow-[0_12px_36px_rgba(0,0,0,0.5)] sm:rounded-[2rem] sm:p-6">
           <div className="flex items-center justify-between mb-4">
             <div className="h-12 w-12 sm:h-13 sm:w-13 rounded-2xl bg-emerald-500/10 dark:bg-emerald-500/15 text-emerald-600 dark:text-emerald-400 flex items-center justify-center border border-emerald-500/20 group-hover:scale-110 transition-transform duration-300">
               <CalendarDays className="h-6 w-6 sm:h-7 sm:w-7" />
@@ -460,7 +460,7 @@ export default function AdminDashboardPage() {
         </div>
 
         {/* Card 3: Lịch dạy cố định tuần này */}
-        <div className="group rounded-[2.25rem] bg-white/80 dark:bg-[#18181b]/80 backdrop-blur-2xl border border-white/80 dark:border-white/10 shadow-[0_8px_30px_rgba(0,0,0,0.04)] dark:shadow-[0_12px_36px_rgba(0,0,0,0.5)] p-5 sm:p-6 hover:shadow-[0_16px_40px_rgba(99,102,241,0.12)] hover:border-indigo-500/30 hover:-translate-y-1 transition-all duration-300 ease-spring">
+        <div className="group rounded-[1.5rem] border border-white/80 bg-white/80 p-4 shadow-[0_8px_30px_rgba(0,0,0,0.04)] backdrop-blur-2xl transition-all duration-300 ease-spring hover:-translate-y-1 hover:border-indigo-500/30 hover:shadow-[0_16px_40px_rgba(99,102,241,0.12)] dark:border-white/10 dark:bg-[#18181b]/80 dark:shadow-[0_12px_36px_rgba(0,0,0,0.5)] sm:rounded-[2rem] sm:p-6">
           <div className="flex items-center justify-between mb-4">
             <div className="h-12 w-12 sm:h-13 sm:w-13 rounded-2xl bg-indigo-500/10 dark:bg-indigo-500/15 text-indigo-600 dark:text-indigo-400 flex items-center justify-center border border-indigo-500/20 group-hover:scale-110 transition-transform duration-300">
               <Clock className="h-6 w-6 sm:h-7 sm:w-7" />
@@ -478,7 +478,7 @@ export default function AdminDashboardPage() {
         </div>
 
         {/* Card 4: Tổng bài tập */}
-        <div className="group rounded-[2.25rem] bg-white/80 dark:bg-[#18181b]/80 backdrop-blur-2xl border border-white/80 dark:border-white/10 shadow-[0_8px_30px_rgba(0,0,0,0.04)] dark:shadow-[0_12px_36px_rgba(0,0,0,0.5)] p-5 sm:p-6 hover:shadow-[0_16px_40px_rgba(245,158,11,0.12)] hover:border-amber-500/30 hover:-translate-y-1 transition-all duration-300 ease-spring">
+        <div className="group rounded-[1.5rem] border border-white/80 bg-white/80 p-4 shadow-[0_8px_30px_rgba(0,0,0,0.04)] backdrop-blur-2xl transition-all duration-300 ease-spring hover:-translate-y-1 hover:border-amber-500/30 hover:shadow-[0_16px_40px_rgba(245,158,11,0.12)] dark:border-white/10 dark:bg-[#18181b]/80 dark:shadow-[0_12px_36px_rgba(0,0,0,0.5)] sm:rounded-[2rem] sm:p-6">
           <div className="flex items-center justify-between mb-4">
             <div className="h-12 w-12 sm:h-13 sm:w-13 rounded-2xl bg-amber-500/10 dark:bg-amber-500/15 text-amber-600 dark:text-amber-400 flex items-center justify-center border border-amber-500/20 group-hover:scale-110 transition-transform duration-300">
               <BookOpen className="h-6 w-6 sm:h-7 sm:w-7" />

@@ -29,8 +29,8 @@ export function AssignmentDetailTabs({ assignmentId, initialAssignment, initialQ
   ] as const;
 
   return (
-    <div className="mx-auto max-w-6xl px-3 sm:px-4 py-4 sm:py-8 md:px-8 space-y-4 sm:space-y-6 animate-fade-in transition-colors duration-500">
-      <div className="relative overflow-hidden flex flex-col gap-3 sm:gap-4 md:flex-row md:items-center md:justify-between bg-white/80 dark:bg-[#18181b]/80 backdrop-blur-2xl border border-white/80 dark:border-white/10 p-5 sm:p-7 rounded-[2.5rem] shadow-[0_8px_30px_rgba(0,0,0,0.04)] dark:shadow-[0_12px_36px_rgba(0,0,0,0.5)]">
+    <div className="mx-auto w-full max-w-[1440px] space-y-4 px-4 py-5 pb-20 animate-fade-in transition-colors duration-500 sm:space-y-6 sm:px-6 sm:py-7 md:px-8 md:py-8 lg:pb-8">
+      <div className="relative flex flex-col gap-3 overflow-hidden rounded-[1.75rem] border border-white/80 bg-white/80 p-5 shadow-[0_8px_30px_rgba(0,0,0,0.04)] backdrop-blur-2xl dark:border-white/10 dark:bg-[#18181b]/80 dark:shadow-[0_12px_36px_rgba(0,0,0,0.5)] sm:gap-4 sm:rounded-[2rem] sm:p-7">
         <div className="absolute top-0 right-0 -mt-12 -mr-12 w-64 h-64 bg-gradient-to-br from-blue-400/15 to-indigo-500/15 rounded-full blur-3xl pointer-events-none" />
         <div className="relative z-10">
           <Link href="/admin/assignments">
@@ -60,8 +60,8 @@ export function AssignmentDetailTabs({ assignmentId, initialAssignment, initialQ
         </div>
       </div>
 
-      <div className="bg-white/80 dark:bg-[#18181b]/80 backdrop-blur-2xl border border-white/80 dark:border-white/10 p-1.5 sm:p-2 rounded-[2rem] shadow-[0_4px_20px_rgba(0,0,0,0.03)] dark:shadow-[0_8px_24px_rgba(0,0,0,0.4)]">
-        <nav className="flex gap-1 sm:gap-2 overflow-x-auto scrollbar-hide" aria-label="Tabs">
+      <div className="rounded-[1.5rem] border border-white/80 bg-white/80 p-1.5 shadow-[0_4px_20px_rgba(0,0,0,0.03)] backdrop-blur-2xl dark:border-white/10 dark:bg-[#18181b]/80 dark:shadow-[0_8px_24px_rgba(0,0,0,0.4)] sm:rounded-[2rem] sm:p-2">
+        <nav className="flex min-w-0 gap-1 overflow-x-auto scrollbar-hide sm:gap-2" aria-label="Tabs">
           {TABS.map((tab) => {
             const Icon = tab.icon;
             const isActive = activeTab === tab.id;
