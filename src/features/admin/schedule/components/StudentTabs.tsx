@@ -23,7 +23,7 @@ export function StudentTabs({
       <button
         onClick={onSelectOverview}
         className={`
-          flex items-center gap-2 px-3 sm:px-4 py-2 rounded-full font-medium text-sm sm:text-[15px] transition-all duration-200 whitespace-nowrap
+          flex min-h-11 items-center gap-2 px-3 sm:px-4 py-2 rounded-full font-medium text-sm sm:text-[15px] transition-all duration-200 whitespace-nowrap
           ${
             selectedTab === "overview"
               ? "bg-[#0066cc] text-white shadow-lg shadow-blue-500/20"
@@ -40,7 +40,7 @@ export function StudentTabs({
           key={student.id}
           onClick={() => onSelectStudent(student.id)}
           className={`
-            flex items-center gap-2 px-3 sm:px-4 py-2 rounded-full font-medium text-sm sm:text-[15px] transition-all duration-200 whitespace-nowrap
+            flex min-h-11 items-center gap-2 px-3 sm:px-4 py-2 rounded-full font-medium text-sm sm:text-[15px] transition-all duration-200 whitespace-nowrap
             ${
               selectedTab === "student" && selectedStudentId === student.id
                 ? "text-white shadow-lg"
@@ -64,7 +64,7 @@ export function StudentTabs({
 
       <button
         onClick={onAddStudent}
-        className="flex items-center gap-2 px-3 sm:px-4 py-2 rounded-full font-medium text-sm sm:text-[15px] bg-emerald-100 dark:bg-emerald-900/30 text-emerald-700 dark:text-emerald-400 hover:bg-emerald-200 dark:hover:bg-emerald-900/50 transition-all duration-200 whitespace-nowrap"
+        className="flex min-h-11 items-center gap-2 px-3 sm:px-4 py-2 rounded-full font-medium text-sm sm:text-[15px] bg-emerald-100 dark:bg-emerald-900/30 text-emerald-700 dark:text-emerald-400 hover:bg-emerald-200 dark:hover:bg-emerald-900/50 transition-all duration-200 whitespace-nowrap"
       >
         <Plus className="w-4 h-4" />
         Thêm học sinh

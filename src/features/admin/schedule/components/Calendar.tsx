@@ -76,8 +76,10 @@ export function Calendar({
           }}
         >
           <button
+            type="button"
+            aria-label="Tháng trước"
             onClick={handlePrevMonth}
-            className="p-1 sm:p-1.5 rounded-lg hover:bg-white/20 text-white transition-colors duration-200"
+            className="flex h-11 w-11 items-center justify-center rounded-full text-white transition-colors duration-200 hover:bg-white/20"
           >
             <ChevronLeft className="w-4 h-4 sm:w-5 sm:h-5" />
           </button>
@@ -87,8 +89,10 @@ export function Calendar({
           </h2>
 
           <button
+            type="button"
+            aria-label="Tháng sau"
             onClick={handleNextMonth}
-            className="p-1 sm:p-1.5 rounded-lg hover:bg-white/20 text-white transition-colors duration-200"
+            className="flex h-11 w-11 items-center justify-center rounded-full text-white transition-colors duration-200 hover:bg-white/20"
           >
             <ChevronRight className="w-4 h-4 sm:w-5 sm:h-5" />
           </button>

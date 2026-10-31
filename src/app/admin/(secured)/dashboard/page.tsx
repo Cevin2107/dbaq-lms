@@ -121,13 +121,11 @@ export default function AdminDashboardPage() {
   const dayTabsRef = useRef<Record<number, HTMLButtonElement | null>>({});
 
   useEffect(() => {
-    if (selectedDay && dayTabsRef.current[selectedDay]) {
-      dayTabsRef.current[selectedDay]?.scrollIntoView({
-        behavior: "smooth",
-        block: "nearest",
-        inline: "center",
-      });
-    }
+    dayTabsRef.current[selectedDay]?.scrollIntoView({
+      behavior: "smooth",
+      block: "nearest",
+      inline: "center",
+    });
   }, [selectedDay]);
 
   const getTargetDateForDayOfWeek = (targetDayValue: number): Date => {
@@ -367,7 +365,7 @@ export default function AdminDashboardPage() {
   const currentDayShifts = weeklyShiftsByDay[selectedDay] || [];
 
   return (
-    <div className="container-custom min-w-0 space-y-5 py-5 pb-20 animate-fade-in sm:space-y-6 sm:py-7 md:space-y-8 md:py-8 lg:pb-8">
+    <div className="container-custom admin-page min-w-0 space-y-5 py-5 pb-20 animate-fade-in sm:space-y-6 sm:py-7 md:space-y-8 md:py-8 lg:pb-8">
       {/* Header with Glassmorphic Card */}
       <div className="rounded-[2.5rem] bg-gradient-to-br from-white via-blue-50/50 to-sky-50/30 dark:from-[#18181b]/90 dark:via-[#141418]/80 dark:to-blue-950/25 backdrop-blur-2xl border border-white/80 dark:border-white/10 shadow-[0_16px_45px_rgba(0,102,204,0.06)] dark:shadow-[0_20px_50px_rgba(0,0,0,0.6)] p-6 sm:p-8 md:p-10 transition-all">
         <div className="flex flex-col gap-5 sm:gap-6 md:flex-row md:items-center md:justify-between">
@@ -384,14 +382,14 @@ export default function AdminDashboardPage() {
             </p>
           </div>
 
-          <div className="flex w-full flex-wrap items-center gap-2 sm:w-auto sm:gap-3">
+          <div className="grid w-full grid-cols-2 gap-2 sm:flex sm:w-auto sm:gap-3">
             <Button
               variant="outline"
               size="sm"
               onClick={handleRefresh}
               disabled={isRefreshing || isLoadingStats}
               loading={isRefreshing}
-              className="rounded-full bg-white/80 dark:bg-white/5 backdrop-blur-md border-black/[0.06] dark:border-white/10 hover:bg-black/[0.04] dark:hover:bg-white/10 text-slate-700 dark:text-slate-200 px-4 py-2 text-xs font-semibold shadow-sm hover:-translate-y-0.5 active:scale-95 transition-all duration-300 ease-spring"
+              className="w-full rounded-full bg-white/80 px-2 py-2 text-[11px] font-semibold text-slate-700 shadow-sm transition-all duration-300 ease-spring hover:-translate-y-0.5 hover:bg-black/[0.04] active:scale-95 dark:border-white/10 dark:bg-white/5 dark:text-slate-200 dark:hover:bg-white/10 sm:w-auto sm:px-4 sm:text-xs"
             >
               <RefreshCw className="h-4 w-4 mr-1.5" />
               <span>Làm mới</span>
@@ -401,7 +399,7 @@ export default function AdminDashboardPage() {
               <Button
                 variant="outline"
                 size="sm"
-                className="rounded-full bg-white/80 dark:bg-white/5 backdrop-blur-md border-black/[0.06] dark:border-white/10 hover:bg-blue-500/10 dark:hover:bg-blue-500/20 text-[#0066cc] dark:text-blue-400 px-4 py-2 text-xs font-semibold shadow-sm hover:-translate-y-0.5 active:scale-95 transition-all duration-300 ease-spring"
+                className="w-full rounded-full bg-white/80 px-2 py-2 text-[11px] font-semibold text-[#0066cc] shadow-sm transition-all duration-300 ease-spring hover:-translate-y-0.5 hover:bg-blue-500/10 active:scale-95 dark:border-white/10 dark:bg-white/5 dark:text-blue-400 dark:hover:bg-blue-500/20 sm:w-auto sm:px-4 sm:text-xs"
               >
                 <Clock className="h-4 w-4 mr-1.5 text-[#0066cc] dark:text-blue-400" />
                 <span>Đăng ký ca dạy</span>
@@ -412,7 +410,7 @@ export default function AdminDashboardPage() {
               variant="brand"
               size="sm"
               onClick={() => setShowCreateAssignmentModal(true)}
-              className="rounded-full bg-[#0066cc] hover:bg-[#005bb5] shadow-lg shadow-blue-500/25 hover:shadow-xl hover:-translate-y-0.5 px-5 py-2 text-xs font-semibold active:scale-95 transition-all duration-300 ease-spring"
+              className="col-span-2 w-full rounded-full bg-[#0066cc] px-5 py-2 text-xs font-semibold shadow-lg shadow-blue-500/25 transition-all duration-300 ease-spring hover:-translate-y-0.5 hover:bg-[#005bb5] hover:shadow-xl active:scale-95 sm:col-auto sm:w-auto"
             >
               <Plus className="h-4 w-4 mr-1.5" />
               <span>Tạo bài mới</span>
@@ -422,75 +420,75 @@ export default function AdminDashboardPage() {
       </div>
 
       {/* Visual Stat Overview Cards - Replaced Old Cards */}
-      <div className="grid grid-cols-1 min-[400px]:grid-cols-2 gap-3 sm:gap-5 lg:grid-cols-4 lg:gap-6">
+      <div className="admin-stat-grid grid grid-cols-2 gap-2.5 sm:gap-5 lg:grid-cols-4 lg:gap-6">
         {/* Card 1: Học sinh Hệ thống */}
-        <div className="group rounded-[1.5rem] border border-white/80 bg-white/80 p-4 shadow-[0_8px_30px_rgba(0,0,0,0.04)] backdrop-blur-2xl transition-all duration-300 ease-spring hover:-translate-y-1 hover:border-blue-500/30 hover:shadow-[0_16px_40px_rgba(0,102,204,0.12)] dark:border-white/10 dark:bg-[#18181b]/80 dark:shadow-[0_12px_36px_rgba(0,0,0,0.5)] sm:rounded-[2rem] sm:p-6">
-          <div className="flex items-center justify-between mb-4">
-            <div className="h-12 w-12 sm:h-13 sm:w-13 rounded-2xl bg-blue-500/10 dark:bg-blue-500/15 text-[#0066cc] dark:text-blue-400 flex items-center justify-center border border-blue-500/20 group-hover:scale-110 transition-transform duration-300">
-              <GraduationCap className="h-6 w-6 sm:h-7 sm:w-7" />
+        <div className="admin-stat-card group flex min-w-0 flex-col justify-between rounded-[1.25rem] border border-white/80 bg-white/80 p-3 shadow-[0_8px_30px_rgba(0,0,0,0.04)] backdrop-blur-2xl transition-all duration-300 ease-spring hover:-translate-y-1 hover:border-blue-500/30 hover:shadow-[0_16px_40px_rgba(0,102,204,0.12)] dark:border-white/10 dark:bg-[#18181b]/80 dark:shadow-[0_12px_36px_rgba(0,0,0,0.5)] sm:rounded-[2rem] sm:p-6">
+          <div className="mb-2 flex items-center justify-between gap-1 sm:mb-4">
+            <div className="flex h-9 w-9 items-center justify-center rounded-xl border border-blue-500/20 bg-blue-500/10 text-[#0066cc] transition-transform duration-300 group-hover:scale-110 dark:bg-blue-500/15 dark:text-blue-400 sm:h-12 sm:w-12 sm:rounded-2xl">
+              <GraduationCap className="h-5 w-5 sm:h-7 sm:w-7" />
             </div>
-            <span className="text-[11px] font-bold px-2.5 py-1 rounded-full bg-blue-500/10 text-[#0066cc] dark:text-blue-300 border border-blue-500/20">
+            <span className="rounded-full border border-blue-500/20 bg-blue-500/10 px-2 py-1 text-[9px] font-bold text-[#0066cc] dark:text-blue-300 sm:px-2.5 sm:text-[11px]">
               Chính thức
             </span>
           </div>
-          <p className="text-3xl sm:text-4xl font-extrabold text-[#1d1d1f] dark:text-white tracking-tight">
+          <p className="text-2xl font-extrabold tracking-tight text-[#1d1d1f] dark:text-white sm:text-4xl">
             {isLoadingStats ? "..." : summary.totalSystemStudents}
           </p>
-          <p className="text-xs sm:text-sm font-medium text-slate-500 dark:text-slate-400 mt-1 flex items-center gap-1">
+          <p className="mt-1 text-[10px] font-medium leading-tight text-slate-500 dark:text-slate-400 sm:text-sm">
             <span>Học sinh hệ thống</span>
           </p>
         </div>
 
         {/* Card 2: Số buổi học Tháng này */}
-        <div className="group rounded-[1.5rem] border border-white/80 bg-white/80 p-4 shadow-[0_8px_30px_rgba(0,0,0,0.04)] backdrop-blur-2xl transition-all duration-300 ease-spring hover:-translate-y-1 hover:border-emerald-500/30 hover:shadow-[0_16px_40px_rgba(16,185,129,0.12)] dark:border-white/10 dark:bg-[#18181b]/80 dark:shadow-[0_12px_36px_rgba(0,0,0,0.5)] sm:rounded-[2rem] sm:p-6">
-          <div className="flex items-center justify-between mb-4">
-            <div className="h-12 w-12 sm:h-13 sm:w-13 rounded-2xl bg-emerald-500/10 dark:bg-emerald-500/15 text-emerald-600 dark:text-emerald-400 flex items-center justify-center border border-emerald-500/20 group-hover:scale-110 transition-transform duration-300">
-              <CalendarDays className="h-6 w-6 sm:h-7 sm:w-7" />
+        <div className="admin-stat-card group flex min-w-0 flex-col justify-between rounded-[1.25rem] border border-white/80 bg-white/80 p-3 shadow-[0_8px_30px_rgba(0,0,0,0.04)] backdrop-blur-2xl transition-all duration-300 ease-spring hover:-translate-y-1 hover:border-emerald-500/30 hover:shadow-[0_16px_40px_rgba(16,185,129,0.12)] dark:border-white/10 dark:bg-[#18181b]/80 dark:shadow-[0_12px_36px_rgba(0,0,0,0.5)] sm:rounded-[2rem] sm:p-6">
+          <div className="mb-2 flex items-center justify-between gap-1 sm:mb-4">
+            <div className="flex h-9 w-9 items-center justify-center rounded-xl border border-emerald-500/20 bg-emerald-500/10 text-emerald-600 transition-transform duration-300 group-hover:scale-110 dark:bg-emerald-500/15 dark:text-emerald-400 sm:h-12 sm:w-12 sm:rounded-2xl">
+              <CalendarDays className="h-5 w-5 sm:h-7 sm:w-7" />
             </div>
-            <span className="text-[11px] font-bold px-2.5 py-1 rounded-full bg-emerald-500/10 text-emerald-700 dark:text-emerald-300 border border-emerald-500/20">
+            <span className="rounded-full border border-emerald-500/20 bg-emerald-500/10 px-2 py-1 text-[9px] font-bold text-emerald-700 dark:text-emerald-300 sm:px-2.5 sm:text-[11px]">
               Tháng {summary.currentMonth}
             </span>
           </div>
-          <p className="text-3xl sm:text-4xl font-extrabold text-[#1d1d1f] dark:text-white tracking-tight">
+          <p className="text-2xl font-extrabold tracking-tight text-[#1d1d1f] dark:text-white sm:text-4xl">
             {isLoadingStats ? "..." : summary.totalMonthlySessions}
           </p>
-          <p className="text-xs sm:text-sm font-medium text-slate-500 dark:text-slate-400 mt-1 flex items-center gap-1">
+          <p className="mt-1 text-[10px] font-medium leading-tight text-slate-500 dark:text-slate-400 sm:text-sm">
             <span>Buổi dạy đã học</span>
           </p>
         </div>
 
         {/* Card 3: Lịch dạy cố định tuần này */}
-        <div className="group rounded-[1.5rem] border border-white/80 bg-white/80 p-4 shadow-[0_8px_30px_rgba(0,0,0,0.04)] backdrop-blur-2xl transition-all duration-300 ease-spring hover:-translate-y-1 hover:border-indigo-500/30 hover:shadow-[0_16px_40px_rgba(99,102,241,0.12)] dark:border-white/10 dark:bg-[#18181b]/80 dark:shadow-[0_12px_36px_rgba(0,0,0,0.5)] sm:rounded-[2rem] sm:p-6">
-          <div className="flex items-center justify-between mb-4">
-            <div className="h-12 w-12 sm:h-13 sm:w-13 rounded-2xl bg-indigo-500/10 dark:bg-indigo-500/15 text-indigo-600 dark:text-indigo-400 flex items-center justify-center border border-indigo-500/20 group-hover:scale-110 transition-transform duration-300">
-              <Clock className="h-6 w-6 sm:h-7 sm:w-7" />
+        <div className="admin-stat-card group flex min-w-0 flex-col justify-between rounded-[1.25rem] border border-white/80 bg-white/80 p-3 shadow-[0_8px_30px_rgba(0,0,0,0.04)] backdrop-blur-2xl transition-all duration-300 ease-spring hover:-translate-y-1 hover:border-indigo-500/30 hover:shadow-[0_16px_40px_rgba(99,102,241,0.12)] dark:border-white/10 dark:bg-[#18181b]/80 dark:shadow-[0_12px_36px_rgba(0,0,0,0.5)] sm:rounded-[2rem] sm:p-6">
+          <div className="mb-2 flex items-center justify-between gap-1 sm:mb-4">
+            <div className="flex h-9 w-9 items-center justify-center rounded-xl border border-indigo-500/20 bg-indigo-500/10 text-indigo-600 transition-transform duration-300 group-hover:scale-110 dark:bg-indigo-500/15 dark:text-indigo-400 sm:h-12 sm:w-12 sm:rounded-2xl">
+              <Clock className="h-5 w-5 sm:h-7 sm:w-7" />
             </div>
-            <span className="text-[11px] font-bold px-2.5 py-1 rounded-full bg-indigo-500/10 text-indigo-700 dark:text-indigo-300 border border-indigo-500/20">
+            <span className="rounded-full border border-indigo-500/20 bg-indigo-500/10 px-2 py-1 text-[9px] font-bold text-indigo-700 dark:text-indigo-300 sm:px-2.5 sm:text-[11px]">
               Trong tuần
             </span>
           </div>
-          <p className="text-3xl sm:text-4xl font-extrabold text-[#1d1d1f] dark:text-white tracking-tight">
+          <p className="text-2xl font-extrabold tracking-tight text-[#1d1d1f] dark:text-white sm:text-4xl">
             {isLoadingStats ? "..." : summary.totalWeeklyShifts}
           </p>
-          <p className="text-xs sm:text-sm font-medium text-slate-500 dark:text-slate-400 mt-1 flex items-center gap-1">
+          <p className="mt-1 text-[10px] font-medium leading-tight text-slate-500 dark:text-slate-400 sm:text-sm">
             <span>Ca dạy đăng ký</span>
           </p>
         </div>
 
         {/* Card 4: Tổng bài tập */}
-        <div className="group rounded-[1.5rem] border border-white/80 bg-white/80 p-4 shadow-[0_8px_30px_rgba(0,0,0,0.04)] backdrop-blur-2xl transition-all duration-300 ease-spring hover:-translate-y-1 hover:border-amber-500/30 hover:shadow-[0_16px_40px_rgba(245,158,11,0.12)] dark:border-white/10 dark:bg-[#18181b]/80 dark:shadow-[0_12px_36px_rgba(0,0,0,0.5)] sm:rounded-[2rem] sm:p-6">
-          <div className="flex items-center justify-between mb-4">
-            <div className="h-12 w-12 sm:h-13 sm:w-13 rounded-2xl bg-amber-500/10 dark:bg-amber-500/15 text-amber-600 dark:text-amber-400 flex items-center justify-center border border-amber-500/20 group-hover:scale-110 transition-transform duration-300">
-              <BookOpen className="h-6 w-6 sm:h-7 sm:w-7" />
+        <div className="admin-stat-card group flex min-w-0 flex-col justify-between rounded-[1.25rem] border border-white/80 bg-white/80 p-3 shadow-[0_8px_30px_rgba(0,0,0,0.04)] backdrop-blur-2xl transition-all duration-300 ease-spring hover:-translate-y-1 hover:border-amber-500/30 hover:shadow-[0_16px_40px_rgba(245,158,11,0.12)] dark:border-white/10 dark:bg-[#18181b]/80 dark:shadow-[0_12px_36px_rgba(0,0,0,0.5)] sm:rounded-[2rem] sm:p-6">
+          <div className="mb-2 flex items-center justify-between gap-1 sm:mb-4">
+            <div className="flex h-9 w-9 items-center justify-center rounded-xl border border-amber-500/20 bg-amber-500/10 text-amber-600 transition-transform duration-300 group-hover:scale-110 dark:bg-amber-500/15 dark:text-amber-400 sm:h-12 sm:w-12 sm:rounded-2xl">
+              <BookOpen className="h-5 w-5 sm:h-7 sm:w-7" />
             </div>
-            <span className="text-[11px] font-bold px-2.5 py-1 rounded-full bg-amber-50 dark:bg-amber-900/50 text-amber-700 dark:text-amber-300">
+            <span className="rounded-full bg-amber-50 px-2 py-1 text-[9px] font-bold text-amber-700 dark:bg-amber-900/50 dark:text-amber-300 sm:px-2.5 sm:text-[11px]">
               Đang mở
             </span>
           </div>
-          <p className="text-3xl sm:text-4xl font-bold text-slate-900 dark:text-white tracking-tight">
+          <p className="text-2xl font-bold tracking-tight text-slate-900 dark:text-white sm:text-4xl">
             {isAssignmentsLoading ? "..." : summary.visibleAssignments}
           </p>
-          <p className="text-[14px] font-medium text-slate-500 dark:text-slate-400 mt-1 flex items-center gap-1">
+          <p className="mt-1 text-[10px] font-medium leading-tight text-slate-500 dark:text-slate-400 sm:text-sm">
             <span>Bài tập khả dụng</span>
           </p>
         </div>
@@ -524,8 +522,8 @@ export default function AdminDashboardPage() {
 
             <div className="rounded-[2.5rem] bg-white/80 dark:bg-[#18181b]/80 backdrop-blur-2xl border border-white/80 dark:border-white/10 shadow-[0_8px_30px_rgba(0,0,0,0.04)] dark:shadow-[0_12px_36px_rgba(0,0,0,0.5)] p-5 sm:p-7 space-y-6">
 
-              {/* Day Selector Segmented Control (Mobile Responsive + Auto-Center Scroll) */}
-              <div className="flex items-center gap-1.5 sm:gap-2 p-1.5 sm:p-2 bg-slate-100/80 dark:bg-[#121214]/80 rounded-[1.75rem] overflow-x-auto no-scrollbar scroll-smooth snap-x snap-mandatory border border-black/[0.04] dark:border-white/5 shadow-inner">
+              {/* Horizontal day strip can be swiped on touch screens. */}
+              <div className="flex snap-x snap-mandatory touch-pan-x gap-1.5 overflow-x-auto overscroll-x-contain rounded-[1.25rem] border border-black/[0.04] bg-slate-100/80 p-1.5 shadow-inner scroll-smooth no-scrollbar dark:border-white/5 dark:bg-[#121214]/80 sm:gap-2 sm:rounded-[1.75rem] sm:p-2">
                 {DAYS.map((day) => {
                   const isSelected = selectedDay === day.value;
                   const isToday = todayDayOfWeek === day.value;
@@ -540,23 +538,24 @@ export default function AdminDashboardPage() {
                   return (
                     <button
                       key={day.value}
-                      ref={(el) => {
-                        dayTabsRef.current[day.value] = el;
+                      ref={(element) => {
+                        dayTabsRef.current[day.value] = element;
                       }}
                       onClick={() => setSelectedDay(day.value)}
-                      className={`flex-1 min-w-[76px] sm:min-w-[95px] shrink-0 snap-center py-2 sm:py-2.5 px-1.5 sm:px-2 rounded-2xl text-xs font-bold transition-all duration-300 ease-spring flex flex-col items-center justify-center gap-1 active:scale-95 ${isSelected
+                      className={`flex min-w-[76px] shrink-0 snap-center flex-col items-center justify-center gap-1 rounded-xl px-1 py-2 text-[11px] font-bold transition-all duration-300 ease-spring active:scale-95 sm:min-w-[95px] sm:gap-1.5 sm:rounded-2xl sm:px-2 sm:py-2.5 sm:text-xs ${isSelected
                           ? "bg-white dark:bg-[#202024] text-[#0066cc] dark:text-blue-400 shadow-sm border border-blue-500/25 scale-[1.02]"
                           : "text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-white/40 dark:hover:bg-white/5"
                         }`}
                     >
                       <div className="flex items-center gap-1 sm:gap-1.5">
-                        <span className="text-xs sm:text-[13px] whitespace-nowrap">{day.label}</span>
+                          <span className="whitespace-nowrap sm:hidden">{day.short}</span>
+                          <span className="hidden whitespace-nowrap sm:inline sm:text-[13px]">{day.label}</span>
                         {isToday && (
                           <span className="h-1.5 w-1.5 rounded-full bg-[#0066cc] dark:bg-blue-400 shadow-xs shrink-0" />
                         )}
                       </div>
-                      <div className="flex items-center justify-between w-full px-0.5 sm:px-1 text-[10px]">
-                        <span className={isSelected ? "text-[#0066cc]/90 dark:text-blue-300 font-bold" : "text-slate-400"}>
+                      <div className="flex w-full items-center justify-center gap-1 px-0.5 text-[9px] sm:justify-between sm:px-1 sm:text-[10px]">
+                        <span className={`whitespace-nowrap ${isSelected ? "text-[#0066cc]/90 dark:text-blue-300 font-bold" : "text-slate-400"}`}>
                           {formattedDateVi}
                         </span>
                         {recordedSessionsCount > 0 && (

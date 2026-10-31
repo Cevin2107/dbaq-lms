@@ -23,11 +23,14 @@ export function CalendarDay({ date, currentMonth, sessions, onDayClick }: Calend
   };
 
   return (
-    <div
+    <button
+      type="button"
+      aria-label={`${date.toLocaleDateString("vi-VN", { day: "numeric", month: "long" })}, ${daySessions.length} buổi học`}
+      disabled={!isCurrentMonth}
       onClick={handleClick}
       className={`
-        calendar-day-container min-h-[38px] sm:min-h-[46px] md:min-h-[52px] 
-        p-1 sm:p-1.5 flex flex-col gap-1 relative
+        calendar-day-container min-h-[44px] w-full p-1 text-left sm:min-h-[46px] sm:p-1.5 md:min-h-[52px]
+        flex flex-col gap-1 relative disabled:cursor-default
         border-r border-b border-black/5 dark:border-white/5
         transition-all duration-200
         ${!isCurrentMonth
@@ -87,6 +90,6 @@ export function CalendarDay({ date, currentMonth, sessions, onDayClick }: Calend
           </div>
         )}
       </div>
-    </div>
+    </button>
   );
 }

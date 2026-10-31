@@ -134,7 +134,7 @@ export default function SettingsPage() {
   };
 
   return (
-    <div className="container-custom min-w-0 space-y-5 py-5 pb-20 animate-fade-in sm:space-y-6 sm:py-7 md:space-y-8 md:py-8 lg:pb-8">
+    <div className="container-custom admin-page min-w-0 space-y-5 py-5 pb-20 animate-fade-in sm:space-y-6 sm:py-7 md:space-y-8 md:py-8 lg:pb-8">
       {/* Header Tile Glassmorphic with Aura Glow */}
       <div className="relative overflow-hidden rounded-[1.75rem] border border-white/80 bg-gradient-to-br from-white/95 via-sky-50/50 to-blue-50/30 p-5 shadow-[0_8px_32px_rgba(0,102,204,0.08)] backdrop-blur-2xl dark:border-white/10 dark:from-[#18181b]/95 dark:via-[#18181b]/80 dark:to-blue-950/20 sm:rounded-[2rem] sm:p-8 md:p-10">
         <div className="pointer-events-none absolute -top-24 -right-24 h-72 w-72 rounded-full bg-blue-500/10 blur-3xl dark:bg-blue-600/15" />

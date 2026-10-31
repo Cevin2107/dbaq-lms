@@ -67,7 +67,7 @@ export default function AssignmentsPage() {
 
   return (
     <>
-      <div className="container-custom min-w-0 space-y-5 py-5 pb-20 animate-fade-in sm:space-y-6 sm:py-7 md:space-y-8 md:py-8 lg:pb-8">
+      <div className="container-custom admin-page min-w-0 space-y-5 py-5 pb-20 animate-fade-in sm:space-y-6 sm:py-7 md:space-y-8 md:py-8 lg:pb-8">
       {/* Header with Liquid Glass Card */}
       <div className="relative overflow-hidden rounded-[1.75rem] border border-white/80 bg-white/80 p-5 shadow-[0_8px_30px_rgba(0,0,0,0.04)] backdrop-blur-2xl dark:border-white/10 dark:bg-[#18181b]/80 dark:shadow-[0_12px_36px_rgba(0,0,0,0.5)] sm:rounded-[2rem] sm:p-8 md:p-10">
         <div className="absolute top-0 right-0 -mt-16 -mr-16 w-72 h-72 bg-gradient-to-br from-blue-400/15 to-indigo-500/15 rounded-full blur-3xl pointer-events-none" />
@@ -84,11 +84,11 @@ export default function AssignmentsPage() {
               Tìm kiếm, lọc và phân loại tất cả đề thi, bài tập và ngân hàng câu hỏi trong hệ thống.
             </p>
           </div>
-          <div className="flex w-full flex-wrap items-center gap-2 sm:w-auto">
+          <div className="grid w-full grid-cols-2 gap-2 sm:flex sm:w-auto">
             <button
               id="create-quiz-btn"
               onClick={() => setShowCreateQuizModal(true)}
-              className="inline-flex items-center gap-1.5 rounded-full bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-700 hover:to-indigo-700 text-white shadow-lg shadow-purple-500/25 hover:shadow-xl hover:-translate-y-0.5 px-4 sm:px-5 py-2.5 text-xs font-bold active:scale-95 transition-all duration-300"
+              className="inline-flex min-h-11 w-full items-center justify-center gap-1.5 rounded-full bg-gradient-to-r from-purple-600 to-indigo-600 px-3 py-2.5 text-xs font-bold text-white shadow-lg shadow-purple-500/25 transition-all duration-300 hover:-translate-y-0.5 hover:from-purple-700 hover:to-indigo-700 hover:shadow-xl active:scale-95 sm:w-auto sm:px-5"
             >
               <Zap className="h-4 w-4" />
               <span className="hidden sm:inline">Tạo Quiz</span>
@@ -98,7 +98,7 @@ export default function AssignmentsPage() {
               variant="brand"
               size="sm"
               onClick={() => setShowCreateAssignmentModal(true)}
-              className="rounded-full bg-[#0066cc] hover:bg-[#005bb5] shadow-lg shadow-blue-500/25 hover:shadow-xl hover:-translate-y-0.5 px-5 sm:px-6 py-2.5 text-xs font-semibold active:scale-95 transition-all duration-300 ease-spring"
+              className="min-h-11 w-full rounded-full bg-[#0066cc] px-3 py-2.5 text-xs font-semibold shadow-lg shadow-blue-500/25 transition-all duration-300 ease-spring hover:-translate-y-0.5 hover:bg-[#005bb5] hover:shadow-xl active:scale-95 sm:w-auto sm:px-6"
             >
               <Plus className="h-4 w-4 mr-1.5" />
               <span className="hidden sm:inline">Tạo bài tập mới</span>
@@ -136,13 +136,13 @@ export default function AssignmentsPage() {
           </div>
 
           {/* Filter & Sort Controls */}
-          <div className="flex flex-wrap items-center gap-2.5">
-            <div className="flex items-center gap-2 bg-slate-50/80 dark:bg-white/5 border border-slate-200/80 dark:border-white/10 rounded-full px-4 py-2.5">
+          <div className="grid w-full grid-cols-1 gap-2.5 sm:flex sm:w-auto sm:flex-wrap">
+            <div className="flex min-w-0 items-center gap-2 rounded-full border border-slate-200/80 bg-slate-50/80 px-4 py-2.5 dark:border-white/10 dark:bg-white/5 sm:w-auto">
               <Filter className="h-4 w-4 text-slate-400" />
               <select 
                 value={filter} 
                 onChange={e => setFilter(e.target.value)}
-                className="bg-transparent text-xs sm:text-sm font-semibold text-slate-700 dark:text-slate-300 focus:outline-none pr-1 cursor-pointer"
+                className="min-w-0 flex-1 cursor-pointer bg-transparent pr-1 text-xs font-semibold text-slate-700 focus:outline-none dark:text-slate-300 sm:text-sm"
                 aria-label="Lọc trạng thái"
               >
                 <option value="all">Tất cả bài tập</option>
@@ -151,14 +151,14 @@ export default function AssignmentsPage() {
               </select>
             </div>
 
-            <div className="flex items-center gap-2 bg-slate-50/80 dark:bg-white/5 border border-slate-200/80 dark:border-white/10 rounded-full px-4 py-2.5">
+            <div className="flex min-w-0 items-center gap-2 rounded-full border border-slate-200/80 bg-slate-50/80 px-4 py-2.5 dark:border-white/10 dark:bg-white/5 sm:w-auto">
               <svg className="h-4 w-4 text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                 <path strokeLinecap="round" strokeLinejoin="round" d="M3 4h13M3 8h9m-9 4h9m5-4v12m0 0l-4-4m4 4l4-4" />
               </svg>
               <select 
                 value={sortBy} 
                 onChange={e => setSortBy(e.target.value as any)}
-                className="bg-transparent text-xs sm:text-sm font-semibold text-slate-700 dark:text-slate-300 focus:outline-none pr-1 cursor-pointer"
+                className="min-w-0 flex-1 cursor-pointer bg-transparent pr-1 text-xs font-semibold text-slate-700 focus:outline-none dark:text-slate-300 sm:text-sm"
                 aria-label="Sắp xếp theo"
               >
                 <option value="date">Mới nhất (Ngày tạo)</option>
@@ -286,19 +286,19 @@ export default function AssignmentsPage() {
               </div>
 
               {/* Action Buttons */}
-              <div className="pt-3 border-t border-black/5 dark:border-white/5 flex items-center gap-2">
+              <div className="grid grid-cols-1 gap-2 border-t border-black/5 pt-3 min-[420px]:grid-cols-2 dark:border-white/5">
                 <Button
                   variant="outline"
                   size="sm"
                   onClick={(e) => handleCopyLink(a.id, e)}
-                  className="rounded-full bg-white/80 dark:bg-white/5 backdrop-blur-md border-black/[0.06] dark:border-white/10 hover:bg-blue-500/10 dark:hover:bg-blue-500/20 hover:text-[#0066cc] dark:hover:text-blue-400 shrink-0 px-3.5 py-2 text-xs font-semibold active:scale-95 transition-all duration-300 ease-spring"
+                  className="min-h-11 w-full rounded-full bg-white/80 px-3.5 py-2 text-xs font-semibold transition-all duration-300 ease-spring hover:bg-blue-500/10 hover:text-[#0066cc] active:scale-95 dark:border-white/10 dark:bg-white/5 dark:hover:bg-blue-500/20 dark:hover:text-blue-400"
                   title="Sao chép link bài tập"
                   aria-label="Sao chép link bài tập"
                 >
                   <Copy className="h-3.5 w-3.5 mr-1.5 text-slate-500 group-hover:text-[#0066cc]" />
                   <span>Sao chép link</span>
                 </Button>
-                <Link href={`/admin/assignments/${a.id}`} className="flex-1">
+                <Link href={`/admin/assignments/${a.id}`} className="w-full">
                   <Button variant="outline" size="sm" className="w-full rounded-full bg-white/80 dark:bg-white/5 backdrop-blur-md border-black/[0.06] dark:border-white/10 hover:bg-black/[0.04] dark:hover:bg-white/10 group font-semibold text-xs py-2 active:scale-95 transition-all duration-300 ease-spring">
                     <Edit className="h-3.5 w-3.5 mr-1 group-hover:scale-110 transition-transform" />
                     <span>Quản lý</span>

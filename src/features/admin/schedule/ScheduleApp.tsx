@@ -226,7 +226,7 @@ export function ScheduleApp() {
     : [];
 
   return (
-    <div className="container-custom min-w-0 space-y-5 py-5 pb-20 animate-fade-in sm:space-y-6 sm:py-7 md:space-y-8 md:py-8 lg:pb-8">
+    <div className="container-custom admin-page min-w-0 space-y-5 py-5 pb-20 animate-fade-in sm:space-y-6 sm:py-7 md:space-y-8 md:py-8 lg:pb-8">
       {/* Unified Hero Header Tile */}
       <div className="relative overflow-hidden rounded-[1.75rem] border border-white/80 bg-white/80 p-5 shadow-[0_8px_30px_rgba(0,0,0,0.04)] backdrop-blur-2xl dark:border-white/10 dark:bg-[#18181b]/80 dark:shadow-[0_12px_36px_rgba(0,0,0,0.5)] sm:rounded-[2rem] sm:p-8 md:p-10">
         <div className="absolute top-0 right-0 -mt-16 -mr-16 w-72 h-72 bg-gradient-to-br from-blue-400/15 to-indigo-500/15 rounded-full blur-3xl pointer-events-none" />

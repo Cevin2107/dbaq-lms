@@ -644,3 +644,89 @@
     animation: softPulseGlow 3s ease-in-out infinite;
   }
 }
+
+.admin-workspace {
+  padding-top: env(safe-area-inset-top, 0px);
+}
+
+@media (max-width: 1023px) {
+  .admin-workspace > main {
+    min-height: 0;
+    margin-bottom: 0;
+  }
+
+  .admin-workspace .admin-content-scroll {
+    padding-bottom: 0;
+  }
+
+  .admin-workspace .admin-content-flow {
+    padding-bottom: 0;
+  }
+
+  .admin-workspace .admin-content-flow::after {
+    content: "";
+    display: block;
+    flex: 0 0 calc(5rem + env(safe-area-inset-bottom, 0px));
+  }
+
+  .admin-workspace main footer {
+    display: none;
+  }
+
+  .admin-workspace .admin-page[class*="pb-20"] {
+    padding-bottom: 0.75rem;
+  }
+}
+
+@media (max-width: 639px) {
+  .admin-workspace .admin-page > div:first-child {
+    padding: 1.1rem;
+    border-radius: 1.2rem;
+  }
+
+  .admin-workspace .admin-page [class*="rounded-[2.25rem]"],
+  .admin-workspace .admin-page [class*="rounded-[2.5rem]"] {
+    border-radius: 1.15rem;
+  }
+
+  .admin-workspace .admin-page [class~="p-6"],
+  .admin-workspace .admin-page [class~="p-7"],
+  .admin-workspace .admin-page [class~="p-8"],
+  .admin-workspace .admin-page [class~="sm:p-6"],
+  .admin-workspace .admin-page [class~="sm:p-7"],
+  .admin-workspace .admin-page [class~="sm:p-8"] {
+    padding: 1rem;
+  }
+
+  .admin-workspace .admin-page [class~="gap-6"],
+  .admin-workspace .admin-page [class~="gap-8"],
+  .admin-workspace .admin-page [class~="sm:gap-6"],
+  .admin-workspace .admin-page [class~="sm:gap-8"] {
+    gap: 1rem;
+  }
+
+  .admin-workspace .admin-page h1 {
+    font-size: clamp(1.7rem, 8vw, 2.25rem);
+    line-height: 1.08;
+  }
+
+  .admin-workspace .admin-page button,
+  .admin-workspace .admin-page a[role="button"] {
+    touch-action: manipulation;
+  }
+
+  .admin-workspace .admin-page input:not([type="checkbox"]),
+  .admin-workspace .admin-page select {
+    min-height: 2.75rem;
+    font-size: 16px;
+  }
+
+  .admin-workspace .admin-page table {
+    min-width: max-content;
+  }
+
+  .admin-workspace .admin-page [class*="overflow-x-auto"] {
+    overscroll-behavior-x: contain;
+    -webkit-overflow-scrolling: touch;
+  }
+}

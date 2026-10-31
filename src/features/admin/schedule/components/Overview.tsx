@@ -107,21 +107,44 @@ export function Overview({ onOpenSettings, refreshKey }: OverviewProps) {
     })
     .filter((stat) => stat.totalSessions > 0);
 
-  const monthlyCounts = Array(12).fill(0);
   const monthlyIncomes = Array(12).fill(0);
   yearlySessions.forEach(session => {
     const dateParts = session.teaching_date.split('-');
     if (dateParts.length >= 2) {
       const m = parseInt(dateParts[1], 10) - 1;
       if (m >= 0 && m < 12) {
-        monthlyCounts[m]++;
         const student = students.find((s) => s.id === session.student_id);
         monthlyIncomes[m] += (student?.salary_per_session || 0);
       }
     }
   });
 
-  const maxMonthlyCount = Math.max(...monthlyCounts, 1);
+  const maxMonthlyIncome = Math.max(...monthlyIncomes, 1);
+  const yearlyIncome = monthlyIncomes.reduce((sum, income) => sum + income, 0);
+
+  const formatCompactCurrency = (amount: number) => {
+    if (amount >= 1_000_000) {
+      return `${new Intl.NumberFormat("vi-VN", { maximumFractionDigits: 1 }).format(amount / 1_000_000)}tr`;
+    }
+    if (amount >= 1_000) {
+      return `${Math.round(amount / 1_000)}k`;
+    }
+    return `${Math.round(amount)}`;
+  };
+
+  const chartLeft = 72;
+  const chartRight = 744;
+  const chartTop = 24;
+  const chartBottom = 176;
+  const incomePoints = monthlyIncomes.map((income, index) => ({
+    x: chartLeft + (index * (chartRight - chartLeft)) / (monthlyIncomes.length - 1),
+    y: chartBottom - (income / maxMonthlyIncome) * (chartBottom - chartTop),
+    income,
+  }));
+  const incomeLinePath = incomePoints
+    .map((point, index) => `${index === 0 ? "M" : "L"} ${point.x} ${point.y}`)
+    .join(" ");
+  const incomeAreaPath = `${incomeLinePath} L ${chartRight} ${chartBottom} L ${chartLeft} ${chartBottom} Z`;
 
   if (isLoading) {
     return (
@@ -252,62 +275,138 @@ export function Overview({ onOpenSettings, refreshKey }: OverviewProps) {
         )}
       </div>
 
-      {/* Monthly Trend Chart for the Year */}
-      <div className="p-6 sm:p-8 rounded-[2.25rem] bg-white/80 dark:bg-[#18181b]/80 backdrop-blur-2xl border border-white/80 dark:border-white/10 shadow-[0_4px_24px_rgba(0,0,0,0.04)] space-y-6">
-        <div className="flex items-center justify-between pb-4 border-b border-slate-100 dark:border-white/5">
+      {/* Monthly income trend for the selected year */}
+      <div className="space-y-4 rounded-[2.25rem] border border-white/80 bg-white/80 p-5 shadow-[0_4px_24px_rgba(0,0,0,0.04)] backdrop-blur-2xl dark:border-white/10 dark:bg-[#18181b]/80 sm:space-y-6 sm:p-8">
+        <div className="flex flex-col gap-3 border-b border-slate-100 pb-4 dark:border-white/5 sm:flex-row sm:items-center sm:justify-between">
           <div className="flex items-center gap-3">
-            <div className="p-2.5 rounded-2xl bg-blue-500/10 text-[#0066cc] dark:text-blue-400">
-              <BarChart3 className="w-5 h-5" />
+            <div className="rounded-2xl bg-emerald-500/10 p-2.5 text-emerald-600 dark:text-emerald-400">
+              <TrendingUp className="h-5 w-5" />
             </div>
             <div>
-              <h4 className="font-bold text-slate-900 dark:text-white text-base">Phân bổ Buổi dạy trong năm</h4>
-              <p className="text-xs text-slate-500 dark:text-slate-400">Biểu đồ tổng số buổi dạy 12 tháng năm {selectedYear}</p>
+              <h4 className="text-base font-bold text-slate-900 dark:text-white">Thu nhập theo tháng</h4>
+              <p className="text-xs text-slate-500 dark:text-slate-400">Học phí từng tháng trong năm {selectedYear} · VND</p>
             </div>
           </div>
-        </div>
-        
-        <div className="h-56 sm:h-64 relative pt-4">
-          <div className="absolute inset-0 flex flex-col justify-between pt-2 pb-8 pointer-events-none">
-            {[1, 0.75, 0.5, 0.25, 0].map((tick, i) => (
-              <div key={i} className="flex items-center w-full">
-                <span className="w-8 text-right text-[11px] font-semibold text-slate-400 dark:text-slate-500 pr-2">
-                  {Math.round(maxMonthlyCount * tick)}
-                </span>
-                <div className="flex-1 border-t border-dashed border-slate-200/80 dark:border-white/10" />
-              </div>
-            ))}
+          <div className="flex items-baseline gap-2 self-start rounded-full bg-emerald-500/10 px-3.5 py-2 sm:self-auto">
+            <span className="text-[11px] font-semibold text-slate-500 dark:text-slate-400">Cả năm</span>
+            <span className="text-sm font-extrabold text-emerald-700 dark:text-emerald-300">{formatCurrency(yearlyIncome)}</span>
           </div>
+        </div>
 
-          <div className="absolute inset-0 flex items-end justify-between pl-8 pb-8 pt-2">
-            {monthlyCounts.map((count, index) => {
-              const heightPercent = (count / maxMonthlyCount) * 100;
-              const isCurrentMonth = (index + 1) === selectedMonth;
-              
+        <div className="min-w-0">
+          <div className="-mx-1 min-w-0 touch-pan-x overflow-x-auto overscroll-x-contain pb-2 sm:mx-0 lg:overflow-visible">
+          <svg
+            viewBox="0 0 760 230"
+            className="block h-auto w-full min-w-[760px]"
+            role="group"
+            aria-label={`Biểu đồ thu nhập theo tháng năm ${selectedYear}. Vuốt ngang để xem các tháng.`}
+          >
+            <defs>
+              <linearGradient id="monthly-income-fill" x1="0" x2="0" y1="0" y2="1">
+                <stop offset="0%" stopColor="#10b981" stopOpacity="0.22" />
+                <stop offset="100%" stopColor="#10b981" stopOpacity="0.01" />
+              </linearGradient>
+            </defs>
+
+            {[0, 0.25, 0.5, 0.75, 1].map((ratio) => {
+              const y = chartBottom - ratio * (chartBottom - chartTop);
+              const tickValue = maxMonthlyIncome * ratio;
               return (
-                <div 
-                  key={index} 
-                  className="flex flex-col items-center flex-1 h-full justify-end group cursor-pointer"
-                  onClick={() => setSelectedMonth(index + 1)}
-                >
-                  <div className="w-full flex justify-center h-full items-end">
-                    <div 
-                      className={`w-6 sm:w-10 rounded-t-xl transition-all duration-300 group-hover:opacity-80 relative flex items-end justify-center ${isCurrentMonth ? 'bg-gradient-to-t from-emerald-600 to-emerald-400 shadow-md shadow-emerald-500/30' : 'bg-gradient-to-t from-[#0066cc] to-[#005bb5] shadow-xs dark:from-blue-600 dark:to-blue-400'}`}
-                      style={{ height: `${heightPercent}%`, minHeight: count > 0 ? '6px' : '0' }}
-                    >
-                      <div className="absolute -top-12 opacity-0 group-hover:opacity-100 transition-all duration-200 bg-slate-900/90 backdrop-blur-md text-white text-xs font-bold py-1.5 px-2.5 rounded-xl pointer-events-none whitespace-nowrap shadow-xl z-20 flex flex-col items-center gap-0.5 border border-white/10">
-                        <span>T{index + 1}: {count} buổi</span>
-                        {monthlyIncomes[index] > 0 && (
-                          <span className="text-emerald-400 font-semibold">{formatCurrency(monthlyIncomes[index])}</span>
-                        )}
-                      </div>
-                    </div>
-                  </div>
-                  <span className={`absolute bottom-0 text-[11px] font-bold translate-y-full pt-2 ${isCurrentMonth ? 'text-emerald-600 dark:text-emerald-400' : 'text-slate-400'}`}>
-                    T{index + 1}
-                  </span>
-                </div>
+                <g key={ratio}>
+                  <line
+                    x1={chartLeft}
+                    x2={chartRight}
+                    y1={y}
+                    y2={y}
+                    className="stroke-slate-200/80 dark:stroke-white/10"
+                    strokeDasharray={ratio === 0 ? undefined : "4 5"}
+                  />
+                  <text
+                    x={chartLeft - 10}
+                    y={y + 4}
+                    textAnchor="end"
+                    className="fill-slate-400 dark:fill-slate-500"
+                    fontSize="10"
+                    fontWeight="600"
+                  >
+                    {formatCompactCurrency(tickValue)}
+                  </text>
+                </g>
               );
             })}
+
+            <path d={incomeAreaPath} fill="url(#monthly-income-fill)" />
+            {incomePoints.map((point, index) => (
+              <line
+                key={`month-tick-${index}`}
+                x1={point.x}
+                x2={point.x}
+                y1={chartBottom}
+                y2={chartBottom + 6}
+                className="stroke-slate-300 dark:stroke-white/20"
+              />
+            ))}
+            <path
+              d={incomeLinePath}
+              fill="none"
+              stroke="#10b981"
+              strokeWidth="3"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            />
+
+            {incomePoints.map((point, index) => {
+              const isSelected = index + 1 === selectedMonth;
+              const selectMonth = () => setSelectedMonth(index + 1);
+              return (
+                <g
+                  key={index}
+                  role="button"
+                  tabIndex={0}
+                  aria-label={`${getMonthName(index + 1)}: ${formatCurrency(point.income)}`}
+                  aria-pressed={isSelected}
+                  className="cursor-pointer outline-none"
+                  onClick={selectMonth}
+                  onKeyDown={(event) => {
+                    if (event.key === "Enter" || event.key === " ") {
+                      event.preventDefault();
+                      selectMonth();
+                    }
+                  }}
+                >
+                  <circle
+                    cx={point.x}
+                    cy={point.y}
+                    r={isSelected ? 6 : 4}
+                    fill={isSelected ? "#059669" : "#10b981"}
+                    stroke="white"
+                    strokeWidth="2"
+                  />
+                  <text
+                    x={point.x}
+                    y={chartBottom + 22}
+                    textAnchor="middle"
+                    className={isSelected ? "fill-emerald-700 dark:fill-emerald-300" : "fill-slate-500 dark:fill-slate-400"}
+                    fontSize="11"
+                    fontWeight={isSelected ? "700" : "600"}
+                  >
+                    T{index + 1}
+                  </text>
+                  <text
+                    x={point.x}
+                    y={chartBottom + 39}
+                    textAnchor="middle"
+                    className={isSelected ? "fill-emerald-700 dark:fill-emerald-300" : "fill-slate-400 dark:fill-slate-500"}
+                    fontSize="9"
+                    fontWeight="600"
+                  >
+                    {formatCompactCurrency(point.income)}
+                  </text>
+                  <title>{`${getMonthName(index + 1)}: ${formatCurrency(point.income)}`}</title>
+                </g>
+              );
+            })}
+          </svg>
           </div>
         </div>
       </div>
