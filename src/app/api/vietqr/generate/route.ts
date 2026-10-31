@@ -5,12 +5,19 @@ export const runtime = "nodejs";
 const DEFAULT_BANK_CODE = process.env.BANK_CODE || "TPB";
 const DEFAULT_BANK_ACCOUNT = process.env.BANK_ACCOUNT || "10002150181";
 const DEFAULT_BANK_OWNER = process.env.BANK_OWNER || "DAO BA ANH QUAN";
+type VietQrFormat = "png" | "svg";
+
+function parseVietQrFormat(value: unknown): VietQrFormat | null {
+  const format = String(value ?? "svg").toLowerCase();
+  return format === "png" || format === "svg" ? format : null;
+}
 
 function buildVietQrImageUrl({
   bankCode,
   accountNumber,
   amount,
   description,
+  format,
   template = "qr_only",
   accountName,
 }: {
@@ -18,6 +25,7 @@ function buildVietQrImageUrl({
   accountNumber: string;
   amount: number | string;
   description: string;
+  format: VietQrFormat;
   template?: string;
   accountName?: string;
 }) {
@@ -38,7 +46,7 @@ function buildVietQrImageUrl({
 
   const query = params.toString();
   const suffix = query ? `?${query}` : "";
-  return `https://img.vietqr.io/image/${bankId}-${accountNo}-${qrTemplate}.png${suffix}`;
+  return `https://img.vietqr.io/image/${bankId}-${accountNo}-${qrTemplate}.${format}${suffix}`;
 }
 
 export async function POST(req: Request) {
@@ -50,15 +58,25 @@ export async function POST(req: Request) {
       amount,
       content,
       description,
+      accountName,
+      format: requestedFormat,
       template = "qr_only",
     } = body;
 
-    const numAmount = Number(amount) || 0;
+    const numAmount = Number(amount);
+    const format = parseVietQrFormat(requestedFormat);
     const transferContent = String(content || description || "").trim();
 
-    if (numAmount <= 0) {
+    if (!Number.isFinite(numAmount) || numAmount <= 0) {
       return NextResponse.json(
         { success: false, error: "Số tiền phải lớn hơn 0" },
+        { status: 400 }
+      );
+    }
+
+    if (!format) {
+      return NextResponse.json(
+        { success: false, error: "Định dạng mã QR không hợp lệ" },
         { status: 400 }
       );
     }
@@ -68,34 +86,28 @@ export async function POST(req: Request) {
       accountNumber,
       amount: numAmount,
       description: transferContent,
+      format,
       template,
+      accountName,
     });
-
-    let base64DataUrl = qrImageUrl;
-    try {
-      const imgRes = await fetch(qrImageUrl, { cache: "no-store" });
-      if (imgRes.ok) {
-        const arrayBuffer = await imgRes.arrayBuffer();
-        const base64 = Buffer.from(arrayBuffer).toString("base64");
-        base64DataUrl = `data:image/png;base64,${base64}`;
-      }
-    } catch (fetchErr) {
-      console.warn("[VIETQR-SERVER-FETCH-WARN]", fetchErr);
-    }
 
     return NextResponse.json({
       success: true,
-      qrCode: base64DataUrl,
-      qrLink: base64DataUrl,
+      qrCode: qrImageUrl,
+      qrLink: qrImageUrl,
       rawUrl: qrImageUrl,
       bankCode,
       bankAccount: accountNumber,
-      bankOwner: DEFAULT_BANK_OWNER,
+      bankOwner: accountName || DEFAULT_BANK_OWNER,
     });
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error("[VIETQR-GENERATE-ERROR]", error);
     return NextResponse.json(
-      { success: false, error: "Lỗi khi tạo mã QR", details: error?.message },
+      {
+        success: false,
+        error: "Lỗi khi tạo mã QR",
+        details: error instanceof Error ? error.message : undefined,
+      },
       { status: 500 }
     );
   }
@@ -108,12 +120,21 @@ export async function GET(req: Request) {
     const accountNumber = searchParams.get("accountNumber") || DEFAULT_BANK_ACCOUNT;
     const amount = searchParams.get("amount");
     const description = searchParams.get("description") || searchParams.get("content") || "";
+    const accountName = searchParams.get("accountName") || undefined;
+    const format = parseVietQrFormat(searchParams.get("format"));
     const template = searchParams.get("template") || "compact2";
 
-    const numAmount = Number(amount) || 0;
-    if (numAmount <= 0) {
+    const numAmount = Number(amount);
+    if (!Number.isFinite(numAmount) || numAmount <= 0) {
       return NextResponse.json(
         { success: false, error: "Số tiền phải lớn hơn 0" },
+        { status: 400 }
+      );
+    }
+
+    if (!format) {
+      return NextResponse.json(
+        { success: false, error: "Định dạng mã QR không hợp lệ" },
         { status: 400 }
       );
     }
@@ -123,7 +144,9 @@ export async function GET(req: Request) {
       accountNumber,
       amount: numAmount,
       description,
+      format,
       template,
+      accountName,
     });
 
     return NextResponse.json({
@@ -132,12 +155,16 @@ export async function GET(req: Request) {
       qrLink: qrImageUrl,
       bankCode,
       bankAccount: accountNumber,
-      bankOwner: DEFAULT_BANK_OWNER,
+      bankOwner: accountName || DEFAULT_BANK_OWNER,
     });
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error("[VIETQR-GENERATE-GET-ERROR]", error);
     return NextResponse.json(
-      { success: false, error: "Lỗi khi tạo mã QR", details: error?.message },
+      {
+        success: false,
+        error: "Lỗi khi tạo mã QR",
+        details: error instanceof Error ? error.message : undefined,
+      },
       { status: 500 }
     );
   }

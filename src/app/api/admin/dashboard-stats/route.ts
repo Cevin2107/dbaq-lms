@@ -48,16 +48,18 @@ export async function GET() {
       sessionsRes,
       scheduleStudentsRes,
       registrationsRes,
-      assignmentsRes
+      assignmentsCountRes,
+      visibleAssignmentsCountRes,
+      recentAssignmentsRes,
     ] = await Promise.all([
       supabase.auth.admin.listUsers().catch(err => ({ data: { users: [] }, error: err })),
       supabase.from("student_profiles").select("id, full_name, created_at"),
       supabase
         .from("teaching_sessions")
-        .select("*, students(id, name, color)")
+        .select("id, teaching_date, subject, student_id, students(name)")
         .gte("teaching_date", queryStartDate)
         .lte("teaching_date", queryEndDate),
-      supabase.from("students").select("id, name, color, salary_per_session"),
+      supabase.from("students").select("id, name, color"),
       supabase
         .from("schedule_registrations")
         .select(`
@@ -80,8 +82,16 @@ export async function GET() {
         .order("created_at", { ascending: false }),
       supabase
         .from("assignments")
+        .select("id", { count: "exact", head: true }),
+      supabase
+        .from("assignments")
+        .select("id", { count: "exact", head: true })
+        .eq("is_hidden", false),
+      supabase
+        .from("assignments")
         .select("id, title, subject, grade, is_hidden, created_at, duration_minutes, total_score")
-        .order("created_at", { ascending: false }),
+        .order("created_at", { ascending: false })
+        .limit(5),
     ]);
 
     const usersData = usersRes.data;
@@ -89,7 +99,15 @@ export async function GET() {
     const sessionsData = sessionsRes.data || [];
     const scheduleStudents = scheduleStudentsRes.data || [];
     const registrationsData = registrationsRes.data || [];
-    const assignmentsData = assignmentsRes.data || [];
+    const assignmentsData = recentAssignmentsRes.data || [];
+
+    const assignmentQueryError =
+      assignmentsCountRes.error ||
+      visibleAssignmentsCountRes.error ||
+      recentAssignmentsRes.error;
+    if (assignmentQueryError) {
+      throw assignmentQueryError;
+    }
 
     // Build unique system students map by normalized full_name / email
     const registeredStudentsMap = new Map<string, {
@@ -199,8 +217,8 @@ export async function GET() {
       }
     });
 
-    const totalAssignments = assignmentsData.length;
-    const visibleAssignments = assignmentsData.filter((a: any) => !a.is_hidden).length;
+    const totalAssignments = assignmentsCountRes.count ?? 0;
+    const visibleAssignments = visibleAssignmentsCountRes.count ?? 0;
 
     // Combine student items for dashboard UI
     const studentsOverview = registeredStudents.map((st) => {
@@ -243,7 +261,7 @@ export async function GET() {
           student_id: s.student_id,
           studentName: s.students?.name,
         })),
-        recentAssignments: assignmentsData.slice(0, 5),
+        recentAssignments: assignmentsData,
       },
       {
         headers: {

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useMemo, useRef } from "react";
 import clsx from "clsx";
 import { useQuery } from "@tanstack/react-query";
 import { createClient } from "@supabase/supabase-js";
@@ -29,6 +29,9 @@ export function StudentSessionsTab({ assignmentId }: { assignmentId: string }) {
   const [searchTerm, setSearchTerm] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 10;
+  const realtimeTimerRef = useRef<NodeJS.Timeout | null>(null);
+  const selectedSessionIdRef = useRef(selectedSessionId);
+  const pendingDetailRefreshIdRef = useRef<string | null>(null);
 
   // Reset page when search term changes
   useEffect(() => {
@@ -54,7 +57,8 @@ export function StudentSessionsTab({ assignmentId }: { assignmentId: string }) {
       const data = await res.json();
       return data.sessions || [];
     },
-    staleTime: 0, // Data luôn được coi là stale, refetch ngay lập tức
+    staleTime: 5000,
+    placeholderData: (previousData) => previousData,
   });
 
   const { data: detailData, isLoading: detailLoading, refetch: refetchDetail } = useQuery({
@@ -75,10 +79,17 @@ export function StudentSessionsTab({ assignmentId }: { assignmentId: string }) {
       }
     },
     enabled: !!selectedSessionId,
-    staleTime: 0, // Data luôn được coi là stale
+    staleTime: 5000,
+    placeholderData: (previousData) => previousData,
   });
 
-  // Đăng ký nhận thông báo thay đổi thời gian thực từ Supabase Realtime
+  const refetchSessionsRef = useRef(refetch);
+  const refetchDetailRef = useRef(refetchDetail);
+  selectedSessionIdRef.current = selectedSessionId;
+  refetchSessionsRef.current = refetch;
+  refetchDetailRef.current = refetchDetail;
+
+  // Đăng ký nhận thông báo thay đổi thời gian thực từ Supabase Realtime (với debounce chống giật lag re-render)
   useEffect(() => {
     if (!assignmentId) return;
 
@@ -97,16 +108,37 @@ export function StudentSessionsTab({ assignmentId }: { assignmentId: string }) {
           filter: `assignment_id=eq.${assignmentId}`,
         },
         (payload) => {
-          refetch();
-          refetchDetail();
+          const selectedSessionId = selectedSessionIdRef.current;
+          if (
+            selectedSessionId &&
+            (("id" in payload.new && payload.new.id === selectedSessionId) ||
+              ("id" in payload.old && payload.old.id === selectedSessionId))
+          ) {
+            pendingDetailRefreshIdRef.current = selectedSessionId;
+          }
+
+          if (realtimeTimerRef.current) {
+            clearTimeout(realtimeTimerRef.current);
+          }
+          realtimeTimerRef.current = setTimeout(() => {
+            void refetchSessionsRef.current();
+            const pendingDetailRefreshId = pendingDetailRefreshIdRef.current;
+            pendingDetailRefreshIdRef.current = null;
+            if (pendingDetailRefreshId === selectedSessionIdRef.current) {
+              void refetchDetailRef.current();
+            }
+          }, 400);
         }
       )
       .subscribe();
 
     return () => {
+      if (realtimeTimerRef.current) {
+        clearTimeout(realtimeTimerRef.current);
+      }
       supabase.removeChannel(channel);
     };
-  }, [assignmentId, refetch, refetchDetail]);
+  }, [assignmentId]);
 
   const handleDeleteSession = async (sessionId: string) => {
     if (!confirm("Xóa phiên làm bài này? Toàn bộ quá trình của học sinh sẽ bị mất.")) return;
@@ -122,29 +154,32 @@ export function StudentSessionsTab({ assignmentId }: { assignmentId: string }) {
   };
 
   // Filter and sort sessions
-  const filteredSessions = sessions
-    .filter((s: any) => s.student_name.toLowerCase().includes(searchTerm.toLowerCase()))
-    .sort((a: any, b: any) => {
-      // Priority 1: Active sessions (not submitted and not exited)
-      const aActive = !a.submissions?.id && a.status !== "exited";
-      const bActive = !b.submissions?.id && b.status !== "exited";
-      if (aActive && !bActive) return -1;
-      if (!aActive && bActive) return 1;
+  const filteredSessions = useMemo(() => {
+    const normalizedSearchTerm = searchTerm.toLowerCase();
+    return sessions
+      .filter((s: any) => s.student_name.toLowerCase().includes(normalizedSearchTerm))
+      .sort((a: any, b: any) => {
+        // Priority 1: Active sessions (not submitted and not exited)
+        const aActive = !a.submissions?.id && a.status !== "exited";
+        const bActive = !b.submissions?.id && b.status !== "exited";
+        if (aActive && !bActive) return -1;
+        if (!aActive && bActive) return 1;
 
-      // Priority 2: Exited sessions (not submitted but exited)
-      const aExited = !a.submissions?.id && a.status === "exited";
-      const bExited = !b.submissions?.id && b.status === "exited";
-      if (aExited && !bExited) return -1;
-      if (!aExited && bExited) return 1;
+        // Priority 2: Exited sessions (not submitted but exited)
+        const aExited = !a.submissions?.id && a.status === "exited";
+        const bExited = !b.submissions?.id && b.status === "exited";
+        if (aExited && !bExited) return -1;
+        if (!aExited && bExited) return 1;
 
-      // Priority 3: Sort by started_at desc
-      return new Date(b.started_at).getTime() - new Date(a.started_at).getTime();
-    });
+        // Priority 3: Sort by started_at desc
+        return new Date(b.started_at).getTime() - new Date(a.started_at).getTime();
+      });
+  }, [sessions, searchTerm]);
 
   const totalPages = Math.ceil(filteredSessions.length / itemsPerPage);
-  const paginatedSessions = filteredSessions.slice(
-    (currentPage - 1) * itemsPerPage,
-    currentPage * itemsPerPage
+  const paginatedSessions = useMemo(
+    () => filteredSessions.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage),
+    [filteredSessions, currentPage]
   );
 
 
