@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useRef } from "react";
 import { Calendar } from "@/features/admin/schedule/components/Calendar";
 import { Statistics } from "@/features/admin/schedule/components/Statistics";
 import { SessionModal } from "@/features/admin/schedule/components/SessionModal";
@@ -20,6 +20,7 @@ import type { TeachingSession, Subject, Student } from "@/features/admin/schedul
 export function ScheduleApp() {
   const [currentDate, setCurrentDate] = useState(new Date());
   const [sessions, setSessions] = useState<TeachingSession[]>([]);
+  const [sessionsQueryKey, setSessionsQueryKey] = useState<string | null>(null);
   const [students, setStudents] = useState<Student[]>([]);
   const [selectedStudentId, setSelectedStudentId] = useState<string | null>(null);
   const [selectedTab, setSelectedTab] = useState<"overview" | "student">("overview");
@@ -32,6 +33,12 @@ export function ScheduleApp() {
 
   const year = currentDate.getFullYear();
   const month = currentDate.getMonth() + 1;
+  const activeSessionsQueryKey = selectedStudentId
+    ? `${selectedStudentId}:${year}-${month}`
+    : null;
+  const activeSessionsQueryKeyRef = useRef(activeSessionsQueryKey);
+  const sessionsRequestIdRef = useRef(0);
+  activeSessionsQueryKeyRef.current = activeSessionsQueryKey;
 
   useEffect(() => {
     const loadStudents = async () => {
@@ -53,14 +60,34 @@ export function ScheduleApp() {
 
   const loadSessions = useCallback(async () => {
     if (!selectedStudentId) return;
+    const requestKey = `${selectedStudentId}:${year}-${month}`;
+    if (requestKey !== activeSessionsQueryKeyRef.current) return;
+
+    const requestId = ++sessionsRequestIdRef.current;
     setIsLoading(true);
     try {
       const data = await getSessionsByMonth(year, month, selectedStudentId);
-      setSessions(data);
+      if (
+        requestId === sessionsRequestIdRef.current &&
+        requestKey === activeSessionsQueryKeyRef.current
+      ) {
+        setSessions(data);
+        setSessionsQueryKey(requestKey);
+      }
     } catch (error) {
-      console.error("Error loading sessions:", error);
+      if (
+        requestId === sessionsRequestIdRef.current &&
+        requestKey === activeSessionsQueryKeyRef.current
+      ) {
+        console.error("Error loading sessions:", error);
+      }
     } finally {
-      setIsLoading(false);
+      if (
+        requestId === sessionsRequestIdRef.current &&
+        requestKey === activeSessionsQueryKeyRef.current
+      ) {
+        setIsLoading(false);
+      }
     }
   }, [year, month, selectedStudentId]);
 
@@ -220,9 +247,11 @@ export function ScheduleApp() {
   };
 
   const currentStudent = students.find((s) => s.id === selectedStudentId);
+  const visibleSessions =
+    sessionsQueryKey === activeSessionsQueryKey ? sessions : [];
 
   const selectedDateSessions = selectedDate
-    ? sessions.filter((s) => s.teaching_date === formatDate(selectedDate))
+    ? visibleSessions.filter((s) => s.teaching_date === formatDate(selectedDate))
     : [];
 
   return (
@@ -316,7 +345,7 @@ export function ScheduleApp() {
             <Calendar
               year={year}
               month={month}
-              sessions={sessions}
+              sessions={visibleSessions}
               onMonthChange={handleMonthChange}
               onDayClick={handleDayClick}
               studentColor={currentStudent?.color}
@@ -326,7 +355,8 @@ export function ScheduleApp() {
 
           <div className="lg:col-span-1 export-col-stats">
             <Statistics
-              sessions={sessions}
+              key={selectedStudentId}
+              sessions={visibleSessions}
               onExport={handleExport}
               salaryPerSession={currentStudent?.salary_per_session}
               studentName={currentStudent?.name}
