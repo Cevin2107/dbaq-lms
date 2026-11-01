@@ -79,7 +79,7 @@ export function Calendar({
             type="button"
             aria-label="Tháng trước"
             onClick={handlePrevMonth}
-            className="flex h-11 w-11 items-center justify-center rounded-full text-white transition-colors duration-200 hover:bg-white/20"
+            className="export-hide flex h-11 w-11 items-center justify-center rounded-full text-white transition-colors duration-200 hover:bg-white/20"
           >
             <ChevronLeft className="w-4 h-4 sm:w-5 sm:h-5" />
           </button>
@@ -92,7 +92,7 @@ export function Calendar({
             type="button"
             aria-label="Tháng sau"
             onClick={handleNextMonth}
-            className="flex h-11 w-11 items-center justify-center rounded-full text-white transition-colors duration-200 hover:bg-white/20"
+            className="export-hide flex h-11 w-11 items-center justify-center rounded-full text-white transition-colors duration-200 hover:bg-white/20"
           >
             <ChevronRight className="w-4 h-4 sm:w-5 sm:h-5" />
           </button>

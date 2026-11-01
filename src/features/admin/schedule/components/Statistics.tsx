@@ -245,7 +245,7 @@ export function Statistics({
                   <button
                     onClick={handleCopyAccount}
                     title="Sao chép số tài khoản"
-                    className="p-0.5 hover:bg-slate-200 dark:hover:bg-slate-700 rounded transition-colors text-slate-500"
+                    className="export-hide p-0.5 hover:bg-slate-200 dark:hover:bg-slate-700 rounded transition-colors text-slate-500"
                   >
                     {copied ? <Check className="w-3.5 h-3.5 text-emerald-500" /> : <Copy className="w-3.5 h-3.5" />}
                   </button>

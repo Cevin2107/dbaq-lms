@@ -87,7 +87,6 @@ export async function exportToImage(elementId: string, filename: string) {
       },
       filter: (node) => {
         const el = node as HTMLElement;
-        if (el?.tagName === "BUTTON") return false;
         if (el?.classList?.contains("export-hide")) return false;
         return true;
       },
