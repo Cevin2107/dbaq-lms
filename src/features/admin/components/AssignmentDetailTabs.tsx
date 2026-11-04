@@ -93,7 +93,7 @@ export function AssignmentDetailTabs({ assignmentId, initialAssignment, initialQ
 
       <div className="pt-2">
         {activeTab === "overview" && (
-          <OverviewTab assignmentId={assignmentId} initialData={initialAssignment} />
+          <OverviewTab assignmentId={assignmentId} initialData={initialAssignment} initialQuestions={initialQuestions} />
         )}
         {activeTab === "questions" && (
           <QuestionBuilderTab assignmentId={assignmentId} initialQuestions={initialQuestions} isQuiz={isQuiz} />

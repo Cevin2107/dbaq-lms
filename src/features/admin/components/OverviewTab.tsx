@@ -9,6 +9,11 @@ import { useQuery } from "@tanstack/react-query";
 import { formatVietnamTime } from "@/utils/date";
 import Toast from "@/components/Toast";
 import {
+  ArrowLeftRight,
+  HelpCircle,
+  CheckCircle,
+  AlertTriangle,
+  Loader2,
   BarChart3,
   CalendarClock,
   Clock3,
@@ -124,11 +129,90 @@ function SettingToggle({
   );
 }
 
-export function OverviewTab({ assignmentId, initialData }: { assignmentId: string; initialData: any }) {
+export function OverviewTab({ assignmentId, initialData, initialQuestions = [] }: { assignmentId: string; initialData: any; initialQuestions?: any[] }) {
   const router = useRouter();
   const [toast, setToast] = useState<{ message: string; type: "success" | "error" } | null>(null);
   const [editForm, setEditForm] = useState<EditForm>(() => normalizeInitialData(initialData));
   const [loading, setLoading] = useState(false);
+  const [converting, setConverting] = useState(false);
+
+  // Fetch questions to check eligibility for converting to Quiz
+  const { data: questions = initialQuestions } = useQuery({
+    queryKey: ["admin-questions", assignmentId],
+    queryFn: async () => {
+      const res = await fetch(`/api/admin/questions?assignmentId=${assignmentId}`);
+      if (!res.ok) return initialQuestions;
+      const data = await res.json();
+      return data.questions || [];
+    },
+    initialData: initialQuestions,
+  });
+
+  const isCurrentQuiz = editForm.type === "QUIZ";
+  const actualQuestions = (questions || []).filter((q: any) => q.type !== "section");
+  const totalQuestionsCount = actualQuestions.length;
+  const nonMcqQuestions = actualQuestions.filter((q: any) => q.type !== "mcq");
+  const canConvertToQuiz = totalQuestionsCount > 0 && nonMcqQuestions.length === 0;
+
+  const handleToggleType = async () => {
+    if (isCurrentQuiz) {
+      if (!confirm("Chuyển bài thi này sang dạng Bài tập thông thường?\n\nHọc sinh sẽ làm bài theo dạng hoàn thành tất cả câu rồi nộp bài mới biết kết quả.")) return;
+      setConverting(true);
+      try {
+        const res = await fetch(`/api/admin/assignments/${assignmentId}`, {
+          method: "PATCH",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ type: "ASSIGNMENT" }),
+        });
+        if (!res.ok) throw new Error("Chuyển đổi thất bại");
+        setEditForm(prev => ({ ...prev, type: "ASSIGNMENT" }));
+        setToast({ message: "Đã chuyển sang dạng Bài tập thông thường thành công!", type: "success" });
+        router.refresh();
+      } catch {
+        setToast({ message: "Không thể chuyển đổi dạng bài", type: "error" });
+      } finally {
+        setConverting(false);
+      }
+    } else {
+      if (!canConvertToQuiz) {
+        if (totalQuestionsCount === 0) {
+          setToast({ message: "Bài tập chưa có câu hỏi. Vui lòng thêm câu hỏi trắc nghiệm trước khi chuyển sang Quiz.", type: "error" });
+        } else {
+          setToast({ message: `Không thể chuyển: Có ${nonMcqQuestions.length} câu không phải trắc nghiệm (chỉ chấp nhận câu hỏi trắc nghiệm 4 lựa chọn).`, type: "error" });
+        }
+        return;
+      }
+
+      if (!confirm("Chuyển bài tập này sang dạng Quiz trực tuyến?\n\nHọc sinh sẽ làm theo dạng từng câu, phản hồi trực tiếp kết quả đúng/sai theo thời gian thực.")) return;
+      setConverting(true);
+      try {
+        const res = await fetch(`/api/admin/assignments/${assignmentId}`, {
+          method: "PATCH",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            type: "QUIZ",
+            quizConfig: editForm.quiz_config || {
+              shuffleQuestions: false,
+              shuffleOptions: false,
+              instantFeedback: true,
+              autoAdvance: false,
+              autoAdvanceSeconds: 2,
+              allowRetry: true,
+            },
+          }),
+        });
+        if (!res.ok) throw new Error("Chuyển đổi thất bại");
+        setEditForm(prev => ({ ...prev, type: "QUIZ" }));
+        setToast({ message: "Đã chuyển sang dạng Quiz trực tuyến thành công!", type: "success" });
+        router.refresh();
+      } catch {
+        setToast({ message: "Không thể chuyển đổi sang Quiz", type: "error" });
+      } finally {
+        setConverting(false);
+      }
+    }
+  };
+
 
   useEffect(() => {
     if (initialData) {
@@ -562,6 +646,80 @@ export function OverviewTab({ assignmentId, initialData }: { assignmentId: strin
                   )}
                 </section>
               )}
+
+                            {/* Chuyển đổi định dạng Bài tập <-> Quiz */}
+              <section className="border-t border-slate-100 dark:border-white/5 pt-6">
+                <div className="rounded-[1.75rem] border border-slate-200/80 bg-slate-50/70 p-5 dark:border-white/10 dark:bg-white/[0.02]">
+                  <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+                    <div className="flex items-start gap-3.5">
+                      <div className={`flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl shadow-sm ${
+                        isCurrentQuiz
+                          ? "bg-purple-500/10 text-purple-600 dark:bg-purple-500/20 dark:text-purple-400"
+                          : "bg-blue-500/10 text-[#0066cc] dark:bg-blue-500/20 dark:text-blue-400"
+                      }`}>
+                        {isCurrentQuiz ? <Zap className="h-5 w-5" /> : <ArrowLeftRight className="h-5 w-5" />}
+                      </div>
+                      <div>
+                        <div className="flex items-center gap-2 flex-wrap">
+                          <h3 className="text-sm font-bold text-slate-900 dark:text-white">
+                            Chế độ bài làm hiện tại:{" "}
+                            <span className={isCurrentQuiz ? "text-purple-600 dark:text-purple-400" : "text-[#0066cc] dark:text-blue-400"}>
+                              {isCurrentQuiz ? "Quiz trực tuyến (Tương tác nhanh)" : "Bài tập thông thường (Nộp bài chấm điểm)"}
+                            </span>
+                          </h3>
+                        </div>
+                        <p className="mt-1 text-xs text-slate-500 dark:text-slate-400 leading-relaxed max-w-xl">
+                          {isCurrentQuiz
+                            ? "Bài đang ở dạng Quiz (phản hồi ngay kết quả từng câu). Bạn có thể chuyển về Bài tập thông thường bất cứ lúc nào."
+                            : canConvertToQuiz
+                            ? "Tất cả câu hỏi trong bài đều là trắc nghiệm. Bạn có thể chuyển sang dạng Quiz trực tuyến tương tác ngay."
+                            : totalQuestionsCount === 0
+                            ? "Bài tập chưa có câu hỏi. Cần bổ sung câu hỏi trắc nghiệm để mở tính năng chuyển sang Quiz."
+                            : `Chưa đủ điều kiện chuyển Quiz: Có ${nonMcqQuestions.length}/${totalQuestionsCount} câu là dạng khác (Tự luận / Đúng-Sai / Trả lời ngắn). Quiz chỉ hỗ trợ toàn bộ câu trắc nghiệm.`
+                          }
+                        </p>
+                      </div>
+                    </div>
+
+                    <div className="flex items-center gap-2 shrink-0">
+                      <Button
+                        type="button"
+                        variant="outline"
+                        size="sm"
+                        disabled={converting || (!isCurrentQuiz && !canConvertToQuiz)}
+                        onClick={handleToggleType}
+                        className={`rounded-full px-5 py-2.5 text-xs font-bold transition-all duration-300 shadow-sm active:scale-95 ${
+                          isCurrentQuiz
+                            ? "border-purple-300/80 bg-purple-50/80 text-purple-700 hover:bg-purple-100 hover:border-purple-400 dark:border-purple-500/30 dark:bg-purple-950/30 dark:text-purple-300 dark:hover:bg-purple-900/50"
+                            : canConvertToQuiz
+                            ? "border-blue-300/80 bg-blue-50/80 text-[#0066cc] hover:bg-blue-100 hover:border-blue-400 dark:border-blue-500/30 dark:bg-blue-950/30 dark:text-blue-300 dark:hover:bg-blue-900/50 shadow-blue-500/10"
+                            : "opacity-40 cursor-not-allowed border-slate-200 dark:border-white/10 text-slate-400"
+                        }`}
+                        title={
+                          !isCurrentQuiz && !canConvertToQuiz
+                            ? (totalQuestionsCount === 0 ? "Chưa có câu hỏi" : "Tất cả câu hỏi phải là trắc nghiệm mới có thể chuyển sang Quiz")
+                            : undefined
+                        }
+                      >
+                        {converting ? (
+                          <Loader2 className="h-4 w-4 mr-1.5 animate-spin" />
+                        ) : isCurrentQuiz ? (
+                          <ArrowLeftRight className="h-4 w-4 mr-1.5" />
+                        ) : (
+                          <Zap className="h-4 w-4 mr-1.5 text-amber-500" />
+                        )}
+                        <span>
+                          {converting
+                            ? "Đang chuyển..."
+                            : isCurrentQuiz
+                            ? "Chuyển sang Bài tập thông thường"
+                            : "Chuyển sang dạng Quiz"}
+                        </span>
+                      </Button>
+                    </div>
+                  </div>
+                </div>
+              </section>
 
               <div className="flex flex-col-reverse gap-3 border-t border-slate-100 dark:border-white/5 pt-6 sm:flex-row sm:items-center sm:justify-between">
                 <Button type="button" variant="destructive" size="sm" onClick={handleDelete} className="w-full sm:w-auto rounded-full text-xs font-bold px-5">
