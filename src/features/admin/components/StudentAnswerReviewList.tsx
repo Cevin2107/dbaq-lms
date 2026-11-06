@@ -279,7 +279,7 @@ export function StudentAnswerReviewList({
                     </div>
                   )}
 
-                  <div className="text-sm text-slate-700 dark:text-slate-300 leading-relaxed mb-3">
+                  <div className="text-sm text-slate-700 dark:text-slate-300 leading-relaxed mb-3 min-w-0 max-w-full break-words [overflow-wrap:anywhere] [word-break:break-word] [&_.katex]:max-w-full [&_.katex-display]:max-w-full [&_.katex-display]:overflow-x-auto">
                     <MathText text={q.content || ""} />
                   </div>
                 </div>
@@ -513,7 +513,7 @@ export function StudentAnswerReviewList({
                 )}
 
                 {/* Question content */}
-                <div className="text-sm text-slate-700 dark:text-slate-300 leading-relaxed mb-3">
+                <div className="text-sm text-slate-700 dark:text-slate-300 leading-relaxed mb-3 min-w-0 max-w-full break-words [overflow-wrap:anywhere] [word-break:break-word] [&_.katex]:max-w-full [&_.katex-display]:max-w-full [&_.katex-display]:overflow-x-auto">
                   <MathText text={displayContent} />
                 </div>
 

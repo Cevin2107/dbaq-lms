@@ -132,7 +132,7 @@ export function QuestionDetailCard({
       )}
 
       {q.content && (
-        <div className="text-base font-semibold text-slate-900 dark:text-white mb-4 leading-relaxed"><MathText text={q.content} /></div>
+        <div className="text-base font-semibold text-slate-900 dark:text-white mb-4 leading-relaxed w-full min-w-0 max-w-full break-words [overflow-wrap:anywhere] [word-break:break-word] [&_.katex]:max-w-full [&_.katex-display]:max-w-full [&_.katex-display]:overflow-x-auto"><MathText text={q.content} /></div>
       )}
 
       {(q.type === "mcq" || q.type === "true_false") && (
@@ -168,7 +168,7 @@ export function QuestionDetailCard({
                   <span className="inline-flex items-center justify-center h-6 w-6 rounded-lg bg-slate-200/80 dark:bg-white/10 text-xs font-bold text-slate-700 dark:text-slate-300 flex-shrink-0">
                     {choiceLetter}
                   </span>
-                  <span className="flex-1">{choice ? <MathText text={choice} /> : <em className="text-slate-400 dark:text-slate-500">Không có nội dung</em>}</span>
+                  <span className="flex-1 min-w-0 max-w-full break-words [overflow-wrap:anywhere] [word-break:break-word] [&_.katex]:max-w-full [&_.katex-display]:max-w-full [&_.katex-display]:overflow-x-auto">{choice ? <MathText text={choice} /> : <em className="text-slate-400 dark:text-slate-500">Không có nội dung</em>}</span>
                   {isCorrectAnswer && (
                     <span className="flex items-center gap-1 text-emerald-700 dark:text-emerald-400 font-bold text-xs whitespace-nowrap">
                       <CheckCircle2 className="h-4 w-4" />

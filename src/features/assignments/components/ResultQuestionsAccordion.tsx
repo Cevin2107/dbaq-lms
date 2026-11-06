@@ -486,7 +486,7 @@ export function ResultQuestionsAccordion({
 
                     {/* Nội dung câu hỏi */}
                     {q.content && (
-                      <div className="text-[15px] font-medium text-slate-800 dark:text-slate-200 leading-relaxed mt-4">
+                      <div className="text-[15px] font-medium text-slate-800 dark:text-slate-200 leading-relaxed mt-4 min-w-0 max-w-full break-words [overflow-wrap:anywhere] [word-break:break-word] [&_.katex]:max-w-full [&_.katex-display]:max-w-full [&_.katex-display]:overflow-x-auto">
                         <MathText text={toMathRenderableText(q.content)} />
                       </div>
                     )}

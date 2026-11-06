@@ -83,7 +83,7 @@ export const AssignmentQuestion = memo(function AssignmentQuestion({
                     />
                   </div>
                 )}
-                <div className={clsx("prose prose-sm sm:prose-base max-w-none font-medium leading-relaxed dark:text-slate-200", isDark ? "text-slate-200" : "text-slate-700")}>
+                <div className={clsx("prose prose-sm sm:prose-base max-w-none font-medium leading-relaxed dark:text-slate-200 min-w-0 max-w-full break-words [overflow-wrap:anywhere] [word-break:break-word] [&_.katex]:max-w-full [&_.katex-display]:max-w-full [&_.katex-display]:overflow-x-auto", isDark ? "text-slate-200" : "text-slate-700")}>
                   <MathText text={q.content || ""} />
                 </div>
               </div>
@@ -115,7 +115,7 @@ export const AssignmentQuestion = memo(function AssignmentQuestion({
                 </div>
               )}
               {q.content && (
-                <div className={clsx("prose prose-sm sm:prose-base max-w-none font-semibold leading-relaxed mb-4 dark:text-slate-100", isDark ? "text-slate-100" : "text-slate-800")}>
+                <div className={clsx("prose prose-sm sm:prose-base max-w-none font-semibold leading-relaxed mb-4 dark:text-slate-100 min-w-0 max-w-full break-words [overflow-wrap:anywhere] [word-break:break-word] [&_.katex]:max-w-full [&_.katex-display]:max-w-full [&_.katex-display]:overflow-x-auto", isDark ? "text-slate-100" : "text-slate-800")}>
                   <MathText text={q.content} />
                 </div>
               )}

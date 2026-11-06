@@ -627,7 +627,7 @@ export function QuizTaking({ assignment, questions: initialQuestions, initialStu
       {/* Main interactive question area */}
       <main className="flex-1 max-w-[1000px] w-full mx-auto px-4 sm:px-6 py-6 sm:py-10 flex flex-col justify-center">
         {/* Question Card */}
-        <div className="relative rounded-[2.5rem] bg-white/90 dark:bg-[#18181b]/90 backdrop-blur-2xl border border-white/80 dark:border-white/10 shadow-[0_8px_30px_rgba(0,0,0,0.04)] dark:shadow-[0_12px_36px_rgba(0,0,0,0.5)] p-6 sm:p-10 mb-6 transition-all animate-fade-in">
+        <div className="relative rounded-[2.5rem] bg-white/90 dark:bg-[#18181b]/90 backdrop-blur-2xl border border-white/80 dark:border-white/10 shadow-[0_8px_30px_rgba(0,0,0,0.04)] dark:shadow-[0_12px_36px_rgba(0,0,0,0.5)] p-6 sm:p-10 mb-6 transition-all animate-fade-in min-w-0 max-w-full overflow-hidden">
           {/* Question Index Badge */}
           <div className="flex items-center justify-between mb-4">
             <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-black bg-purple-500/10 text-purple-600 dark:text-purple-400 border border-purple-500/20">
@@ -651,8 +651,8 @@ export function QuizTaking({ assignment, questions: initialQuestions, initialStu
             </div>
           )}
 
-          {/* Question Stem rendered with KaTeX */}
-          <div className="text-base sm:text-lg md:text-xl font-bold text-slate-900 dark:text-white leading-relaxed select-text [overflow-wrap:anywhere] [&_.katex-display]:overflow-x-auto">
+          {/* Question Stem rendered with KaTeX - Full container expansion, break-words and scroll handling */}
+          <div className="w-full min-w-0 max-w-full text-base sm:text-lg md:text-xl font-bold text-slate-900 dark:text-white leading-relaxed select-text break-words [overflow-wrap:anywhere] [word-break:break-word] [&_.katex]:max-w-full [&_.katex-display]:max-w-full [&_.katex-display]:overflow-x-auto [&_.katex-display]:py-1">
             <MathText text={currentQ.content || ""} />
           </div>
         </div>
@@ -714,7 +714,7 @@ export function QuizTaking({ assignment, questions: initialQuestions, initialStu
                 </div>
 
                 {/* Option Text with KaTeX - Full box expansion, no scrollbars inside */}
-                <div className="flex-1 min-w-0 pt-1 text-sm sm:text-base font-semibold leading-relaxed [overflow-wrap:anywhere] break-words select-text [&_.katex-display]:my-1 [&_.katex-display]:overflow-x-visible">
+                <div className="flex-1 min-w-0 max-w-full pt-1 text-sm sm:text-base font-semibold leading-relaxed break-words [overflow-wrap:anywhere] [word-break:break-word] select-text [&_.katex]:max-w-full [&_.katex-display]:my-1 [&_.katex-display]:max-w-full [&_.katex-display]:overflow-x-auto">
                   <MathText text={opt.text} />
                 </div>
               </button>

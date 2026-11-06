@@ -347,7 +347,7 @@ function renderContentBlock(text: string, className?: string) {
       {segments.map((segment, index) => {
         if (segment.type === "text") {
           return (
-            <span key={index} className="whitespace-pre-wrap">
+            <span key={index} className="whitespace-pre-wrap break-words [overflow-wrap:anywhere] [word-break:break-word]">
               {renderTextWithRedHighlights(segment.value)}
             </span>
           );
@@ -357,7 +357,7 @@ function renderContentBlock(text: string, className?: string) {
         return (
           <span
             key={index}
-            className={segment.displayMode ? "my-2 block overflow-x-auto" : "inline align-baseline"}
+            className={segment.displayMode ? "my-2 block max-w-full overflow-x-auto" : "inline align-baseline max-w-full"}
             dangerouslySetInnerHTML={{ __html: html }}
           />
         );
@@ -372,7 +372,7 @@ export function MathText({ text, className }: MathTextProps) {
   const blocks = splitMarkdownTableBlocks(text);
 
   return (
-    <span className={className}>
+    <span className={className ? `break-words [overflow-wrap:anywhere] ${className}` : "break-words [overflow-wrap:anywhere]"}>
       {blocks.map((block, bIdx) => {
         if (block.type === "table") {
           return (

@@ -26,7 +26,7 @@ export const QuestionRenderer: React.FC<QuestionRendererProps> = React.memo(({
           <span className="text-2xl">💡</span>
           <span className="text-xs font-bold text-indigo-400 uppercase tracking-widest">Đoạn văn / Ghi chú</span>
         </div>
-        <h3 className="text-sm md:text-base font-semibold text-indigo-100 leading-relaxed"><MathText text={question.content || ""} /></h3>
+        <h3 className="text-sm md:text-base font-semibold text-indigo-100 leading-relaxed min-w-0 max-w-full break-words [overflow-wrap:anywhere] [word-break:break-word] [&_.katex]:max-w-full [&_.katex-display]:max-w-full [&_.katex-display]:overflow-x-auto"><MathText text={question.content || ""} /></h3>
         {question.imageUrl && (
           <img src={question.imageUrl} alt="Lý thuyết" className="mt-4 max-w-full rounded-xl shadow-lg border border-indigo-500/20 max-h-80 object-contain" />
         )}
@@ -58,7 +58,7 @@ export const QuestionRenderer: React.FC<QuestionRendererProps> = React.memo(({
 
           <div className="flex-1 min-w-0">
             {/* Question text */}
-            <div className="text-base font-semibold text-white leading-relaxed mb-5"><MathText text={question.content || ""} /></div>
+            <div className="text-base font-semibold text-white leading-relaxed mb-5 min-w-0 max-w-full break-words [overflow-wrap:anywhere] [word-break:break-word] [&_.katex]:max-w-full [&_.katex-display]:max-w-full [&_.katex-display]:overflow-x-auto"><MathText text={question.content || ""} /></div>
 
             {question.imageUrl && (
               <img src={question.imageUrl} alt="Câu hỏi" className="mb-5 max-w-full rounded-xl shadow-md border border-white/10 max-h-80 object-contain bg-black/20" />
