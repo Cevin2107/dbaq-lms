@@ -19,6 +19,7 @@ import {
   Search,
   X,
   AlertCircle,
+  CalendarSync,
 } from "lucide-react";
 import { Button } from "@/components/ui/Button";
 import clsx from "clsx";
@@ -58,6 +59,7 @@ export default function TeachingSchedulePage() {
   const [selectedProxyStudent, setSelectedProxyStudent] = useState<string>("");
   const [proxySelections, setProxySelections] = useState<string[]>([]);
   const [proxySaving, setProxySaving] = useState(false);
+  const [applyingMonth, setApplyingMonth] = useState(false);
 
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
@@ -309,6 +311,34 @@ export default function TeachingSchedulePage() {
       showMessage("error", "Lỗi kết nối.");
     } finally {
       setProxySaving(false);
+    }
+  };
+
+  const handleApplyCurrentMonth = async () => {
+    const currentMonthNumber = new Date().getMonth() + 1;
+    const currentYearNumber = new Date().getFullYear();
+    const confirmed = window.confirm(
+      `Áp dụng toàn bộ lịch đăng ký hiện tại sang Google Calendar cho Tháng ${currentMonthNumber}/${currentYearNumber}?\n\n` +
+      `Toàn bộ các ca đã đăng ký của học sinh sẽ được đồng bộ lên Google Calendar lặp lại hàng tuần cho đến hết ngày cuối cùng của Tháng ${currentMonthNumber}.`
+    );
+    if (!confirmed) return;
+
+    setApplyingMonth(true);
+    try {
+      const res = await fetch("/api/admin/schedule-registrations/apply-month", {
+        method: "POST",
+      });
+      const data = await res.json().catch(() => ({}));
+      if (res.ok) {
+        showMessage("success", data.message || `Đã áp dụng lịch sang Google Calendar Tháng ${currentMonthNumber}!`);
+        fetchData();
+      } else {
+        showMessage("error", data.error || "Không thể áp dụng lịch cho tháng này.");
+      }
+    } catch {
+      showMessage("error", "Lỗi kết nối khi đồng bộ Google Calendar.");
+    } finally {
+      setApplyingMonth(false);
     }
   };
 
@@ -629,18 +659,37 @@ export default function TeachingSchedulePage() {
             </p>
           </div>
 
-          <select
-            value={selectedProxyStudent}
-            onChange={(e) => setSelectedProxyStudent(e.target.value)}
-            className="w-full md:w-auto px-4 py-2.5 border border-slate-200 dark:border-white/10 rounded-full bg-slate-50 dark:bg-slate-800 text-xs sm:text-sm font-semibold text-slate-900 dark:text-white outline-none focus:ring-2 focus:ring-blue-500 min-w-[260px] shadow-2xs"
-          >
-            <option value="">-- Chọn học sinh cần đăng ký hộ --</option>
-            {studentLimits.map((s) => (
-              <option key={s.id} value={s.id}>
-                {s.full_name} ({s.max_shifts} ca tối đa)
-              </option>
-            ))}
-          </select>
+          <div className="flex flex-wrap items-center gap-2.5 w-full md:w-auto">
+            <Button
+              type="button"
+              variant="outline"
+              size="sm"
+              disabled={applyingMonth}
+              onClick={handleApplyCurrentMonth}
+              className="rounded-full bg-gradient-to-r from-blue-50 to-indigo-50/70 hover:from-blue-100 hover:to-indigo-100 text-[#0066cc] dark:from-blue-950/40 dark:to-indigo-950/40 dark:text-blue-300 dark:hover:from-blue-900/60 dark:hover:to-indigo-900/60 border border-blue-200/80 dark:border-blue-500/30 text-xs font-bold px-4 py-2.5 shadow-sm active:scale-95 transition-all duration-300 ease-spring"
+              title="Đồng bộ toàn bộ lịch đăng ký hiện tại lên Google Calendar đến hết tháng này"
+            >
+              {applyingMonth ? (
+                <RefreshCw className="h-4 w-4 mr-1.5 animate-spin" />
+              ) : (
+                <CalendarSync className="h-4 w-4 mr-1.5 text-[#0066cc] dark:text-blue-400" />
+              )}
+              <span>{applyingMonth ? "Đang áp dụng..." : "Áp dụng cho tháng này"}</span>
+            </Button>
+
+            <select
+              value={selectedProxyStudent}
+              onChange={(e) => setSelectedProxyStudent(e.target.value)}
+              className="w-full sm:w-auto px-4 py-2.5 border border-slate-200 dark:border-white/10 rounded-full bg-slate-50 dark:bg-slate-800 text-xs sm:text-sm font-semibold text-slate-900 dark:text-white outline-none focus:ring-2 focus:ring-blue-500 min-w-[260px] shadow-2xs"
+            >
+              <option value="">-- Chọn học sinh cần đăng ký hộ --</option>
+              {studentLimits.map((s) => (
+                <option key={s.id} value={s.id}>
+                  {s.full_name} ({s.max_shifts} ca tối đa)
+                </option>
+              ))}
+            </select>
+          </div>
         </div>
 
         {selectedProxyStudent ? (

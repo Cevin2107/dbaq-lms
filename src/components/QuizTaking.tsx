@@ -11,6 +11,9 @@ import {
   CheckCircle2,
   XCircle,
   ArrowRight,
+  ArrowLeft,
+  ChevronLeft,
+  ChevronRight,
   Sparkles,
   Zap,
   Volume2,
@@ -497,6 +500,16 @@ export function QuizTaking({ assignment, questions: initialQuestions, initialStu
     }
   };
 
+  const handlePrev = () => {
+    if (autoAdvanceTimerRef.current) {
+      clearTimeout(autoAdvanceTimerRef.current);
+      autoAdvanceTimerRef.current = null;
+    }
+    if (currentIndex > 0) {
+      setCurrentIndex((prev) => prev - 1);
+    }
+  };
+
   const handleNext = (overrideAnswers?: Record<string, string>) => {
     if (autoAdvanceTimerRef.current) {
       clearTimeout(autoAdvanceTimerRef.current);
@@ -707,6 +720,42 @@ export function QuizTaking({ assignment, questions: initialQuestions, initialStu
               </button>
             );
           })}
+        </div>
+
+        {/* Navigation Bar (Quay lại câu trước & Tiến tới câu tiếp theo) */}
+        <div className="flex items-center justify-between gap-3 mb-6">
+          <button
+            type="button"
+            onClick={handlePrev}
+            disabled={currentIndex === 0 || submitting}
+            className={clsx(
+              "inline-flex items-center gap-2 px-5 py-2.5 rounded-full text-xs sm:text-sm font-bold border transition-all duration-300 ease-spring active:scale-95 shadow-xs",
+              currentIndex > 0 && !submitting
+                ? "bg-white/90 dark:bg-[#18181b]/90 border-slate-200/80 dark:border-white/10 text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-white/10 hover:border-purple-400/40 hover:-translate-y-0.5"
+                : "opacity-40 cursor-not-allowed bg-slate-100/50 dark:bg-white/5 border-transparent text-slate-400"
+            )}
+            aria-label="Quay lại câu trước"
+          >
+            <ChevronLeft className="h-4 w-4" />
+            <span>Câu trước</span>
+          </button>
+
+          {/* Nếu câu hiện tại đã làm (có feedback), cho phép tiến tới câu tiếp theo ngay cả khi chưa hết đếm ngược */}
+          {Boolean(currentFeedback) && (
+            <button
+              type="button"
+              onClick={() => handleNext()}
+              disabled={submitting}
+              className={clsx(
+                "inline-flex items-center gap-2 px-5 py-2.5 rounded-full text-xs sm:text-sm font-bold border transition-all duration-300 ease-spring active:scale-95 shadow-xs",
+                "bg-purple-500/10 text-purple-700 dark:text-purple-300 border-purple-500/25 hover:bg-purple-500/20 hover:border-purple-500/40 hover:-translate-y-0.5"
+              )}
+              aria-label={currentIndex < totalQuestions - 1 ? "Tiến tới câu tiếp theo" : "Xem kết quả"}
+            >
+              <span>{currentIndex < totalQuestions - 1 ? "Câu tiếp theo" : "Xem kết quả"}</span>
+              <ChevronRight className="h-4 w-4" />
+            </button>
+          )}
         </div>
 
         {/* Bottom Feedback Bar & Action Button */}

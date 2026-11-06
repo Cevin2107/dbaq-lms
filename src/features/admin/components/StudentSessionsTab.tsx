@@ -25,7 +25,16 @@ import {
 
 export function StudentSessionsTab({ assignmentId }: { assignmentId: string }) {
   const { addToast } = useToast();
-  const [selectedSessionId, setSelectedSessionId] = useState<string | null>(null);
+  const [selectedSession, setSelectedSession] = useState<any | null>(null);
+  const selectedSessionId = selectedSession?.id || null;
+  const setSelectedSessionId = (id: string | null) => {
+    if (!id) {
+      setSelectedSession(null);
+    } else {
+      const found = sessions.find((s: any) => s.id === id);
+      setSelectedSession(found || { id });
+    }
+  };
   const [searchTerm, setSearchTerm] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 10;
@@ -65,18 +74,25 @@ export function StudentSessionsTab({ assignmentId }: { assignmentId: string }) {
     queryKey: ["session-detail", selectedSessionId],
     queryFn: async () => {
       if (!selectedSessionId) return null;
-      const session = sessions.find((s: any) => s.id === selectedSessionId);
-      if (!session) return null;
+      const session = sessions.find((s: any) => s.id === selectedSessionId) || selectedSession;
 
-      if (session.submissions?.id) {
+      // Nếu session đã có submission id thì fetch theo submission
+      if (session?.submissions?.id) {
         const res = await fetch(`/api/admin/submissions/${session.submissions.id}/detail`, { cache: 'no-store' });
-        if (!res.ok) throw new Error("Failed to fetch submission detail");
-        return res.json();
-      } else {
-        const res = await fetch(`/api/admin/sessions/${session.id}/detail`, { cache: 'no-store' });
-        if (!res.ok) throw new Error("Failed to fetch session detail");
-        return res.json();
+        if (res.ok) return res.json();
       }
+
+      // Ngược lại fetch theo session id
+      const res = await fetch(`/api/admin/sessions/${selectedSessionId}/detail`, { cache: 'no-store' });
+      if (!res.ok) {
+        // Fallback: Nếu không tìm thấy session detail thì thử fetch submission detail nếu có submission_id
+        if (session?.submission_id) {
+          const subRes = await fetch(`/api/admin/submissions/${session.submission_id}/detail`, { cache: 'no-store' });
+          if (subRes.ok) return subRes.json();
+        }
+        throw new Error("Failed to fetch session detail");
+      }
+      return res.json();
     },
     enabled: !!selectedSessionId,
     staleTime: 5000,
@@ -294,7 +310,7 @@ export function StudentSessionsTab({ assignmentId }: { assignmentId: string }) {
               <div 
                 key={s.id} 
                 className={`group relative overflow-hidden rounded-[2.25rem] border p-4 sm:p-5 text-sm transition-all duration-300 ease-spring bg-white/80 dark:bg-[#18181b]/80 backdrop-blur-2xl shadow-[0_4px_20px_rgba(0,0,0,0.02)] hover:shadow-[0_12px_36px_rgba(0,102,204,0.08)] hover:-translate-y-0.5 ${cardBorderClass} cursor-pointer`}
-                onClick={() => setSelectedSessionId(s.id)}
+                onClick={() => setSelectedSession(s)}
               >
                 <div className="flex items-start gap-3.5">
                   {/* Avatar */}
@@ -414,9 +430,8 @@ export function StudentSessionsTab({ assignmentId }: { assignmentId: string }) {
       )}
       {/* Detail Modal - Glassmorphic */}
       {selectedSessionId && (() => {
-        const session = sessions.find((s: any) => s.id === selectedSessionId);
-        if (!session) return null;
-        const isSubmitted = !!session.submissions?.id;
+        const session = sessions.find((s: any) => s.id === selectedSessionId) || selectedSession || {};
+        const isSubmitted = !!(session.submissions?.id || session.submission_id || detailData?.submission);
         return (
           <div className="fixed inset-0 z-[9999] flex items-center justify-center p-3 sm:p-6 animate-fade-in">
             <div className="fixed inset-0 bg-slate-950/60 backdrop-blur-md" onClick={() => setSelectedSessionId(null)} />

@@ -72,6 +72,44 @@ export function getNextWeekdayDateTime(dayOfWeek: number, timeStr: string): Date
 }
 
 /**
+ * Calculates the first occurrence of a weekday in a specific month in Vietnam timezone (GMT+7)
+ */
+export function getFirstWeekdayDateTimeInMonth(
+  targetYear: number,
+  targetMonth: number, // 1-12
+  dayOfWeek: number,
+  timeStr: string
+): { startDateTime: Date; endDateTime: Date; untilStr: string } {
+  const targetJsDay = mapDayOfWeekToJsDay(dayOfWeek);
+
+  // Find the first day of targetMonth that matches targetJsDay
+  let firstDayDate = 1;
+  for (let d = 1; d <= 7; d++) {
+    // Note: Month in JS Date constructor is 0-indexed
+    const checkDate = new Date(Date.UTC(targetYear, targetMonth - 1, d, 12, 0, 0));
+    if (checkDate.getUTCDay() === targetJsDay) {
+      firstDayDate = d;
+      break;
+    }
+  }
+
+  const [h, m, s] = timeStr.split(":").map(Number);
+  const yearStr = String(targetYear);
+  const monthStr = String(targetMonth).padStart(2, "0");
+  const dateStr = String(firstDayDate).padStart(2, "0");
+
+  const startIsoStr = `${yearStr}-${monthStr}-${dateStr}T${String(h).padStart(2, "0")}:${String(m).padStart(2, "0")}:${String(s || 0).padStart(2, "0")}`;
+  const startDateTime = new Date(`${startIsoStr}+07:00`);
+
+  // Last day of targetMonth
+  const lastDayDateObj = new Date(Date.UTC(targetYear, targetMonth, 0, 23, 59, 59));
+  const lastDateStr = String(lastDayDateObj.getUTCDate()).padStart(2, "0");
+  const untilStr = `${yearStr}${monthStr}${lastDateStr}T235959Z`;
+
+  return { startDateTime, endDateTime: startDateTime, untilStr };
+}
+
+/**
  * Creates a weekly recurring Google Calendar event
  * Returns the event ID or null if failed
  */
@@ -80,21 +118,34 @@ export async function createCalendarEvent(
   dayOfWeek: number,
   shiftName: string,
   startTimeStr: string,
-  endTimeStr: string
+  endTimeStr: string,
+  targetMonthYear?: { year: number; month: number }
 ): Promise<string | null> {
   const calendar = await getCalendarClient();
   if (!calendar) return null;
 
   try {
-    const startDateTime = getNextWeekdayDateTime(dayOfWeek, startTimeStr);
-    const endDateTime = getNextWeekdayDateTime(dayOfWeek, endTimeStr);
+    let startDateTime: Date;
+    let endDateTime: Date;
+    let untilStr: string;
 
-    // Calculate the end of the month for the UNTIL rule (last day of the month where the event starts)
-    const lastDayOfMonth = new Date(Date.UTC(startDateTime.getUTCFullYear(), startDateTime.getUTCMonth() + 1, 0, 23, 59, 59));
-    const year = lastDayOfMonth.getUTCFullYear();
-    const month = String(lastDayOfMonth.getUTCMonth() + 1).padStart(2, "0");
-    const date = String(lastDayOfMonth.getUTCDate()).padStart(2, "0");
-    const untilStr = `${year}${month}${date}T235959Z`;
+    if (targetMonthYear) {
+      const startInfo = getFirstWeekdayDateTimeInMonth(targetMonthYear.year, targetMonthYear.month, dayOfWeek, startTimeStr);
+      const endInfo = getFirstWeekdayDateTimeInMonth(targetMonthYear.year, targetMonthYear.month, dayOfWeek, endTimeStr);
+      startDateTime = startInfo.startDateTime;
+      endDateTime = endInfo.startDateTime;
+      untilStr = startInfo.untilStr;
+    } else {
+      startDateTime = getNextWeekdayDateTime(dayOfWeek, startTimeStr);
+      endDateTime = getNextWeekdayDateTime(dayOfWeek, endTimeStr);
+
+      // Calculate the end of the month for the UNTIL rule (last day of the month where the event starts)
+      const lastDayOfMonth = new Date(Date.UTC(startDateTime.getUTCFullYear(), startDateTime.getUTCMonth() + 1, 0, 23, 59, 59));
+      const year = lastDayOfMonth.getUTCFullYear();
+      const month = String(lastDayOfMonth.getUTCMonth() + 1).padStart(2, "0");
+      const date = String(lastDayOfMonth.getUTCDate()).padStart(2, "0");
+      untilStr = `${year}${month}${date}T235959Z`;
+    }
 
     const event = {
       summary: `${studentName} - ${shiftName}`,
