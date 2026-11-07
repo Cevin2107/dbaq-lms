@@ -39,7 +39,7 @@ export const QuestionRenderer: React.FC<QuestionRendererProps> = React.memo(({
       id={`question-${question.id}`}
       className={`rounded-2xl border transition-all duration-200 ${
         isAnswered
-          ? "border-indigo-500/40 bg-white/8 shadow-lg shadow-indigo-900/20"
+          ? "border-indigo-500/40 bg-white/10 shadow-lg shadow-indigo-900/20"
           : "border-white/10 bg-white/5 hover:border-white/20"
       }`}
     >
@@ -114,7 +114,7 @@ export const QuestionRenderer: React.FC<QuestionRendererProps> = React.memo(({
                 value={answer || ""}
                 onChange={(e) => { if (!locked) onAnswerChange(e.target.value); }}
                 disabled={locked}
-                className="w-full rounded-xl border border-white/15 bg-white/8 px-4 py-3 text-base text-white placeholder-slate-500 focus:border-indigo-500 focus:ring-4 focus:ring-indigo-900/60 disabled:opacity-50 transition outline-none"
+                className="w-full rounded-xl border border-white/15 bg-white/10 px-4 py-3 text-base text-white placeholder-slate-500 focus:border-indigo-500 focus:ring-4 focus:ring-indigo-900/60 disabled:opacity-50 transition outline-none"
               />
             )}
 
@@ -127,10 +127,10 @@ export const QuestionRenderer: React.FC<QuestionRendererProps> = React.memo(({
                   value={answer || ""}
                   onChange={(e) => { if (!locked) onAnswerChange(e.target.value); }}
                   disabled={locked}
-                  className="w-full rounded-xl border border-white/15 bg-white/8 px-4 py-3 text-base text-white placeholder-slate-500 focus:border-indigo-500 focus:ring-4 focus:ring-indigo-900/60 disabled:opacity-50 transition outline-none resize-y"
+                  className="w-full rounded-xl border border-white/15 bg-white/10 px-4 py-3 text-base text-white placeholder-slate-500 focus:border-indigo-500 focus:ring-4 focus:ring-indigo-900/60 disabled:opacity-50 transition outline-none resize-y"
                 />
                 <div className="flex flex-wrap items-center gap-4">
-                  <label className={`cursor-pointer inline-flex items-center gap-2 rounded-xl border border-white/15 bg-white/8 px-4 py-2.5 text-sm font-semibold text-slate-300 hover:bg-white/12 transition ${locked || isEssayUploading ? "opacity-50 pointer-events-none" : ""}`}>
+                  <label className={`cursor-pointer inline-flex items-center gap-2 rounded-xl border border-white/15 bg-white/10 px-4 py-2.5 text-sm font-semibold text-slate-300 hover:bg-white/15 transition ${locked || isEssayUploading ? "opacity-50 pointer-events-none" : ""}`}>
                     <input type="file" accept="image/*" className="hidden"
                       onChange={(e) => {
                         const file = e.target.files?.[0];

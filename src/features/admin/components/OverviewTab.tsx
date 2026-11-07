@@ -504,7 +504,7 @@ export function OverviewTab({ assignmentId, initialData, initialQuestions = [] }
                         <label
                           key={cfg.id}
                           htmlFor={cfg.id}
-                          className="flex items-start gap-3.5 p-3.5 rounded-2xl bg-white/80 dark:bg-[#18181b]/80 border border-slate-200/60 dark:border-white/8 cursor-pointer hover:border-purple-400/40 hover:bg-white dark:hover:bg-[#18181b] transition-all group shadow-xs"
+                          className="flex items-start gap-3.5 p-3.5 rounded-2xl bg-white/80 dark:bg-[#18181b]/80 border border-slate-200/60 dark:border-white/10 cursor-pointer hover:border-purple-400/40 hover:bg-white dark:hover:bg-[#18181b] transition-all group shadow-xs"
                         >
                           <div className="flex items-center pt-0.5">
                             <input
@@ -528,7 +528,7 @@ export function OverviewTab({ assignmentId, initialData, initialQuestions = [] }
                       {/* Auto-advance */}
                       <label
                         htmlFor="cfg-auto-advance"
-                        className="flex items-start gap-3.5 p-3.5 rounded-2xl bg-white/80 dark:bg-[#18181b]/80 border border-slate-200/60 dark:border-white/8 cursor-pointer hover:border-purple-400/40 hover:bg-white dark:hover:bg-[#18181b] transition-all shadow-xs"
+                        className="flex items-start gap-3.5 p-3.5 rounded-2xl bg-white/80 dark:bg-[#18181b]/80 border border-slate-200/60 dark:border-white/10 cursor-pointer hover:border-purple-400/40 hover:bg-white dark:hover:bg-[#18181b] transition-all shadow-xs"
                       >
                         <div className="flex items-center pt-0.5">
                           <input

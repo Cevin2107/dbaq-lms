@@ -119,16 +119,16 @@ export function CreateAssignmentModal({ isOpen, onClose }: CreateAssignmentModal
     >
       {/* Backdrop */}
       <div
-        className="absolute inset-0 bg-black/40 dark:bg-black/60 backdrop-blur-sm"
+        className="absolute inset-0 bg-slate-950/60 dark:bg-black/80 backdrop-blur-md"
         onClick={() => {
           if (!loading) onClose();
         }}
       />
 
       {/* Panel */}
-      <div className="relative z-10 w-full sm:max-w-2xl max-h-screen sm:max-h-[92vh] flex flex-col rounded-none sm:rounded-[2rem] bg-white/95 dark:bg-[#18181b]/95 backdrop-blur-2xl border-0 sm:border border-white/80 dark:border-white/10 shadow-2xl overflow-hidden">
+      <div className="relative z-10 w-full sm:max-w-2xl max-h-screen sm:max-h-[92vh] flex flex-col rounded-none sm:rounded-[2rem] bg-white/95 dark:bg-[#121214]/95 backdrop-blur-2xl border-0 sm:border border-white/80 dark:border-white/10 shadow-2xl overflow-hidden">
         {/* Header */}
-        <div className="flex items-center justify-between p-5 sm:p-6 border-b border-black/5 dark:border-white/8 flex-shrink-0">
+        <div className="flex items-center justify-between p-5 sm:p-6 border-b border-black/5 dark:border-white/10 flex-shrink-0">
           <div className="flex items-center gap-3">
             <div className="flex h-10 w-10 items-center justify-center rounded-2xl bg-gradient-to-br from-[#0066cc] to-sky-500 shadow-lg shadow-blue-500/30">
               <BookOpen className="h-5 w-5 text-white" />
@@ -141,7 +141,7 @@ export function CreateAssignmentModal({ isOpen, onClose }: CreateAssignmentModal
           <button
             onClick={onClose}
             disabled={loading}
-            className="flex h-9 w-9 items-center justify-center rounded-full bg-black/5 dark:bg-white/8 hover:bg-black/10 dark:hover:bg-white/15 text-slate-500 dark:text-slate-400 transition-all active:scale-95 disabled:opacity-40"
+            className="flex h-9 w-9 items-center justify-center rounded-full bg-black/5 dark:bg-white/10 hover:bg-black/10 dark:hover:bg-white/15 text-slate-500 dark:text-slate-400 transition-all active:scale-95 disabled:opacity-40"
             aria-label="Đóng"
           >
             <X className="h-4 w-4" />
@@ -151,7 +151,7 @@ export function CreateAssignmentModal({ isOpen, onClose }: CreateAssignmentModal
         {/* Body */}
         <form id="create-assignment-form" onSubmit={handleSubmit} className="overflow-y-auto flex-1 p-5 sm:p-6 space-y-5">
           {/* Thông tin cơ bản */}
-          <div className="rounded-[1.5rem] border border-black/5 dark:border-white/8 bg-slate-50/80 dark:bg-white/3 p-4 sm:p-5 space-y-4">
+          <div className="rounded-[1.5rem] border border-black/5 dark:border-white/10 bg-slate-50/80 dark:bg-white/[0.04] p-4 sm:p-5 space-y-4">
             <div className="flex items-center gap-2 text-sm font-bold text-slate-700 dark:text-slate-200">
               <BookOpen className="h-4 w-4 text-[#0066cc]" />
               Thông tin cơ bản
@@ -169,7 +169,7 @@ export function CreateAssignmentModal({ isOpen, onClose }: CreateAssignmentModal
                 value={title}
                 onChange={e => setTitle(e.target.value)}
                 placeholder="VD: Kiểm tra Toán - Hàm số bậc nhất 15 phút"
-                className="w-full px-4 py-3 rounded-xl bg-white dark:bg-[#18181b] border border-slate-200/80 dark:border-white/10 text-sm text-slate-900 dark:text-white placeholder:text-slate-400 focus:ring-2 focus:ring-blue-500/20 focus:border-[#0066cc] outline-none transition-all"
+                className="w-full px-4 py-3 rounded-xl bg-white dark:bg-black/40 border border-slate-200/80 dark:border-white/10 text-sm text-slate-900 dark:text-white placeholder:text-slate-400 dark:placeholder:text-slate-500 focus:ring-2 focus:ring-blue-500/20 focus:border-[#0066cc] outline-none transition-all"
               />
             </div>
 
@@ -180,17 +180,17 @@ export function CreateAssignmentModal({ isOpen, onClose }: CreateAssignmentModal
                 <select
                   value={subjectSelect}
                   onChange={e => setSubjectSelect(e.target.value)}
-                  className="w-full px-3 py-3 rounded-xl bg-white dark:bg-[#18181b] border border-slate-200/80 dark:border-white/10 text-sm text-slate-900 dark:text-white focus:ring-2 focus:ring-blue-500/20 focus:border-[#0066cc] outline-none transition-all"
+                  className="w-full px-3 py-3 rounded-xl bg-white dark:bg-black/40 border border-slate-200/80 dark:border-white/10 text-sm text-slate-900 dark:text-white focus:ring-2 focus:ring-blue-500/20 focus:border-[#0066cc] outline-none transition-all"
                 >
-                  {SUBJECT_OPTIONS.map(s => <option key={s} value={s}>{s}</option>)}
-                  <option value={CUSTOM_VALUE}>Khác...</option>
+                  {SUBJECT_OPTIONS.map(s => <option key={s} value={s} className="bg-white dark:bg-[#18181b] text-slate-900 dark:text-white">{s}</option>)}
+                  <option value={CUSTOM_VALUE} className="bg-white dark:bg-[#18181b] text-slate-900 dark:text-white">Khác...</option>
                 </select>
                 {subjectSelect === CUSTOM_VALUE && (
                   <input
                     value={subjectCustom}
                     onChange={e => setSubjectCustom(e.target.value)}
                     placeholder="Nhập môn học"
-                    className="w-full mt-1 px-3 py-2 rounded-xl bg-white dark:bg-[#18181b] border border-slate-200/80 dark:border-white/10 text-sm text-slate-900 dark:text-white outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-[#0066cc] transition-all"
+                    className="w-full mt-1 px-3 py-2 rounded-xl bg-white dark:bg-black/40 border border-slate-200/80 dark:border-white/10 text-sm text-slate-900 dark:text-white outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-[#0066cc] transition-all"
                   />
                 )}
               </div>
@@ -200,17 +200,17 @@ export function CreateAssignmentModal({ isOpen, onClose }: CreateAssignmentModal
                 <select
                   value={gradeSelect}
                   onChange={e => setGradeSelect(e.target.value)}
-                  className="w-full px-3 py-3 rounded-xl bg-white dark:bg-[#18181b] border border-slate-200/80 dark:border-white/10 text-sm text-slate-900 dark:text-white focus:ring-2 focus:ring-blue-500/20 focus:border-[#0066cc] outline-none transition-all"
+                  className="w-full px-3 py-3 rounded-xl bg-white dark:bg-black/40 border border-slate-200/80 dark:border-white/10 text-sm text-slate-900 dark:text-white focus:ring-2 focus:ring-blue-500/20 focus:border-[#0066cc] outline-none transition-all"
                 >
-                  {GRADE_OPTIONS.map(g => <option key={g} value={g}>{g}</option>)}
-                  <option value={CUSTOM_VALUE}>Khác...</option>
+                  {GRADE_OPTIONS.map(g => <option key={g} value={g} className="bg-white dark:bg-[#18181b] text-slate-900 dark:text-white">{g}</option>)}
+                  <option value={CUSTOM_VALUE} className="bg-white dark:bg-[#18181b] text-slate-900 dark:text-white">Khác...</option>
                 </select>
                 {gradeSelect === CUSTOM_VALUE && (
                   <input
                     value={gradeCustom}
                     onChange={e => setGradeCustom(e.target.value)}
                     placeholder="Nhập khối lớp"
-                    className="w-full mt-1 px-3 py-2 rounded-xl bg-white dark:bg-[#18181b] border border-slate-200/80 dark:border-white/10 text-sm text-slate-900 dark:text-white outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-[#0066cc] transition-all"
+                    className="w-full mt-1 px-3 py-2 rounded-xl bg-white dark:bg-black/40 border border-slate-200/80 dark:border-white/10 text-sm text-slate-900 dark:text-white outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-[#0066cc] transition-all"
                   />
                 )}
               </div>
@@ -229,7 +229,7 @@ export function CreateAssignmentModal({ isOpen, onClose }: CreateAssignmentModal
                   value={durationMinutes}
                   onChange={e => setDurationMinutes(e.target.value)}
                   placeholder="Không giới hạn"
-                  className="w-full px-3 py-3 rounded-xl bg-white dark:bg-[#18181b] border border-slate-200/80 dark:border-white/10 text-sm text-slate-900 dark:text-white outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-[#0066cc] transition-all"
+                  className="w-full px-3 py-3 rounded-xl bg-white dark:bg-black/40 border border-slate-200/80 dark:border-white/10 text-sm text-slate-900 dark:text-white outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-[#0066cc] transition-all"
                 />
               </div>
               <div className="space-y-1.5">
@@ -243,7 +243,7 @@ export function CreateAssignmentModal({ isOpen, onClose }: CreateAssignmentModal
                   value={totalScore}
                   onChange={e => setTotalScore(e.target.value)}
                   placeholder="10"
-                  className="w-full px-3 py-3 rounded-xl bg-white dark:bg-[#18181b] border border-slate-200/80 dark:border-white/10 text-sm text-slate-900 dark:text-white outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-[#0066cc] transition-all"
+                  className="w-full px-3 py-3 rounded-xl bg-white dark:bg-black/40 border border-slate-200/80 dark:border-white/10 text-sm text-slate-900 dark:text-white outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-[#0066cc] transition-all"
                 />
               </div>
               <div className="space-y-1.5">
@@ -254,13 +254,13 @@ export function CreateAssignmentModal({ isOpen, onClose }: CreateAssignmentModal
                   type="datetime-local"
                   value={dueAt}
                   onChange={e => setDueAt(e.target.value)}
-                  className="w-full px-3 py-3 rounded-xl bg-white dark:bg-[#18181b] border border-slate-200/80 dark:border-white/10 text-xs sm:text-sm text-slate-900 dark:text-white outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-[#0066cc] transition-all"
+                  className="w-full px-3 py-3 rounded-xl bg-white dark:bg-black/40 border border-slate-200/80 dark:border-white/10 text-xs sm:text-sm text-slate-900 dark:text-white outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-[#0066cc] transition-all"
                 />
               </div>
             </div>
 
             {/* Hide score checkbox */}
-            <label className="flex items-start gap-3 p-3 rounded-xl bg-white/70 dark:bg-[#18181b]/60 border border-slate-200/50 dark:border-white/8 cursor-pointer hover:border-blue-500/30 transition-all">
+            <label className="flex items-start gap-3 p-3 rounded-xl bg-white/70 dark:bg-white/[0.04] border border-slate-200/50 dark:border-white/10 cursor-pointer hover:border-blue-500/30 dark:hover:bg-white/10 transition-all">
               <input
                 type="checkbox"
                 checked={hideScore}
@@ -279,7 +279,7 @@ export function CreateAssignmentModal({ isOpen, onClose }: CreateAssignmentModal
           </div>
 
           {/* Giao bài cho Học sinh */}
-          <div className="rounded-[1.5rem] border border-black/5 dark:border-white/8 bg-slate-50/80 dark:bg-white/3 p-4 sm:p-5 space-y-3">
+          <div className="rounded-[1.5rem] border border-black/5 dark:border-white/10 bg-slate-50/80 dark:bg-white/[0.04] p-4 sm:p-5 space-y-3">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-2 text-sm font-bold text-slate-700 dark:text-slate-200">
                 <Users className="h-4 w-4 text-[#0066cc]" />
@@ -312,7 +312,7 @@ export function CreateAssignmentModal({ isOpen, onClose }: CreateAssignmentModal
             ) : (
               <div className="max-h-36 overflow-y-auto space-y-1.5 scrollbar-hide">
                 {students.map(s => (
-                  <label key={s.id} className="flex items-center gap-2.5 px-3 py-2 rounded-xl bg-white/70 dark:bg-[#18181b]/60 border border-slate-200/50 dark:border-white/8 cursor-pointer hover:border-[#0066cc]/30 transition-all">
+                  <label key={s.id} className="flex items-center gap-2.5 px-3 py-2 rounded-xl bg-white/70 dark:bg-white/[0.04] border border-slate-200/50 dark:border-white/10 cursor-pointer hover:border-[#0066cc]/30 dark:hover:border-white/20 transition-all">
                     <input
                       type="checkbox"
                       checked={assignedIds.includes(s.id)}
@@ -334,13 +334,13 @@ export function CreateAssignmentModal({ isOpen, onClose }: CreateAssignmentModal
         </form>
 
         {/* Footer */}
-        <div className="flex items-center justify-end gap-3 p-4 sm:p-5 border-t border-black/5 dark:border-white/8 flex-shrink-0 bg-white/50 dark:bg-[#18181b]/50">
+        <div className="flex items-center justify-end gap-3 p-4 sm:p-5 border-t border-black/5 dark:border-white/10 flex-shrink-0 bg-white/50 dark:bg-black/20">
           <Button
             type="button"
             variant="outline"
             disabled={loading}
             onClick={onClose}
-            className="rounded-full px-5 py-2.5 text-xs font-semibold border-black/10 dark:border-white/10 hover:bg-black/5 dark:hover:bg-white/8 active:scale-95 transition-all disabled:opacity-40"
+            className="rounded-full px-5 py-2.5 text-xs font-semibold border-black/10 dark:border-white/10 hover:bg-black/5 dark:hover:bg-white/10 text-slate-700 dark:text-slate-300 active:scale-95 transition-all disabled:opacity-40"
           >
             Hủy
           </Button>

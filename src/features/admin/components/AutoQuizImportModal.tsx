@@ -262,9 +262,9 @@ export function AutoQuizImportModal({
     >
       <div className="absolute inset-0 bg-black/50 backdrop-blur-sm" onClick={onClose} />
 
-      <div className="relative z-10 w-full max-w-4xl max-h-[92vh] flex flex-col rounded-[2.5rem] bg-white/95 dark:bg-[#18181b]/95 backdrop-blur-2xl border border-white/80 dark:border-white/10 shadow-2xl overflow-hidden">
+      <div className="relative z-10 w-full max-w-4xl max-h-[92vh] flex flex-col rounded-[2.5rem] bg-white/95 dark:bg-[#121214]/95 backdrop-blur-2xl border border-white/80 dark:border-white/10 shadow-2xl overflow-hidden">
         {/* Header */}
-        <div className="flex items-center justify-between p-5 sm:p-6 border-b border-black/5 dark:border-white/8 flex-shrink-0">
+        <div className="flex items-center justify-between p-5 sm:p-6 border-b border-black/5 dark:border-white/10 flex-shrink-0">
           <div className="flex items-center gap-3">
             <div className="flex h-10 w-10 items-center justify-center rounded-2xl bg-gradient-to-br from-purple-500 to-indigo-600 shadow-lg shadow-purple-500/30 text-white">
               <Zap className="h-5 w-5" />
@@ -280,7 +280,7 @@ export function AutoQuizImportModal({
           </div>
           <button
             onClick={onClose}
-            className="flex h-9 w-9 items-center justify-center rounded-full bg-black/5 dark:bg-white/8 hover:bg-black/10 text-slate-500 dark:text-slate-400 active:scale-95 transition-all"
+            className="flex h-9 w-9 items-center justify-center rounded-full bg-black/5 dark:bg-white/10 hover:bg-black/10 text-slate-500 dark:text-slate-400 active:scale-95 transition-all"
           >
             <X className="h-4 w-4" />
           </button>
@@ -331,7 +331,7 @@ export function AutoQuizImportModal({
           ) : (
             <div className="space-y-4">
               {/* Summary toolbar */}
-              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 p-4 rounded-2xl bg-slate-50 dark:bg-white/5 border border-black/5 dark:border-white/8">
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 p-4 rounded-2xl bg-slate-50 dark:bg-white/5 border border-black/5 dark:border-white/10">
                 <div className="flex flex-wrap items-center gap-2.5">
                   <div className="flex items-center gap-1.5">
                     <CheckCircle2 className="h-5 w-5 text-emerald-500" />
@@ -383,7 +383,7 @@ export function AutoQuizImportModal({
                     className={`p-4 sm:p-5 rounded-2xl border transition-all ${
                       idx < importCount
                         ? "bg-white dark:bg-[#1d1d1f] border-purple-500/30 shadow-sm"
-                        : "bg-slate-50/50 dark:bg-white/3 border-black/5 opacity-50"
+                        : "bg-slate-50/50 dark:bg-white/[0.04] border-black/5 dark:border-white/10 opacity-50"
                     }`}
                   >
                     <div className="flex items-start justify-between gap-3 mb-2">
@@ -458,7 +458,7 @@ export function AutoQuizImportModal({
         </div>
 
         {/* Footer */}
-        <div className="flex items-center justify-between p-4 sm:p-5 border-t border-black/5 dark:border-white/8 bg-white/50 dark:bg-[#18181b]/50 flex-shrink-0">
+        <div className="flex items-center justify-between p-4 sm:p-5 border-t border-black/5 dark:border-white/10 bg-white/50 dark:bg-black/20 flex-shrink-0">
           <Button
             variant="outline"
             size="sm"
